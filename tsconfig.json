@@ -20,15 +20,7 @@
     "strict": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "baseUrl": "./",
-    "paths": {
-      "@": [
-        "src"
-      ],
-      "@/*": [
-        "src/*"
-      ]
-    }
+    "baseUrl": "./"
   },
   "include": [
     "src"

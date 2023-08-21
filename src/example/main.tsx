@@ -7,10 +7,10 @@ import { IS_DEV } from './constants'
 // Components
 import './index.scss'
 import App from './App'
-import Editor from './debug/Editor'
+import Editor from '../debug/Editor'
 import { app } from './constants'
 // Tools
-import RemoteController from './debug/remote/RemoteController'
+import RemoteController from '../debug/remote/RemoteController'
 
 // Debug tools
 if (IS_DEV) {
