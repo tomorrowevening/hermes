@@ -1,0 +1,42 @@
+@use 'theme';
+
+.draggable {
+  li {
+    div {
+      background-color: $BAR_COLOR;
+      line-height: 14px;
+      padding: 5px 10px;
+      transition: background-color 0.25s linear;
+      &:hover {
+        background-color: $BTN_HOVER;
+      }
+      span {
+        font-size: 12px;
+        margin: 0px 15px 0 10px;
+      }
+      .dragIcon {
+        position: absolute;
+        left: 10px;
+      }
+      .closeIcon {
+        background-color: transparent;
+        padding: 0;
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        min-width: 14px;
+        width: 14px;
+        height: 14px;
+        transform: translateY(-50%);
+        &:hover {
+          background-color: transparent;
+        }
+        svg {
+          background-color: transparent;
+          left: 0px;
+          position: relative;
+        }
+      }
+    }
+  }
+}
