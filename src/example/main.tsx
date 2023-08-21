@@ -11,6 +11,7 @@ import Editor from '../debug/Editor'
 import { app } from './constants'
 // Tools
 import RemoteController from '../debug/remote/RemoteController'
+import SceneHierarchy from '../debug/sceneHierarchy/SceneHierarchy'
 
 // Debug tools
 if (IS_DEV) {
@@ -23,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     {IS_DEV ? (
       <>
         <App />
-        {app.editor ? (<Editor></Editor>) : null}
+        {app.editor ? (
+        <Editor components={[<SceneHierarchy />]}></Editor>
+        ) : null}
       </>
     ) : (
       <React.StrictMode>
