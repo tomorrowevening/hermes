@@ -13,7 +13,6 @@
     ],
     "module": "ESNext",
     "moduleResolution": "Node",
-    "noEmit": true,
     "removeComments": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,

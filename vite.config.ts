@@ -24,13 +24,15 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ['react', 'three'],
+      external: ['react', 'three', '@theatre/core', '@theatre/studio'],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
           react: 'React',
           three: 'Three',
+          '@theatre/core': 'Theatre Core',
+          '@theatre/studio': 'Theatre Studio',
         }
       }
     }
