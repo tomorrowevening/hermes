@@ -18,6 +18,18 @@ function App() {
   app.theatre?.sheet('App')
 
   useEffect(() => {
+    // GUI Example
+    const testFolder = app.debug?.addFolder('Test')
+    const test = { progress: 0 }
+    app.debug?.bind('progress', test, {
+      min: 0,
+      max: 10,
+      onChange: (value: number) => {
+        console.log('Progress:', value.toFixed(3))
+      }
+    }, testFolder)
+
+    // Theatre Example
     const container = elementRef.current!
     container.style.visibility = app.editor ? 'hidden' : 'inherit'
     const sheetObj = app.theatre?.sheetObject(
@@ -33,6 +45,7 @@ function App() {
     )
     return () => {
       if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj)
+      app.dispose()
     }
   }, [])
 

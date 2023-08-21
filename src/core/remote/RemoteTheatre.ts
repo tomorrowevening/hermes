@@ -3,18 +3,16 @@ import { getProject } from '@theatre/core'
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core'
 //
 import Application from '../Application'
-import RemoteBase from './BaseRemote'
-import type { noop, TheatreUpdateCallback } from '../types'
+import RemoteBase, { noop } from './BaseRemote'
+import type { DataUpdateCallback, VoidCallback } from '../types'
 import { isColor } from '../../debug/utils'
-
-const _noop = () => {}
 
 export default class RemoteTheatre extends RemoteBase {
   project: IProject | undefined
   sheets: Map<string, ISheet>
   sheetObjects: Map<string, ISheetObject>
-  sheetObjectCBs: Map<string, TheatreUpdateCallback>
-  sheetObjectUnsubscribe: Map<string, noop>
+  sheetObjectCBs: Map<string, DataUpdateCallback>
+  sheetObjectUnsubscribe: Map<string, VoidCallback>
 
   constructor(app: Application, projectName: string, projectConfig?: IProjectConfig | undefined) {
     super(app)
@@ -47,7 +45,7 @@ export default class RemoteTheatre extends RemoteBase {
     sheetName: string,
     key: string,
     props: any,
-    onUpdate?: TheatreUpdateCallback,
+    onUpdate?: DataUpdateCallback,
   ): ISheetObject | undefined {
     if (this.project === undefined) {
       console.error('Theatre Project hasn\'t been created yet.')
@@ -65,7 +63,7 @@ export default class RemoteTheatre extends RemoteBase {
 
     obj = sheet.object(key, props)
     this.sheetObjects.set(objName, obj)
-    this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : _noop)
+    this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop)
 
     const unsubscribe = obj.onValuesChange((values: any) => {
       if (this.app.editor) {

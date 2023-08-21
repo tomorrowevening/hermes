@@ -1,8 +1,13 @@
 export type EditorEvent =
+// Theatre
   | 'setSheet'
   | 'setSheetObject'
   | 'updateSheetObject'
   | 'updateTimeline'
+// GUI
+  | 'addFolder'
+  | 'bindObject'
+  | 'updateBind'
 
 export interface BroadcastData {
   event: EditorEvent
