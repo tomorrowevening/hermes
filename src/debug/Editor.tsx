@@ -1,5 +1,6 @@
 // Components
 import SceneHierarchy from './sceneHierarchy/SceneHierarchy'
+import './scss/index.scss'
 
 type EditorProps = {
   children?: JSX.Element | JSX.Element[]

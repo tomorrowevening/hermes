@@ -24,7 +24,15 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ['react', 'three', '@theatre/core', '@theatre/studio'],
+      external: [
+        'react',
+        'three',
+        '@theatre/core',
+        '@theatre/studio',
+        'tweakpane',
+        'tweakpane-image-plugin',
+        '@tweakpane/plugin-essentials'
+      ],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
@@ -33,6 +41,9 @@ export default defineConfig({
           three: 'Three',
           '@theatre/core': 'Theatre Core',
           '@theatre/studio': 'Theatre Studio',
+          'tweakpane': 'tweakpane',
+          'tweakpane-image-plugin': 'tweakpane-image-plugin',
+          '@tweakpane/plugin-essentials': 'tweakpane-plugin-essentials',
         }
       }
     }

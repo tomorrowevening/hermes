@@ -16,7 +16,7 @@ export default function RemoteController(app: Application) {
       let value = undefined
       switch (msg.event) {
         case 'setSheet':
-          value = app.sheets.get(msg.data.sheet)
+          value = app.theatre?.sheets.get(msg.data.sheet)
           if (value !== undefined) {
             activeSheet = value
             studio.setSelection([value])
@@ -24,19 +24,19 @@ export default function RemoteController(app: Application) {
           break
 
         case 'setSheetObject':
-          value = app.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`)
+          value = app.theatre?.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`)
           if (value !== undefined) {
             studio.setSelection([value])
           }
           break
 
         case 'updateSheetObject':
-          value = app.sheetObjectCBs.get(msg.data.sheetObject)
+          value = app.theatre?.sheetObjectCBs.get(msg.data.sheetObject)
           if (value !== undefined) value(msg.data.values)
           break
 
         case 'updateTimeline':
-          activeSheet = app.sheets.get(msg.data.sheet)
+          activeSheet = app.theatre?.sheets.get(msg.data.sheet)
           if (activeSheet !== undefined) {
             activeSheet.sequence.position = msg.data.position
           }
@@ -62,7 +62,7 @@ export default function RemoteController(app: Application) {
             data = {
               sheet: obj.address.sheetId,
             }
-            activeSheet = app.sheets.get(obj.address.sheetId)
+            activeSheet = app.theatre?.sheets.get(obj.address.sheetId)
             break
 
           case 'Theatre_SheetObject_PublicAPI':
