@@ -1,0 +1,170 @@
+$barHeight: 20px;
+$maxHeight: calc($barHeight * 10);
+
+#SceneHierarchy {
+  background-color: #0d0d0d;
+  border-radius: 2px;
+  bottom: 0;
+  right: 0;
+  font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
+  font-size: 10px;
+  min-height: $barHeight;
+  overflow: hidden;
+  pointer-events: visible;
+  position: absolute;
+  width: 250px;
+  z-index: 100;
+
+  button {
+    background-color: transparent;
+    border: none;
+    color: #FFF;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+  }
+
+  .header {
+    height: $barHeight;
+    position: relative;
+
+    span {
+      display: inline-block;
+      font-size: 12px;
+      line-height: $barHeight;
+      padding-left: 20px;
+      pointer-events: none;
+    }
+
+    button {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      width: $barHeight;
+      height: $barHeight;
+    }
+
+    .refresh {
+      background-color: transparent;
+      background-image: url("/images/debug/icon_refresh.png");
+      background-size: 20px 20px;
+      opacity: 0.7;
+      transform: translateY(-50%) scale(0.8);
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .status {
+      left: 0;
+      transform: translateY(-50%) scale(0.8);
+    }
+  }
+
+  .status {
+    background-image: url("/images/debug/icon_folder.png");
+    background-position-x: 2px;
+    background-position-y: 2px;
+    background-size: 32px 16px;
+    transform: scale(0.8);
+    width: $barHeight;
+    height: $barHeight;
+  }
+
+  .childObject {
+    background-color: #111;
+    min-height: $barHeight;
+    overflow: hidden;
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0d0d0d;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #666;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
+
+    .child {
+      background-color: #222;
+      border: none;
+      border-bottom: 1px solid #111;
+      height: $barHeight;
+      position: relative;
+
+      &:hover {
+        background-color: #333;
+      }
+    }
+
+    .name {
+      background-color: transparent;
+      max-lines: 1;
+      position: absolute;
+      left: 5px;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+    }
+
+    .container {
+      padding-left: 5px;
+      height: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: $maxHeight;
+
+      &.closed {
+        height: 0;
+        overflow: hidden;
+      }
+    }
+
+    .icon {
+      background-color: transparent;
+      background-image: url("/images/debug/icon_world.png");
+      background-size: 20px 20px;
+      display: inline-block;
+      position: absolute;
+      right: 5px;
+      top: 0;
+      width: $barHeight;
+      height: $barHeight;
+      transform: scale(0.8);
+    }
+
+    .obj3D {
+      background-image: url("/images/debug/icon_world.png");
+    }
+
+    .camera {
+      background-image: url("/images/debug/icon_camera.png");
+    }
+
+    .interactive {
+      background-image: url("/images/debug/icon_interactive.png");
+    }
+
+    .light {
+      background-image: url("/images/debug/icon_lights.png");
+    }
+
+    .ui {
+      background-image: url("/images/debug/icon_ui.png");
+    }
+
+    .utils {
+      background-image: url("/images/debug/icon_utils.png");
+    }
+  }
+}
