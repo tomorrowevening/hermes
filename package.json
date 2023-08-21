@@ -12,6 +12,7 @@
   "dependencies": {
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
+    "framer-motion": "^10.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.155.0",
