@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getProject, type IProject, type ISheet, type ISheetObject } from '@theatre/core'
 //
-import { editorHashtag, IS_DEV } from '../constants'
 import type { ApplicationMode, noop, TheatreUpdateCallback } from './types'
 import type { BroadcastCallback, BroadcastData } from '../debug/remote/types'
 import { isColor } from '../debug/utils'
@@ -13,22 +11,25 @@ export default class Application {
   protected channel?: BroadcastChannel | undefined = undefined
 
   // Theatre
-  project: IProject
+  project!: IProject
   sheets: Map<string, ISheet>
   sheetObjects: Map<string, ISheetObject>
   sheetObjectCBs: Map<string, TheatreUpdateCallback>
   sheetObjectUnsubscribe: Map<string, noop>
 
-  constructor(projectName: string, projectConfig?: any) {
-    this.editor = IS_DEV && document.location.hash.search(editorHashtag) > -1
-    if (IS_DEV) this.channel = new BroadcastChannel('theatre')
+  constructor(debugEnabled: boolean, editorHashtag: string) {
+    this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1
+    if (debugEnabled) this.channel = new BroadcastChannel('theatre')
 
     // Theatre
-    this.project = getProject(projectName, projectConfig)
     this.sheets = new Map()
     this.sheetObjects = new Map()
     this.sheetObjectCBs = new Map()
     this.sheetObjectUnsubscribe = new Map()
+  }
+
+  setProject(projectName: string, projectConfig?: any) {
+    this.project = getProject(projectName, projectConfig)
   }
 
   get editor(): boolean {
