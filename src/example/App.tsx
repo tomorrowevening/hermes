@@ -15,12 +15,24 @@ const elementStyle: CSSProperties = {
 
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!)
-  app.sheet('App')
+  app.theatre?.sheet('App')
 
   useEffect(() => {
+    // GUI Example
+    const testFolder = app.debug?.addFolder('Test')
+    const test = { progress: 0 }
+    app.debug?.bind('progress', test, {
+      min: 0,
+      max: 10,
+      onChange: (value: number) => {
+        console.log('Progress:', value.toFixed(3))
+      }
+    }, testFolder)
+
+    // Theatre Example
     const container = elementRef.current!
     container.style.visibility = app.editor ? 'hidden' : 'inherit'
-    const sheetObj = app.sheetObject(
+    const sheetObj = app.theatre?.sheetObject(
       'App',
       'Box',
       {
@@ -32,7 +44,8 @@ function App() {
       },
     )
     return () => {
-      if (sheetObj !== undefined) app.unsubscribe(sheetObj)
+      if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj)
+      app.dispose()
     }
   }, [])
 

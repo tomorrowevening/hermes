@@ -1,4 +1,4 @@
-export type EditorEvent = 'setSheet' | 'setSheetObject' | 'updateSheetObject' | 'updateTimeline';
+export type EditorEvent = 'setSheet' | 'setSheetObject' | 'updateSheetObject' | 'updateTimeline' | 'addFolder' | 'bindObject' | 'updateBind';
 export interface BroadcastData {
     event: EditorEvent;
     data: any;

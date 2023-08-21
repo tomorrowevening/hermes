@@ -1,3 +1,4 @@
 export type ApplicationMode = 'listener' | 'editor';
-export type noop = () => void;
-export type TheatreUpdateCallback = (data: any) => void;
+export type VoidCallback = () => void;
+export type DataUpdateCallback = (data: any) => void;
+export declare const noop: () => void;

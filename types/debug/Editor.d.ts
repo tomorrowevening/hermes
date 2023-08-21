@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import './scss/index.scss';
 type EditorProps = {
     children?: JSX.Element | JSX.Element[];
 };
