@@ -7,10 +7,32 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // @ts-ignore
+      // @ts-ignore __dirname is part of environment
       "@": path.resolve(__dirname, "/src"),
-      // @ts-ignore
+      // @ts-ignore __dirname is part of environment
       "~@": path.resolve(__dirname, "/src"),
     }
-  }
+  },
+  build: {
+    lib: {
+      // @ts-ignore __dirname is part of environment
+      entry: path.resolve(__dirname, 'src/library.ts'),
+      name: 'Hermes',
+      // the proper extensions will be added
+      fileName: 'hermes'
+    },
+    rollupOptions: {
+      // make sure to externalize deps that shouldn't be bundled
+      // into your library
+      external: ['react', 'three'],
+      output: {
+        // Provide global variables to use in the UMD build
+        // for externalized deps
+        globals: {
+          react: 'React',
+          three: 'Three',
+        }
+      }
+    }
+  },
 })

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Libs
 import { useState } from 'react'
 import { Object3D } from 'three'

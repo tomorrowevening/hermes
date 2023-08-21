@@ -1,4 +1,5 @@
-import { getProject, type IProject, type ISheet, type ISheetObject } from '@theatre/core'
+import { getProject } from '@theatre/core'
+import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core'
 //
 import type { ApplicationMode, noop, TheatreUpdateCallback } from './types'
 import type { BroadcastCallback, BroadcastData } from '../debug/remote/types'
@@ -28,7 +29,7 @@ export default class Application {
     this.sheetObjectUnsubscribe = new Map()
   }
 
-  setProject(projectName: string, projectConfig?: any) {
+  setProject(projectName: string, projectConfig?: IProjectConfig | undefined) {
     this.project = getProject(projectName, projectConfig)
   }
 
@@ -53,7 +54,7 @@ export default class Application {
 
   listen(callback: BroadcastCallback) {
     if (this.mode === 'listener' && this.channel !== undefined) {
-      this.channel.onmessage = (event: MessageEvent<any>) => {
+      this.channel.onmessage = (event: MessageEvent) => {
         callback(event.data)
       }
     }
@@ -62,7 +63,7 @@ export default class Application {
   // Theatre
 
   sheet(name: string): ISheet {
-    let sheet: any = this.sheets.get(name)
+    let sheet = this.sheets.get(name)
     if (sheet !== undefined) return sheet
 
     sheet = this.project.sheet(name)
@@ -92,7 +93,7 @@ export default class Application {
 
     const unsubscribe = obj.onValuesChange((values: any) => {
       if (this.editor) {
-        for (let i in values) {
+        for (const i in values) {
           const value = values[i]
           if (typeof value === 'object') {
             if (isColor(value)) {

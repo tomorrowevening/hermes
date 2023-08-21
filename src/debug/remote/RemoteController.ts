@@ -13,27 +13,26 @@ export default function RemoteController(app: Application) {
     studio.ui.hide()
 
     app.listen((msg: BroadcastData) => {
+      let value = undefined
       switch (msg.event) {
         case 'setSheet':
-          const sheet = app.sheets.get(msg.data.sheet)
-          if (sheet !== undefined) {
-            activeSheet = sheet
-            studio.setSelection([sheet])
+          value = app.sheets.get(msg.data.sheet)
+          if (value !== undefined) {
+            activeSheet = value
+            studio.setSelection([value])
           }
           break
 
         case 'setSheetObject':
-          const sheetObj = app.sheetObjects.get(
-            `${msg.data.sheet}_${msg.data.key}`,
-          )
-          if (sheetObj !== undefined) {
-            studio.setSelection([sheetObj])
+          value = app.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`)
+          if (value !== undefined) {
+            studio.setSelection([value])
           }
           break
 
         case 'updateSheetObject':
-          const sheetObjCB = app.sheetObjectCBs.get(msg.data.sheetObject)
-          if (sheetObjCB !== undefined) sheetObjCB(msg.data.values)
+          value = app.sheetObjectCBs.get(msg.data.sheetObject)
+          if (value !== undefined) value(msg.data.values)
           break
 
         case 'updateTimeline':
@@ -70,6 +69,7 @@ export default function RemoteController(app: Application) {
             type = 'setSheetObject'
             id += `_${obj.address.objectKey}`
             data = {
+              id: id,
               sheet: obj.address.sheetId,
               key: obj.address.objectKey,
             }

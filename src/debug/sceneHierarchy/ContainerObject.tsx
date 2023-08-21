@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Object3D } from 'three'
 import ChildObject from './ChildObject'
 import type { ChildObjectProps } from './types'

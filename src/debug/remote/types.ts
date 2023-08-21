@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export type EditorEvent =
   | 'setSheet'
   | 'setSheetObject'
@@ -19,4 +16,4 @@ export type BroadcastCallback = (data: BroadcastData) => void
 export type TheatreUpdateCallback = (data: any) => void
 
 // Default SheetObject.onValuesChange callback
-export const defaultTheatreCallback: TheatreUpdateCallback = (_: any) => {}
+export const defaultTheatreCallback: TheatreUpdateCallback = () => {}

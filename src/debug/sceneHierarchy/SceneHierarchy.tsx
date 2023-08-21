@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Libs
 import { Component, ReactNode } from 'react'
 // Models

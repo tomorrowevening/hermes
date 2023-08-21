@@ -1,6 +1,6 @@
+import { arrayMoveImmutable } from 'array-move'
 import { useState, useRef } from 'react'
-import move from 'array-move'
-import { clamp, distance } from '@/utils/math'
+import { clamp, distance } from '../utils'
 
 export function usePositionReorder(initialState: any) {
   const [updatedList, setUpdatedList] = useState(initialState)
@@ -18,7 +18,7 @@ export function usePositionReorder(initialState: any) {
   const updateOrder = (i: number, dragOffset: number) => {
     const targetIndex = findIndex(i, dragOffset, positions)
     if (targetIndex !== i) {
-      setUpdatedList(move(updatedList, i, targetIndex))
+      setUpdatedList(arrayMoveImmutable(updatedList, i, targetIndex))
     }
   }
 
