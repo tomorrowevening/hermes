@@ -1,40 +1,30 @@
 // Libs
 import { useState } from 'react'
+import { Reorder } from 'framer-motion'
 // Components
 import NavButton from './NavButton'
 import DraggableItem from './DraggableItem'
 import { DraggableProps } from './types'
-// Utils
-import { usePositionReorder } from '../hooks/usePositionReorder'
 
 export default function Draggable(props: DraggableProps) {
   const [expanded, setExpanded] = useState(false)
-  const [listedItems, setListedItems] = useState<string[]>(props.options)
-  const [updatedList, updatePosition, updateOrder] = usePositionReorder(listedItems)
+  const [list, setList] = useState<string[]>(props.options)
 
-  const onDragComplete = () => {
-    props.onDragComplete(updatedList)
+  const updateList = (updated: string[]) => {
+    props.onDragComplete(updated)
+    setList(updated)
   }
 
-  const list: Array<any> = []
-  {
-    updatedList.map((name: string, index: number) =>
-      list.push(
-        <DraggableItem
-          key={name}
-          index={index}
-          title={name}
-          updateOrder={updateOrder}
-          updatePosition={updatePosition}
-          onDragComplete={onDragComplete}
-          onDelete={() => {
-            setListedItems(updatedList.splice(index, 1))
-            onDragComplete()
-          }}
-        />,
-      ),
-    )
+  const onDelete = (index: number) => {
+    const newArray = [...list]
+    newArray.splice(index, 1)
+    updateList(newArray)
   }
+
+  const elements: any[] = []
+  list.forEach((value: string, index: number) => {
+    elements.push(<DraggableItem key={value} index={index} title={value} onDelete={onDelete} />)
+  })
 
   let ddClassName = 'dropdown draggable'
   if (props.subdropdown) ddClassName += ' subdropdown'
@@ -42,7 +32,9 @@ export default function Draggable(props: DraggableProps) {
   return (
     <div className={ddClassName} onMouseEnter={() => setExpanded(true)} onMouseLeave={() => setExpanded(false)}>
       <NavButton title={props.title} />
-      <ul style={{ visibility: expanded ? 'visible' : 'hidden' }}>{list}</ul>
+      <Reorder.Group axis="y" values={list} onReorder={updateList} style={{ visibility: expanded ? 'visible' : 'hidden' }}>
+        {elements}
+      </Reorder.Group>
     </div>
   )
 }
