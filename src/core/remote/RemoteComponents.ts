@@ -15,4 +15,14 @@ export default class RemoteComponents extends BaseRemote {
       }
     })
   }
+
+  updateDropdown(dropdown: string, list: string[]) {
+    this.app.send({
+      event: 'draggableListUpdate',
+      data: {
+        dropdown,
+        value: list
+      }
+    })
+  }
 }

@@ -69,9 +69,14 @@ function App() {
     const selectDropdown = (evt: any) => {
       console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`)
     }
+    const draglistUpdate = (evt: any) => {
+      console.log(`Dragged list updated: ${evt.value.dropdown}, value: ${evt.value.value.join(', ')}`)
+    }
     debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
+    debugDispatcher.addEventListener(ToolEvents.DRAG_UPDATE, draglistUpdate)
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
+      debugDispatcher.removeEventListener(ToolEvents.DRAG_UPDATE, draglistUpdate)
     }
   }, [])
 

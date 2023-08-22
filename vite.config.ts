@@ -21,10 +21,10 @@ export default defineConfig({
       external: [
         'react',
         'three',
+        'framer-motion',
         '@theatre/core',
         '@theatre/studio',
         'tweakpane',
-        'tweakpane-image-plugin',
         '@tweakpane/plugin-essentials'
       ],
       output: {
@@ -33,10 +33,10 @@ export default defineConfig({
         globals: {
           react: 'React',
           three: 'Three',
+          'framer-motion': 'framer-motion',
           '@theatre/core': 'Theatre Core',
           '@theatre/studio': 'Theatre Studio',
           'tweakpane': 'tweakpane',
-          'tweakpane-image-plugin': 'tweakpane-image-plugin',
           '@tweakpane/plugin-essentials': 'tweakpane-plugin-essentials',
         }
       }

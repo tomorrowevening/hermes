@@ -13,20 +13,18 @@
   "scripts": {
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
-    "build": "yarn clean && tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
+    "build": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
-    "array-move": "^4.0.0",
     "framer-motion": "^10.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.155.0",
-    "tweakpane": "^4.0.0",
-    "tweakpane-image-plugin": "^1.1.3"
+    "tweakpane": "^4.0.0"
   },
   "devDependencies": {
     "@theatre/studio": "0.7.0",

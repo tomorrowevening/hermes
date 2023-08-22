@@ -12,6 +12,7 @@ export type EditorEvent =
   | 'clickButton'
 // Components
   | 'dropdownSelect'
+  | 'draggableListUpdate'
 
 export interface BroadcastData {
   event: EditorEvent

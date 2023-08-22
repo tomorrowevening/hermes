@@ -8,6 +8,7 @@ import { app, IS_DEV } from './constants'
 import './index.scss'
 import App from './App'
 import Editor from '../debug/Editor'
+import Draggable from '../debug/components/Draggable'
 import Dropdown from '../debug/components/Dropdown'
 // Tools
 import RemoteController from '../debug/remote/RemoteController'
@@ -46,6 +47,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               ]}
               onSelect={(value: string) => {
                 app.components?.selectDropdown('Scenes', value)
+              }}
+            />
+
+            <Draggable
+              title="Draggable Items"
+              options={[
+                'Item A',
+                'Item B',
+                'Item C',
+                'Item D',
+                'Item E',
+              ]}
+              onDragComplete={(options: string[]) => {
+                app.components?.updateDropdown('Draggable Items', options)
               }}
             />
           </Editor>

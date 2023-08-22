@@ -30,10 +30,7 @@ export interface DropdownItemProps {
 export interface DraggableItemProps {
   index: number
   title: string
-  updateOrder: any
-  updatePosition: (index: number, pos: number) => void
-  onDragComplete: () => void
-  onDelete: () => void
+  onDelete: (index: number) => void
 }
 
 export interface DraggableProps {

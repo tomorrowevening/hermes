@@ -20,6 +20,9 @@ export default function RemoteController(app: Application) {
         case 'dropdownSelect':
           debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data })
           break
+        case 'draggableListUpdate':
+          debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data })
+          break
 
         // GUI Events
         case 'addFolder':
