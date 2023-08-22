@@ -3,11 +3,11 @@ import { getProject } from '@theatre/core'
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core'
 //
 import Application from '../Application'
-import RemoteBase, { noop } from './BaseRemote'
+import BaseRemote, { noop } from './BaseRemote'
 import type { DataUpdateCallback, VoidCallback } from '../types'
 import { isColor } from '../../debug/utils'
 
-export default class RemoteTheatre extends RemoteBase {
+export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined
   sheets: Map<string, ISheet>
   sheetObjects: Map<string, ISheetObject>

@@ -1,8 +1,8 @@
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core';
 import Application from '../Application';
-import RemoteBase from './BaseRemote';
+import BaseRemote from './BaseRemote';
 import type { DataUpdateCallback, VoidCallback } from '../types';
-export default class RemoteTheatre extends RemoteBase {
+export default class RemoteTheatre extends BaseRemote {
     project: IProject | undefined;
     sheets: Map<string, ISheet>;
     sheetObjects: Map<string, ISheetObject>;

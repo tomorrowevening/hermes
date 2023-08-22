@@ -4,6 +4,7 @@ import studio from '@theatre/studio'
 // Core
 import Application from '../../core/Application'
 import type { BroadcastData, EditorEvent } from './types'
+import { ToolEvents, debugDispatcher } from '../global'
 
 export default function RemoteController(app: Application) {
   let activeSheet: ISheet | undefined = undefined
@@ -15,6 +16,11 @@ export default function RemoteController(app: Application) {
     app.listen((msg: BroadcastData) => {
       let value = undefined
       switch (msg.event) {
+        // Components
+        case 'dropdownSelect':
+          debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data })
+          break
+
         // GUI Events
         case 'addFolder':
           app.debug?.addFolder(msg.data.name, msg.data.params, msg.data.parent)
@@ -23,7 +29,13 @@ export default function RemoteController(app: Application) {
           app.debug?.bind(msg.data.name, msg.data.params, msg.data.parent)
           break
         case 'updateBind':
-          app.debug?.updateBind(msg.data.id, msg.data.value)
+          app.debug?.triggerBind(msg.data.id, msg.data.value)
+          break
+        case 'addButton':
+          app.debug?.button(msg.data.name, msg.data.callback, msg.data.parent)
+          break
+        case 'clickButton':
+          app.debug?.triggerButton(msg.data.id)
           break
 
         // Theatre Events

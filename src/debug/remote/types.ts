@@ -8,6 +8,10 @@ export type EditorEvent =
   | 'addFolder'
   | 'bindObject'
   | 'updateBind'
+  | 'addButton'
+  | 'clickButton'
+// Components
+  | 'dropdownSelect'
 
 export interface BroadcastData {
   event: EditorEvent
