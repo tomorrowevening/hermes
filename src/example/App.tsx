@@ -5,6 +5,7 @@ import { types } from '@theatre/core'
 import { app } from './constants'
 // Components
 import './App.css'
+import { debugDispatcher, ToolEvents } from '../debug/global'
 
 const elementStyle: CSSProperties = {
   background: '#FF0000',
@@ -18,20 +19,34 @@ function App() {
   app.theatre?.sheet('App')
 
   useEffect(() => {
+    const container = elementRef.current!
+    container.style.visibility = app.editor ? 'hidden' : 'inherit'
+
     // GUI Example
     const testFolder = app.debug?.addFolder('Test')
-    const test = { progress: 0 }
-    app.debug?.bind('progress', test, {
+
+    app.debug?.button('Test Button', () => {
+      console.log('Test button works!')
+    }, testFolder)
+
+    const test = { opacity: 1, rotation: 0 }
+    app.debug?.bind(test, 'opacity', {
       min: 0,
-      max: 10,
+      max: 1,
       onChange: (value: number) => {
-        console.log('Progress:', value.toFixed(3))
+        container.style.opacity = value.toFixed(2)
+      }
+    }, testFolder)
+
+    app.debug?.bind(test, 'rotation', {
+      min: 0,
+      max: 360,
+      onChange: (value: number) => {
+        container.style.transform = `rotate(${value}deg)`
       }
     }, testFolder)
 
     // Theatre Example
-    const container = elementRef.current!
-    container.style.visibility = app.editor ? 'hidden' : 'inherit'
     const sheetObj = app.theatre?.sheetObject(
       'App',
       'Box',
@@ -40,7 +55,8 @@ function App() {
         y: types.number(100, {range: [0, window.innerHeight]}),
       },
       (values: any) => {
-        container.style.transform = `translate3d(${values.x}px, ${values.y}px, 0px)`
+        container.style.left = `${values.x}px`
+        container.style.top = `${values.y}px`
       },
     )
     return () => {
@@ -49,8 +65,18 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const selectDropdown = (evt: any) => {
+      console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`)
+    }
+    debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
+    return () => {
+      debugDispatcher.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
+    }
+  }, [])
+
   return (
-    <div ref={elementRef} style={elementStyle} />
+    <div id='box' ref={elementRef} />
   )
 }
 

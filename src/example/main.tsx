@@ -3,12 +3,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import studio from '@theatre/studio'
 // Models
-import { IS_DEV } from './constants'
+import { app, IS_DEV } from './constants'
 // Components
 import './index.scss'
 import App from './App'
 import Editor from '../debug/Editor'
-import { app } from './constants'
+import Dropdown from '../debug/components/Dropdown'
 // Tools
 import RemoteController from '../debug/remote/RemoteController'
 import SceneHierarchy from '../debug/sceneHierarchy/SceneHierarchy'
@@ -19,13 +19,36 @@ if (IS_DEV) {
   RemoteController(app)
 }
 
+//
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
     {IS_DEV ? (
       <>
         <App />
         {app.editor ? (
-        <Editor components={[<SceneHierarchy />]}></Editor>
+          <Editor components={[
+            <SceneHierarchy key="SceneHierarchy" />
+          ]}>
+            <Dropdown
+              title="Scenes"
+              options={[
+                {
+                  type: 'option',
+                  title: 'Option 1',
+                  value: 'opt1',
+                },
+                {
+                  type: 'option',
+                  title: 'Option 2',
+                  value: 'opt2',
+                },
+              ]}
+              onSelect={(value: string) => {
+                app.components?.selectDropdown('Scenes', value)
+              }}
+            />
+          </Editor>
         ) : null}
       </>
     ) : (

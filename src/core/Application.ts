@@ -1,11 +1,13 @@
 import type { IProjectConfig } from '@theatre/core'
 //
+import RemoteComponents from './remote/RemoteComponents'
 import RemoteDebug from './remote/RemoteDebug'
 import RemoteTheatre from './remote/RemoteTheatre'
 import type { ApplicationMode } from './types'
 import type { BroadcastCallback, BroadcastData } from '../debug/remote/types'
 
 export default class Application {
+  components?: RemoteComponents
   debug?: RemoteDebug
   theatre?: RemoteTheatre
 
@@ -16,6 +18,10 @@ export default class Application {
   constructor(debugEnabled: boolean, editorHashtag: string) {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1
     if (debugEnabled) this.channel = new BroadcastChannel('theatre')
+  }
+
+  setupComponents() {
+    this.components = new RemoteComponents(this)
   }
 
   setupGUI() {

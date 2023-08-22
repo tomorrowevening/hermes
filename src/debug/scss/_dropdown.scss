@@ -19,6 +19,7 @@
     text-align: left;
     min-width: $ROW_HEIGHT;
     width: 100%;
+    height: $BTN_SIZE;
     transition: all 0.2s linear;
 
     &:hover {
@@ -29,7 +30,6 @@
     &.svg {
       line-height: 0;
       width: $BTN_SIZE;
-      height: $BTN_SIZE;
     }
   }
 

@@ -3,48 +3,55 @@ import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 //
 import Application from '../Application'
-import RemoteBase, { noop } from './BaseRemote'
-import type { DataUpdateCallback } from '../types'
+import BaseRemote, { noop } from './BaseRemote'
+import type { DataUpdateCallback, VoidCallback } from '../types'
 
-export default class RemoteDebug extends RemoteBase {
+export default class RemoteDebug extends BaseRemote {
   appTab: any = undefined
   systemTab: any = undefined
   utilsTab: any = undefined
   bindCBs: Map<string, DataUpdateCallback>
+  buttonCBs: Map<string, VoidCallback>
 
   protected pane?: Pane | undefined = undefined
-  protected timesBound = 0
+  protected appCallbacks = 0
+  protected editorCallbacks = 0
 
   constructor(app: Application) {
     super(app)
     this.bindCBs = new Map()
+    this.buttonCBs = new Map()
 
-    if (app.editor) {
-      this.pane = new Pane({ title: 'GUI' })
-      this.pane.registerPlugin(EssentialsPlugin)
-      const guiElement = this.pane.element.parentElement as HTMLElement
-      guiElement.style.left = '50%'
-      guiElement.style.top = '0'
-      guiElement.style.maxHeight = '100%'
-      guiElement.style.overflowX = 'hidden'
-      guiElement.style.overflowY = 'auto'
-      guiElement.style.transform = 'translateX(-50%)'
-      guiElement.style.width = '300px'
-      guiElement.style.zIndex = '100'
+    if (app.editor) this.createGUI()
+  }
 
-      // @ts-ignore
-      const tabs = this.pane.addTab({
-        pages: [{ title: 'App' }, { title: 'System' }, { title: 'Tools' }],
-      })
-      this.appTab = tabs.pages[0]
-      this.systemTab = tabs.pages[1]
-      this.utilsTab = tabs.pages[2]
-    }
+  protected createGUI() {
+    this.pane = new Pane({ title: 'GUI' })
+    this.pane.registerPlugin(EssentialsPlugin)
+    const guiElement = this.pane.element.parentElement as HTMLElement
+    guiElement.style.left = '50%'
+    guiElement.style.top = '0'
+    guiElement.style.maxHeight = '100%'
+    guiElement.style.overflowX = 'hidden'
+    guiElement.style.overflowY = 'auto'
+    guiElement.style.transform = 'translateX(-50%)'
+    guiElement.style.width = '300px'
+    guiElement.style.zIndex = '100'
+
+    // @ts-ignore
+    const tabs = this.pane.addTab({
+      pages: [{ title: 'App' }, { title: 'System' }, { title: 'Tools' }],
+    })
+    this.appTab = tabs.pages[0]
+    this.systemTab = tabs.pages[1]
+    this.utilsTab = tabs.pages[2]
   }
 
   override dispose(): void {
     this.bindCBs.clear()
-    this.timesBound = 0
+    this.buttonCBs.clear()
+    this.appCallbacks = 0
+    this.editorCallbacks = 0
 
     if (this.app.editor) {
       this.appTab?.dispose()
@@ -60,6 +67,8 @@ export default class RemoteDebug extends RemoteBase {
 
   addFolder(name: string, params: any = undefined, parent: any = undefined) {
     if (this.app.editor) {
+      if (this.pane === undefined) this.createGUI()
+
       const container = parent !== undefined ? parent : this.appTab
       return container.addFolder({
         title: name,
@@ -77,11 +86,20 @@ export default class RemoteDebug extends RemoteBase {
     }
   }
 
-  bind(name: string, obj: any, params: any, parent: any = undefined) {
-    const bindID = `debug_${this.timesBound}`
-    this.bindCBs.set(bindID, params.onChange !== undefined ? params.onChange : noop)
+  get bindID(): string {
+    return `debug_${Math.max(this.appCallbacks, this.editorCallbacks)}`
+  }
+
+  // Binding
+
+  bind(obj: any, name: string, params: any, parent: any = undefined) {
+    const bindID = this.bindID
+    const callback = params.onChange !== undefined ? params.onChange : noop
+    this.bindCBs.set(bindID, callback)
 
     if (this.app.editor) {
+      if (this.pane === undefined) this.createGUI()
+
       const container = parent !== undefined ? parent : this.appTab
       container
         .addBinding(obj, name, params)
@@ -94,7 +112,7 @@ export default class RemoteDebug extends RemoteBase {
             }
           })
         })
-      this.timesBound++
+      this.editorCallbacks++
     } else {
       this.app.send({
         event: 'bindObject',
@@ -105,12 +123,53 @@ export default class RemoteDebug extends RemoteBase {
           parent
         }
       })
+      this.appCallbacks++
     }
   }
 
-  updateBind(id: string, data: any) {
+  triggerBind(id: string, data: any) {
     const cb = this.bindCBs.get(id)
     if (cb !== undefined) cb(data)
     else console.warn(`No callback for: ${id}`, data)
+  }
+
+  // Buttons
+
+  button(name: string, callback: VoidCallback, parent: any = undefined) {
+    const bindID = this.bindID
+    this.buttonCBs.set(bindID, callback)
+
+    if (this.app.editor) {
+      if (this.pane === undefined) this.createGUI()
+
+      const container = parent !== undefined ? parent : this.appTab
+      container
+        .addButton({ title: name })
+        .on('click', () => {
+          this.app.send({
+            event: 'clickButton',
+            data: {
+              id: bindID,
+            }
+          })
+        })
+      this.editorCallbacks++
+    } else {
+      this.app.send({
+        event: 'addButton',
+        data: {
+          id: bindID,
+          name,
+          callback,
+          parent
+        }
+      })
+      this.appCallbacks++
+    }
+  }
+
+  triggerButton(id: string) {
+    const cb = this.buttonCBs.get(id)
+    if (cb !== undefined) cb()
   }
 }
