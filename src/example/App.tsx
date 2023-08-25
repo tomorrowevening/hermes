@@ -5,7 +5,7 @@ import { types } from '@theatre/core'
 import { app } from './constants'
 // Components
 import './App.css'
-import { debugDispatcher, ToolEvents } from '../debug/global'
+import { debugDispatcher, ToolEvents } from '../editor/global'
 
 const elementStyle: CSSProperties = {
   background: '#FF0000',

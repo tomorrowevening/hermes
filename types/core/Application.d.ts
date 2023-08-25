@@ -1,12 +1,11 @@
 import type { IProjectConfig } from '@theatre/core';
 import RemoteComponents from './remote/RemoteComponents';
-import RemoteDebug from './remote/RemoteDebug';
 import RemoteTheatre from './remote/RemoteTheatre';
-import type { ApplicationMode } from './types';
-import type { BroadcastCallback, BroadcastData } from '../debug/remote/types';
+import RemoteTweakpane from './remote/RemoteTweakpane';
+import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 export default class Application {
     components?: RemoteComponents;
-    debug?: RemoteDebug;
+    debug?: RemoteTweakpane;
     theatre?: RemoteTheatre;
     protected mode: ApplicationMode;
     protected channel?: BroadcastChannel | undefined;

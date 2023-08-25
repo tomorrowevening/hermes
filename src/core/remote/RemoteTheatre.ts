@@ -1,11 +1,12 @@
 // Libs
 import { getProject } from '@theatre/core'
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core'
-//
+// Core
 import Application from '../Application'
-import BaseRemote, { noop } from './BaseRemote'
+import BaseRemote from './BaseRemote'
+import { isColor } from '../../editor/utils'
+import { noop } from '../types'
 import type { DataUpdateCallback, VoidCallback } from '../types'
-import { isColor } from '../../debug/utils'
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined
@@ -24,7 +25,11 @@ export default class RemoteTheatre extends BaseRemote {
   }
 
   override dispose(): void {
-    //
+    this.project = undefined
+    this.sheets = new Map()
+    this.sheetObjects = new Map()
+    this.sheetObjectCBs = new Map()
+    this.sheetObjectUnsubscribe = new Map()
   }
 
   sheet(name: string): ISheet | undefined {

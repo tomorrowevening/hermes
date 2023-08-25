@@ -1,14 +1,14 @@
+// Libs
 import type { IProjectConfig } from '@theatre/core'
-//
+// Core
 import RemoteComponents from './remote/RemoteComponents'
-import RemoteDebug from './remote/RemoteDebug'
 import RemoteTheatre from './remote/RemoteTheatre'
-import type { ApplicationMode } from './types'
-import type { BroadcastCallback, BroadcastData } from '../debug/remote/types'
+import RemoteTweakpane from './remote/RemoteTweakpane'
+import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types'
 
 export default class Application {
   components?: RemoteComponents
-  debug?: RemoteDebug
+  debug?: RemoteTweakpane
   theatre?: RemoteTheatre
 
   // Protected
@@ -25,7 +25,7 @@ export default class Application {
   }
 
   setupGUI() {
-    this.debug = new RemoteDebug(this)
+    this.debug = new RemoteTweakpane(this)
   }
 
   setupTheatre(projectName: string, projectConfig?: IProjectConfig | undefined) {
@@ -33,6 +33,7 @@ export default class Application {
   }
 
   dispose() {
+    this.components?.dispose()
     this.debug?.dispose()
     this.theatre?.dispose()
   }

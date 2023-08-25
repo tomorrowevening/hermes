@@ -1,12 +1,13 @@
 // Libs
 import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
-//
+// Core
 import Application from '../Application'
-import BaseRemote, { noop } from './BaseRemote'
+import BaseRemote from './BaseRemote'
+import { noop } from '../types'
 import type { DataUpdateCallback, VoidCallback } from '../types'
 
-export default class RemoteDebug extends BaseRemote {
+export default class RemoteTweakpane extends BaseRemote {
   appTab: any = undefined
   systemTab: any = undefined
   utilsTab: any = undefined

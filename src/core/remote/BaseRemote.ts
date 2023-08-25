@@ -1,7 +1,8 @@
 import Application from '../Application'
 
-export const noop = () => {}
-
+/**
+ * Base class for remote-related extensions
+ */
 export default class BaseRemote {
   protected app: Application
 

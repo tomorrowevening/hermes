@@ -2,9 +2,9 @@
 import type { ISheet } from '@theatre/core'
 import studio from '@theatre/studio'
 // Core
-import Application from '../../core/Application'
+import Application from './Application'
+import { ToolEvents, debugDispatcher } from '../editor/global'
 import type { BroadcastData, EditorEvent } from './types'
-import { ToolEvents, debugDispatcher } from '../global'
 
 export default function RemoteController(app: Application) {
   let activeSheet: ISheet | undefined = undefined
@@ -17,11 +17,11 @@ export default function RemoteController(app: Application) {
       let value = undefined
       switch (msg.event) {
         // Components
-        case 'dropdownSelect':
-          debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data })
-          break
         case 'draggableListUpdate':
           debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data })
+          break
+        case 'selectComponent':
+          debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data })
           break
 
         // GUI Events

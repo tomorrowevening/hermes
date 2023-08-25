@@ -1,2 +1,2 @@
-import Application from '../../core/Application';
+import Application from './Application';
 export default function RemoteController(app: Application): void;
