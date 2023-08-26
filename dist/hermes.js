@@ -1,15 +1,13 @@
 var mt = Object.defineProperty;
 var gt = (a, n, r) => n in a ? mt(a, n, { enumerable: !0, configurable: !0, writable: !0, value: r }) : a[n] = r;
 var y = (a, n, r) => (gt(a, typeof n != "symbol" ? n + "" : n, r), r);
-import { Pane as Et } from "tweakpane";
-import * as yt from "@tweakpane/plugin-essentials";
-import { getProject as Ct } from "@theatre/core";
+import { getProject as Et } from "@theatre/core";
+import { Pane as yt } from "tweakpane";
+import * as Ct from "@tweakpane/plugin-essentials";
 import { EventDispatcher as _t } from "three";
-import Pe, { useState as Y, Component as St } from "react";
+import Pe, { useState as Y, Component as jt } from "react";
 import { Reorder as De } from "framer-motion";
 import U from "@theatre/studio";
-const Ie = () => {
-};
 class ae {
   constructor(n) {
     y(this, "app");
@@ -18,13 +16,13 @@ class ae {
   dispose() {
   }
 }
-class Rt extends ae {
+class St extends ae {
   constructor(n) {
     super(n);
   }
   selectDropdown(n, r) {
     this.app.send({
-      event: "dropdownSelect",
+      event: "selectComponent",
       data: {
         dropdown: n,
         value: r
@@ -41,7 +39,84 @@ class Rt extends ae {
     });
   }
 }
-class jt extends ae {
+function Rt() {
+  return Math.round(Math.random() * 1e6).toString();
+}
+function Tt(a) {
+  return a.r !== void 0 && a.g !== void 0 && a.b !== void 0;
+}
+const Ie = () => {
+};
+class xt extends ae {
+  constructor(r, o, i) {
+    super(r);
+    y(this, "project");
+    y(this, "sheets");
+    y(this, "sheetObjects");
+    y(this, "sheetObjectCBs");
+    y(this, "sheetObjectUnsubscribe");
+    this.project = Et(o, i), this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
+  }
+  dispose() {
+    this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
+  }
+  sheet(r) {
+    var i;
+    if (this.project === void 0) {
+      console.error("Theatre Project hasn't been created yet.");
+      return;
+    }
+    let o = this.sheets.get(r);
+    return o !== void 0 || (o = (i = this.project) == null ? void 0 : i.sheet(r), this.sheets.set(r, o)), o;
+  }
+  sheetObject(r, o, i, l) {
+    if (this.project === void 0) {
+      console.error("Theatre Project hasn't been created yet.");
+      return;
+    }
+    const g = this.sheets.get(r);
+    if (g === void 0)
+      return;
+    const b = `${r}_${o}`;
+    let d = this.sheetObjects.get(b);
+    if (d !== void 0)
+      return d = g.object(o, { ...i, ...d.value }, { reconfigure: !0 }), d;
+    d = g.object(o, i), this.sheetObjects.set(b, d), this.sheetObjectCBs.set(b, l !== void 0 ? l : Ie);
+    const E = d.onValuesChange((v) => {
+      if (this.app.editor) {
+        for (const C in v) {
+          const j = v[C];
+          typeof j == "object" && Tt(j) && (v[C] = {
+            r: j.r,
+            g: j.g,
+            b: j.b,
+            a: j.a
+          });
+        }
+        this.app.send({
+          event: "updateSheetObject",
+          data: {
+            sheetObject: b,
+            values: v
+          }
+        });
+      } else {
+        const C = this.sheetObjectCBs.get(b);
+        C !== void 0 && C(v);
+      }
+    });
+    return this.sheetObjectUnsubscribe.set(b, E), d;
+  }
+  unsubscribe(r) {
+    if (this.project === void 0) {
+      console.error("Theatre Project hasn't been created yet.");
+      return;
+    }
+    const o = `${r.address.sheetId}_${r.address.objectKey}`, i = this.sheetObjectUnsubscribe.get(o);
+    i !== void 0 && i();
+  }
+}
+class wt extends ae {
   constructor(r) {
     super(r);
     y(this, "appTab");
@@ -55,7 +130,7 @@ class jt extends ae {
     this.bindCBs = /* @__PURE__ */ new Map(), this.buttonCBs = /* @__PURE__ */ new Map(), r.editor && this.createGUI();
   }
   createGUI() {
-    this.pane = new Et({ title: "GUI" }), this.pane.registerPlugin(yt);
+    this.pane = new yt({ title: "GUI" }), this.pane.registerPlugin(Ct);
     const r = this.pane.element.parentElement;
     r.style.left = "50%", r.style.top = "0", r.style.maxHeight = "100%", r.style.overflowX = "hidden", r.style.overflowY = "auto", r.style.transform = "translateX(-50%)", r.style.width = "300px", r.style.zIndex = "100";
     const o = this.pane.addTab({
@@ -135,80 +210,6 @@ class jt extends ae {
     o !== void 0 && o();
   }
 }
-function xt() {
-  return Math.round(Math.random() * 1e6).toString();
-}
-function Tt(a) {
-  return a.r !== void 0 && a.g !== void 0 && a.b !== void 0;
-}
-class wt extends ae {
-  constructor(r, o, i) {
-    super(r);
-    y(this, "project");
-    y(this, "sheets");
-    y(this, "sheetObjects");
-    y(this, "sheetObjectCBs");
-    y(this, "sheetObjectUnsubscribe");
-    this.project = Ct(o, i), this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
-  }
-  dispose() {
-  }
-  sheet(r) {
-    var i;
-    if (this.project === void 0) {
-      console.error("Theatre Project hasn't been created yet.");
-      return;
-    }
-    let o = this.sheets.get(r);
-    return o !== void 0 || (o = (i = this.project) == null ? void 0 : i.sheet(r), this.sheets.set(r, o)), o;
-  }
-  sheetObject(r, o, i, l) {
-    if (this.project === void 0) {
-      console.error("Theatre Project hasn't been created yet.");
-      return;
-    }
-    const g = this.sheets.get(r);
-    if (g === void 0)
-      return;
-    const b = `${r}_${o}`;
-    let d = this.sheetObjects.get(b);
-    if (d !== void 0)
-      return d = g.object(o, { ...i, ...d.value }, { reconfigure: !0 }), d;
-    d = g.object(o, i), this.sheetObjects.set(b, d), this.sheetObjectCBs.set(b, l !== void 0 ? l : Ie);
-    const E = d.onValuesChange((v) => {
-      if (this.app.editor) {
-        for (const C in v) {
-          const S = v[C];
-          typeof S == "object" && Tt(S) && (v[C] = {
-            r: S.r,
-            g: S.g,
-            b: S.b,
-            a: S.a
-          });
-        }
-        this.app.send({
-          event: "updateSheetObject",
-          data: {
-            sheetObject: b,
-            values: v
-          }
-        });
-      } else {
-        const C = this.sheetObjectCBs.get(b);
-        C !== void 0 && C(v);
-      }
-    });
-    return this.sheetObjectUnsubscribe.set(b, E), d;
-  }
-  unsubscribe(r) {
-    if (this.project === void 0) {
-      console.error("Theatre Project hasn't been created yet.");
-      return;
-    }
-    const o = `${r.address.sheetId}_${r.address.objectKey}`, i = this.sheetObjectUnsubscribe.get(o);
-    i !== void 0 && i();
-  }
-}
 class Gt {
   constructor(n, r) {
     y(this, "components");
@@ -220,17 +221,17 @@ class Gt {
     this.editor = n && document.location.hash.search(r) > -1, n && (this.channel = new BroadcastChannel("theatre"));
   }
   setupComponents() {
-    this.components = new Rt(this);
+    this.components = new St(this);
   }
   setupGUI() {
-    this.debug = new jt(this);
+    this.debug = new wt(this);
   }
   setupTheatre(n, r) {
-    this.theatre = new wt(this, n, r);
+    this.theatre = new xt(this, n, r);
   }
   dispose() {
-    var n, r;
-    (n = this.debug) == null || n.dispose(), (r = this.theatre) == null || r.dispose();
+    var n, r, o;
+    (n = this.components) == null || n.dispose(), (r = this.debug) == null || r.dispose(), (o = this.theatre) == null || o.dispose();
   }
   // Remote
   send(n) {
@@ -275,14 +276,14 @@ function Ot() {
   Oe = 1;
   var a = Pe, n = Symbol.for("react.element"), r = Symbol.for("react.fragment"), o = Object.prototype.hasOwnProperty, i = a.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, l = { key: !0, ref: !0, __self: !0, __source: !0 };
   function g(b, d, E) {
-    var v, C = {}, S = null, D = null;
-    E !== void 0 && (S = "" + E), d.key !== void 0 && (S = "" + d.key), d.ref !== void 0 && (D = d.ref);
+    var v, C = {}, j = null, D = null;
+    E !== void 0 && (j = "" + E), d.key !== void 0 && (j = "" + d.key), d.ref !== void 0 && (D = d.ref);
     for (v in d)
       o.call(d, v) && !l.hasOwnProperty(v) && (C[v] = d[v]);
     if (b && b.defaultProps)
       for (v in d = b.defaultProps, d)
         C[v] === void 0 && (C[v] = d[v]);
-    return { $$typeof: n, type: b, key: S, ref: D, props: C, _owner: i.current };
+    return { $$typeof: n, type: b, key: j, ref: D, props: C, _owner: i.current };
   }
   return L.Fragment = r, L.jsx = g, L.jsxs = g, L;
 }
@@ -299,15 +300,15 @@ var W = {};
 var ke;
 function kt() {
   return ke || (ke = 1, process.env.NODE_ENV !== "production" && function() {
-    var a = Pe, n = Symbol.for("react.element"), r = Symbol.for("react.portal"), o = Symbol.for("react.fragment"), i = Symbol.for("react.strict_mode"), l = Symbol.for("react.profiler"), g = Symbol.for("react.provider"), b = Symbol.for("react.context"), d = Symbol.for("react.forward_ref"), E = Symbol.for("react.suspense"), v = Symbol.for("react.suspense_list"), C = Symbol.for("react.memo"), S = Symbol.for("react.lazy"), D = Symbol.for("react.offscreen"), $ = Symbol.iterator, Ae = "@@iterator";
-    function $e(e) {
+    var a = Pe, n = Symbol.for("react.element"), r = Symbol.for("react.portal"), o = Symbol.for("react.fragment"), i = Symbol.for("react.strict_mode"), l = Symbol.for("react.profiler"), g = Symbol.for("react.provider"), b = Symbol.for("react.context"), d = Symbol.for("react.forward_ref"), E = Symbol.for("react.suspense"), v = Symbol.for("react.suspense_list"), C = Symbol.for("react.memo"), j = Symbol.for("react.lazy"), D = Symbol.for("react.offscreen"), M = Symbol.iterator, Ae = "@@iterator";
+    function Me(e) {
       if (e === null || typeof e != "object")
         return null;
-      var t = $ && e[$] || e[Ae];
+      var t = M && e[M] || e[Ae];
       return typeof t == "function" ? t : null;
     }
     var N = a.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-    function j(e) {
+    function R(e) {
       {
         for (var t = arguments.length, s = new Array(t > 1 ? t - 1 : 0), c = 1; c < t; c++)
           s[c - 1] = arguments[c];
@@ -324,10 +325,10 @@ function kt() {
         m.unshift("Warning: " + t), Function.prototype.apply.call(console[e], console, m);
       }
     }
-    var Me = !1, Ue = !1, Le = !1, We = !1, Ye = !1, ie;
+    var $e = !1, Ue = !1, Le = !1, We = !1, Ye = !1, ie;
     ie = Symbol.for("react.module.reference");
     function Ve(e) {
-      return !!(typeof e == "string" || typeof e == "function" || e === o || e === l || Ye || e === i || e === E || e === v || We || e === D || Me || Ue || Le || typeof e == "object" && e !== null && (e.$$typeof === S || e.$$typeof === C || e.$$typeof === g || e.$$typeof === b || e.$$typeof === d || // This needs to include all possible module reference object
+      return !!(typeof e == "string" || typeof e == "function" || e === o || e === l || Ye || e === i || e === E || e === v || We || e === D || $e || Ue || Le || typeof e == "object" && e !== null && (e.$$typeof === j || e.$$typeof === C || e.$$typeof === g || e.$$typeof === b || e.$$typeof === d || // This needs to include all possible module reference object
       // types supported by any Flight configuration anywhere since
       // we don't know which Flight build this will end up being used
       // with.
@@ -346,7 +347,7 @@ function kt() {
     function w(e) {
       if (e == null)
         return null;
-      if (typeof e.tag == "number" && j("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), typeof e == "function")
+      if (typeof e.tag == "number" && R("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), typeof e == "function")
         return e.displayName || e.name || null;
       if (typeof e == "string")
         return e;
@@ -377,7 +378,7 @@ function kt() {
           case C:
             var c = e.displayName || null;
             return c !== null ? c : w(e.type) || "Memo";
-          case S: {
+          case j: {
             var p = e, m = p._payload, h = p._init;
             try {
               return w(h(m));
@@ -447,7 +448,7 @@ function kt() {
             })
           });
         }
-        B < 0 && j("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
+        B < 0 && R("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
       }
     }
     var J = N.ReactCurrentDispatcher, K;
@@ -518,19 +519,19 @@ function kt() {
       } catch (O) {
         if (O && c && typeof O.stack == "string") {
           for (var f = O.stack.split(`
-`), x = c.stack.split(`
-`), _ = f.length - 1, R = x.length - 1; _ >= 1 && R >= 0 && f[_] !== x[R]; )
-            R--;
-          for (; _ >= 1 && R >= 0; _--, R--)
-            if (f[_] !== x[R]) {
-              if (_ !== 1 || R !== 1)
+`), T = c.stack.split(`
+`), _ = f.length - 1, S = T.length - 1; _ >= 1 && S >= 0 && f[_] !== T[S]; )
+            S--;
+          for (; _ >= 1 && S >= 0; _--, S--)
+            if (f[_] !== T[S]) {
+              if (_ !== 1 || S !== 1)
                 do
-                  if (_--, R--, R < 0 || f[_] !== x[R]) {
-                    var T = `
+                  if (_--, S--, S < 0 || f[_] !== T[S]) {
+                    var x = `
 ` + f[_].replace(" at new ", " at ");
-                    return e.displayName && T.includes("<anonymous>") && (T = T.replace("<anonymous>", e.displayName)), typeof e == "function" && H.set(e, T), T;
+                    return e.displayName && x.includes("<anonymous>") && (x = x.replace("<anonymous>", e.displayName)), typeof e == "function" && H.set(e, x), x;
                   }
-                while (_ >= 1 && R >= 0);
+                while (_ >= 1 && S >= 0);
               break;
             }
         }
@@ -566,7 +567,7 @@ function kt() {
             return Je(e.render);
           case C:
             return G(e.type, t, s);
-          case S: {
+          case j: {
             var c = e, p = c._payload, m = c._init;
             try {
               return G(m(p), t, s);
@@ -592,14 +593,14 @@ function kt() {
             var f = void 0;
             try {
               if (typeof e[h] != "function") {
-                var x = Error((c || "React class") + ": " + s + " type `" + h + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof e[h] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
-                throw x.name = "Invariant Violation", x;
+                var T = Error((c || "React class") + ": " + s + " type `" + h + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof e[h] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                throw T.name = "Invariant Violation", T;
               }
               f = e[h](t, h, c, s, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
             } catch (_) {
               f = _;
             }
-            f && !(f instanceof Error) && (z(p), j("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", c || "React class", s, h, typeof f), z(null)), f instanceof Error && !(f.message in be) && (be[f.message] = !0, z(p), j("Failed %s type: %s", s, f.message), z(null));
+            f && !(f instanceof Error) && (z(p), R("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", c || "React class", s, h, typeof f), z(null)), f instanceof Error && !(f.message in be) && (be[f.message] = !0, z(p), R("Failed %s type: %s", s, f.message), z(null));
           }
       }
     }
@@ -625,9 +626,9 @@ function kt() {
     }
     function Ee(e) {
       if (et(e))
-        return j("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", Qe(e)), ge(e);
+        return R("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", Qe(e)), ge(e);
     }
-    var M = N.ReactCurrentOwner, tt = {
+    var $ = N.ReactCurrentOwner, tt = {
       key: !0,
       ref: !0,
       __self: !0,
@@ -651,15 +652,15 @@ function kt() {
       return e.key !== void 0;
     }
     function at(e, t) {
-      if (typeof e.ref == "string" && M.current && t && M.current.stateNode !== t) {
-        var s = w(M.current.type);
-        Q[s] || (j('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', w(M.current.type), e.ref), Q[s] = !0);
+      if (typeof e.ref == "string" && $.current && t && $.current.stateNode !== t) {
+        var s = w($.current.type);
+        Q[s] || (R('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', w($.current.type), e.ref), Q[s] = !0);
       }
     }
     function it(e, t) {
       {
         var s = function() {
-          ye || (ye = !0, j("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", t));
+          ye || (ye = !0, R("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", t));
         };
         s.isReactWarning = !0, Object.defineProperty(e, "key", {
           get: s,
@@ -670,7 +671,7 @@ function kt() {
     function st(e, t) {
       {
         var s = function() {
-          Ce || (Ce = !0, j("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", t));
+          Ce || (Ce = !0, R("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", t));
         };
         s.isReactWarning = !0, Object.defineProperty(e, "ref", {
           get: s,
@@ -709,8 +710,8 @@ function kt() {
     };
     function ct(e, t, s, c, p) {
       {
-        var m, h = {}, f = null, x = null;
-        s !== void 0 && (Ee(s), f = "" + s), nt(t) && (Ee(t.key), f = "" + t.key), rt(t) && (x = t.ref, at(t, p));
+        var m, h = {}, f = null, T = null;
+        s !== void 0 && (Ee(s), f = "" + s), nt(t) && (Ee(t.key), f = "" + t.key), rt(t) && (T = t.ref, at(t, p));
         for (m in t)
           q.call(t, m) && !tt.hasOwnProperty(m) && (h[m] = t[m]);
         if (e && e.defaultProps) {
@@ -718,11 +719,11 @@ function kt() {
           for (m in _)
             h[m] === void 0 && (h[m] = _[m]);
         }
-        if (f || x) {
-          var R = typeof e == "function" ? e.displayName || e.name || "Unknown" : e;
-          f && it(h, R), x && st(h, R);
+        if (f || T) {
+          var S = typeof e == "function" ? e.displayName || e.name || "Unknown" : e;
+          f && it(h, S), T && st(h, S);
         }
-        return ot(e, f, x, p, c, M.current, h);
+        return ot(e, f, T, p, c, $.current, h);
       }
     }
     var ee = N.ReactCurrentOwner, _e = N.ReactDebugCurrentFrame;
@@ -738,7 +739,7 @@ function kt() {
     function re(e) {
       return typeof e == "object" && e !== null && e.$$typeof === n;
     }
-    function Se() {
+    function je() {
       {
         if (ee.current) {
           var e = w(ee.current.type);
@@ -761,10 +762,10 @@ Check your code at ` + t + ":" + s + ".";
         return "";
       }
     }
-    var Re = {};
+    var Se = {};
     function ut(e) {
       {
-        var t = Se();
+        var t = je();
         if (!t) {
           var s = typeof e == "string" ? e : e.displayName || e.name;
           s && (t = `
@@ -774,35 +775,35 @@ Check the top-level render call using <` + s + ">.");
         return t;
       }
     }
-    function je(e, t) {
+    function Re(e, t) {
       {
         if (!e._store || e._store.validated || e.key != null)
           return;
         e._store.validated = !0;
         var s = ut(t);
-        if (Re[s])
+        if (Se[s])
           return;
-        Re[s] = !0;
+        Se[s] = !0;
         var c = "";
-        e && e._owner && e._owner !== ee.current && (c = " It was passed a child from " + w(e._owner.type) + "."), F(e), j('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', s, c), F(null);
+        e && e._owner && e._owner !== ee.current && (c = " It was passed a child from " + w(e._owner.type) + "."), F(e), R('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', s, c), F(null);
       }
     }
-    function xe(e, t) {
+    function Te(e, t) {
       {
         if (typeof e != "object")
           return;
         if (Z(e))
           for (var s = 0; s < e.length; s++) {
             var c = e[s];
-            re(c) && je(c, t);
+            re(c) && Re(c, t);
           }
         else if (re(e))
           e._store && (e._store.validated = !0);
         else if (e) {
-          var p = $e(e);
+          var p = Me(e);
           if (typeof p == "function" && p !== e.entries)
             for (var m = p.call(e), h; !(h = m.next()).done; )
-              re(h.value) && je(h.value, t);
+              re(h.value) && Re(h.value, t);
         }
       }
     }
@@ -826,9 +827,9 @@ Check the top-level render call using <` + s + ">.");
         } else if (t.PropTypes !== void 0 && !te) {
           te = !0;
           var p = w(t);
-          j("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", p || "Unknown");
+          R("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", p || "Unknown");
         }
-        typeof t.getDefaultProps == "function" && !t.getDefaultProps.isReactClassApproved && j("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
+        typeof t.getDefaultProps == "function" && !t.getDefaultProps.isReactClassApproved && R("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
       }
     }
     function ft(e) {
@@ -836,48 +837,48 @@ Check the top-level render call using <` + s + ">.");
         for (var t = Object.keys(e.props), s = 0; s < t.length; s++) {
           var c = t[s];
           if (c !== "children" && c !== "key") {
-            F(e), j("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", c), F(null);
+            F(e), R("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", c), F(null);
             break;
           }
         }
-        e.ref !== null && (F(e), j("Invalid attribute `ref` supplied to `React.Fragment`."), F(null));
+        e.ref !== null && (F(e), R("Invalid attribute `ref` supplied to `React.Fragment`."), F(null));
       }
     }
-    function Te(e, t, s, c, p, m) {
+    function xe(e, t, s, c, p, m) {
       {
         var h = Ve(e);
         if (!h) {
           var f = "";
           (e === void 0 || typeof e == "object" && e !== null && Object.keys(e).length === 0) && (f += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
-          var x = lt(p);
-          x ? f += x : f += Se();
+          var T = lt(p);
+          T ? f += T : f += je();
           var _;
-          e === null ? _ = "null" : Z(e) ? _ = "array" : e !== void 0 && e.$$typeof === n ? (_ = "<" + (w(e.type) || "Unknown") + " />", f = " Did you accidentally export a JSX literal instead of a component?") : _ = typeof e, j("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", _, f);
+          e === null ? _ = "null" : Z(e) ? _ = "array" : e !== void 0 && e.$$typeof === n ? (_ = "<" + (w(e.type) || "Unknown") + " />", f = " Did you accidentally export a JSX literal instead of a component?") : _ = typeof e, R("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", _, f);
         }
-        var R = ct(e, t, s, p, m);
-        if (R == null)
-          return R;
+        var S = ct(e, t, s, p, m);
+        if (S == null)
+          return S;
         if (h) {
-          var T = t.children;
-          if (T !== void 0)
+          var x = t.children;
+          if (x !== void 0)
             if (c)
-              if (Z(T)) {
-                for (var A = 0; A < T.length; A++)
-                  xe(T[A], e);
-                Object.freeze && Object.freeze(T);
+              if (Z(x)) {
+                for (var A = 0; A < x.length; A++)
+                  Te(x[A], e);
+                Object.freeze && Object.freeze(x);
               } else
-                j("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
+                R("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
             else
-              xe(T, e);
+              Te(x, e);
         }
-        return e === o ? ft(R) : dt(R), R;
+        return e === o ? ft(S) : dt(S), S;
       }
     }
     function ht(e, t, s) {
-      return Te(e, t, s, !0);
+      return xe(e, t, s, !0);
     }
     function vt(e, t, s) {
-      return Te(e, t, s, !1);
+      return xe(e, t, s, !1);
     }
     var pt = vt, bt = ht;
     W.Fragment = o, W.jsx = pt, W.jsxs = bt;
@@ -976,20 +977,20 @@ function At(a) {
       );
       break;
   }
-  return /* @__PURE__ */ u.jsx("li", { className: r === n.title ? "selected" : "", children: i }, xt());
+  return /* @__PURE__ */ u.jsx("li", { className: r === n.title ? "selected" : "", children: i }, Rt());
 }
 function qt(a) {
   let n;
   const r = () => {
     U.ui.hide(), a.listen((i) => {
-      var g, b, d, E, v, C, S, D, $;
+      var g, b, d, E, v, C, j, D, M;
       let l;
       switch (i.event) {
-        case "dropdownSelect":
-          k.dispatchEvent({ type: P.SELECT_DROPDOWN, value: i.data });
-          break;
         case "draggableListUpdate":
           k.dispatchEvent({ type: P.DRAG_UPDATE, value: i.data });
+          break;
+        case "selectComponent":
+          k.dispatchEvent({ type: P.SELECT_DROPDOWN, value: i.data });
           break;
         case "addFolder":
           (g = a.debug) == null || g.addFolder(i.data.name, i.data.params, i.data.parent);
@@ -1010,26 +1011,26 @@ function qt(a) {
           l = (C = a.theatre) == null ? void 0 : C.sheets.get(i.data.sheet), l !== void 0 && (n = l, U.setSelection([l]));
           break;
         case "setSheetObject":
-          l = (S = a.theatre) == null ? void 0 : S.sheetObjects.get(`${i.data.sheet}_${i.data.key}`), l !== void 0 && U.setSelection([l]);
+          l = (j = a.theatre) == null ? void 0 : j.sheetObjects.get(`${i.data.sheet}_${i.data.key}`), l !== void 0 && U.setSelection([l]);
           break;
         case "updateSheetObject":
           l = (D = a.theatre) == null ? void 0 : D.sheetObjectCBs.get(i.data.sheetObject), l !== void 0 && l(i.data.values);
           break;
         case "updateTimeline":
-          n = ($ = a.theatre) == null ? void 0 : $.sheets.get(i.data.sheet), n !== void 0 && (n.sequence.position = i.data.position);
+          n = (M = a.theatre) == null ? void 0 : M.sheets.get(i.data.sheet), n !== void 0 && (n.sequence.position = i.data.position);
           break;
       }
     });
   }, o = () => {
     U.ui.restore(), U.onSelectionChange((b) => {
       b.length < 1 || b.forEach((d) => {
-        var S;
+        var j;
         let E = d.address.sheetId, v = "setSheet", C = {};
         switch (d.type) {
           case "Theatre_Sheet_PublicAPI":
             v = "setSheet", C = {
               sheet: d.address.sheetId
-            }, n = (S = a.theatre) == null ? void 0 : S.sheets.get(d.address.sheetId);
+            }, n = (j = a.theatre) == null ? void 0 : j.sheets.get(d.address.sheetId);
             break;
           case "Theatre_SheetObject_PublicAPI":
             v = "setSheetObject", E += `_${d.address.objectKey}`, C = {
@@ -1062,7 +1063,7 @@ function qt(a) {
   };
   a.editor ? o() : r();
 }
-function $t(a) {
+function Mt(a) {
   if (a.name === "cameras")
     return "camera";
   if (a.name === "interactive")
@@ -1113,7 +1114,7 @@ function Fe(a) {
           children: a.child.name.length > 0 ? `${a.child.name} (${a.child.type})` : `${a.child.type}::${a.child.uuid}`
         }
       ),
-      /* @__PURE__ */ u.jsx("div", { className: `icon ${$t(a.child)}` })
+      /* @__PURE__ */ u.jsx("div", { className: `icon ${Mt(a.child)}` })
     ] }),
     o
   ] }, Math.random());
@@ -1124,7 +1125,7 @@ function Bt(a) {
     n.push(/* @__PURE__ */ u.jsx(Fe, { child: r }, Math.random()));
   }), /* @__PURE__ */ u.jsx("div", { className: "scene", children: n });
 }
-class zt extends St {
+class zt extends jt {
   constructor(r) {
     super(r);
     // Private
@@ -1184,13 +1185,17 @@ function Jt(a) {
 }
 export {
   Gt as Application,
+  ae as BaseRemote,
   Nt as Draggable,
   It as DraggableItem,
   Ft as Dropdown,
   At as DropdownItem,
   Jt as Editor,
   Ne as NavButton,
+  St as RemoteComponents,
   qt as RemoteController,
+  xt as RemoteTheatre,
+  wt as RemoteTweakpane,
   zt as SceneHierarchy,
   P as ToolEvents,
   k as debugDispatcher

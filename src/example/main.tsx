@@ -7,12 +7,12 @@ import { app, IS_DEV } from './constants'
 // Components
 import './index.scss'
 import App from './App'
-import Editor from '../debug/Editor'
-import Draggable from '../debug/components/Draggable'
-import Dropdown from '../debug/components/Dropdown'
+import Editor from '../editor/Editor'
+import Draggable from '../editor/components/Draggable'
+import Dropdown from '../editor/components/Dropdown'
 // Tools
-import RemoteController from '../debug/remote/RemoteController'
-import SceneHierarchy from '../debug/sceneHierarchy/SceneHierarchy'
+import RemoteController from '../core/RemoteController'
+import SceneHierarchy from '../editor/sceneHierarchy/SceneHierarchy'
 
 // Debug tools
 if (IS_DEV) {

@@ -1,8 +1,21 @@
 {
-  "name": "hermes",
-  "private": true,
+  "name": "@tomorrowevening/hermes",
+  "author": "Colin Duffy <http://tomorrowevening.com/>",
+  "description": "An extendable set of Web Tools controlled via a separate window for non-intereference with content.",
+  "license": "GPL-3.0-or-later",
+  "main": "index.js",
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://github.com/tomorrowevening/hermes#readme",
+  "bugs": {
+    "url": "https://github.com/tomorrowevening/hermes/issues"
+  },
+  "keywords": [
+    "Editor",
+    "Remote",
+    "TheatreJS",
+    "Tweakpane"
+  ],
   "files": [
     "src/**/*.css",
     "src/**/*.scss",
@@ -10,6 +23,10 @@
     "dist",
     "types/**/*.d.ts"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomorrowevening/hermes.git"
+  },
   "scripts": {
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
