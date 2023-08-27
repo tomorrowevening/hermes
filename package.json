@@ -19,10 +19,12 @@
     "Tweakpane"
   ],
   "files": [
+    "src",
     "src/**/*.css",
     "src/**/*.scss",
-    "src",
     "dist",
+    "dist/**/*.css",
+    "dist/**/*.scss",
     "types/**/*.d.ts"
   ],
   "exports": {
