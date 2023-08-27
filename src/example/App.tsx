@@ -1,6 +1,7 @@
 // Libs
 import { CSSProperties, useEffect, useRef } from 'react'
 import { types } from '@theatre/core'
+import { Mesh, MeshNormalMaterial, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer } from 'three'
 // Models
 import { app } from './constants'
 // Components
@@ -65,6 +66,48 @@ function App() {
     }
   }, [])
 
+  // ThreeJS
+  useEffect(() => {
+    if (app.editor) return
+
+    const width = window.innerWidth
+    const height = window.innerHeight
+    const renderer = new WebGLRenderer({ antialias: true })
+    renderer.setSize(width, height)
+    renderer.setPixelRatio(devicePixelRatio)
+    elementRef.current.parentElement!.appendChild(renderer.domElement)
+
+    const scene = new Scene()
+    scene.name = 'Example'
+
+    const camera = new PerspectiveCamera(60, width / height, 1, 2000)
+    camera.position.z = 300
+
+    const mesh = new Mesh(new SphereGeometry(100), new MeshNormalMaterial())
+    mesh.name = 'sphere'
+    scene.add(mesh)
+
+    const onSelect = (evt: any) => {
+      console.log('onSelect:', evt.value)
+    }
+    debugDispatcher.addEventListener(ToolEvents.INSPECT_ITEM, onSelect)
+
+    // Start RAF
+    let raf = -1
+    const onUpdate = () => {
+      renderer.render(scene, camera)
+      raf = requestAnimationFrame(onUpdate)
+    }
+    onUpdate()
+
+    return () => {
+      renderer.dispose()
+      cancelAnimationFrame(raf)
+      raf = -1
+    }
+  }, [])
+
+  // Debug Events
   useEffect(() => {
     const selectDropdown = (evt: any) => {
       console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`)
