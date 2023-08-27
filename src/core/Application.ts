@@ -15,9 +15,9 @@ export default class Application {
   protected mode: ApplicationMode = 'listener'
   protected channel?: BroadcastChannel | undefined = undefined
 
-  constructor(debugEnabled: boolean, editorHashtag: string) {
+  constructor(name: string, debugEnabled: boolean, editorHashtag: string) {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1
-    if (debugEnabled) this.channel = new BroadcastChannel('theatre')
+    if (debugEnabled) this.channel = new BroadcastChannel(name)
   }
 
   setupComponents() {
