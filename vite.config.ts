@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: path.resolve(dirname, 'src/library.ts'),
+      entry: path.resolve(dirname, 'src/index.ts'),
       name: 'Hermes',
       // the proper extensions will be added
       fileName: 'hermes'
