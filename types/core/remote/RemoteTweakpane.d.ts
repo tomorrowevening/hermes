@@ -11,6 +11,7 @@ export default class RemoteTweakpane extends BaseRemote {
     protected pane?: Pane | undefined;
     protected appCallbacks: number;
     protected editorCallbacks: number;
+    protected inspectorFolder: any;
     constructor(app: Application);
     protected createGUI(): void;
     dispose(): void;
@@ -20,4 +21,6 @@ export default class RemoteTweakpane extends BaseRemote {
     triggerBind(id: string, data: any): void;
     button(name: string, callback: VoidCallback, parent?: any): void;
     triggerButton(id: string): void;
+    createInspector(): void;
+    clearInspector(): void;
 }

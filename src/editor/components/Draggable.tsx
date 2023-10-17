@@ -1,33 +1,33 @@
 // Libs
-import { useState } from 'react'
-import { Reorder } from 'framer-motion'
+import { useState } from 'react';
+import { Reorder } from 'framer-motion';
 // Components
-import NavButton from './NavButton'
-import DraggableItem from './DraggableItem'
-import { DraggableProps } from './types'
+import NavButton from './NavButton';
+import DraggableItem from './DraggableItem';
+import { DraggableProps } from './types';
 
 export default function Draggable(props: DraggableProps) {
-  const [expanded, setExpanded] = useState(false)
-  const [list, setList] = useState<string[]>(props.options)
+  const [expanded, setExpanded] = useState(false);
+  const [list, setList] = useState<string[]>(props.options);
 
   const updateList = (updated: string[]) => {
-    props.onDragComplete(updated)
-    setList(updated)
-  }
+    props.onDragComplete(updated);
+    setList(updated);
+  };
 
   const onDelete = (index: number) => {
-    const newArray = [...list]
-    newArray.splice(index, 1)
-    updateList(newArray)
-  }
+    const newArray = [...list];
+    newArray.splice(index, 1);
+    updateList(newArray);
+  };
 
-  const elements: any[] = []
+  const elements: any[] = [];
   list.forEach((value: string, index: number) => {
-    elements.push(<DraggableItem key={value} index={index} title={value} onDelete={onDelete} />)
-  })
+    elements.push(<DraggableItem key={value} index={index} title={value} onDelete={onDelete} />);
+  });
 
-  let ddClassName = 'dropdown draggable'
-  if (props.subdropdown) ddClassName += ' subdropdown'
+  let ddClassName = 'dropdown draggable';
+  if (props.subdropdown) ddClassName += ' subdropdown';
 
   return (
     <div className={ddClassName} onMouseEnter={() => setExpanded(true)} onMouseLeave={() => setExpanded(false)}>
@@ -36,5 +36,5 @@ export default function Draggable(props: DraggableProps) {
         {elements}
       </Reorder.Group>
     </div>
-  )
+  );
 }

@@ -3,7 +3,8 @@
 @import 'sceneHierarchy';
 
 .editor {
-  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
+  font-size: 10px;
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -22,12 +23,18 @@
     text-align: left;
   }
 
-  .navBar {
+  header {
     display: inline-block;
     pointer-events: visible;
     position: relative;
     left: 50px;
     top: 12px;
+  }
+
+  footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
   }
 
   @import 'dropdown';

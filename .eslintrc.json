@@ -18,8 +18,9 @@
     "react"
   ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "react/react-in-jsx-scope": "off",
+    "semi": "error"
   }
 }
