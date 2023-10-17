@@ -1,24 +1,24 @@
 // Libs
-import { useState } from 'react'
-import { Object3D } from 'three'
+import { useState } from 'react';
+import { Object3D } from 'three';
 // Models
-import { debugDispatcher, ToolEvents } from '../global'
-import { ChildObjectProps } from './types'
+import { debugDispatcher, ToolEvents } from '../global';
+import { ChildObjectProps } from './types';
 // Utils
-import { determineIcon } from './utils'
+import { determineIcon } from './utils';
 
 export default function ChildObject(props: ChildObjectProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  let container = null
-  let hasChildren = false
+  let container = null;
+  let hasChildren = false;
   if (props.child.children.length > 0) {
-    hasChildren = true
-    const children: Array<any> = []
+    hasChildren = true;
+    const children: Array<any> = [];
     props.child.children.map((child: Object3D) => {
-      children.push(<ChildObject child={child} key={Math.random()} />)
-    })
-    container = <div className={`container ${!open ? 'closed' : ''}`}>{children}</div>
+      children.push(<ChildObject child={child} key={Math.random()} />);
+    });
+    container = <div className={`container ${!open ? 'closed' : ''}`}>{children}</div>;
   }
 
   return (
@@ -31,7 +31,7 @@ export default function ChildObject(props: ChildObjectProps) {
               backgroundPositionX: open ? '-14px' : '2px',
             }}
             onClick={() => {
-              setOpen(!open)
+              setOpen(!open);
             }}
           ></button>
         ) : null}
@@ -41,7 +41,7 @@ export default function ChildObject(props: ChildObjectProps) {
             left: hasChildren ? '20px' : '5px',
           }}
           onClick={() => {
-            debugDispatcher.dispatchEvent({ type: ToolEvents.INSPECT_ITEM, value: props.child })
+            debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: props.child });
           }}
         >
           {props.child.name.length > 0
@@ -52,5 +52,5 @@ export default function ChildObject(props: ChildObjectProps) {
       </div>
       {container}
     </div>
-  )
+  );
 }

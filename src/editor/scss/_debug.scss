@@ -1,7 +1,4 @@
-$maxInput: 160px;
-
 body {
-
   .tp-dfwv,
   .tp-dfwv button,
   .tp-dfwv input {
@@ -14,34 +11,27 @@ body {
 }
 
 .tp-dfwv {
+  left: 50%;
+  top: 0;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform: translateX(-50%);
+  width: 400px;
+  z-index: 100;
+
   .tp-lblv {
     position: relative;
   }
 
   .tp-lblv_v {
     display: inline-block;
-    max-width: $maxInput;
 
     .tp-ckbv {
       width: 20px;
     }
 
-    .tp-txtv,
-    .tp-sldtxtv {
-      max-width: $maxInput;
-    }
-
-    .tp-lstv {
-      width: $maxInput;
-    }
-
     .tp-fpsv {
-      width: 280px;
-    }
-  }
-
-  .tp-lblv-nol {
-    .tp-btnv {
       width: 280px;
     }
   }

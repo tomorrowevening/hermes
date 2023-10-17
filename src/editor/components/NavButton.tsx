@@ -7,5 +7,5 @@ export default function NavButton(props: NavButtonProps) {
     <button className="svg" dangerouslySetInnerHTML={{ __html: props.title }}></button>
   ) : (
     <button>{props.title}</button>
-  )
+  );
 }

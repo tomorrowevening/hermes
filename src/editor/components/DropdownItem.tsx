@@ -1,17 +1,17 @@
 // Libs
-import { useState } from 'react'
+import { useState } from 'react';
 // Components
-import Draggable from './Draggable'
-import Dropdown from './Dropdown'
-import type { DropdownItemProps, DropdownOption } from './types'
+import Draggable from './Draggable';
+import Dropdown from './Dropdown';
+import type { DropdownItemProps, DropdownOption } from './types';
 // Utils
-import { randomID } from '../utils'
+import { randomID } from '../utils';
 
 export default function DropdownItem(props: DropdownItemProps) {
-  const { option } = props
-  const [selected, setSelected] = useState('')
+  const { option } = props;
+  const [selected, setSelected] = useState('');
 
-  let element = null
+  let element = null;
   switch (option.type) {
     case 'draggable':
       element = (
@@ -19,12 +19,12 @@ export default function DropdownItem(props: DropdownItemProps) {
           title={option.title}
           options={option.value as Array<string>}
           onDragComplete={(options: string[]) => {
-            if (option.onDragComplete !== undefined) option.onDragComplete(options)
+            if (option.onDragComplete !== undefined) option.onDragComplete(options);
           }}
           subdropdown={true}
         />
-      )
-      break
+      );
+      break;
     case 'dropdown':
       element = (
         <Dropdown
@@ -33,32 +33,32 @@ export default function DropdownItem(props: DropdownItemProps) {
           onSelect={option.onSelect}
           subdropdown={true}
         />
-      )
-      break
+      );
+      break;
     case 'option':
       element = (
         <button
           onClick={() => {
-            if (option.onSelect !== undefined) option.onSelect(option.value)
+            if (option.onSelect !== undefined) option.onSelect(option.value);
             // Toggle selectable
             if (option.selectable) {
               if (selected !== option.title) {
-                setSelected(option.title)
+                setSelected(option.title);
               } else {
-                setSelected('')
+                setSelected('');
               }
             }
           }}
         >
           {option.title}
         </button>
-      )
-      break
+      );
+      break;
   }
 
   return (
     <li className={selected === option.title ? 'selected' : ''} key={randomID()}>
       {element}
     </li>
-  )
+  );
 }

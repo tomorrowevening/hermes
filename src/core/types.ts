@@ -1,19 +1,21 @@
 // Interfaces
 
 export interface BroadcastData {
+  target: ApplicationMode
   event: EditorEvent
   data: any
 }
 
 // Types
 
-export type ApplicationMode = 'listener' | 'editor'
+export type ApplicationMode = 'app' | 'editor'
 
 export type VoidCallback = () => void
 
 export type DataUpdateCallback = (data: any) => void
 
 export type EditorEvent =
+  | 'custom'
 // Theatre
   | 'setSheet'
   | 'setSheetObject'
@@ -27,6 +29,8 @@ export type EditorEvent =
   | 'clickButton'
 // Components
   | 'selectComponent'
+  | 'setObject'
+  | 'setScene'
   | 'draggableListUpdate'
 
 export type VoidFunc = () => void
@@ -37,7 +41,7 @@ export type TheatreUpdateCallback = (data: any) => void
 
 // Consts
 
-export const noop = () => {}
+export const noop = () => {};
 
-export const defaultTheatreCallback: TheatreUpdateCallback = () => {}
+export const defaultTheatreCallback: TheatreUpdateCallback = () => {};
 

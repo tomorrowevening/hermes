@@ -1,9 +1,9 @@
 // Libs
-import { Reorder } from 'framer-motion'
+import { Reorder } from 'framer-motion';
 // Components
-import CloseIcon from './icons/CloseIcon'
-import DragIcon from './icons/DragIcon'
-import { DraggableItemProps } from './types'
+import CloseIcon from './icons/CloseIcon';
+import DragIcon from './icons/DragIcon';
+import { DraggableItemProps } from './types';
 
 export default function DraggableItem(props: DraggableItemProps) {
   return (
@@ -12,11 +12,11 @@ export default function DraggableItem(props: DraggableItemProps) {
         {DragIcon}
         <span>{props.title}</span>
         <button className="closeIcon" onClick={() => {
-          props.onDelete(props.index)
+          props.onDelete(props.index);
         }}>
           {CloseIcon}
         </button>
       </div>
     </Reorder.Item>
-  )
+  );
 }

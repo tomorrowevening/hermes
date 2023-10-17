@@ -4,4 +4,4 @@ export default (
     <line x1="4" y1="4" x2="10" y2="10" />
     <line x1="4" y1="10" x2="10" y2="4" />
   </svg>
-)
+);

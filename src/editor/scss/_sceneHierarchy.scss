@@ -11,16 +11,11 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
 
 #SceneHierarchy {
   background-color: #0d0d0d;
-  border-radius: 2px;
-  bottom: 0;
-  right: 0;
-  font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
-  font-size: 10px;
+  border-top: 1px solid #111;
   min-height: $barHeight;
   overflow: hidden;
   pointer-events: visible;
-  position: absolute;
-  width: 250px;
+  width: 300px;
   z-index: 100;
 
   button {
@@ -33,42 +28,57 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     text-align: left;
   }
 
-  .header {
-    height: $barHeight;
-    position: relative;
+  #options {
+    border-bottom: 1px solid #111;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    width: 100%;
 
-    span {
-      display: inline-block;
-      font-size: 12px;
-      line-height: $barHeight;
-      padding-left: 20px;
-      pointer-events: none;
-    }
-
-    button {
-      position: absolute;
-      right: 5px;
-      top: 50%;
-      width: $barHeight;
-      height: $barHeight;
-    }
-
-    .refresh {
-      background-color: transparent;
-      background-image: $icon_refresh;
-      background-size: 20px 20px;
-      opacity: 0.7;
-      transform: translateY(-50%) scale(0.8);
-
-      &:hover {
-        opacity: 1;
+    .selected {
+      background-color: #222;
+      button {
+        pointer-events: none;
       }
     }
 
-    .status {
-      left: 0;
-      transform: translateY(-50%) scale(0.8);
+    button {
+      min-width: $barHeight;
+      height: $barHeight;
+      text-align: center;
+      width: 100%;
+      &:hover {
+        background-color: #333;
+      }
     }
+
+    li {
+      border-right: 1px solid #111;
+      font-size: 12px;
+      line-height: $barHeight;
+      min-height: $barHeight;
+      min-width: $barHeight;
+      text-align: center;
+      width: 100%;
+      &.icon {
+        height: $barHeight;
+        width: $barHeight;
+        button {
+          text-indent: -9999px;
+          white-space: nowrap;
+        }
+      }
+      &:first-child {
+        border-left: 1px solid #111;
+      }
+    }
+  }
+
+  .status, .refresh {
+    overflow: hidden;
+    width: $barHeight;
+    height: $barHeight;
   }
 
   .status {
@@ -76,9 +86,14 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     background-position-x: 2px;
     background-position-y: 2px;
     background-size: 32px 16px;
-    transform: scale(0.8);
-    width: $barHeight;
-    height: $barHeight;
+  }
+
+  .refresh {
+    background-color: transparent;
+    background-image: $icon_refresh;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
   }
 
   .childObject {
@@ -117,9 +132,10 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     .name {
       background-color: transparent;
       max-lines: 1;
+      overflow: hidden;
       position: absolute;
       left: 5px;
-      right: 0;
+      right: 30px;
       top: 50%;
       transform: translateY(-50%);
       white-space: nowrap;
