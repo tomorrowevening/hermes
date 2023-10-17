@@ -8,3 +8,4 @@ An extendable set of Web Tools controlled via a separate window for non-interefe
 - [TheatreJS](https://www.theatrejs.com/)
 - [ThreeJS](https://threejs.org/)
 - [Tweakpane](https://tweakpane.github.io/docs/)
+- Custom ThreeJS Scene + Object Inspector
