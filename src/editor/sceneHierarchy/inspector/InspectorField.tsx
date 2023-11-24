@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range'
 
 export interface InspectorFieldProps {
   label: string
@@ -22,9 +22,6 @@ export default function InspectorField(props: InspectorFieldProps) {
     if (props.onChange !== undefined) props.onChange(value);
   };
 
-  const useNumber = props.type === 'number';
-  const useRange = props.min !== undefined || props.max !== undefined || props.step !== undefined;
-
   return (
     <div className="field">
       <label key="fieldLabel">{props.label}</label>
@@ -36,8 +33,28 @@ export default function InspectorField(props: InspectorFieldProps) {
           value={fieldValue}
         />
       )}
+
+      {props.type === 'boolean' && (
+        <input
+          type="checkbox"
+          disabled={props.disabled}
+          onChange={onChange}
+          value={fieldValue}
+        />
+      )}
+
+      {props.type === 'number' && (
+        <input
+          type="number"
+          value={fieldValue}
+          min={props.min}
+          max={props.max}
+          step={props.step}
+          onChange={onChange}
+        />
+      )}
       
-      {useNumber && useRange && (
+      {props.type === 'range' && (
         <>
           <input type="text" value={fieldValue.toString()} onChange={onChange} className="min" />
           <input
@@ -50,18 +67,6 @@ export default function InspectorField(props: InspectorFieldProps) {
             onChange={onChange}
           />
         </>
-      )}
-      {useNumber && !useRange && (
-        <input type="text" value={fieldValue.toString()} onChange={onChange} />
-      )}
-
-      {props.type === 'boolean' && (
-        <input
-          type="checkbox"
-          disabled={props.disabled}
-          onChange={onChange}
-          value={fieldValue}
-        />
       )}
     </div>
   );

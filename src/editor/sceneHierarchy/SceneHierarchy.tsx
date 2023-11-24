@@ -56,9 +56,7 @@ export default class SceneHierarchy extends Component {
             <button onClick={() => { this.mode = 'Inspector'; }}>Inspector</button>
           </li>
         </ul>
-        {/* {hasScene && ( */}
         {(
-          // <div className={this.componentState.open ? '' : 'hidden'}>
           <div>
             {hasScene && <ContainerObject class={openHierarchy ? '' : 'hidden'} child={this.componentState.scene!} />}
             <Inspector class={this.mode === 'Inspector' ? '' : 'hidden'} key="Inspector" />

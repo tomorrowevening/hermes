@@ -19,8 +19,9 @@ export default function Inspector(props: CoreComponentProps) {
 
   return (
     <div id="Inspector" className={props.class}>
-      <InspectorField type="string" label="Name" value={"Obj Name"} />
+      <InspectorField type="string" label="Name" value={"Obj Name"} disabled={true} />
       <InspectorField type="string" label="Type" value={"Obj Type"} disabled={true} />
+      <InspectorField type="string" label="UUID" value={"Obj UUID"} disabled={true} />
       <InspectorGroup
         title="Transform"
         items={[
@@ -33,25 +34,19 @@ export default function Inspector(props: CoreComponentProps) {
             label: 'Position X',
             type: 'number',
             value: 0,
-            min: -500,
-            max: 500,
-            step: 0.1,
+            step: 0.01,
           },
           {
             label: 'Position Y',
             type: 'number',
             value: 0,
-            min: -500,
-            max: 500,
-            step: 0.1,
+            step: 0.01,
           },
           {
             label: 'Position Z',
             type: 'number',
             value: 0,
-            min: -500,
-            max: 500,
-            step: 0.1,
+            step: 0.01,
           },
           {
             label: 'Rotation X',
@@ -63,8 +58,8 @@ export default function Inspector(props: CoreComponentProps) {
           },
           {
             label: 'Rotation Y',
-            value: 0,
             type: 'number',
+            value: 0,
             min: -Math.PI,
             max: Math.PI,
             step: 0.01,
@@ -79,26 +74,20 @@ export default function Inspector(props: CoreComponentProps) {
           },
           {
             label: 'Scale X',
-            value: 0,
             type: 'number',
-            min: -1,
-            max: 1,
+            value: 1,
             step: 0.01,
           },
           {
             label: 'Scale Y',
             type: 'number',
-            value: 0,
-            min: -1,
-            max: 1,
+            value: 1,
             step: 0.01,
           },
           {
             label: 'Scale Z',
             type: 'number',
-            value: 0,
-            min: -1,
-            max: 1,
+            value: 1,
             step: 0.01,
           },
         ]}
