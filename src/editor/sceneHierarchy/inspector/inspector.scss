@@ -1,0 +1,71 @@
+$icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAA8CAYAAACtrX6oAAAACXBIWXMAABYlAAAWJQFJUiTwAAAB90lEQVR4nO2cXWoCQRCEy+R0+6QguCE5XwLJtYToIZTOgxFlWd1Vd7p7yvpgXoLJ1NQ3a/wZnZkZBC8v0QFEWSSYHAkmR4LJkWByJJgcCSZHgsmRYHIkmBwJJkeCyZFgciSYHAkmR4LJkWByxghuAKwBbAEsiqa5jzlO+ZrgLH3MAWxwyLd0n93MhsbaTuzMrB3xO15j9Z/pyG+CTNfyufd36130K4BPAG2BvXYrKwBfOGTKSF8+//5G7IJFZxeG7MTOaC9kWgRmunbldnHr79FCIyRnyjJW7i4qc23FZshwj9zWzN4istdUcM1yj7dxl1xL0QxyQyTXUDiTXHfJ2YtnlOu6tswCmOW6rXGKP1Ii5DPIdVnr0y14glHVhp5y4VXcZT04qvuXNHUB6R90ZBNQeo4SRaR+2pCleK+5ShWS9ol/dOHec5YsJuVLd1FFR81dOmS6F9+9C47O4BEy1dtnXsVmyeIVMs0b4CPG4pFCC427Dzh4hrwkObq87jg/g5YpX19/g2fQPI/N/gB4B7A/+9kewAeAb8cct5ApX19/wwTsxLmZbcxsa2bLBFdGdzR2uIq3lueMV7e/Y75m6PYzM33THTP6ZAM5EkyOBJMjweRIMDkSTI4EkyPB5EgwORJMjgSTI8HkSDA5EkyOBJMjweRIMDl/5nU6ICCWVGoAAAAASUVORK5CYII=');
+
+#Inspector {
+  .field {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1px;
+    label {
+      margin: 0 10px;
+      width: max-content;
+    }
+    input {
+      flex: 50%;
+      outline: none;
+      &.min {
+        height: 11px;
+        flex: none;
+        width: 30px;
+        margin-right: 1px;
+      }
+    }
+    input[type="checkbox"] {
+      flex: none;
+    }
+    input[type="range"] {
+      appearance: none;
+      height: 11px;
+      margin: 0;
+      padding: 4px 1px;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      background-color: #666;
+      padding: 0;
+      height: 17px;
+      width: 17px;
+   }
+  }
+  .group {
+    margin: 2px 0;
+    h4 {
+      display: inline;
+      font-weight: bold;
+      margin: 0 0 0 5px;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+    .toggleBtn {
+      background-image: $icon_folder;
+      background-position-x: 2px;
+      background-position-y: 2px;
+      background-size: 32px 16px;
+      display: inline-block;
+      margin-left: 5px;
+      text-indent: -9999px;
+      white-space: nowrap;
+      width: 13px;
+      height: 13px;
+      &:hover {
+        background-color: #CCC;
+      }
+    }
+  }
+}

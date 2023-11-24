@@ -1,7 +1,10 @@
 import { Object3D } from 'three';
 
-export type ChildObjectProps = {
+export interface CoreComponentProps {
   class?: string
+}
+
+export interface ChildObjectProps extends CoreComponentProps {
   child: Object3D
 }
 
