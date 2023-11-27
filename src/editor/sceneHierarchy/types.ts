@@ -25,6 +25,15 @@ export interface MinimumObject {
 
 export interface RemoteMaterial {
   type: string
+  opacity: number
+  transparent: boolean
+  side: number
+  // Blending
+  // Depth
+  // Stencil
+  // Clipping
+  // Polygon
+  // ETC
 }
 
 export interface RemoteObject {
@@ -33,4 +42,5 @@ export interface RemoteObject {
   type: string
   visible: boolean
   matrix: number[] // based on Matrix4.elements
+  material?: RemoteMaterial
 }
