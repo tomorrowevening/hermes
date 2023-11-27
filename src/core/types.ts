@@ -21,6 +21,9 @@ export type EditorEvent =
   | 'setSheetObject'
   | 'updateSheetObject'
   | 'updateTimeline'
+// Three
+  | 'setObject'
+  | 'setScene'
 // GUI
   | 'addFolder'
   | 'bindObject'
@@ -29,8 +32,6 @@ export type EditorEvent =
   | 'clickButton'
 // Components
   | 'selectComponent'
-  | 'setObject'
-  | 'setScene'
   | 'draggableListUpdate'
 
 export type VoidFunc = () => void

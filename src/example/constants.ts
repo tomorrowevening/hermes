@@ -1,6 +1,7 @@
 import Application from '@/core/Application'
 import RemoteComponents from '@/core/remote/RemoteComponents'
 import RemoteTheatre from '@/core/remote/RemoteTheatre'
+import RemoteThree from '@/core/remote/RemoteThree'
 import RemoteTweakpane from '@/core/remote/RemoteTweakpane'
 
 export const IS_DEV = import.meta.env.DEV
@@ -16,6 +17,7 @@ class CustomApp extends Application {
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this))
       this.addComponent('debug', new RemoteTweakpane(this))
+      this.addComponent('three', new RemoteThree(this))
     }
   }
 
@@ -31,6 +33,10 @@ class CustomApp extends Application {
 
   get theatre(): RemoteTheatre {
     return this.components.get('theatre') as RemoteTheatre
+  }
+
+  get three(): RemoteThree {
+    return this.components.get('three') as RemoteThree
   }
 }
 

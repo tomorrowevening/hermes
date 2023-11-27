@@ -101,7 +101,7 @@ function App() {
     window.addEventListener('resize', onResize)
 
     // Debug
-    if (IS_DEV) app.debugComponents.setScene(scene)
+    if (IS_DEV) app.three.setScene(scene)
 
     return () => {
       window.removeEventListener('resize', onResize)
