@@ -5,7 +5,9 @@ import { debugDispatcher, ToolEvents } from '../global';
 // Components
 import '../scss/_sceneHierarchy.scss';
 import ContainerObject from './ContainerObject';
+import Inspector from './inspector/Inspector';
 import { SceneModes, SceneHierarchyState } from './types';
+import { app } from '@/example/constants';
 
 export default class SceneHierarchy extends Component {
   constructor(props: object | SceneHierarchyState) {
@@ -24,38 +26,40 @@ export default class SceneHierarchy extends Component {
 
   render(): ReactNode {
     const hasScene = this.componentState.scene !== null;
+    const openHierarchy = this.componentState.open && this.mode === 'Hierarchy';
     return (
-      <div id="SceneHierarchy" className={hasScene ? '' : 'hidden'}>
-        {hasScene && (
-          <>
-            <ul id='options'>
-              <li className='icon'>
-                <button
-                  className='status'
-                  onClick={this.toggleOpen}
-                  style={{
-                    backgroundPositionX: this.componentState.open ? '-14px' : '2px',
-                  }}
-                >
-                  Toggle
-                </button>
-              </li>
-              <li className='icon'>
-                <button className='refresh' onClick={this.onRefresh}>
-                  Refresh
-                </button>
-              </li>
-              <li className={this.mode === 'Hierarchy' ? 'selected' : ''}>
-                <button onClick={() => { this.mode = 'Hierarchy'; }}>Hierarchy</button>
-              </li>
-              <li className={this.mode === 'Inspector' ? 'selected' : ''}>
-                <button onClick={() => { this.mode = 'Inspector'; }}>Inspector</button>
-              </li>
-            </ul>
-            <div className={this.componentState.open ? '' : 'hidden'}>
-              <ContainerObject class={this.mode === 'Hierarchy' ? '' : 'hidden'} child={this.componentState.scene!} />
-            </div>
-          </>
+      <div id="SceneHierarchy" key="SceneHierarchy">
+        <ul id='options'>
+          {hasScene && (
+            <li className='icon'>
+              <button
+                className='status'
+                onClick={this.toggleOpen}
+                style={{
+                  backgroundPositionX: this.componentState.open ? '-14px' : '2px',
+                }}
+              >
+                Toggle
+              </button>
+            </li>
+          )}
+          <li className='icon'>
+            <button className='refresh' onClick={this.onRefresh}>
+              Refresh
+            </button>
+          </li>
+          <li className={this.mode === 'Hierarchy' ? 'selected' : ''}>
+            <button onClick={() => { this.mode = 'Hierarchy'; }}>Hierarchy</button>
+          </li>
+          <li className={this.mode === 'Inspector' ? 'selected' : ''}>
+            <button onClick={() => { this.mode = 'Inspector'; }}>Inspector</button>
+          </li>
+        </ul>
+        {(
+          <div>
+            {hasScene && <ContainerObject class={openHierarchy ? '' : 'hidden'} child={this.componentState.scene!} />}
+            <Inspector class={this.mode === 'Inspector' ? '' : 'hidden'} key="Inspector" />
+          </div>
         )}
     </div>
     );
@@ -64,7 +68,7 @@ export default class SceneHierarchy extends Component {
   // Private
 
   private onRefresh = () => {
-    debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: this.componentState.scene });
+    app.three.getScene();
   };
 
   private toggleOpen = () => {

@@ -3,7 +3,7 @@
 export interface BroadcastData {
   target: ApplicationMode
   event: EditorEvent
-  data: any
+  data?: any
 }
 
 // Types
@@ -21,6 +21,12 @@ export type EditorEvent =
   | 'setSheetObject'
   | 'updateSheetObject'
   | 'updateTimeline'
+// Three
+  | 'getObject'
+  | 'setObject'
+  | 'updateObject'
+  | 'getScene'
+  | 'setScene'
 // GUI
   | 'addFolder'
   | 'bindObject'
@@ -29,8 +35,6 @@ export type EditorEvent =
   | 'clickButton'
 // Components
   | 'selectComponent'
-  | 'setObject'
-  | 'setScene'
   | 'draggableListUpdate'
 
 export type VoidFunc = () => void

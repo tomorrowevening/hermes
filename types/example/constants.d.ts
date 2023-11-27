@@ -1,6 +1,7 @@
 import Application from '@/core/Application';
 import RemoteComponents from '@/core/remote/RemoteComponents';
 import RemoteTheatre from '@/core/remote/RemoteTheatre';
+import RemoteThree from '@/core/remote/RemoteThree';
 import RemoteTweakpane from '@/core/remote/RemoteTweakpane';
 export declare const IS_DEV: boolean;
 declare class CustomApp extends Application {
@@ -8,6 +9,7 @@ declare class CustomApp extends Application {
     get debug(): RemoteTweakpane;
     get debugComponents(): RemoteComponents;
     get theatre(): RemoteTheatre;
+    get three(): RemoteThree;
 }
 export declare const app: CustomApp;
 export {};

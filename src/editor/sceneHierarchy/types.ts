@@ -1,21 +1,36 @@
 import { Object3D } from 'three';
 
-export type ChildObjectProps = {
+export interface CoreComponentProps {
   class?: string
+}
+
+export interface ChildObjectProps extends CoreComponentProps {
   child: Object3D
 }
 
 export type SceneModes = 'Hierarchy' | 'Inspector'
 
-export type SceneHierarchyState = {
+export interface SceneHierarchyState {
   mode: SceneModes
   open: boolean
   scene: Object3D | null
 }
 
-export type MinimumObject = {
+export interface MinimumObject {
   name: string
   uuid: string
   type: string
   children: MinimumObject[]
+}
+
+export interface RemoteMaterial {
+  type: string
+}
+
+export interface RemoteObject {
+  name: string
+  uuid: string
+  type: string
+  visible: boolean
+  matrix: number[] // based on Matrix4.elements
 }

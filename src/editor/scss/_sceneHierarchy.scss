@@ -18,6 +18,14 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
   width: 300px;
   z-index: 100;
 
+  input {
+    background-color: #222;
+    border: 1px dotted #333;
+    font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
+    font-size: 10px;
+    padding: 4px;
+  }
+
   button {
     background-color: transparent;
     border: none;

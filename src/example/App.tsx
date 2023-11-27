@@ -101,9 +101,29 @@ function App() {
     window.addEventListener('resize', onResize)
 
     // Debug
-    if (IS_DEV) app.debugComponents.setScene(scene)
+    const onGetObject = (evt: any) => {
+      const child = scene.getObjectByProperty('uuid', evt.value);
+      if (child !== undefined) app.three.setObject(child);
+    };
+    const onUpdateObject = (evt: any) => {
+      console.log('onUpdateObject:', evt);
+      // const child = scene.getObjectByProperty('uuid', evt.value);
+      // if (child !== undefined) app.three.setObject(child);
+    };
+    const onGetScene = () => {
+      app.three.setScene(scene)
+    };
+    if (IS_DEV) {
+      debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
+      debugDispatcher.addEventListener(ToolEvents.GET_SCENE, onGetScene);
+      debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
+      app.three.setScene(scene)
+    }
 
     return () => {
+      debugDispatcher.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
+      debugDispatcher.removeEventListener(ToolEvents.GET_SCENE, onGetScene);
+      debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
       window.removeEventListener('resize', onResize)
       renderer.dispose()
       cancelAnimationFrame(raf)
