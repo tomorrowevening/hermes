@@ -7,6 +7,7 @@ import '../scss/_sceneHierarchy.scss';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
 import { SceneModes, SceneHierarchyState } from './types';
+import { app } from '@/example/constants';
 
 export default class SceneHierarchy extends Component {
   constructor(props: object | SceneHierarchyState) {
@@ -29,26 +30,24 @@ export default class SceneHierarchy extends Component {
     return (
       <div id="SceneHierarchy" key="SceneHierarchy">
         <ul id='options'>
-          {hasScene && this.mode === 'Hierarchy' && (
-            <>
-              <li className='icon'>
-                <button
-                  className='status'
-                  onClick={this.toggleOpen}
-                  style={{
-                    backgroundPositionX: this.componentState.open ? '-14px' : '2px',
-                  }}
-                >
-                  Toggle
-                </button>
-              </li>
-              <li className='icon'>
-                <button className='refresh' onClick={this.onRefresh}>
-                  Refresh
-                </button>
-              </li>
-            </>
+          {hasScene && (
+            <li className='icon'>
+              <button
+                className='status'
+                onClick={this.toggleOpen}
+                style={{
+                  backgroundPositionX: this.componentState.open ? '-14px' : '2px',
+                }}
+              >
+                Toggle
+              </button>
+            </li>
           )}
+          <li className='icon'>
+            <button className='refresh' onClick={this.onRefresh}>
+              Refresh
+            </button>
+          </li>
           <li className={this.mode === 'Hierarchy' ? 'selected' : ''}>
             <button onClick={() => { this.mode = 'Hierarchy'; }}>Hierarchy</button>
           </li>
@@ -69,7 +68,7 @@ export default class SceneHierarchy extends Component {
   // Private
 
   private onRefresh = () => {
-    debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: this.componentState.scene });
+    app.three.getScene();
   };
 
   private toggleOpen = () => {

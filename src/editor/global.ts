@@ -12,4 +12,5 @@ export const ToolEvents = {
   SET_SCENE: 'ToolEvents::setScene',
   GET_OBJECT: 'ToolEvents::getObject',
   SET_OBJECT: 'ToolEvents::setObject',
+  UPDATE_OBJECT: 'ToolEvents::updateObject',
 };

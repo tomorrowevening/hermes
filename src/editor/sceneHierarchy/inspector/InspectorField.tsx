@@ -10,7 +10,7 @@ export interface InspectorFieldProps {
   max?: number
   step?: number
   disabled?: boolean
-  onChange?: (value: any) => void
+  onChange?: (label: string, value: any) => void
 }
 
 export default function InspectorField(props: InspectorFieldProps) {
@@ -19,7 +19,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   const onChange = (evt: any) => {
     const value = evt.target.value;
     setFieldValue(value);
-    if (props.onChange !== undefined) props.onChange(value);
+    if (props.onChange !== undefined) props.onChange(props.label, value);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function InspectorField(props: InspectorFieldProps) {
           type="checkbox"
           disabled={props.disabled}
           onChange={onChange}
-          value={fieldValue}
+          checked={fieldValue}
         />
       )}
 

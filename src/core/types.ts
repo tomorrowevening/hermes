@@ -3,7 +3,7 @@
 export interface BroadcastData {
   target: ApplicationMode
   event: EditorEvent
-  data: any
+  data?: any
 }
 
 // Types
@@ -22,7 +22,10 @@ export type EditorEvent =
   | 'updateSheetObject'
   | 'updateTimeline'
 // Three
+  | 'getObject'
   | 'setObject'
+  | 'updateObject'
+  | 'getScene'
   | 'setScene'
 // GUI
   | 'addFolder'

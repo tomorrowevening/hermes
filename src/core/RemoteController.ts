@@ -8,18 +8,41 @@ import type { BroadcastData, EditorEvent } from './types';
 
 export default function RemoteController(app: Application) {
   let activeSheet: ISheet | undefined = undefined;
-
   const mode = app.editor ? 'editor' : 'app';
-  console.log('RemoteController:', mode);
 
   // Handlers
 
-  function handleApp(msg: BroadcastData) {
+  function handleAppBroadcast(msg: BroadcastData) {
     let value = undefined;
 
     switch (msg.event) {
       case 'custom':
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+
+      // Components
+      case 'selectComponent':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data });
+        break;
+      case 'draggableListUpdate':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data });
+        break;
+
+      // GUI
+      case 'addFolder':
+        app.components.get('debug')?.addFolder(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'bindObject':
+        app.components.get('debug')?.bind(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'updateBind':
+        app.components.get('debug')?.triggerBind(msg.data.id, msg.data.value);
+        break;
+      case 'addButton':
+        app.components.get('debug')?.button(msg.data.name, msg.data.callback, msg.data.parent);
+        break;
+      case 'clickButton':
+        app.components.get('debug')?.triggerButton(msg.data.id);
         break;
 
       // Theatre
@@ -47,37 +70,28 @@ export default function RemoteController(app: Application) {
         }
         break;
 
-      // GUI
-      case 'addFolder':
-        app.components.get('debug')?.addFolder(msg.data.name, msg.data.params, msg.data.parent);
+      // Three
+      case 'getScene':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.GET_SCENE });
         break;
-      case 'bindObject':
-        app.components.get('debug')?.bind(msg.data.name, msg.data.params, msg.data.parent);
+      case 'getObject':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
         break;
-      case 'updateBind':
-        app.components.get('debug')?.triggerBind(msg.data.id, msg.data.value);
-        break;
-      case 'addButton':
-        app.components.get('debug')?.button(msg.data.name, msg.data.callback, msg.data.parent);
-        break;
-      case 'clickButton':
-        app.components.get('debug')?.triggerButton(msg.data.id);
-        break;
-
-      // Components
-      case 'selectComponent':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data });
-        break;
-      case 'draggableListUpdate':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data });
+      case 'updateObject':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
         break;
     }
   }
 
-  function handleEditor(msg: BroadcastData) {
+  function handleEditorBroadcast(msg: BroadcastData) {
     switch (msg.event) {
       case 'custom':
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+
+      // Three
+      case 'setObject':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
         break;
       case 'setScene':
         debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
@@ -154,9 +168,9 @@ export default function RemoteController(app: Application) {
 
   app.listen((msg: BroadcastData) => {
     if (mode === 'app') {
-      handleApp(msg);
+      handleAppBroadcast(msg);
     } else {
-      handleEditor(msg);
+      handleEditorBroadcast(msg);
     }
   });
 

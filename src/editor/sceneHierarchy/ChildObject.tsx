@@ -2,10 +2,10 @@
 import { useState } from 'react';
 import { Object3D } from 'three';
 // Models
-import { debugDispatcher, ToolEvents } from '../global';
 import { ChildObjectProps } from './types';
 // Utils
 import { determineIcon } from './utils';
+import { app } from '@/example/constants';
 
 export default function ChildObject(props: ChildObjectProps) {
   const [open, setOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function ChildObject(props: ChildObjectProps) {
             left: hasChildren ? '20px' : '5px',
           }}
           onClick={() => {
-            debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: props.child });
+            app.three.getObject(props.child.uuid);
           }}
         >
           {props.child.name.length > 0

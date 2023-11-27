@@ -12,6 +12,10 @@ export interface InspectorGroupProps {
 export default function InspectorGroup(props: InspectorGroupProps) {
   const [expanded, setExpanded] = useState(props.expanded !== undefined ? props.expanded : false);
 
+  function onChange(label: string, value: any) {
+    console.log('onChange:', label, value);
+  }
+
   const children: any[] = [];
   props.items.forEach((child: InspectorFieldProps) => {
     children.push(
@@ -24,7 +28,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
         max={child.max}
         step={child.step}
         disabled={child.disabled}
-        onChange={child.onChange}
+        onChange={onChange}
       />
     );
   });
