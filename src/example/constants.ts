@@ -4,7 +4,8 @@ import RemoteTheatre from '@/core/remote/RemoteTheatre'
 import RemoteThree from '@/core/remote/RemoteThree'
 import RemoteTweakpane from '@/core/remote/RemoteTweakpane'
 
-export const IS_DEV = import.meta.env.DEV
+export const IS_DEV = true
+// export const IS_DEV = import.meta.env.DEV
 // export const app = new Application('Hermes', IS_DEV, 'editor')
 
 class CustomApp extends Application {
@@ -12,7 +13,7 @@ class CustomApp extends Application {
     super(name, debugEnabled, editorHashtag)
 
     // Add components
-    this.addComponent('theatre', new RemoteTheatre(this, 'RemoteApp'))
+    this.addComponent('theatre', new RemoteTheatre(this, 'RemoteApp', {}))
 
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this))
