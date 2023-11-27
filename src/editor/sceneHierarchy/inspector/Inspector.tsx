@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Euler, Matrix4, Vector3 } from "three";
 import { CoreComponentProps, RemoteObject } from "../types";
 import { ToolEvents, debugDispatcher } from "../../global";
+// import { app } from "@/example/constants";
 import './inspector.scss';
 import InspectorField from './InspectorField';
-import { app } from "@/example/constants";
-// import InspectorGroup from './InspectorGroup';
+import InspectorGroup from './InspectorGroup';
 
 export default function Inspector(props: CoreComponentProps) {
   const [lastRefresh, setLastRefresh] = useState(-1);
@@ -65,7 +65,7 @@ export default function Inspector(props: CoreComponentProps) {
           <InspectorField type="string" label="Name" value={currentObject.name} disabled={true} />
           <InspectorField type="string" label="Type" value={currentObject.type} disabled={true} />
           <InspectorField type="string" label="UUID" value={currentObject.uuid} disabled={true} />
-          <InspectorField
+          {/* <InspectorField
             type="boolean"
             label="Visible"
             value={currentObject.visible}
@@ -73,9 +73,9 @@ export default function Inspector(props: CoreComponentProps) {
               console.log('Send GUI change:', label, value);
               app.three.updateObject(currentObject.uuid, 'visible', value);
             }}
-          />
+          /> */}
           
-          {/* <InspectorGroup
+          <InspectorGroup
             title="Transform"
             items={[
               {
@@ -150,7 +150,7 @@ export default function Inspector(props: CoreComponentProps) {
               title="Material"
               items={materialItems}
             />
-          )} */}
+          )}
         </>
       )}
     </div>

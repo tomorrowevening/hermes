@@ -19,6 +19,9 @@ export interface MinimumObject {
 }
 export interface RemoteMaterial {
     type: string;
+    opacity: number;
+    transparent: boolean;
+    side: number;
 }
 export interface RemoteObject {
     name: string;
@@ -26,4 +29,5 @@ export interface RemoteObject {
     type: string;
     visible: boolean;
     matrix: number[];
+    material?: RemoteMaterial;
 }
