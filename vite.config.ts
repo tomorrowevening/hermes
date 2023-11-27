@@ -8,6 +8,7 @@ const dirname = __dirname
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  /*
   build: {
     lib: {
       entry: path.resolve(dirname, 'src/index.ts'),
@@ -42,6 +43,7 @@ export default defineConfig({
       }
     }
   },
+  */
   resolve: {
     alias: {
       '@': path.resolve(dirname, '/src'),

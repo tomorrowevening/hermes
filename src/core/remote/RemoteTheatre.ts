@@ -1,6 +1,7 @@
 // Libs
 import { getProject } from '@theatre/core';
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core';
+import {} from '@theatre/studio';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
