@@ -38,11 +38,11 @@ export default function InspectorGroup(props: InspectorGroupProps) {
       <button
         className='toggleBtn'
         onClick={() => { setExpanded(!expanded); }}
-        style={{ backgroundPositionY: `${expanded ? 0 : -13}px` }}
+        style={{ backgroundPositionY: `${expanded ? 1 : -10}px` }}
       >
         <h4>{props.title}</h4>
       </button>
-      <div className={expanded ? '' : 'hidden'}>
+      <div className={`fieldItems ${expanded ? '' : 'hidden'}`}>
         {children}
       </div>
     </div>

@@ -20,13 +20,7 @@ export default function Inspector(props: CoreComponentProps) {
   useEffect(() => {
     function onSelectItem(evt: any) {
       const obj = evt.value as RemoteObject;
-      setCurrentObject({
-        name: obj.name,
-        type: obj.type,
-        uuid: obj.uuid,
-        visible: obj.visible,
-        matrix: obj.matrix,
-      });
+      setCurrentObject(obj);
       setLastRefresh(Date.now());
     }
 
@@ -48,14 +42,32 @@ export default function Inspector(props: CoreComponentProps) {
   }
 
   const materialItems: any[] = [];
-  const hasMaterial = currentObject.type === 'Mesh';
+  const hasMaterial = currentObject.material !== undefined;
   if (hasMaterial) {
-    materialItems.push({
-      label: 'Type',
-      type: 'string',
-      value: 'ShaderMaterial',
-      disabled: true,
-    });
+    for (const i in currentObject.material) {
+      // @ts-ignore
+      const propType = typeof currentObject.material[i];
+      // @ts-ignore
+      const value = currentObject.material[i];
+      if (propType === 'boolean' || propType === 'number' || propType === 'string') {
+        materialItems.push({
+          label: i,
+          type: propType,
+          value: value,
+        });
+      } else if (propType === 'object') {
+        if (value.isColor) {
+          materialItems.push({
+            label: i,
+            type: 'color',
+            value: value,
+          });
+        }
+      } else if (value !== undefined) {
+        // @ts-ignore
+        console.log('other:', i, propType, value);
+      }
+    }
   }
 
   return (

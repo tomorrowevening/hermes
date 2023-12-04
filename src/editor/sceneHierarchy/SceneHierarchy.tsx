@@ -18,10 +18,12 @@ export default class SceneHierarchy extends Component {
       scene: null,
     } as SceneHierarchyState;
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.setScene);
+    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, this.onSelectItem);
   }
 
   componentWillUnmount(): void {
     debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, this.setScene);
+    debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, this.onSelectItem);
   }
 
   render(): ReactNode {
@@ -30,7 +32,7 @@ export default class SceneHierarchy extends Component {
     return (
       <div id="SceneHierarchy" key="SceneHierarchy">
         <ul id='options'>
-          {hasScene && (
+          {hasScene && this.mode === 'Hierarchy' && (
             <li className='icon'>
               <button
                 className='status'
@@ -43,11 +45,13 @@ export default class SceneHierarchy extends Component {
               </button>
             </li>
           )}
-          <li className='icon'>
-            <button className='refresh' onClick={this.onRefresh}>
-              Refresh
-            </button>
-          </li>
+          {this.mode === 'Hierarchy' && (
+            <li className='icon'>
+              <button className='refresh' onClick={this.onRefresh}>
+                Refresh
+              </button>
+            </li>
+          )}
           <li className={this.mode === 'Hierarchy' ? 'selected' : ''}>
             <button onClick={() => { this.mode = 'Hierarchy'; }}>Hierarchy</button>
           </li>
@@ -81,6 +85,10 @@ export default class SceneHierarchy extends Component {
     this.setState(() => ({
       scene: evt.value
     }));
+  };
+
+  private onSelectItem = () => {
+    this.mode = 'Inspector';
   };
 
   // Getters / Setters
