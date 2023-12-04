@@ -6,13 +6,18 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAABOCAYAAAC
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    height: 21px;
+    overflow: hidden;
     padding: 1px;
     label {
       margin: 0 10px;
-      width: max-content;
+      width: fit-content;
     }
     input {
-      flex: 50%;
+      block-size: 11px;
+      flex: 1%;
+      margin: 0;
+      padding: 4px;
       outline: none;
       &.min {
         height: 11px;
@@ -20,25 +25,31 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAABOCAYAAAC
         width: 30px;
         margin-right: 1px;
       }
+      &.color {
+        flex: none;
+        width: 60px;
+      }
     }
     input[type="checkbox"] {
       flex: none;
     }
+    input[type="color"] {
+      block-size: revert;
+      height: 21px;
+      padding-block: revert;
+      padding: 0;
+      margin: 0;
+    }
     input[type="number"], input[type="range"] {
       appearance: none;
       height: 11px;
-      margin: 0;
-      padding: 4px;
     }
     input[type="range"]::-webkit-slider-runnable-track {
       border: none;
-      margin: 0;
-      padding: 0;
     }
     input[type="range"]::-webkit-slider-thumb {
       appearance: none;
       background-color: #666;
-      padding: 0;
       height: 17px;
       width: 17px;
    }
@@ -55,21 +66,26 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAABOCAYAAAC
     .toggleBtn {
       background-color: #191919;
       background-image: $icon_folder;
+      background-position: 1px 1px;
       background-repeat: no-repeat;
-      background-size: 13px 26px;
+      background-size: 11px 22px;
       display: inline-block;
-      height: 17px;
+      height: 13px;
       opacity: 0.8;
       overflow: hidden;
       margin: 0 0 0 5px;
       padding-left: 20px;
       width: calc(100% - 7px);
-      height: 13px;
       transition: all 0.25s linear;
       &:hover {
         background-color: #222;
         opacity: 1;
       }
+    }
+    .fieldItems {
+      border-top: 1px dotted #333;
+      max-height: 200px;
+      overflow-y: auto;
     }
   }
 }

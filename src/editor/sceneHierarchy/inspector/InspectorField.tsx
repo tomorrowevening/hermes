@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color'
 
 export interface InspectorFieldProps {
   label: string
@@ -21,6 +21,10 @@ export default function InspectorField(props: InspectorFieldProps) {
     setFieldValue(value);
     if (props.onChange !== undefined) props.onChange(props.label, value);
   };
+
+  if (props.type === 'color') {
+    console.log(props.label, fieldValue);
+  }
 
   return (
     <div className="field">
@@ -66,6 +70,13 @@ export default function InspectorField(props: InspectorFieldProps) {
             step={props.step}
             onChange={onChange}
           />
+        </>
+      )}
+
+      {props.type === 'color' && (
+        <>
+          <input type="text" value={fieldValue.toString()} onChange={onChange} className="color" />
+          <input type="color" value={fieldValue} onChange={onChange} />
         </>
       )}
     </div>
