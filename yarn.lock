@@ -2181,6 +2181,11 @@ slash@^3.0.0:
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
+stats-gl@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/stats-gl/-/stats-gl-1.0.7.tgz#b7fa2e0d464c8b7f4c57aa6a9bae33ed09762abe"
+  integrity sha512-vZI82CjefSxLC1bjw36z28v0+QE9rJKymGlXtfWu+ipW70ZEAwa4EbO4LxluAfLfpqiaAS04NzpYBRLDeAwYWQ==
+
 string.prototype.matchall@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/string.prototype.matchall/-/string.prototype.matchall-4.0.8.tgz#3bf85722021816dcd1bf38bb714915887ca79fd3"
