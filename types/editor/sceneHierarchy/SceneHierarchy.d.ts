@@ -8,6 +8,7 @@ export default class SceneHierarchy extends Component {
     private onRefresh;
     private toggleOpen;
     private setScene;
+    private onSelectItem;
     get componentState(): SceneHierarchyState;
     get mode(): SceneModes;
     set mode(value: SceneModes);

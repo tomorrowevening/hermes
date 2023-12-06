@@ -22,10 +22,6 @@ export default function InspectorField(props: InspectorFieldProps) {
     if (props.onChange !== undefined) props.onChange(props.label, value);
   };
 
-  if (props.type === 'color') {
-    console.log(props.label, fieldValue);
-  }
-
   return (
     <div className="field">
       <label key="fieldLabel">{props.label}</label>

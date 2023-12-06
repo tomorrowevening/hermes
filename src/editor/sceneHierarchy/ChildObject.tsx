@@ -8,7 +8,7 @@ import { determineIcon } from './utils';
 import { app } from '@/example/constants';
 
 export default function ChildObject(props: ChildObjectProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   let container = null;
   let hasChildren = false;

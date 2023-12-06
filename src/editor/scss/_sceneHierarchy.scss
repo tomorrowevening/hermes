@@ -11,12 +11,38 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
 
 #SceneHierarchy {
   background-color: #0d0d0d;
-  border-top: 1px solid #111;
+  border: 1px solid #111;
+  max-height: 100%;
   min-height: $barHeight;
-  overflow: hidden;
+  overflow-y: auto;
   pointer-events: visible;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   width: 300px;
-  z-index: 100;
+
+  .section {
+    border-bottom: 1px dotted #333;
+    background-color: #111;
+    resize: vertical;
+    overflow-y: auto;
+    .icon {
+      height: $barHeight;
+      width: $barHeight;
+      button {
+        text-indent: -9999px;
+        white-space: nowrap;
+      }
+    }
+    h1 {
+      background-color: #111;
+      font-size: 12px;
+      margin: 0;
+      padding: 0 0 0 5px;
+      user-select: none;
+    }
+  }
 
   input {
     background-color: #222;
@@ -69,14 +95,6 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
       min-width: $barHeight;
       text-align: center;
       width: 100%;
-      &.icon {
-        height: $barHeight;
-        width: $barHeight;
-        button {
-          text-indent: -9999px;
-          white-space: nowrap;
-        }
-      }
       &:first-child {
         border-left: 1px solid #111;
       }
@@ -102,6 +120,8 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     background-position: 2px 2px;
     background-repeat: no-repeat;
     background-size: 16px 16px;
+    position: absolute;
+    right: 5px;
   }
 
   .childObject {
