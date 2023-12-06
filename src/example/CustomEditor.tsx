@@ -33,10 +33,8 @@ export default function CustomEditor() {
             })
           }}
         />
-      ]}
-      footer={[
+      ]}>
         <SceneHierarchy key="SceneHierarchy" />
-      ]}
-      />
+      </Editor>
   )
 }

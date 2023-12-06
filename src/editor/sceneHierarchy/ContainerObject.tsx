@@ -7,5 +7,5 @@ export default function ContainerObject(props: ChildObjectProps) {
   props.child.children.map((child: Object3D) => {
     children.push(<ChildObject child={child} key={Math.random()} />);
   });
-  return <div className={`scene ${props.class}`}>{children}</div>;
+  return <div className={`scene ${props.class !== undefined ? props.class : ''}`}>{children}</div>;
 }
