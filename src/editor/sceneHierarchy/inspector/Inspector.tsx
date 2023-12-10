@@ -88,7 +88,7 @@ export default function Inspector(props: CoreComponentProps) {
           /> */}
           
           <InspectorGroup
-            title="Transform"
+            label="Transform"
             items={[
               {
                 label: 'Visible',
@@ -159,7 +159,7 @@ export default function Inspector(props: CoreComponentProps) {
           />
           {hasMaterial && (
             <InspectorGroup
-              title="Material"
+              label="Material"
               items={materialItems}
             />
           )}

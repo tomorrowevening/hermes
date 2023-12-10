@@ -2,7 +2,7 @@ import { useState } from 'react';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
 
 export interface InspectorGroupProps {
-  title: string
+  label: string
   expanded?: boolean
   items: InspectorFieldProps[]
 }
@@ -38,7 +38,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
         onClick={() => { setExpanded(!expanded); }}
         style={{ backgroundPositionY: `${expanded ? 1 : -10}px` }}
       >
-        <h4>{props.title}</h4>
+        <h4>{props.label}</h4>
       </button>
       <div className={`fieldItems ${expanded ? '' : 'hidden'}`}>
         {children}
