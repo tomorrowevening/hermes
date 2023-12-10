@@ -1,3 +1,4 @@
+import { colorToHex } from "@/editor/utils";
 import { useState } from "react";
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color'
@@ -14,10 +15,15 @@ export interface InspectorFieldProps {
 }
 
 export default function InspectorField(props: InspectorFieldProps) {
-  const [fieldValue, setFieldValue] = useState(props.value);
+  let propsValue = props.value;
+  if (props.value.isColor !== undefined) {
+    propsValue = colorToHex(props.value);
+  }
+  const [fieldValue, setFieldValue] = useState(propsValue);
 
   const onChange = (evt: any) => {
-    const value = evt.target.value;
+    let value = evt.target.value;
+    if (props.type === 'boolean') value = evt.target.checked;
     setFieldValue(value);
     if (props.onChange !== undefined) props.onChange(props.label, value);
   };

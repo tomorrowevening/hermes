@@ -35,6 +35,10 @@ export default class SceneHierarchy extends Component {
     debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, this.onSelectItem);
   }
 
+  componentDidMount(): void {
+    this.onRefresh();
+  }
+
   componentWillUnmount(): void {
     debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, this.setScene);
     debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, this.onSelectItem);

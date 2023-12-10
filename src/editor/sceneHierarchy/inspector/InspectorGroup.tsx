@@ -7,8 +7,6 @@ export interface InspectorGroupProps {
   items: InspectorFieldProps[]
 }
 
-// children?: JSX.Element | JSX.Element[]
-
 export default function InspectorGroup(props: InspectorGroupProps) {
   const [expanded, setExpanded] = useState(props.expanded !== undefined ? props.expanded : false);
 
