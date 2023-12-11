@@ -1,4 +1,4 @@
-import { Euler, Matrix4, Vector3 } from 'three';
+import { Color, Euler, Matrix4, Vector3 } from 'three';
 // import InspectorField from './InspectorField';
 import InspectorGroup from './InspectorGroup';
 import { RemoteMaterial, RemoteObject } from "../types";
@@ -15,7 +15,7 @@ export function inspectCamera(): any[] {
 
 // Materials
 
-export function inspectMaterialItems(material: RemoteMaterial): any[] {
+export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
 	const items: any[] = [];
 	for (const i in material) {
 		// @ts-ignore
@@ -25,15 +25,23 @@ export function inspectMaterialItems(material: RemoteMaterial): any[] {
 		if (propType === 'boolean' || propType === 'number' || propType === 'string') {
 			items.push({
 				label: i,
+				prop: i,
 				type: propType,
 				value: value,
+				onChange: (prop: string, value: any) => {
+					three.updateObject(object.uuid, `material.${prop}`, Number(value));
+				},
 			});
 		} else if (propType === 'object') {
 			if (value.isColor) {
 				items.push({
 					label: i,
+					prop: i,
 					type: 'color',
 					value: value,
+					onChange: (prop: string, value: any) => {
+						three.updateObject(object.uuid, `material.${prop}`, new Color(value));
+					},
 				});
 			}
 		} else if (value !== undefined) {
@@ -41,10 +49,18 @@ export function inspectMaterialItems(material: RemoteMaterial): any[] {
 			console.log('other:', i, propType, value);
 		}
 	}
+	// items.push({
+	// 	label: 'Update Material',
+	// 	type: 'button',
+	// 	onChange: (prop: string) => {
+	// 		console.log('clicked!', prop);
+	// 	},
+	// });
 	return items;
 }
-
-export function InspectMaterial(material: RemoteMaterial | RemoteMaterial[]): any {
+// RemoteMaterial | RemoteMaterial[]
+export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
+	const material = object.material!;
 	if (Array.isArray(material)) {
 		const items: any[] = [];
 		const total = material.length;
@@ -52,7 +68,7 @@ export function InspectMaterial(material: RemoteMaterial | RemoteMaterial[]): an
 			items.push(
 				<InspectorGroup
 					title={`Material ${i}`}
-					items={inspectMaterialItems(material[i])}
+					items={inspectMaterialItems(material[i], object, three)}
 				/>
 			);
 		}
@@ -61,7 +77,7 @@ export function InspectMaterial(material: RemoteMaterial | RemoteMaterial[]): an
 		return (
 			<InspectorGroup
 				title="Material"
-				items={inspectMaterialItems(material)}
+				items={inspectMaterialItems(material, object, three)}
 			/>
 		);
 	}

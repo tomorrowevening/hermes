@@ -1,13 +1,13 @@
 import { colorToHex } from "@/editor/utils";
 import { useEffect, useRef, useState } from "react";
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button'
 
 export interface InspectorFieldProps {
   label: string
-  prop: string
-  value: any
   type: InspectorFieldType
+  prop?: string
+  value?: any
   min?: number
   max?: number
   step?: number
@@ -17,8 +17,10 @@ export interface InspectorFieldProps {
 
 export default function InspectorField(props: InspectorFieldProps) {
   let propsValue = props.value;
-  if (props.value.isColor !== undefined) {
-    propsValue = colorToHex(props.value);
+  if (propsValue !== undefined) {
+    if (propsValue.isColor !== undefined) {
+      propsValue = colorToHex(props.value);
+    }
   }
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLLabelElement>(null);
@@ -28,7 +30,7 @@ export default function InspectorField(props: InspectorFieldProps) {
     let value = evt.target.value;
     if (props.type === 'boolean') value = evt.target.checked;
     setFieldValue(value);
-    if (props.onChange !== undefined) props.onChange(props.prop, value);
+    if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, value);
   };
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function InspectorField(props: InspectorFieldProps) {
       const value = valueStart + delta;
       if (inputRef.current !== null) inputRef.current.value = value.toString();
       // setFieldValue(value);
-      if (props.onChange !== undefined) props.onChange(props.prop, value);
+      if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, value);
     };
     const onMouseUp = () => {
       mouseDown = false;
@@ -70,7 +72,9 @@ export default function InspectorField(props: InspectorFieldProps) {
 
   return (
     <div className="field">
-      <label key="fieldLabel" ref={labelRef}>{props.label}</label>
+      {props.type !== 'button' && (
+        <label key="fieldLabel" ref={labelRef}>{props.label}</label>
+      )}
       {props.type === 'string' && (
         <input
           type="text"
@@ -121,6 +125,16 @@ export default function InspectorField(props: InspectorFieldProps) {
           <input type="text" value={fieldValue.toString()} onChange={onChange} className="color" />
           <input type="color" value={fieldValue} onChange={onChange} />
         </>
+      )}
+
+      {props.type === 'button' && (
+        <button
+          onClick={() => {
+            if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, true);
+          }}
+        >
+          {props.label}
+        </button>
       )}
     </div>
   );

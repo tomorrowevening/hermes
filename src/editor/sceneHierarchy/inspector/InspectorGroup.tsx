@@ -8,7 +8,7 @@ export interface InspectorGroupProps {
 }
 
 export default function InspectorGroup(props: InspectorGroupProps) {
-  const [expanded, setExpanded] = useState(props.expanded !== undefined ? props.expanded : false);
+  const [expanded, setExpanded] = useState(props.expanded !== undefined ? props.expanded : true);
 
   function onChange(label: string, value: any) {
     console.log('onChange:', label, value);
