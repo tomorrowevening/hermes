@@ -10,15 +10,12 @@ import { app } from '@/example/constants';
 export default function ChildObject(props: ChildObjectProps) {
   const [open, setOpen] = useState(true);
 
-  let container = null;
-  let hasChildren = false;
+  const hasChildren = props.child.children.length > 0;
+  const children: Array<any> = [];
   if (props.child.children.length > 0) {
-    hasChildren = true;
-    const children: Array<any> = [];
     props.child.children.map((child: Object3D) => {
       children.push(<ChildObject child={child} key={Math.random()} />);
     });
-    container = <div className={`container ${!open ? 'closed' : ''}`}>{children}</div>;
   }
 
   return (
@@ -50,7 +47,11 @@ export default function ChildObject(props: ChildObjectProps) {
         </button>
         <div className={`icon ${determineIcon(props.child)}`}></div>
       </div>
-      {container}
+      <div className={open ? 'open' : ''}>
+        <div className="container">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

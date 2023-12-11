@@ -211,16 +211,24 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
       white-space: nowrap;
     }
 
-    .container {
-      padding-left: 5px;
-      height: auto;
-      overflow-x: hidden;
-      overflow-y: auto;
-      max-height: $maxHeight;
-
-      &.closed {
-        height: 0;
-        overflow: hidden;
+    > div {
+      display: grid; 
+      grid-template-rows: 0fr;
+      transition: 0.33s grid-template-rows cubic-bezier(0.645, 0.045, 0.355, 1);
+      &.open {
+        grid-template-rows: 1fr;
+      }
+      .container {
+        padding-left: 5px;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: $maxHeight;
+  
+        &.closed {
+          height: 0;
+          overflow: hidden;
+        }
       }
     }
 
