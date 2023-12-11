@@ -1,4 +1,4 @@
-import Application from '../Application'
+import Application from '../Application';
 
 /**
  * Base class for remote-related extensions

@@ -22,11 +22,25 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
   bottom: 0;
   width: 300px;
 
-  .section {
+  .accordion {
     border-bottom: 1px dotted #333;
     background-color: #111;
+    line-height: 0;
     resize: vertical;
     overflow-y: auto;
+
+    > div {
+      display: grid; 
+      grid-template-rows: 0fr;
+      transition: 0.33s grid-template-rows cubic-bezier(0.645, 0.045, 0.355, 1);
+      > div {
+        overflow: hidden;
+      }
+      &.open {
+        grid-template-rows: 1fr;
+      }
+    }
+
     .icon {
       height: $barHeight;
       width: $barHeight;
@@ -35,12 +49,32 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
         white-space: nowrap;
       }
     }
-    h1 {
+
+    .toggle {
       background-color: #111;
+      display: inline-block;
       font-size: 12px;
+      font-weight: bold;
       margin: 0;
-      padding: 0 0 0 5px;
+      padding: 0;
+      position: relative;
       user-select: none;
+      width: 100%;
+      height: 20px;
+      transition: background-color 0.2s linear;
+      &:hover {
+        background-color: #191919;
+      }
+      p {
+        margin: 0;
+        padding: 0;
+      }
+      .label {
+        display: inline;
+        position: absolute;
+        left: 25px;
+        top: 3px;
+      }
     }
   }
 
@@ -102,9 +136,14 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
   }
 
   .status, .refresh {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     width: $barHeight;
     height: $barHeight;
+    text-indent: -9999px;
+    white-space: nowrap;
   }
 
   .status {
@@ -112,6 +151,9 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     background-position-x: 2px;
     background-position-y: 2px;
     background-size: 32px 16px;
+    &.open {
+      background-position-x: 18px;
+    }
   }
 
   .refresh {
@@ -169,16 +211,24 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
       white-space: nowrap;
     }
 
-    .container {
-      padding-left: 5px;
-      height: auto;
-      overflow-x: hidden;
-      overflow-y: auto;
-      max-height: $maxHeight;
-
-      &.closed {
-        height: 0;
-        overflow: hidden;
+    > div {
+      display: grid; 
+      grid-template-rows: 0fr;
+      transition: 0.33s grid-template-rows cubic-bezier(0.645, 0.045, 0.355, 1);
+      &.open {
+        grid-template-rows: 1fr;
+      }
+      .container {
+        padding-left: 5px;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: $maxHeight;
+  
+        &.closed {
+          height: 0;
+          overflow: hidden;
+        }
       }
     }
 

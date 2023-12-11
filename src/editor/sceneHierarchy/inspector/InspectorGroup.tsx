@@ -20,13 +20,20 @@ export default function InspectorGroup(props: InspectorGroupProps) {
       <InspectorField
         key={Math.random()}
         label={child.label}
+        prop={child.prop}
         value={child.value}
         type={child.type}
         min={child.min}
         max={child.max}
         step={child.step}
         disabled={child.disabled}
-        onChange={onChange}
+        onChange={(prop: string, value: any) => {
+          if (child.onChange !== undefined) {
+            child.onChange(prop, value);
+          } else {
+            onChange(prop, value);
+          }
+        }}
       />
     );
   });
@@ -36,7 +43,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
       <button
         className='toggleBtn'
         onClick={() => { setExpanded(!expanded); }}
-        style={{ backgroundPositionY: `${expanded ? 1 : -10}px` }}
+        style={{ backgroundPositionY: `${expanded ? 0 : -30}px` }}
       >
         <h4>{props.title}</h4>
       </button>

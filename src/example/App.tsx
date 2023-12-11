@@ -1,6 +1,6 @@
 // Libs
 import { CSSProperties, useEffect, useRef } from 'react'
-import { Mesh, MeshNormalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer } from 'three'
+import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer } from 'three'
 import { types } from '@theatre/core'
 // Models
 import { app, IS_DEV } from './constants'
@@ -71,17 +71,29 @@ function App() {
 
     // World
 
+    
     const world = new Object3D()
     world.name = 'world'
     scene.add(world)
+    
+    const sun = new DirectionalLight();
+    sun.name = 'sun';
+    sun.position.set(100, 100, 50);
+    world.add(sun);
 
-    const mesh = new Mesh(new SphereGeometry(100), new MeshNormalMaterial())
+    const mesh = new Mesh(new SphereGeometry(50), new MeshNormalMaterial())
     mesh.name = 'sphere'
     world.add(mesh)
-    
-    const test = new Object3D()
-    test.name = 'test'
-    mesh.add(test)
+
+    const mesh2 = new Mesh(new SphereGeometry(50), new MeshBasicMaterial())
+    mesh2.name = 'sphere2'
+    mesh2.position.x = 100;
+    world.add(mesh2);
+
+    const mesh3 = new Mesh(new SphereGeometry(50), new MeshPhysicalMaterial())
+    mesh3.name = 'sphere3'
+    mesh3.position.x = -100;
+    world.add(mesh3);
 
     // Start RAF
     let raf = -1
@@ -106,9 +118,35 @@ function App() {
       if (child !== undefined) app.three.setObject(child);
     };
     const onUpdateObject = (evt: any) => {
-      console.log('onUpdateObject:', evt);
-      // const child = scene.getObjectByProperty('uuid', evt.value);
-      // if (child !== undefined) app.three.setObject(child);
+      const msg = evt.value;
+      const { key, value, uuid } = msg;
+      const child = scene.getObjectByProperty('uuid', uuid);
+      if (child !== undefined) {
+        const keys = key.split('.');
+        const total = keys.length;
+        switch (total) {
+          case 1:
+            // @ts-ignore
+            child[key] = value;
+            break;
+          case 2:
+            // @ts-ignore
+            child[keys[0]][keys[1]] = value;
+            break;
+          case 3:
+            // @ts-ignore
+            child[keys[0]][keys[1]][keys[2]] = value;
+            break;
+          case 4:
+            // @ts-ignore
+            child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
+            break;
+          case 5:
+            // @ts-ignore
+            child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
+            break;
+        }
+      }
     };
     const onGetScene = () => {
       app.three.setScene(scene)
