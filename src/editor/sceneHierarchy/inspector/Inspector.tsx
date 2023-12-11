@@ -20,7 +20,6 @@ export default function Inspector(props: CoreComponentProps) {
   useEffect(() => {
     function onSelectItem(evt: any) {
       const obj = evt.value as RemoteObject;
-      console.log(obj);
       setCurrentObject(obj);
       setLastRefresh(Date.now());
     }
@@ -71,7 +70,7 @@ export default function Inspector(props: CoreComponentProps) {
           {/* Transform */}
           {InspectTransform(currentObject, app.three)}
           {/* Material */}
-          {currentObject.material !== undefined ? InspectMaterial(currentObject.material) : null}
+          {currentObject.material !== undefined ? InspectMaterial(currentObject, app.three) : null}
           {/* Camera */}
           {isCamera ? null : null}
         </>

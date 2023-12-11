@@ -56,7 +56,7 @@ function App() {
     // Scene
 
     const scene = new Scene()
-    scene.name = 'Example'
+    scene.name = 'Example Scene'
 
     // Cameras
 
@@ -70,7 +70,6 @@ function App() {
     cameras.add(camera)
 
     // World
-
     
     const world = new Object3D()
     world.name = 'world'
@@ -78,19 +77,19 @@ function App() {
     
     const sun = new DirectionalLight();
     sun.name = 'sun';
-    sun.position.set(100, 100, 50);
+    sun.position.set(0, 50, 200);
     world.add(sun);
 
     const mesh = new Mesh(new SphereGeometry(50), new MeshNormalMaterial())
     mesh.name = 'sphere'
     world.add(mesh)
 
-    const mesh2 = new Mesh(new SphereGeometry(50), new MeshBasicMaterial())
+    const mesh2 = new Mesh(new SphereGeometry(50), new MeshBasicMaterial({ transparent: true }))
     mesh2.name = 'sphere2'
     mesh2.position.x = 100;
     world.add(mesh2);
 
-    const mesh3 = new Mesh(new SphereGeometry(50), new MeshPhysicalMaterial())
+    const mesh3 = new Mesh(new SphereGeometry(50), new MeshPhysicalMaterial({ transparent: true }))
     mesh3.name = 'sphere3'
     mesh3.position.x = -100;
     world.add(mesh3);
@@ -124,6 +123,8 @@ function App() {
       if (child !== undefined) {
         const keys = key.split('.');
         const total = keys.length;
+        // console.log('update obj:', uuid, keys, total, value, typeof value);
+        // console.log(child);
         switch (total) {
           case 1:
             // @ts-ignore
@@ -177,7 +178,7 @@ function App() {
 
       // Tweakpane Example
 
-      const testFolder = app.debug.addFolder('Test')
+      const testFolder = app.debug.addFolder('Test Folder')
 
       app.debug.button('Test Button', () => {
         console.log('Test button works!')

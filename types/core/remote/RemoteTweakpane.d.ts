@@ -3,9 +3,6 @@ import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import type { DataUpdateCallback, VoidCallback } from '../types';
 export default class RemoteTweakpane extends BaseRemote {
-    appTab: any;
-    systemTab: any;
-    utilsTab: any;
     bindCBs: Map<string, DataUpdateCallback>;
     buttonCBs: Map<string, VoidCallback>;
     protected pane?: Pane | undefined;

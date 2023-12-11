@@ -1,9 +1,9 @@
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color';
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button';
 export interface InspectorFieldProps {
     label: string;
-    prop: string;
-    value: any;
     type: InspectorFieldType;
+    prop?: string;
+    value?: any;
     min?: number;
     max?: number;
     step?: number;

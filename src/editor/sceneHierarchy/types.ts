@@ -59,7 +59,13 @@ export interface RemoteMaterial {
   toneMapped: boolean
   transparent: boolean
   type: string
+  uuid: string
   vertexColors: boolean
+  // Colors
+  color?: Color
+  attenuationColor?: Color
+  sheenColor?: Color
+  specularColor?: Color
 }
 
 export interface RemoteObject {

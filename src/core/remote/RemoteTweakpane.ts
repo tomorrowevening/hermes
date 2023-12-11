@@ -8,9 +8,6 @@ import { noop } from '../types';
 import type { DataUpdateCallback, VoidCallback } from '../types';
 
 export default class RemoteTweakpane extends BaseRemote {
-  appTab: any = undefined;
-  systemTab: any = undefined;
-  utilsTab: any = undefined;
   bindCBs: Map<string, DataUpdateCallback>;
   buttonCBs: Map<string, VoidCallback>;
 
@@ -30,14 +27,6 @@ export default class RemoteTweakpane extends BaseRemote {
   protected createGUI() {
     this.pane = new Pane({ title: 'GUI' });
     this.pane.registerPlugin(EssentialsPlugin);
-
-    // @ts-ignore
-    const tabs = this.pane.addTab({
-      pages: [{ title: 'App' }, { title: 'System' }, { title: 'Tools' }],
-    });
-    this.appTab = tabs.pages[0];
-    this.systemTab = tabs.pages[1];
-    this.utilsTab = tabs.pages[2];
   }
 
   override dispose(): void {
@@ -47,13 +36,7 @@ export default class RemoteTweakpane extends BaseRemote {
     this.editorCallbacks = 0;
 
     if (this.app.editor) {
-      this.appTab?.dispose();
-      this.systemTab?.dispose();
-      this.utilsTab?.dispose();
       this.pane?.dispose();
-      this.appTab = undefined;
-      this.systemTab = undefined;
-      this.utilsTab = undefined;
       this.pane = undefined;
     }
   }
@@ -62,7 +45,7 @@ export default class RemoteTweakpane extends BaseRemote {
     if (this.app.editor) {
       if (this.pane === undefined) this.createGUI();
 
-      const container = parent !== undefined ? parent : this.appTab;
+      const container = parent !== undefined ? parent : this.pane;
       return container.addFolder({
         title: name,
         ...params,
@@ -94,7 +77,7 @@ export default class RemoteTweakpane extends BaseRemote {
     if (this.app.editor) {
       if (this.pane === undefined) this.createGUI();
 
-      const container = parent !== undefined ? parent : this.appTab;
+      const container = parent !== undefined ? parent : this.pane;
       container
         .addBinding(obj, name, params)
         .on('change', (evt: any) => {
@@ -138,7 +121,7 @@ export default class RemoteTweakpane extends BaseRemote {
     if (this.app.editor) {
       if (this.pane === undefined) this.createGUI();
 
-      const container = parent !== undefined ? parent : this.appTab;
+      const container = parent !== undefined ? parent : this.pane;
       container
         .addButton({ title: name })
         .on('click', () => {
@@ -174,7 +157,7 @@ export default class RemoteTweakpane extends BaseRemote {
   // Inspector
 
   createInspector() {
-    this.inspectorFolder = this.addFolder('Inspector', this.utilsTab);
+    this.inspectorFolder = this.addFolder('Inspector', this.pane);
   }
 
   clearInspector() {
