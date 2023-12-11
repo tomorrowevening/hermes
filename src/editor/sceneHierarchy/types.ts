@@ -8,11 +8,7 @@ export interface ChildObjectProps extends CoreComponentProps {
   child: Object3D
 }
 
-export type SceneModes = 'Hierarchy' | 'Inspector'
-
 export interface SceneHierarchyState {
-  mode: SceneModes
-  open: boolean
   scene: Object3D | null
 }
 

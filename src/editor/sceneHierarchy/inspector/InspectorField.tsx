@@ -5,13 +5,14 @@ export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'co
 
 export interface InspectorFieldProps {
   label: string
+  prop: string
   value: any
   type: InspectorFieldType
   min?: number
   max?: number
   step?: number
   disabled?: boolean
-  onChange?: (label: string, value: any) => void
+  onChange?: (prop: string, value: any) => void
 }
 
 export default function InspectorField(props: InspectorFieldProps) {
@@ -25,7 +26,7 @@ export default function InspectorField(props: InspectorFieldProps) {
     let value = evt.target.value;
     if (props.type === 'boolean') value = evt.target.checked;
     setFieldValue(value);
-    if (props.onChange !== undefined) props.onChange(props.label, value);
+    if (props.onChange !== undefined) props.onChange(props.prop, value);
   };
 
   return (
