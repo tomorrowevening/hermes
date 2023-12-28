@@ -55,7 +55,7 @@ function stripMaterialData(material: Material): RemoteMaterial {
         materialData[i] = value;
         break;
       case 'object':
-        if (value !== null && value.isColor !== undefined) {
+        if (value !== null) {
           // @ts-ignore
           materialData[i] = value;
         }

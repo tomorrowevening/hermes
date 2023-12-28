@@ -3,11 +3,11 @@ import { CSSProperties, useEffect, useRef } from 'react'
 import { types } from '@theatre/core'
 import { WebGLRenderer } from 'three';
 // Models
-import { app, IS_DEV } from './constants'
+import { app, IS_DEV } from '../constants'
 // Components
 import './App.css'
-import ExampleScene from './ExampleScene';
-import { debugDispatcher, ToolEvents } from '../editor/global';
+import ExampleScene from '../three/ExampleScene';
+import { debugDispatcher, ToolEvents } from '../../editor/global';
 
 const elementStyle: CSSProperties = {
   background: '#FF0000',

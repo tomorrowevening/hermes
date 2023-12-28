@@ -52,6 +52,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 		if (!acceptedMaterialNames(i)) continue;
 		// @ts-ignore
 		const propType = typeof material[i];
+		console.log(material.name, i, propType);
 		// @ts-ignore
 		const value = material[i];
 		if (propType === 'boolean' || propType === 'number' || propType === 'string') {
@@ -75,6 +76,34 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 						three.updateObject(object.uuid, `material.${prop}`, new Color(value));
 					},
 				});
+			} else {
+				// console.log('>>>> not sending:', i, value);
+				for (const n in value) {
+					const propValue = value[n];
+					console.log('> try:', n, propValue);
+					switch (typeof propValue) {
+						case 'boolean':
+						case 'number':
+						case 'string':
+							console.log('>> add this:', n);
+							break;
+						case 'object':
+							console.log('>> add this object:', n);
+							for (const c in propValue) {
+								console.log('>>', c, propValue[c], typeof propValue[c]);
+							}
+							break;
+					}
+				}
+				// items.push({
+				// 	label: i,
+				// 	prop: i,
+				// 	type: 'color',
+				// 	value: value,
+				// 	onChange: (prop: string, value: any) => {
+				// 		three.updateObject(object.uuid, `material.${prop}`, new Color(value));
+				// 	},
+				// });
 			}
 		} else if (value !== undefined) {
 			// @ts-ignore
