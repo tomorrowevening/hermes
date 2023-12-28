@@ -15,9 +15,41 @@ export function inspectCamera(): any[] {
 
 // Materials
 
+export function acceptedMaterialNames(name: string): boolean {
+  return !(
+		name === 'alphaHash' ||
+    name === 'alphaToCoverage' ||
+    name === 'attenuationDistance' ||
+    name === 'colorWrite' ||
+    name === 'combine' ||
+    name === 'depthFunc' ||
+    name === 'forceSinglePass' ||
+    name === 'glslVersion' ||
+    name === 'linewidth' ||
+    name === 'normalMapType' ||
+    name === 'precision' ||
+    name === 'premultipliedAlpha' ||
+    name === 'shadowSide' ||
+    name === 'side' ||
+    name === 'toneMapped' ||
+    name === 'uniformsNeedUpdate' ||
+    name === 'vertexColors' ||
+    name === 'version' ||
+    name === 'wireframeLinecap' ||
+    name === 'wireframeLinejoin' ||
+    name === 'wireframeLinewidth' ||
+    name.slice(0, 5) === 'blend' ||
+    name.slice(0, 4) === 'clip' ||
+    name.slice(0, 7) === 'polygon' ||
+    name.slice(0, 7) === 'stencil' ||
+    name.slice(0, 2) === 'is'
+  );
+}
+
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
 	const items: any[] = [];
 	for (const i in material) {
+		if (!acceptedMaterialNames(i)) continue;
 		// @ts-ignore
 		const propType = typeof material[i];
 		// @ts-ignore
@@ -49,6 +81,11 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 			console.log('other:', i, propType, value);
 		}
 	}
+	items.sort((a: any, b: any) => {
+		if (a.label < b.label) return -1;
+		if (a.label > b.label) return 1;
+		return 0;
+	});
 	// items.push({
 	// 	label: 'Update Material',
 	// 	type: 'button',

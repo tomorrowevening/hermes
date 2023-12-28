@@ -1,12 +1,12 @@
 // Libs
 import { CSSProperties, useEffect, useRef } from 'react'
-import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer } from 'three'
 import { types } from '@theatre/core'
 // Models
 import { app, IS_DEV } from './constants'
 // Components
 import './App.css'
-import { debugDispatcher, ToolEvents } from '../editor/global'
+import ExampleScene from './ExampleScene';
+import { debugDispatcher, ToolEvents } from '../editor/global';
 
 const elementStyle: CSSProperties = {
   background: '#FF0000',
@@ -18,6 +18,8 @@ const elementStyle: CSSProperties = {
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!)
   app.theatre?.sheet('App')
+
+  let exampleScene: ExampleScene;
 
   // Theatre
   useEffect(() => {
@@ -47,64 +49,18 @@ function App() {
   useEffect(() => {
     if (app.editor) return
 
-    // Renderer
-
-    const renderer = new WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio(devicePixelRatio)
-    elementRef.current.parentElement!.appendChild(renderer.domElement)
-
-    // Scene
-
-    const scene = new Scene()
-    scene.name = 'Example Scene'
-
-    // Cameras
-
-    const cameras = new Object3D()
-    cameras.name = 'cameras'
-    scene.add(cameras)
-
-    const camera = new PerspectiveCamera(60, 1, 1, 2000)
-    camera.name = 'mainCamera'
-    camera.position.z = 300
-    cameras.add(camera)
-
-    // World
-    
-    const world = new Object3D()
-    world.name = 'world'
-    scene.add(world)
-    
-    const sun = new DirectionalLight();
-    sun.name = 'sun';
-    sun.position.set(0, 50, 200);
-    world.add(sun);
-
-    const mesh = new Mesh(new SphereGeometry(50), new MeshNormalMaterial())
-    mesh.name = 'sphere'
-    world.add(mesh)
-
-    const mesh2 = new Mesh(new SphereGeometry(50), new MeshBasicMaterial({ transparent: true }))
-    mesh2.name = 'sphere2'
-    mesh2.position.x = 100;
-    world.add(mesh2);
-
-    const mesh3 = new Mesh(new SphereGeometry(50), new MeshPhysicalMaterial({ transparent: true }))
-    mesh3.name = 'sphere3'
-    mesh3.position.x = -100;
-    world.add(mesh3);
+    exampleScene = new ExampleScene();
+    elementRef.current.parentElement!.appendChild(exampleScene.renderer.domElement)
 
     // Start RAF
     let raf = -1
     const onResize = () => {
       const width = window.innerWidth
       const height = window.innerHeight
-      camera.aspect = width / height
-      camera.updateProjectionMatrix()
-      renderer.setSize(width, height)
+      exampleScene.resize(width, height)
     }
     const onUpdate = () => {
-      renderer.render(scene, camera)
+      exampleScene.draw();
       raf = requestAnimationFrame(onUpdate)
     }
     onResize()
@@ -113,13 +69,13 @@ function App() {
 
     // Debug
     const onGetObject = (evt: any) => {
-      const child = scene.getObjectByProperty('uuid', evt.value);
+      const child = exampleScene.scene.getObjectByProperty('uuid', evt.value);
       if (child !== undefined) app.three.setObject(child);
     };
     const onUpdateObject = (evt: any) => {
       const msg = evt.value;
       const { key, value, uuid } = msg;
-      const child = scene.getObjectByProperty('uuid', uuid);
+      const child = exampleScene.scene.getObjectByProperty('uuid', uuid);
       if (child !== undefined) {
         const keys = key.split('.');
         const total = keys.length;
@@ -150,13 +106,13 @@ function App() {
       }
     };
     const onGetScene = () => {
-      app.three.setScene(scene)
+      app.three.setScene(exampleScene.scene)
     };
     if (IS_DEV) {
       debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
       debugDispatcher.addEventListener(ToolEvents.GET_SCENE, onGetScene);
       debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      app.three.setScene(scene)
+      app.three.setScene(exampleScene.scene)
     }
 
     return () => {
@@ -164,7 +120,7 @@ function App() {
       debugDispatcher.removeEventListener(ToolEvents.GET_SCENE, onGetScene);
       debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
       window.removeEventListener('resize', onResize)
-      renderer.dispose()
+      exampleScene.renderer.dispose()
       cancelAnimationFrame(raf)
       raf = -1
     }
