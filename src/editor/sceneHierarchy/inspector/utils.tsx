@@ -80,21 +80,18 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 				// console.log('>>>> not sending:', i, value);
 				for (const n in value) {
 					const propValue = value[n];
-					console.log('> try:', n, propValue);
+					// console.log('> try:', n, propValue);
 					switch (typeof propValue) {
 						case 'boolean':
 						case 'number':
 						case 'string':
-							console.log('>> add this:', n);
+							console.log('>> add this b/n/s:', n);
 							break;
 						case 'object':
 							console.log('>> add this object:', n);
 							for (const c in propValue) {
-								// console.log('>>>', c, propValue[c], typeof propValue[c]);
 								// @ts-ignore
-								console.log('>>>', i, n, value, c);
-								// @ts-ignore
-								console.log(material[i][n][c]);
+								console.log(`Material.${i}.${n}.${c} =`, material[i][n][c]);
 							}
 							break;
 					}
