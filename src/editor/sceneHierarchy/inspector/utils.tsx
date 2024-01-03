@@ -52,7 +52,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 		if (!acceptedMaterialNames(i)) continue;
 		// @ts-ignore
 		const propType = typeof material[i];
-		console.log(material.name, i, propType);
+		console.log('material:', material.name, i, propType);
 		// @ts-ignore
 		const value = material[i];
 		if (propType === 'boolean' || propType === 'number' || propType === 'string') {
@@ -90,7 +90,11 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 						case 'object':
 							console.log('>> add this object:', n);
 							for (const c in propValue) {
-								console.log('>>', c, propValue[c], typeof propValue[c]);
+								// console.log('>>>', c, propValue[c], typeof propValue[c]);
+								// @ts-ignore
+								console.log('>>>', i, n, value, c);
+								// @ts-ignore
+								console.log(material[i][n][c]);
 							}
 							break;
 					}
