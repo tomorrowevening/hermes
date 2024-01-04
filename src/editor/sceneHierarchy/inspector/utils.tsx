@@ -99,6 +99,24 @@ export function niceMaterialNames(name: string): string {
   return name;
 }
 
+export function clampedNames(name: string): boolean {
+  return (
+    name.toLowerCase().search('intensity') > -1 ||
+    name === 'anisotropyRotation' ||
+    name === 'bumpScale' ||
+    name === 'clearcoatRoughness' ||
+    name === 'displacementBias' ||
+    name === 'displacementScale' ||
+    name === 'metalness' ||
+    name === 'opacity' ||
+    name === 'reflectivity' ||
+    name === 'refractionRatio' ||
+    name === 'roughness' ||
+    name === 'sheenRoughness' ||
+    name === 'thickness'
+  );
+}
+
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
   const items: any[] = [];
   for (const i in material) {
@@ -109,16 +127,30 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     // @ts-ignore
     const value = material[i];
     if (propType === 'boolean' || propType === 'number' || propType === 'string') {
-      items.push({
+      const newField = {
         title: niceMaterialNames(i),
         prop: i,
         type: propType,
         value: value,
+        min: undefined,
+        max: undefined,
         onChange: (prop: string, value: any) => {
-          three.updateObject(object.uuid, `material.${prop}`, Number(value));
+          three.updateObject(object.uuid, `material.${prop}`, value);
           if (propType === 'boolean') three.updateObject(object.uuid, 'material.needsUpdate', true);
         },
-      });
+      };
+      if (clampedNames(i)) {
+        newField.value = Number(value);
+        // @ts-ignore
+        newField.type = 'range';
+        // @ts-ignore
+        newField.min = 0;
+        // @ts-ignore
+        newField.max = 1;
+        // @ts-ignore
+        newField.step = 0.01;
+      }
+      items.push(newField);
     } else if (propType === 'object') {
       if (value.isColor) {
         items.push({
@@ -229,6 +261,15 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     if (a.title > b.title) return 1;
     return 0;
   });
+
+  items.push({
+    title: 'Update Material',
+    type: 'button',
+    onChange: () => {
+      three.updateObject(object.uuid, `material.needsUpdate`, true);
+    },
+  });
+
   return items;
 }
 

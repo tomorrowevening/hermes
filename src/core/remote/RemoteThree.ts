@@ -13,7 +13,6 @@ export default class RemoteThree extends BaseRemote {
   }
 
   getObject(uuid: string) {
-    console.log('RemoteThree::getObject:', uuid);
     this.app.send({
       event: 'getObject',
       target: 'app',
@@ -22,7 +21,6 @@ export default class RemoteThree extends BaseRemote {
   }
 
   setObject(value: any) {
-    console.log('RemoteThree::setObject:', value);
     const stripped = stripObject(value);
     this.app.send({
       event: 'setObject',

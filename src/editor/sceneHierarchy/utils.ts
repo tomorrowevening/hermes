@@ -39,16 +39,19 @@ export function stripScene(obj: Object3D): MinimumObject {
 }
 
 function cleanUniforms(obj: any) {
+  const newObj = {};
   for (const i in obj) {
     const value = obj[i].value;
-    if (typeof value === 'object') {
-      if (value.isTexture) {
-        obj[i].value = {
-          src: value.image.src,
-        };
-      }
+    // @ts-ignore
+    newObj[i] = { value: value };
+    if (value.isTexture) {
+      // @ts-ignore
+      newObj[i].value = {
+        src: value.image.src,
+      };
     }
   }
+  return newObj;
 }
 
 function stripMaterialData(material: Material): RemoteMaterial {
@@ -71,8 +74,10 @@ function stripMaterialData(material: Material): RemoteMaterial {
         if (value !== null) {
           // @ts-ignore
           materialData[i] = value;
-          // @ts-ignore
-          if (i === 'uniforms') cleanUniforms(materialData[i]);
+          if (i === 'uniforms') {
+            // @ts-ignore
+            materialData[i] = cleanUniforms(materialData[i]);
+          }
         }
         break;
     }
