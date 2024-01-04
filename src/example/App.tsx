@@ -1,6 +1,7 @@
 // Libs
 import { CSSProperties, useEffect, useRef } from 'react'
 import { types } from '@theatre/core'
+import { WebGLRenderer } from 'three';
 // Models
 import { app, IS_DEV } from './constants'
 // Components
@@ -47,31 +48,39 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
-    if (app.editor) return
+    const renderer = new WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(devicePixelRatio);
+    elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
-    elementRef.current.parentElement!.appendChild(exampleScene.renderer.domElement)
 
-    // Start RAF
-    let raf = -1
+    // RAF
     const onResize = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      exampleScene.resize(width, height)
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      exampleScene.resize(width, height);
     }
+
+    let raf = -1;
     const onUpdate = () => {
-      exampleScene.draw();
-      raf = requestAnimationFrame(onUpdate)
+      renderer.render(exampleScene.scene, exampleScene.camera);
+      raf = requestAnimationFrame(onUpdate);
     }
-    onResize()
-    onUpdate()
-    window.addEventListener('resize', onResize)
+
+    // TODO: Remove this, render scene with multi-camera support
+    if (!app.editor) {
+      onResize();
+      onUpdate(); // Start rendering
+      window.addEventListener('resize', onResize);
+    }
 
     // Debug
     const onGetObject = (evt: any) => {
       const child = exampleScene.scene.getObjectByProperty('uuid', evt.value);
       if (child !== undefined) app.three.setObject(child);
     };
+
     const onUpdateObject = (evt: any) => {
       const msg = evt.value;
       const { key, value, uuid } = msg;
@@ -105,24 +114,26 @@ function App() {
         }
       }
     };
+
     const onGetScene = () => {
-      app.three.setScene(exampleScene.scene)
+      app.three.setScene(exampleScene.scene);
     };
+
     if (IS_DEV) {
       debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
       debugDispatcher.addEventListener(ToolEvents.GET_SCENE, onGetScene);
       debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      app.three.setScene(exampleScene.scene)
+      app.three.setScene(exampleScene.scene);
     }
 
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
       debugDispatcher.removeEventListener(ToolEvents.GET_SCENE, onGetScene);
       debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      window.removeEventListener('resize', onResize)
-      exampleScene.renderer.dispose()
-      cancelAnimationFrame(raf)
-      raf = -1
+      window.removeEventListener('resize', onResize);
+      renderer.dispose();
+      cancelAnimationFrame(raf);
+      raf = -1;
     }
   }, [])
 
