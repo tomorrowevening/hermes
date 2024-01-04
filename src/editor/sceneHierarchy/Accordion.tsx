@@ -4,16 +4,17 @@ type AccordionProps = {
   label: string
   button?: JSX.Element
   children?: JSX.Element | JSX.Element[]
-	open?: boolean
+  open?: boolean
   onToggle?: (value: boolean) => void
 }
 
 export default function Accordion(props: AccordionProps) {
-	const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
+  const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
+  const hide = !open || props.children === undefined;
 
   return (
-    <div className='accordion'>
-			<button
+    <div className={`accordion ${hide ? 'hide' : ''}`}>
+      <button
         className="toggle"
         onClick={() => {
           const value = !open;
@@ -30,8 +31,10 @@ export default function Accordion(props: AccordionProps) {
       </button>
       {props.button}
       <div className={open ? 'open' : ''}>
-				{props.children}
-			</div>
+        <div>
+          {props.children}
+        </div>
+      </div>
     </div>
   );
 }

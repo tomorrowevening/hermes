@@ -29,9 +29,15 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     resize: vertical;
     overflow-y: auto;
 
+    &.hide {
+      resize: none;
+      overflow-y: hidden;
+    }
+
     > div {
       display: grid; 
       grid-template-rows: 0fr;
+      margin-left: 5px;
       transition: 0.33s grid-template-rows cubic-bezier(0.645, 0.045, 0.355, 1);
       > div {
         overflow: hidden;
@@ -51,7 +57,7 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
     }
 
     .toggle {
-      background-color: #111;
+      background-color: #333;
       display: inline-block;
       font-size: 12px;
       font-weight: bold;
@@ -63,7 +69,7 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
       height: 20px;
       transition: background-color 0.2s linear;
       &:hover {
-        background-color: #191919;
+        background-color: #444;
       }
       p {
         margin: 0;

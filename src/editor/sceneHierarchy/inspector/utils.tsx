@@ -22,6 +22,7 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'attenuationDistance' ||
     name === 'colorWrite' ||
     name === 'combine' ||
+    name === 'defaultAttributeValues' ||
     name === 'depthFunc' ||
     name === 'forceSinglePass' ||
     name === 'glslVersion' ||
@@ -32,7 +33,9 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'shadowSide' ||
     name === 'side' ||
     name === 'toneMapped' ||
+    name === 'uniformsGroups' ||
     name === 'uniformsNeedUpdate' ||
+    name === 'userData' ||
     name === 'vertexColors' ||
     name === 'version' ||
     name === 'wireframeLinecap' ||
@@ -46,29 +49,80 @@ export function acceptedMaterialNames(name: string): boolean {
   );
 }
 
+export function niceMaterialNames(name: string): string {
+	switch (name) {
+		case 'anisotropyRotation': return 'Anisotropy Rotation';
+		case 'aoMapIntensity': return 'AO Map Intensity';
+		case 'attenuationColor': return 'Attenuation Color';
+		case 'bumpScale': return 'Bump Scale';
+		case 'clearcoatNormalScale': return 'Clearcoat Normal Scale';
+		case 'clearcoatRoughness': return 'Clearcoat Roughness';
+		case 'color': return 'Color';
+		case 'defines': return 'Defines';
+		case 'depthTest': return 'Depth Test';
+		case 'depthWrite': return 'Depth Write';
+		case 'displacementBias': return 'Displacement Bias';
+		case 'displacementScale': return 'Displacement Scale';
+		case 'dithering': return 'Dithering';
+		case 'emissive': return 'Emissive';
+		case 'emissiveIntensity': return 'Emissive Intensity';
+		case 'envMapIntensity': return 'ENV Map Intensity';
+		case 'extensions': return 'Extensions';
+		case 'flatShading': return 'Flat Shading';
+		case 'fragmentShader': return 'Fragment Shader';
+		case 'fog': return 'Fog';
+		case 'ior': return 'IOR';
+		case 'iridescenceIOR': return 'Iridescence IOR';
+		case 'iridescenceThicknessRange': return 'Iridescence Thickness Range';
+		case 'lights': return 'Lights';
+		case 'lightMapIntensity': return 'Light Map Intensity';
+		case 'metalness': return 'Metalness';
+		case 'name': return 'Name';
+		case 'normalScale': return 'Normal Scale';
+		case 'opacity': return 'Opacity';
+		case 'reflectivity': return 'Reflectivity';
+		case 'refractionRatio': return 'Refraction Ratio';
+		case 'roughness': return 'Roughness';
+		case 'sheenColor': return 'Sheen Color';
+		case 'sheenRoughness': return 'Sheen Roughness';
+		case 'specularColor': return 'Specular Color';
+		case 'specularIntensity': return 'Specular Intensity';
+		case 'thickness': return 'Thickness';
+		case 'transparent': return 'Transparent';
+		case 'type': return 'Type';
+		case 'uuid': return 'UUID';
+		case 'uniforms': return 'Uniforms';
+		case 'vertexShader': return 'Vertex Shader';
+		case 'visible': return 'Visible';
+		case 'wireframe': return 'Wireframe';
+	}
+	return name;
+}
+
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
 	const items: any[] = [];
 	for (const i in material) {
 		if (!acceptedMaterialNames(i)) continue;
+
 		// @ts-ignore
 		const propType = typeof material[i];
-		console.log('material:', material.name, i, propType);
 		// @ts-ignore
 		const value = material[i];
 		if (propType === 'boolean' || propType === 'number' || propType === 'string') {
 			items.push({
-				label: i,
+				title: niceMaterialNames(i),
 				prop: i,
 				type: propType,
 				value: value,
 				onChange: (prop: string, value: any) => {
 					three.updateObject(object.uuid, `material.${prop}`, Number(value));
+					if (propType === 'boolean') three.updateObject(object.uuid, 'material.needsUpdate', true);
 				},
 			});
 		} else if (propType === 'object') {
 			if (value.isColor) {
 				items.push({
-					label: i,
+					title: niceMaterialNames(i),
 					prop: i,
 					type: 'color',
 					value: value,
@@ -76,35 +130,94 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 						three.updateObject(object.uuid, `material.${prop}`, new Color(value));
 					},
 				});
+			} else if (Array.isArray(value)) {
+				const subChildren = [];
+				for (const index in value) {
+					subChildren.push({
+						title: `${index}`,
+						// @ts-ignore
+						type: `${typeof value[index]}`,
+						value: value[index],
+						onChange: (prop: string, value: any) => {
+							console.log('change!', prop, value);
+							// three.updateObject(object.uuid, `material.${i}.${n}`, value);
+						},
+					});
+				}
+				items.push({
+					title: niceMaterialNames(i),
+					items: subChildren,
+				});
 			} else {
-				// console.log('>>>> not sending:', i, value);
+				// three.updateObject(object.uuid, 'material.needsUpdate', true);
+				const subChildren = [];
+				console.log('> add something:', i, propType);
 				for (const n in value) {
 					const propValue = value[n];
-					// console.log('> try:', n, propValue);
-					switch (typeof propValue) {
+					const propValueType = typeof propValue;
+					switch (propValueType) {
 						case 'boolean':
 						case 'number':
 						case 'string':
-							console.log('>> add this b/n/s:', n);
+							subChildren.push({
+								title: `${niceMaterialNames(n)}`,
+								prop: `material.${i}.${n}`,
+								// @ts-ignore
+								type: `${typeof material[i][n]}`,
+								value: value[n],
+								onChange: (prop: string, value: any) => {
+									console.log('change!', prop, value);
+									// three.updateObject(object.uuid, `material.${i}.${n}`, value);
+								},
+							});
 							break;
 						case 'object':
-							console.log('>> add this object:', n);
-							for (const c in propValue) {
-								// @ts-ignore
-								console.log(`Material.${i}.${n}.${c} =`, material[i][n][c]);
+							// @ts-ignore
+							console.log(' >> add this object:', i, n, propValue.value);
+							// texture
+							if (propValue.value === null) {
+								console.log('  >>> IS IMAGE', n);
+								subChildren.push({
+									title: n,
+									type: 'image',
+									// value: propValue.value,
+									onChange: (prop: string, value: any) => {
+										console.log('change!', prop, value);
+										// three.updateObject(object.uuid, `material.${i}.${n}`, value);
+									},
+								});
+							} else {
+								subChildren.push({
+									title: n,
+									// @ts-ignore
+									type: `${typeof propValue.value}`,
+									value: propValue.value,
+									onChange: (prop: string, value: any) => {
+										console.log('change!', prop, value);
+										// three.updateObject(object.uuid, `material.${i}.${n}`, value);
+									},
+								});
 							}
+							// subChildren.push({
+							// 	title: n,
+							// 	// @ts-ignore
+							// 	type: `${typeof value[index]}`,
+							// 	value: value[index],
+							// 	onChange: (prop: string, value: any) => {
+							// 		console.log('change!', prop, value);
+							// 		// three.updateObject(object.uuid, `material.${i}.${n}`, value);
+							// 	},
+							// });
 							break;
 					}
 				}
-				// items.push({
-				// 	label: i,
-				// 	prop: i,
-				// 	type: 'color',
-				// 	value: value,
-				// 	onChange: (prop: string, value: any) => {
-				// 		three.updateObject(object.uuid, `material.${prop}`, new Color(value));
-				// 	},
-				// });
+
+				if (subChildren.length > 0) {
+					items.push({
+						title: niceMaterialNames(i),
+						items: subChildren,
+					});
+				}
 			}
 		} else if (value !== undefined) {
 			// @ts-ignore
@@ -112,17 +225,10 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 		}
 	}
 	items.sort((a: any, b: any) => {
-		if (a.label < b.label) return -1;
-		if (a.label > b.label) return 1;
+		if (a.title < b.title) return -1;
+		if (a.title > b.title) return 1;
 		return 0;
 	});
-	// items.push({
-	// 	label: 'Update Material',
-	// 	type: 'button',
-	// 	onChange: (prop: string) => {
-	// 		console.log('clicked!', prop);
-	// 	},
-	// });
 	return items;
 }
 // RemoteMaterial | RemoteMaterial[]
@@ -169,33 +275,38 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 		three.updateObject(obj.uuid, prop, value);
 	};
 
-	return (
-		<InspectorGroup
-			title="Transform"
-			items={[
+	const items: any[] = [
+		{
+			title: 'Position',
+			items: [
 				{
-					label: 'Position X',
+					title: 'X',
 					prop: 'position.x',
 					type: 'number',
 					value: position.x,
 					onChange: updateTransform,
 				},
 				{
-					label: 'Position Y',
+					title: 'Y',
 					prop: 'position.y',
 					type: 'number',
 					value: position.y,
 					onChange: updateTransform,
 				},
 				{
-					label: 'Position Z',
+					title: 'Z',
 					prop: 'position.z',
 					type: 'number',
 					value: position.z,
 					onChange: updateTransform,
 				},
+			],
+		},
+		{
+			title: 'Rotation',
+			items: [
 				{
-					label: 'Rotation X',
+					title: 'X',
 					prop: 'rotation.x',
 					type: 'number',
 					value: rotation.x,
@@ -205,7 +316,7 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 					onChange: updateTransform,
 				},
 				{
-					label: 'Rotation Y',
+					title: 'Y',
 					prop: 'rotation.y',
 					type: 'number',
 					value: rotation.y,
@@ -215,7 +326,7 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 					onChange: updateTransform,
 				},
 				{
-					label: 'Rotation Z',
+					title: 'Z',
 					prop: 'rotation.z',
 					type: 'number',
 					value: rotation.z,
@@ -224,8 +335,13 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 					step: 0.01,
 					onChange: updateTransform,
 				},
+			],
+		},
+		{
+			title: 'Scale',
+			items: [
 				{
-					label: 'Scale X',
+					title: 'X',
 					prop: 'scale.x',
 					type: 'number',
 					value: scale.x,
@@ -233,7 +349,7 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 					onChange: updateTransform,
 				},
 				{
-					label: 'Scale Y',
+					title: 'Y',
 					prop: 'scale.y',
 					type: 'number',
 					value: scale.y,
@@ -241,14 +357,21 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 					onChange: updateTransform,
 				},
 				{
-					label: 'Scale Z',
+					title: 'Z',
 					prop: 'scale.z',
 					type: 'number',
 					value: scale.z,
 					step: 0.01,
 					onChange: updateTransform,
 				},
-			]}
+			],
+		},
+	];
+
+	return (
+		<InspectorGroup
+			title="Transform"
+			items={items}
 		/>
 	);
 }

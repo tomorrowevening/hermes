@@ -39,28 +39,28 @@ export default function Inspector(props: CoreComponentProps) {
           {/* Core */}
           <InspectorField
             type="string"
-            label="Name"
+            title="Name"
             prop="name"
             value={currentObject.name}
             disabled={true}
           />
           <InspectorField
             type="string"
-            label="Type"
+            title="Type"
             prop="type"
             value={currentObject.type}
             disabled={true}
           />
           <InspectorField
             type="string"
-            label="UUID"
+            title="UUID"
             prop="uuid"
             value={currentObject.uuid}
             disabled={true}
           />
           <InspectorField
             type="boolean"
-            label="Visible"
+            title="Visible"
             prop="visible"
             value={currentObject.visible}
             onChange={(key: string, value: any) => {

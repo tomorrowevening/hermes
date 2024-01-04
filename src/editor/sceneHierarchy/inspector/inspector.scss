@@ -7,19 +7,24 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: 21px;
+    min-height: 21px;
     overflow: hidden;
     padding: 1px;
+    
     label {
       margin: 0 10px;
+      max-width: 180px;
+      user-select: none;
       width: fit-content;
     }
+
     input {
       block-size: 11px;
       flex: 1%;
       margin: 0;
       padding: 4px;
       outline: none;
+      max-width: 80px;
       &.min {
         height: 11px;
         flex: none;
@@ -31,9 +36,11 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
         width: 60px;
       }
     }
+
     input[type="checkbox"] {
       flex: none;
     }
+
     input[type="color"] {
       block-size: revert;
       height: 21px;
@@ -41,18 +48,29 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       padding: 0;
       margin: 0;
     }
+
     input[type="number"], input[type="range"] {
       appearance: none;
       height: 11px;
     }
+
     input[type="range"]::-webkit-slider-runnable-track {
       border: none;
     }
+
     input[type="range"]::-webkit-slider-thumb {
       appearance: none;
       background-color: #666;
       height: 17px;
       width: 17px;
+    }
+
+    img {
+      cursor: pointer;
+      object-fit: none;
+      width: 100px;
+      min-height: 30px;
+      max-height: 100px;
     }
     button {
       background-color: #333;
