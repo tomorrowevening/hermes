@@ -1,15 +1,10 @@
-import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, WebGLRenderer } from 'three'
+import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry } from 'three'
 
 export default class ExampleScene {
-	renderer: WebGLRenderer;
 	scene: Scene;
-
-	private camera: PerspectiveCamera;
+  camera: PerspectiveCamera;
 
 	constructor() {
-		this.renderer = new WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(devicePixelRatio);
-
     // Scene
 
     this.scene = new Scene();
@@ -55,12 +50,7 @@ export default class ExampleScene {
 	}
 
 	resize(width: number, height: number) {
-		this.camera.aspect = width / height
-		this.camera.updateProjectionMatrix()
-		this.renderer.setSize(width, height)
-	}
-
-	draw() {
-		this.renderer.render(this.scene, this.camera);
+		this.camera.aspect = width / height;
+		this.camera.updateProjectionMatrix();
 	}
 }
