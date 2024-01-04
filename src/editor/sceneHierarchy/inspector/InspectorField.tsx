@@ -1,6 +1,7 @@
 import { colorToHex } from "@/editor/utils";
 import { useEffect, useRef, useState } from "react";
 import { gridImage } from "@/editor/components/content";
+import { uploadLocalImage } from "./utils";
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
 
@@ -29,13 +30,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   const imgRefRef = useRef<HTMLImageElement>(null);
   // console.log('Field:', props.title, props.prop);
 
-  const onChange = (evt: any) => {
-    let value = evt.target.value;
-    if (props.type === 'boolean') value = evt.target.checked;
-    setFieldValue(value);
-    if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
-  };
-
+  // Mouse dragging
   useEffect(() => {
     let mouseDown = false;
     let mouseStart = -1;
@@ -80,9 +75,17 @@ export default function InspectorField(props: InspectorFieldProps) {
   }, [fieldValue]);
 
   const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
+  const block = textfield || props.type === 'image';
+
+  const onChange = (evt: any) => {
+    let value = evt.target.value;
+    if (props.type === 'boolean') value = evt.target.checked;
+    setFieldValue(value);
+    if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
+  };
 
   return (
-    <div className={`field ${textfield ? 'textfield' : ''}`}>
+    <div className={`field ${block ? 'block' : ''}`}>
       {props.type !== 'button' && (
         <label key="fieldLabel" ref={labelRef}>{props.title}</label>
       )}
@@ -161,8 +164,12 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'image' && (
         <img ref={imgRefRef} onClick={() => {
-          console.log('click', props.value);
-        }} src={props.value !== undefined ? props.value : gridImage} />
+          uploadLocalImage()
+            .then((value: string) => {
+              imgRefRef.current!.src = value;
+              if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
+            });
+        }} src={fieldValue !== undefined ? fieldValue : gridImage} />
       )}
     </div>
   );

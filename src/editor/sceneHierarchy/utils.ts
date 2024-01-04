@@ -44,11 +44,12 @@ function cleanUniforms(obj: any) {
     const value = obj[i].value;
     // @ts-ignore
     newObj[i] = { value: value };
-    if (value.isTexture) {
+    if (value === null) {
       // @ts-ignore
-      newObj[i].value = {
-        src: value.image.src,
-      };
+      newObj[i].value = { src: '' };
+    } else if (value.isTexture) {
+      // @ts-ignore
+      newObj[i].value = { src: value.image.src };
     }
   }
   return newObj;

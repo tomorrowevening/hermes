@@ -214,7 +214,8 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
-                    console.log('change!', prop, value);
+                    console.log('change!', prop, i, n);
+                    console.log(`material.${i}.${n}.value =`, value);
                     // three.updateObject(object.uuid, `material.${i}.${n}`, value);
                   },
                 });
@@ -297,6 +298,26 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
     );
   }
   return null;
+}
+
+export function uploadLocalImage(): Promise<string> {
+  const inputElement = document.createElement('input');
+  inputElement.type = 'file';
+  return new Promise((resolve: any, reject: any) => {
+    inputElement.addEventListener('change', function() {
+      if (inputElement.files  === null) {
+        reject();
+      } else {
+        const selectedFile = inputElement.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e: any) {
+          resolve(e.target.result);
+        };
+        reader.readAsDataURL(selectedFile);
+      }
+    });
+    inputElement.click();
+  });
 }
 
 // Transforms
