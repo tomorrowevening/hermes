@@ -24,7 +24,6 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       margin: 0;
       padding: 4px;
       outline: none;
-      max-width: 80px;
       &.min {
         height: 11px;
         flex: none;
@@ -63,6 +62,10 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       background-color: #666;
       height: 17px;
       width: 17px;
+      transition: 0.2s linear background-color;
+      &:hover {
+        background-color: #999;
+      }
     }
 
     textarea {

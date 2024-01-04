@@ -75,7 +75,10 @@ function stripMaterialData(material: Material): RemoteMaterial {
         if (value !== null) {
           // @ts-ignore
           materialData[i] = value;
-          if (i === 'uniforms') {
+          if (value.isTexture) {
+            // @ts-ignore
+            materialData[i] = { src: convertImageToBase64(value.image) };
+          } else if (i === 'uniforms') {
             // @ts-ignore
             materialData[i] = cleanUniforms(materialData[i]);
           }
@@ -85,6 +88,22 @@ function stripMaterialData(material: Material): RemoteMaterial {
   }
 
   return materialData as RemoteMaterial;
+}
+
+export function convertImageToBase64(imgElement: HTMLImageElement): string {
+  // Create a canvas element
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Set the canvas dimensions to match the image
+  canvas.width = imgElement.width;
+  canvas.height = imgElement.height;
+
+  // Draw the image onto the canvas
+  ctx!.drawImage(imgElement, 0, 0);
+
+  // Get the Base64 representation of the image from the canvas
+  return canvas.toDataURL('image/png');
 }
 
 export function stripObject(obj: Object3D): RemoteObject {

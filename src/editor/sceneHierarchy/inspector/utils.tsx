@@ -52,6 +52,7 @@ export function acceptedMaterialNames(name: string): boolean {
 export function niceMaterialNames(name: string): string {
   switch (name) {
     case 'anisotropyRotation': return 'Anisotropy Rotation';
+    case 'aoMap': return 'AO Map';
     case 'aoMapIntensity': return 'AO Map Intensity';
     case 'attenuationColor': return 'Attenuation Color';
     case 'bumpScale': return 'Bump Scale';
@@ -66,6 +67,7 @@ export function niceMaterialNames(name: string): string {
     case 'dithering': return 'Dithering';
     case 'emissive': return 'Emissive';
     case 'emissiveIntensity': return 'Emissive Intensity';
+    case 'envMap': return 'ENV Map';
     case 'envMapIntensity': return 'ENV Map Intensity';
     case 'extensions': return 'Extensions';
     case 'flatShading': return 'Flat Shading';
@@ -76,6 +78,7 @@ export function niceMaterialNames(name: string): string {
     case 'iridescenceThicknessRange': return 'Iridescence Thickness Range';
     case 'lights': return 'Lights';
     case 'lightMapIntensity': return 'Light Map Intensity';
+    case 'map': return 'Map';
     case 'metalness': return 'Metalness';
     case 'name': return 'Name';
     case 'normalScale': return 'Normal Scale';
@@ -119,6 +122,7 @@ export function clampedNames(name: string): boolean {
 
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
   const items: any[] = [];
+  console.log('inspectMaterialItems', material.name, material.type);
   for (const i in material) {
     if (!acceptedMaterialNames(i)) continue;
 
@@ -181,9 +185,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           items: subChildren,
         });
       } else {
-        // three.updateObject(object.uuid, 'material.needsUpdate', true);
         const subChildren = [];
-        // console.log('> add something:', i, propType);
         for (const n in value) {
           const propValue = value[n];
           const propValueType = typeof propValue;
@@ -191,26 +193,38 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
             case 'boolean':
             case 'number':
             case 'string':
-              subChildren.push({
-                title: `${niceMaterialNames(n)}`,
-                prop: `material.${i}.${n}`,
-                // @ts-ignore
-                type: `${typeof material[i][n]}`,
-                value: value[n],
-                onChange: (prop: string, value: any) => {
-                  console.log('change!', prop, value);
-                  // three.updateObject(object.uuid, `material.${i}.${n}`, value);
-                },
-              });
+              if (n === 'src') {
+                items.push({
+                  title: niceMaterialNames(i),
+                  type: 'image',
+                  value: propValue,
+                  onChange: (prop: string, value: any) => {
+                    console.log('change!', prop, i, n);
+                    console.log(`material.${i}.${n} =`, value);
+                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                  },
+                });
+              } else {
+                subChildren.push({
+                  title: `${niceMaterialNames(n)}`,
+                  prop: `material.${i}.${n}`,
+                  // @ts-ignore
+                  type: `${typeof material[i][n]}`,
+                  value: value[n],
+                  onChange: (prop: string, value: any) => {
+                    console.log('change!', prop, value);
+                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                  },
+                });
+              }
               break;
             case 'object':
               // @ts-ignore
-              // console.log(' >> add this object:', i, n, propValue.value);
-              // texture
+              // console.log(' >> add this object:', i, n, propValue);
+              // Uniform textures
               if (propValue.value.src !== undefined) {
-                // console.log('  >>> IS IMAGE', n);
                 subChildren.push({
-                  title: n,
+                  title: niceMaterialNames(n),
                   type: 'image',
                   value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
@@ -231,16 +245,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   },
                 });
               }
-              // subChildren.push({
-              //   title: n,
-              //   // @ts-ignore
-              //   type: `${typeof value[index]}`,
-              //   value: value[index],
-              //   onChange: (prop: string, value: any) => {
-              //     console.log('change!', prop, value);
-              //     // three.updateObject(object.uuid, `material.${i}.${n}`, value);
-              //   },
-              // });
               break;
           }
         }
@@ -270,6 +274,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       three.updateObject(object.uuid, `material.needsUpdate`, true);
     },
   });
+  console.log(items);
 
   return items;
 }
