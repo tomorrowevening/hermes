@@ -37,16 +37,15 @@ export default class CustomMaterial extends ShaderMaterial {
       },
     });
 
-    // const img = new Image();
-    // img.onload = () => {
-    //   const texture = new Texture(img);
-    //   texture.wrapS = RepeatWrapping;
-    //   texture.wrapT = RepeatWrapping;
-    //   // texture.repeat.set(10, 10)
-    //   texture.needsUpdate = true;
-    //   this.uniforms.map.value = texture;
-    // };
-    // img.src = smile;
+    const img = new Image();
+    img.onload = () => {
+      const texture = new Texture(img);
+      texture.wrapS = RepeatWrapping;
+      texture.wrapT = RepeatWrapping;
+      texture.needsUpdate = true;
+      this.uniforms.map.value = texture;
+    };
+    img.src = smile;
   }
 
   update(delta: number) {

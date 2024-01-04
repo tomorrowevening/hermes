@@ -79,15 +79,28 @@ export default function InspectorField(props: InspectorFieldProps) {
     };
   }, [fieldValue]);
 
+  const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
+
   return (
-    <div className="field">
+    <div className={`field ${textfield ? 'textfield' : ''}`}>
       {props.type !== 'button' && (
         <label key="fieldLabel" ref={labelRef}>{props.title}</label>
       )}
-      {props.type === 'string' && (
+
+      {props.type === 'string' && !textfield && (
         <input
           type="text"
           disabled={props.disabled}
+          onChange={onChange}
+          value={fieldValue}
+        />
+      )}
+
+      {props.type === 'string' && textfield && (
+        <textarea
+          cols={50}
+          rows={10}
+          disabled={true}
           onChange={onChange}
           value={fieldValue}
         />
@@ -148,8 +161,8 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'image' && (
         <img ref={imgRefRef} onClick={() => {
-          console.log('click');
-        }} src={gridImage} />
+          console.log('click', props.value);
+        }} src={props.value !== undefined ? props.value : gridImage} />
       )}
     </div>
   );

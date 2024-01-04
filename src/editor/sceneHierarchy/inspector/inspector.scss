@@ -72,6 +72,7 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       min-height: 30px;
       max-height: 100px;
     }
+
     button {
       background-color: #333;
       border-top: 1px dotted #444;
@@ -83,6 +84,18 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       width: 100%;
       &:hover {
         background-color: #444;
+      }
+    }
+
+    &.textfield {
+      label {
+        display: block;
+        line-height: 21px;
+        max-width: 100%;
+        width: 100%;
+      }
+      textarea {
+        font-size: 10px;
       }
     }
   }

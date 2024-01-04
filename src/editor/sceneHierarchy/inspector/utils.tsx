@@ -151,7 +151,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       } else {
         // three.updateObject(object.uuid, 'material.needsUpdate', true);
         const subChildren = [];
-        console.log('> add something:', i, propType);
+        // console.log('> add something:', i, propType);
         for (const n in value) {
           const propValue = value[n];
           const propValueType = typeof propValue;
@@ -173,14 +173,14 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
               break;
             case 'object':
               // @ts-ignore
-              console.log(' >> add this object:', i, n, propValue.value);
+              // console.log(' >> add this object:', i, n, propValue.value);
               // texture
-              if (propValue.value === null) {
-                console.log('  >>> IS IMAGE', n);
+              if (propValue.value.src !== undefined) {
+                // console.log('  >>> IS IMAGE', n);
                 subChildren.push({
                   title: n,
                   type: 'image',
-                  // value: propValue.value,
+                  value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
                     console.log('change!', prop, value);
                     // three.updateObject(object.uuid, `material.${i}.${n}`, value);
@@ -231,6 +231,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
   });
   return items;
 }
+
 // RemoteMaterial | RemoteMaterial[]
 export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
   const material = object.material!;

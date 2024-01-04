@@ -38,6 +38,19 @@ export function stripScene(obj: Object3D): MinimumObject {
   return min;
 }
 
+function cleanUniforms(obj: any) {
+  for (const i in obj) {
+    const value = obj[i].value;
+    if (typeof value === 'object') {
+      if (value.isTexture) {
+        obj[i].value = {
+          src: value.image.src,
+        };
+      }
+    }
+  }
+}
+
 function stripMaterialData(material: Material): RemoteMaterial {
   const materialData = {};
   for (const i in material) {
@@ -58,6 +71,8 @@ function stripMaterialData(material: Material): RemoteMaterial {
         if (value !== null) {
           // @ts-ignore
           materialData[i] = value;
+          // @ts-ignore
+          if (i === 'uniforms') cleanUniforms(materialData[i]);
         }
         break;
     }
