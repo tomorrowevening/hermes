@@ -68,6 +68,7 @@ function App() {
       raf = requestAnimationFrame(onUpdate);
     }
 
+    // TODO: Remove this, render scene with multi-camera support
     if (!app.editor) {
       onResize();
       onUpdate(); // Start rendering
