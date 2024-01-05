@@ -132,7 +132,6 @@ export default function MultiView(props: MultiViewProps) {
     cameras.set(camera.name, camera);
     options.push(camera.name);
   });
-  console.log(options, props.cameras);
 
   return (
     <div className='multiview'>
