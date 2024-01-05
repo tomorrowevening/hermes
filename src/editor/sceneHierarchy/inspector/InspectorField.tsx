@@ -1,7 +1,7 @@
 import { colorToHex } from "@/editor/utils";
 import { useEffect, useRef, useState } from "react";
 import { gridImage } from "@/editor/components/content";
-import { uploadLocalImage } from "./utils";
+import { uploadLocalImage } from "./utils/InspectMaterial";
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
 
@@ -28,32 +28,34 @@ export default function InspectorField(props: InspectorFieldProps) {
   const labelRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const imgRefRef = useRef<HTMLImageElement>(null);
-  // console.log('Field:', props.title, props.prop);
 
   // Mouse dragging
   useEffect(() => {
     let mouseDown = false;
     let mouseStart = -1;
     let valueStart = 0;
+    let value = Number(fieldValue);
+
     const onMouseDown = (evt: MouseEvent) => {
       mouseDown = true;
-      valueStart = Number(fieldValue);
+      valueStart = value;
       mouseStart = evt.clientX;
     };
+
     const onMouseMove = (evt: MouseEvent) => {
       if (!mouseDown) return;
       const deltaAmt = props.step !== undefined ? props.step : 1;
       const delta = (evt.clientX - mouseStart) * deltaAmt;
-      const value = valueStart + delta;
+      value = Number((valueStart + delta).toFixed(4));
       if (inputRef.current !== null) inputRef.current.value = value.toString();
-      // setFieldValue(value);
       if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
     };
+
     const onMouseUp = () => {
       mouseDown = false;
     };
+
     const onRightClick = () => {
-      // evt.preventDefault();
       mouseDown = false;
     };
 
