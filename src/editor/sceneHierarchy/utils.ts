@@ -38,6 +38,23 @@ export function stripScene(obj: Object3D): MinimumObject {
   return min;
 }
 
+function cleanUniforms(obj: any) {
+  const newObj = {};
+  for (const i in obj) {
+    const value = obj[i].value;
+    // @ts-ignore
+    newObj[i] = { value: value };
+    if (value === null) {
+      // @ts-ignore
+      newObj[i].value = { src: '' };
+    } else if (value.isTexture) {
+      // @ts-ignore
+      newObj[i].value = { src: value.image.src };
+    }
+  }
+  return newObj;
+}
+
 function stripMaterialData(material: Material): RemoteMaterial {
   const materialData = {};
   for (const i in material) {
@@ -55,15 +72,38 @@ function stripMaterialData(material: Material): RemoteMaterial {
         materialData[i] = value;
         break;
       case 'object':
-        if (value !== null && value.isColor !== undefined) {
+        if (value !== null) {
           // @ts-ignore
           materialData[i] = value;
+          if (value.isTexture) {
+            // @ts-ignore
+            materialData[i] = { src: convertImageToBase64(value.image) };
+          } else if (i === 'uniforms') {
+            // @ts-ignore
+            materialData[i] = cleanUniforms(materialData[i]);
+          }
         }
         break;
     }
   }
 
   return materialData as RemoteMaterial;
+}
+
+export function convertImageToBase64(imgElement: HTMLImageElement): string {
+  // Create a canvas element
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Set the canvas dimensions to match the image
+  canvas.width = imgElement.width;
+  canvas.height = imgElement.height;
+
+  // Draw the image onto the canvas
+  ctx!.drawImage(imgElement, 0, 0);
+
+  // Get the Base64 representation of the image from the canvas
+  return canvas.toDataURL('image/png');
 }
 
 export function stripObject(obj: Object3D): RemoteObject {

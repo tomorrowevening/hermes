@@ -1,6 +1,6 @@
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button';
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image';
 export interface InspectorFieldProps {
-    label: string;
+    title: string;
     type: InspectorFieldType;
     prop?: string;
     value?: any;

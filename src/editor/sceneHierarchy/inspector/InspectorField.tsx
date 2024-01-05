@@ -1,10 +1,12 @@
 import { colorToHex } from "@/editor/utils";
 import { useEffect, useRef, useState } from "react";
+import { gridImage } from "@/editor/components/content";
+import { uploadLocalImage } from "./utils";
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
 
 export interface InspectorFieldProps {
-  label: string
+  title: string
   type: InspectorFieldType
   prop?: string
   value?: any
@@ -25,14 +27,10 @@ export default function InspectorField(props: InspectorFieldProps) {
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const imgRefRef = useRef<HTMLImageElement>(null);
+  // console.log('Field:', props.title, props.prop);
 
-  const onChange = (evt: any) => {
-    let value = evt.target.value;
-    if (props.type === 'boolean') value = evt.target.checked;
-    setFieldValue(value);
-    if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, value);
-  };
-
+  // Mouse dragging
   useEffect(() => {
     let mouseDown = false;
     let mouseStart = -1;
@@ -49,9 +47,13 @@ export default function InspectorField(props: InspectorFieldProps) {
       const value = valueStart + delta;
       if (inputRef.current !== null) inputRef.current.value = value.toString();
       // setFieldValue(value);
-      if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, value);
+      if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
     };
     const onMouseUp = () => {
+      mouseDown = false;
+    };
+    const onRightClick = () => {
+      // evt.preventDefault();
       mouseDown = false;
     };
 
@@ -60,25 +62,48 @@ export default function InspectorField(props: InspectorFieldProps) {
       labelRef.current?.addEventListener('mousedown', onMouseDown, false);
       document.addEventListener('mouseup', onMouseUp, false);
       document.addEventListener('mousemove', onMouseMove, false);
+      document.addEventListener('contextmenu', onRightClick, false);
     }
     return () => {
       if (useMouse) {
         labelRef.current?.removeEventListener('mousedown', onMouseDown);
         document.removeEventListener('mouseup', onMouseUp);
         document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('contextmenu', onRightClick);
       }
     };
   }, [fieldValue]);
 
+  const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
+  const block = textfield || props.type === 'image';
+
+  const onChange = (evt: any) => {
+    let value = evt.target.value;
+    if (props.type === 'boolean') value = evt.target.checked;
+    setFieldValue(value);
+    if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
+  };
+
   return (
-    <div className="field">
+    <div className={`field ${block ? 'block' : ''}`}>
       {props.type !== 'button' && (
-        <label key="fieldLabel" ref={labelRef}>{props.label}</label>
+        <label key="fieldLabel" ref={labelRef}>{props.title}</label>
       )}
-      {props.type === 'string' && (
+
+      {props.type === 'string' && !textfield && (
         <input
           type="text"
           disabled={props.disabled}
+          onChange={onChange}
+          value={fieldValue}
+        />
+      )}
+
+      {props.type === 'string' && textfield && (
+        <textarea
+          cols={50}
+          rows={10}
+          disabled={true}
           onChange={onChange}
           value={fieldValue}
         />
@@ -130,11 +155,21 @@ export default function InspectorField(props: InspectorFieldProps) {
       {props.type === 'button' && (
         <button
           onClick={() => {
-            if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.label, true);
+            if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, true);
           }}
         >
-          {props.label}
+          {props.title}
         </button>
+      )}
+
+      {props.type === 'image' && (
+        <img ref={imgRefRef} onClick={() => {
+          uploadLocalImage()
+            .then((value: string) => {
+              imgRefRef.current!.src = value;
+              if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
+            });
+        }} src={fieldValue !== undefined ? fieldValue : gridImage} />
       )}
     </div>
   );

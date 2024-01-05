@@ -47,11 +47,7 @@ export interface RemoteMaterial {
   polygonOffsetFactor: number
   polygonOffsetUnits: number
   // ETC
-  alphaHash: boolean
-  alphaToCoverage: boolean
-  colorWrite: boolean
   dithering: boolean
-  forceSinglePass: boolean
   name: string
   opacity: number
   premultipliedAlpha: boolean
@@ -61,6 +57,9 @@ export interface RemoteMaterial {
   type: string
   uuid: string
   vertexColors: boolean
+  defines: any
+  extensions: any
+  uniforms: any
   // Colors
   color?: Color
   attenuationColor?: Color

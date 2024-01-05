@@ -6,7 +6,7 @@ import studio from '@theatre/studio'
 import { app, IS_DEV } from './constants'
 // Components
 import './index.scss'
-import App from './App'
+import App from './components/App'
 import CustomEditor from './CustomEditor'
 // Tools
 import RemoteController from '@/core/RemoteController'

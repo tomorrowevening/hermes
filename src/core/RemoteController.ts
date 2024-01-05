@@ -80,6 +80,9 @@ export default function RemoteController(app: Application) {
       case 'updateObject':
         debugDispatcher.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
         break;
+      case 'createTexture':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
+        break;
     }
   }
 

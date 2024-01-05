@@ -36,11 +36,7 @@ export interface RemoteMaterial {
     polygonOffset: boolean;
     polygonOffsetFactor: number;
     polygonOffsetUnits: number;
-    alphaHash: boolean;
-    alphaToCoverage: boolean;
-    colorWrite: boolean;
     dithering: boolean;
-    forceSinglePass: boolean;
     name: string;
     opacity: number;
     premultipliedAlpha: boolean;
@@ -50,6 +46,9 @@ export interface RemoteMaterial {
     type: string;
     uuid: string;
     vertexColors: boolean;
+    defines: any;
+    extensions: any;
+    uniforms: any;
     color?: Color;
     attenuationColor?: Color;
     sheenColor?: Color;

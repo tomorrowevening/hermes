@@ -34,19 +34,19 @@ export default class SceneHierarchy extends Component {
       <div id="SceneHierarchy" key="SceneHierarchy">
         {(
           <>
-            <Accordion
-              label={HierarchyName}
-              button={(
-                <button className='icon refresh hideText' onClick={this.onRefresh}>
-                  Refresh
-                </button>
-              )}
-              open={true}
-            >
-              <>
-                {hasScene && <ContainerObject child={this.componentState.scene!} />}
-              </>
-            </Accordion>
+            {hasScene && (
+              <Accordion
+                label={HierarchyName}
+                button={(
+                  <button className='icon refresh hideText' onClick={this.onRefresh}>
+                    Refresh
+                  </button>
+                )}
+                open={true}
+              >
+                <ContainerObject child={this.componentState.scene!} />
+              </Accordion>
+            )}
 
             <Accordion label='Inspector'>
               <Inspector key="Inspector" />
