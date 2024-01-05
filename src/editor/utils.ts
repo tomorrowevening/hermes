@@ -1,3 +1,5 @@
+import { Object3D } from "three";
+
 export function clamp(min: number, max: number, value: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -35,3 +37,21 @@ export function colorToHex(obj: any) {
 
   return '#' + red + green + blue;
 }
+
+let totalObjects = 0;
+export const hierarchyUUID = (object: Object3D): void => {
+  if (!object) return;
+
+  let uuid = object.name.replace(' ', '');
+  // fallback in case there's no name
+  if (uuid.length === 0) uuid = `obj_${totalObjects}`;
+  // inherit parent's UUID for hierarchy
+  if (object.parent !== null) uuid = `${object.parent.uuid}.${uuid}`;
+  object.uuid = uuid;
+  totalObjects++;
+
+  // Iterate children
+  object.children.forEach((child: Object3D) => {
+    hierarchyUUID(child);
+  });
+};
