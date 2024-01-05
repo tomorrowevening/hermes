@@ -198,7 +198,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue,
                   onChange: (prop: string, value: any) => {
-                    three.createTexture(object.uuid, `${i}`, value);
+                    three.createTexture(object.uuid, `material.${i}`, value);
                   },
                 });
               } else {
