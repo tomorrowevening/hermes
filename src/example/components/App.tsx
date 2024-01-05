@@ -1,6 +1,7 @@
 // Libs
 import { CSSProperties, useEffect, useRef, useState } from 'react'
 import { types } from '@theatre/core'
+import { WebGLRenderer } from 'three';
 // Models
 import { app, IS_DEV } from '../constants'
 // Components
@@ -49,18 +50,23 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
+    const renderer = new WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(devicePixelRatio);
+    elementRef.current.parentElement!.appendChild(renderer.domElement);
+
     exampleScene = new ExampleScene();
-    elementRef.current.parentElement!.appendChild(exampleScene.renderer.domElement);
 
     // Start RAF
     let raf = -1
     const onResize = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      exampleScene.resize(width, height)
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      exampleScene.resize(width, height);
     }
     const onUpdate = () => {
-      exampleScene.draw();
+      exampleScene.update();
+      renderer.render(exampleScene.scene, exampleScene.camera);
       raf = requestAnimationFrame(onUpdate)
     }
 
@@ -73,7 +79,7 @@ function App() {
 
     return () => {
       window.removeEventListener('resize', onResize);
-      exampleScene.renderer.dispose();
+      renderer.dispose();
       cancelAnimationFrame(raf);
       raf = -1;
     }
