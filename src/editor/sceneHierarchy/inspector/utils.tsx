@@ -122,7 +122,6 @@ export function clampedNames(name: string): boolean {
 
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
   const items: any[] = [];
-  console.log('inspectMaterialItems', material.name, material.type);
   for (const i in material) {
     if (!acceptedMaterialNames(i)) continue;
 
@@ -199,9 +198,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue,
                   onChange: (prop: string, value: any) => {
-                    console.log('change!', prop, i, n);
-                    console.log(`material.${i}.${n} =`, value);
-                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                    three.createTexture(object.uuid, `${i}`, value);
                   },
                 });
               } else {
@@ -228,9 +225,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
-                    console.log('change!', prop, i, n);
-                    console.log(`material.${i}.${n}.value =`, value);
-                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                    three.createTexture(object.uuid, `material.${i}.${n}.value`, value);
                   },
                 });
               } else {
@@ -274,7 +269,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       three.updateObject(object.uuid, `material.needsUpdate`, true);
     },
   });
-  console.log(items);
 
   return items;
 }

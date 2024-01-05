@@ -13,4 +13,5 @@ export const ToolEvents = {
   GET_OBJECT: 'ToolEvents::getObject',
   SET_OBJECT: 'ToolEvents::setObject',
   UPDATE_OBJECT: 'ToolEvents::updateObject',
+  CREATE_TEXTURE: 'ToolEvents::createTexture',
 };

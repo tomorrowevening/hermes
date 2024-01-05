@@ -1,12 +1,12 @@
 // Libs
-import { CSSProperties, useEffect, useRef } from 'react'
+import { CSSProperties, useEffect, useRef, useState } from 'react'
 import { types } from '@theatre/core'
-import { WebGLRenderer } from 'three';
 // Models
 import { app, IS_DEV } from '../constants'
 // Components
 import './App.css'
 import ExampleScene from '../three/ExampleScene';
+import SceneInspector from '@/editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 
 const elementStyle: CSSProperties = {
@@ -16,11 +16,12 @@ const elementStyle: CSSProperties = {
   position: 'absolute',
 }
 
+let exampleScene: ExampleScene;
+
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!)
+  const [threeReady, setThreeReady] = useState(false);
   app.theatre?.sheet('App')
-
-  let exampleScene: ExampleScene;
 
   // Theatre
   useEffect(() => {
@@ -48,90 +49,31 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
-    const renderer = new WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(devicePixelRatio);
-    elementRef.current.parentElement!.appendChild(renderer.domElement);
-
     exampleScene = new ExampleScene();
+    elementRef.current.parentElement!.appendChild(exampleScene.renderer.domElement);
 
-    // RAF
+    // Start RAF
+    let raf = -1
     const onResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      renderer.setSize(width, height);
-      exampleScene.resize(width, height);
+      const width = window.innerWidth
+      const height = window.innerHeight
+      exampleScene.resize(width, height)
     }
-
-    let raf = -1;
     const onUpdate = () => {
-      renderer.render(exampleScene.scene, exampleScene.camera);
-      raf = requestAnimationFrame(onUpdate);
+      exampleScene.draw();
+      raf = requestAnimationFrame(onUpdate)
     }
 
-    // TODO: Remove this, render scene with multi-camera support
     if (!app.editor) {
       onResize();
-      onUpdate(); // Start rendering
+      onUpdate();
       window.addEventListener('resize', onResize);
-    }
-
-    // Debug
-    const onGetObject = (evt: any) => {
-      const child = exampleScene.scene.getObjectByProperty('uuid', evt.value);
-      if (child !== undefined) app.three.setObject(child);
-    };
-
-    const onUpdateObject = (evt: any) => {
-      const msg = evt.value;
-      const { key, value, uuid } = msg;
-      const child = exampleScene.scene.getObjectByProperty('uuid', uuid);
-      if (child !== undefined) {
-        const keys = key.split('.');
-        const total = keys.length;
-        // console.log('update obj:', uuid, keys, total, value, typeof value);
-        // console.log(child);
-        switch (total) {
-          case 1:
-            // @ts-ignore
-            child[key] = value;
-            break;
-          case 2:
-            // @ts-ignore
-            child[keys[0]][keys[1]] = value;
-            break;
-          case 3:
-            // @ts-ignore
-            child[keys[0]][keys[1]][keys[2]] = value;
-            break;
-          case 4:
-            // @ts-ignore
-            child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
-            break;
-          case 5:
-            // @ts-ignore
-            child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
-            break;
-        }
-      }
-    };
-
-    const onGetScene = () => {
-      app.three.setScene(exampleScene.scene);
-    };
-
-    if (IS_DEV) {
-      debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
-      debugDispatcher.addEventListener(ToolEvents.GET_SCENE, onGetScene);
-      debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      app.three.setScene(exampleScene.scene);
+      setThreeReady(true);
     }
 
     return () => {
-      debugDispatcher.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
-      debugDispatcher.removeEventListener(ToolEvents.GET_SCENE, onGetScene);
-      debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
       window.removeEventListener('resize', onResize);
-      renderer.dispose();
+      exampleScene.renderer.dispose();
       cancelAnimationFrame(raf);
       raf = -1;
     }
@@ -185,15 +127,21 @@ function App() {
   }
 
   return (
-    <div id='box' ref={elementRef}>
-      <button onClick={() => {
-        app.send({
-          target: 'editor',
-          event: 'custom',
-          data: 'hello editor!'
-        })
-      }}>Click</button>
-    </div>
+    <>
+      <div id='box' ref={elementRef}>
+        <button onClick={() => {
+          app.send({
+            target: 'editor',
+            event: 'custom',
+            data: 'hello editor!'
+          });
+        }}>Click</button>
+      </div>
+
+      {IS_DEV && threeReady && (
+        <SceneInspector scene={exampleScene.scene} three={app.three} />
+      )}
+    </>
   )
 }
 

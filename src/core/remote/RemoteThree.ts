@@ -41,6 +41,18 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  createTexture(uuid: string, key: string, value: any) {
+    this.app.send({
+      event: 'createTexture',
+      target: 'app',
+      data: {
+        uuid,
+        key,
+        value
+      },
+    });
+  }
+
   getScene() {
     this.app.send({
       event: 'getScene',
