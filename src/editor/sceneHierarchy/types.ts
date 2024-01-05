@@ -67,6 +67,29 @@ export interface RemoteMaterial {
   specularColor?: Color
 }
 
+// Camera Info
+
+export interface PerspectiveCameraInfo {
+  fov: number
+  zoom: number
+  near: number
+  far: number
+  focus: number
+  aspect: number
+  filmGauge: number
+  filmOffset: number
+}
+
+export interface OrthographicCameraInfo {
+  zoom: number
+  near: number
+  far: number
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
 export interface RemoteObject {
   name: string
   uuid: string
@@ -74,4 +97,6 @@ export interface RemoteObject {
   visible: boolean
   matrix: number[] // based on Matrix4.elements
   material?: RemoteMaterial | RemoteMaterial[]
+  perspectiveCameraInfo?: PerspectiveCameraInfo
+  orthographicCameraInfo?: OrthographicCameraInfo
 }

@@ -1,11 +1,10 @@
-import { Scene, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene } from 'three';
 export default class ExampleScene {
-    renderer: WebGLRenderer;
     scene: Scene;
-    private camera;
+    camera: PerspectiveCamera;
     private customMat;
     private lastUpdate;
     constructor();
     resize(width: number, height: number): void;
-    draw(): void;
+    update(): void;
 }

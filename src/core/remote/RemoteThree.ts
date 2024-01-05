@@ -29,6 +29,18 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  requestMethod(uuid: string, key: string, value?: any) {
+    this.app.send({
+      event: 'requestMethod',
+      target: 'app',
+      data: {
+        uuid,
+        key,
+        value
+      },
+    });
+  }
+
   updateObject(uuid: string, key: string, value: any) {
     this.app.send({
       event: 'updateObject',

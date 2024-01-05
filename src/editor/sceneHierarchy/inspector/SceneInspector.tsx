@@ -67,16 +67,34 @@ export default function SceneInspector(props: SceneInspectorProps) {
     props.three.setScene(props.scene);
   };
 
+  const onRequestMethod = (evt: any) => {
+    const { key, uuid, value } = evt.value;
+    const child = props.scene.getObjectByProperty('uuid', uuid);
+    if (child !== undefined) {
+      try {
+        // @ts-ignore
+        child[key](value);
+      } catch (err: any) {
+        console.log('Error requesting method:');
+        console.log(err);
+        console.log(key);
+        console.log(value);
+      }
+    }
+  };
+
   useEffect(() => {
     debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
     debugDispatcher.addEventListener(ToolEvents.GET_SCENE, onGetScene);
     debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
     debugDispatcher.addEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
+    debugDispatcher.addEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
       debugDispatcher.removeEventListener(ToolEvents.GET_SCENE, onGetScene);
       debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
       debugDispatcher.removeEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
+      debugDispatcher.removeEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
     };
   }, []);
 

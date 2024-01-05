@@ -10,4 +10,5 @@ export declare const ToolEvents: {
     SET_OBJECT: string;
     UPDATE_OBJECT: string;
     CREATE_TEXTURE: string;
+    REQUEST_METHOD: string;
 };
