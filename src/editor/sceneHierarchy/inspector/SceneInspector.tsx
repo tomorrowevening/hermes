@@ -63,7 +63,7 @@ export default function SceneInspector(props: SceneInspectorProps) {
 				switch (total) {
 					case 1:
 						// @ts-ignore
-						child[key] = texture;
+						child[keys[0]] = texture;
 						break;
 					case 2:
 						// @ts-ignore
