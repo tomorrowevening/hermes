@@ -5,7 +5,9 @@ import { app } from "@/example/constants";
 import './inspector.scss';
 import InspectorField from './InspectorField';
 // Utils
-import { InspectMaterial, InspectTransform } from './utils';
+import { InspectCamera } from "./utils/InspectCamera";
+import { InspectMaterial } from "./utils/InspectMaterial";
+import { InspectTransform } from "./utils/InspectTransform";
 
 export default function Inspector(props: CoreComponentProps) {
   const [lastRefresh, setLastRefresh] = useState(-1);
@@ -69,6 +71,8 @@ export default function Inspector(props: CoreComponentProps) {
           />
           {/* Transform */}
           {InspectTransform(currentObject, app.three)}
+          {/* Camera */}
+          {currentObject.type.search('Camera') > -1 ? InspectCamera(currentObject, app.three) : null}
           {/* Material */}
           {currentObject.material !== undefined ? InspectMaterial(currentObject, app.three) : null}
           {/* Camera */}

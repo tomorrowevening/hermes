@@ -21,7 +21,7 @@ let exampleScene: ExampleScene;
 
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!)
-  const [threeReady, setThreeReady] = useState(false);
+  const [showSceneInspector, setShowSceneInspector] = useState(false);
   app.theatre?.sheet('App')
 
   // Theatre
@@ -74,8 +74,10 @@ function App() {
       onResize();
       onUpdate();
       window.addEventListener('resize', onResize);
-      setThreeReady(true);
+      setShowSceneInspector(true);
     }
+
+    app.three.setScene(exampleScene.scene);
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -144,7 +146,7 @@ function App() {
         }}>Click</button>
       </div>
 
-      {IS_DEV && threeReady && (
+      {IS_DEV && showSceneInspector && (
         <SceneInspector scene={exampleScene.scene} three={app.three} />
       )}
     </>
