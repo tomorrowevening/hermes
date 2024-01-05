@@ -2,6 +2,7 @@ import { Euler, Matrix4, Vector3 } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from "../../types";
 import RemoteThree from '@/core/remote/RemoteThree';
+import { setItemProps } from '../../utils';
 
 export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
   const matrix = new Matrix4();
@@ -17,6 +18,8 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 
   const updateTransform = (prop: string, value: any) => {
     three.updateObject(obj.uuid, prop, value);
+    const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
+    if (child !== undefined) setItemProps(child, prop, value);
   };
 
   const items: any[] = [

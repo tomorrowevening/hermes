@@ -36,10 +36,10 @@
     right: 5px;
     bottom: 0;
   }
-
-  @import 'dropdown';
-  @import 'draggable';
 }
+
+@import 'dropdown';
+@import 'draggable';
 
 .fsAbsolute {
   position: absolute;

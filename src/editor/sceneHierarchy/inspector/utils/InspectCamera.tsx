@@ -1,6 +1,7 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from "../../types";
+import { setItemProps } from '../../utils';
 
 function prettyName(name: string): string {
   switch (name) {
@@ -35,6 +36,13 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, prop, value);
           three.requestMethod(object.uuid, 'updateProjectionMatrix');
+
+          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) {
+            setItemProps(child, prop, value);
+            // @ts-ignore
+            child.updateProjectionMatrix();
+          }
         }
       });
     }
@@ -50,6 +58,13 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, prop, value);
           three.requestMethod(object.uuid, 'updateProjectionMatrix');
+
+          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) {
+            setItemProps(child, prop, value);
+            // @ts-ignore
+            child.updateProjectionMatrix();
+          }
         }
       });
     }

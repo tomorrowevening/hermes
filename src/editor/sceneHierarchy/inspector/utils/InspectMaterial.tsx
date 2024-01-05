@@ -2,6 +2,7 @@ import { Color } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from "../../types";
 import RemoteThree from '@/core/remote/RemoteThree';
+import { setItemProps } from '../../utils';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -148,6 +149,9 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, `material.${prop}`, value);
           if (propType === 'boolean') three.updateObject(object.uuid, 'material.needsUpdate', true);
+
+          // const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+          // if (child !== undefined) setItemProps(child, prop, value);
         },
       };
       if (clampedNames(i)) {
@@ -170,7 +174,12 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           type: 'color',
           value: value,
           onChange: (prop: string, value: any) => {
-            three.updateObject(object.uuid, `material.${prop}`, new Color(value));
+            const newValue = new Color(value);
+            three.updateObject(object.uuid, `material.${prop}`, newValue);
+            
+            // const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+            // console.log('update color:', object.uuid, child, prop, newValue);
+            // if (child !== undefined) setItemProps(child, prop, newValue);
           },
         });
       } else if (Array.isArray(value)) {
