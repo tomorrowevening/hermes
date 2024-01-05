@@ -1,17 +1,7 @@
-// Libs
-import { Scene } from 'three';
-// Core
-import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { stripObject, stripScene } from '@/editor/sceneHierarchy/utils';
 
 export default class RemoteThree extends BaseRemote {
-  public scene?: Scene | undefined = undefined;
-
-  constructor(app: Application) {
-    super(app);
-  }
-
   getObject(uuid: string) {
     this.app.send({
       event: 'getObject',
