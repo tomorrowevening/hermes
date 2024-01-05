@@ -1,4 +1,4 @@
-import { Material, Mesh, Object3D } from 'three';
+import { Camera, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -128,6 +128,30 @@ export function stripObject(obj: Object3D): RemoteObject {
     } else {
       stripped.material = stripMaterialData(mesh.material);
     }
+  } else if (obj instanceof Camera) {
+    if (obj instanceof PerspectiveCamera) {
+      stripped.perspectiveCameraInfo = {
+        fov: obj.fov,
+        zoom: obj.zoom,
+        near: obj.near,
+        far: obj.far,
+        focus: obj.focus,
+        aspect: obj.aspect,
+        filmGauge: obj.filmGauge,
+        filmOffset: obj.filmOffset,
+      };
+    } else if (obj instanceof OrthographicCamera) {
+      stripped.orthographicCameraInfo = {
+        zoom: obj.zoom,
+        near: obj.near,
+        far: obj.far,
+        left: obj.left,
+        right: obj.right,
+        top: obj.top,
+        bottom: obj.bottom,
+      };
+    }
   }
+
   return stripped;
 }

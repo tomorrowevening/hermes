@@ -83,6 +83,9 @@ export default function RemoteController(app: Application) {
       case 'createTexture':
         debugDispatcher.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
         break;
+      case 'requestMethod':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
+        break;
     }
   }
 

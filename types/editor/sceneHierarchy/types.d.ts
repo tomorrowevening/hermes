@@ -54,6 +54,25 @@ export interface RemoteMaterial {
     sheenColor?: Color;
     specularColor?: Color;
 }
+export interface PerspectiveCameraInfo {
+    fov: number;
+    zoom: number;
+    near: number;
+    far: number;
+    focus: number;
+    aspect: number;
+    filmGauge: number;
+    filmOffset: number;
+}
+export interface OrthographicCameraInfo {
+    zoom: number;
+    near: number;
+    far: number;
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+}
 export interface RemoteObject {
     name: string;
     uuid: string;
@@ -61,4 +80,6 @@ export interface RemoteObject {
     visible: boolean;
     matrix: number[];
     material?: RemoteMaterial | RemoteMaterial[];
+    perspectiveCameraInfo?: PerspectiveCameraInfo;
+    orthographicCameraInfo?: OrthographicCameraInfo;
 }

@@ -1,18 +1,14 @@
-import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader, WebGLRenderer } from 'three'
+import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader } from 'three'
 import CustomMaterial from './CustomMaterial';
 
 export default class ExampleScene {
-  renderer: WebGLRenderer;
   scene: Scene;
+  camera: PerspectiveCamera;
 
-  private camera: PerspectiveCamera;
   private customMat: CustomMaterial;
   private lastUpdate = -1;
 
   constructor() {
-    this.renderer = new WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(devicePixelRatio);
-
     // Scene
 
     this.scene = new Scene();
@@ -77,16 +73,14 @@ export default class ExampleScene {
   }
 
   resize(width: number, height: number) {
-    this.camera.aspect = width / height
-    this.camera.updateProjectionMatrix()
-    this.renderer.setSize(width, height)
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
   }
 
-  draw() {
+  update() {
     const now = Date.now();
     const delta = (now - this.lastUpdate) / 1000;
     this.lastUpdate = now;
     this.customMat.update(delta);
-    this.renderer.render(this.scene, this.camera);
   }
 }

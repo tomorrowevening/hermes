@@ -28,6 +28,7 @@ export type EditorEvent =
   | 'getScene'
   | 'setScene'
   | 'createTexture'
+  | 'requestMethod'
 // GUI
   | 'addFolder'
   | 'bindObject'
