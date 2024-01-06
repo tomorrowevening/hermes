@@ -54,7 +54,7 @@ function App() {
     elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
-    threeCameras.push(exampleScene.camera);
+    // threeCameras.push(exampleScene.camera);
 
     // Start RAF
     let raf = -1;
@@ -88,35 +88,36 @@ function App() {
   }, [])
 
   // Debug Components
-  if (IS_DEV && useTweakpane) {
+  if (IS_DEV) {
     useEffect(() => {
-      const container = elementRef.current!
-      container.style.visibility = app.editor ? 'hidden' : 'inherit'
+      const container = elementRef.current!;
+      container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
       // Tweakpane Example
+      if (useTweakpane) {
+        const testFolder = app.debug.addFolder('Test Folder');
 
-      const testFolder = app.debug.addFolder('Test Folder')
+        app.debug.button('Test Button', () => {
+          console.log('Test button works!');
+        }, testFolder);
 
-      app.debug.button('Test Button', () => {
-        console.log('Test button works!')
-      }, testFolder)
+        const test = { opacity: 1, rotation: 0 };
+        app.debug.bind(test, 'opacity', {
+          min: 0,
+          max: 1,
+          onChange: (value: number) => {
+            container.style.opacity = value.toFixed(2);
+          }
+        }, testFolder);
 
-      const test = { opacity: 1, rotation: 0 }
-      app.debug.bind(test, 'opacity', {
-        min: 0,
-        max: 1,
-        onChange: (value: number) => {
-          container.style.opacity = value.toFixed(2)
-        }
-      }, testFolder)
-
-      app.debug.bind(test, 'rotation', {
-        min: 0,
-        max: 360,
-        onChange: (value: number) => {
-          container.style.transform = `rotate(${value}deg)`
-        }
-      }, testFolder)
+        app.debug.bind(test, 'rotation', {
+          min: 0,
+          max: 360,
+          onChange: (value: number) => {
+            container.style.transform = `rotate(${value}deg)`;
+          }
+        }, testFolder);
+      }
 
       // Components Example
       const onCustom = (evt: any) => {

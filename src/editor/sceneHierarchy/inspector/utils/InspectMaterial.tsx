@@ -2,7 +2,6 @@ import { Color } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from "../../types";
 import RemoteThree from '@/core/remote/RemoteThree';
-import { setItemProps } from '../../utils';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(

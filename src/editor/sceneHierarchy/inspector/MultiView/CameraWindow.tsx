@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { ForwardedRef, forwardRef, useState } from 'react';
 import './CameraWindow.scss';
 
 interface DropdownProps {
@@ -39,10 +39,19 @@ const Dropdown = (props: DropdownProps) => {
   );
 };
 
-export default function CameraWindow(props: DropdownProps) {
+interface CameraWindowProps {
+  index: number
+  onSelect: (value: string) => void;
+  options: string[];
+}
+
+const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div className='CameraWindow'>
+      <div ref={ref} className='clickable'></div>
       <Dropdown index={props.index} options={props.options} onSelect={props.onSelect} />
     </div>
   );
-}
+});
+
+export default CameraWindow;
