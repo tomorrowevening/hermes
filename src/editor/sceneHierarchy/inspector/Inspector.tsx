@@ -75,7 +75,7 @@ export default function Inspector(props: CoreComponentProps) {
           {/* Light */}
           {currentObject.type.search('Light') > -1 ? InspectLight(currentObject, app.three) : null}
           {/* Material */}
-          {currentObject.type.search('Material') > -1 ? InspectMaterial(currentObject, app.three) : null}
+          {currentObject.material !== undefined ? InspectMaterial(currentObject, app.three) : null}
         </>
       )}
     </div>
