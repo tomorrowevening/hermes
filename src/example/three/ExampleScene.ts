@@ -1,4 +1,4 @@
-import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader } from 'three'
+import { CubeTexture, CubeTextureLoader, DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader } from 'three'
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '@/editor/utils';
 
@@ -11,6 +11,16 @@ export default class ExampleScene extends Scene {
   constructor() {
     super();
     this.name = 'TestScene';
+    this.background = new CubeTextureLoader()
+      .setPath('images/milkyWay/')
+      .load([
+        'dark-s_px.jpg',
+        'dark-s_nx.jpg',
+        'dark-s_py.jpg',
+        'dark-s_ny.jpg',
+        'dark-s_pz.jpg',
+        'dark-s_nz.jpg'
+      ]);
 
     // Cameras
 
@@ -51,7 +61,7 @@ export default class ExampleScene extends Scene {
       transparent: true,
       name: 'physicalMaterial'
     });
-    new TextureLoader().load('uv_grid_opengl.jpg', (texture: Texture) => {
+    new TextureLoader().load('images/uv_grid_opengl.jpg', (texture: Texture) => {
       mesh3Mat.map = texture;
       mesh3Mat.needsUpdate = true;
     });
@@ -69,6 +79,7 @@ export default class ExampleScene extends Scene {
 
     this.lastUpdate = Date.now();
     hierarchyUUID(this);
+    console.log(this);
   }
 
   resize(width: number, height: number) {

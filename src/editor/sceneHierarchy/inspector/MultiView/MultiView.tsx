@@ -42,6 +42,7 @@ export default function MultiView(props: MultiViewProps) {
   let trCam = cameras.get('Right')!;
   let blCam = cameras.get('Front')!;
   let brCam = cameras.get('Orthographic')!;
+  let scene = props.scene;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -69,10 +70,11 @@ export default function MultiView(props: MultiViewProps) {
     
     const helper = new CameraHelper(camera);
     helpers.set(camera.name, helper);
+    // scene.add(helper);
   };
 
   useEffect(() => {
-    const scene = new Scene();
+    scene = new Scene();
     scene.name = 'Debug Scene';
     scene.add(props.scene);
     // Helpers
