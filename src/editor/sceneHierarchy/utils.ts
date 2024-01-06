@@ -1,4 +1,4 @@
-import { Camera, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera } from 'three';
+import { Camera, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -181,4 +181,19 @@ export function setItemProps(child: any, key: string, value: any) {
       child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
       break;
   }
+}
+
+export function textureFromSrc(imgSource: string): Promise<Texture> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const texture = new Texture(img);
+      texture.wrapS = RepeatWrapping;
+      texture.wrapT = RepeatWrapping;
+      texture.needsUpdate = true;
+      resolve(texture);
+    };
+    img.onerror = reject;
+    img.src = imgSource;
+  });
 }
