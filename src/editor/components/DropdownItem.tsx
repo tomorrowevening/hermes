@@ -11,7 +11,7 @@ export default function DropdownItem(props: DropdownItemProps) {
   const { option } = props;
   const [selected, setSelected] = useState('');
 
-  let element = null;
+  let element;
   switch (option.type) {
     case 'draggable':
       element = (

@@ -73,6 +73,15 @@ export interface OrthographicCameraInfo {
     top: number;
     bottom: number;
 }
+export interface LightInfo {
+    color: Color;
+    intensity: number;
+    decay?: number;
+    distance?: number;
+    angle?: number;
+    penumbra?: number;
+    groundColor?: Color;
+}
 export interface RemoteObject {
     name: string;
     uuid: string;
@@ -82,4 +91,5 @@ export interface RemoteObject {
     material?: RemoteMaterial | RemoteMaterial[];
     perspectiveCameraInfo?: PerspectiveCameraInfo;
     orthographicCameraInfo?: OrthographicCameraInfo;
+    lightInfo?: LightInfo;
 }

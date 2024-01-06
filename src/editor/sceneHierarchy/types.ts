@@ -90,6 +90,20 @@ export interface OrthographicCameraInfo {
   bottom: number
 }
 
+// Light Info
+export interface LightInfo {
+  color: Color
+  intensity: number
+  // Point
+  decay?: number
+  distance?: number
+  // Spot
+  angle?: number
+  penumbra?: number
+  // Hemisphere 
+  groundColor?: Color
+}
+
 export interface RemoteObject {
   name: string
   uuid: string
@@ -99,4 +113,5 @@ export interface RemoteObject {
   material?: RemoteMaterial | RemoteMaterial[]
   perspectiveCameraInfo?: PerspectiveCameraInfo
   orthographicCameraInfo?: OrthographicCameraInfo
+  lightInfo?: LightInfo
 }

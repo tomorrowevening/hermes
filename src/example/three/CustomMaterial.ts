@@ -1,4 +1,5 @@
-import { RepeatWrapping, ShaderMaterial, Texture } from "three";
+import { textureFromSrc } from "@/editor/sceneHierarchy/utils";
+import { ShaderMaterial, Texture } from "three";
 
 const vertex = `varying vec2 vUv;
 
@@ -44,15 +45,9 @@ export default class CustomMaterial extends ShaderMaterial {
       },
     });
 
-    const img = new Image();
-    img.onload = () => {
-      const texture = new Texture(img);
-      texture.wrapS = RepeatWrapping;
-      texture.wrapT = RepeatWrapping;
-      texture.needsUpdate = true;
+    textureFromSrc(smile).then((texture: Texture) => {
       this.uniforms.map.value = texture;
-    };
-    img.src = smile;
+    });
   }
 
   update(delta: number) {

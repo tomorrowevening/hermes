@@ -8,6 +8,7 @@ import InspectorField from './InspectorField';
 import { InspectCamera } from "./utils/InspectCamera";
 import { InspectMaterial } from "./utils/InspectMaterial";
 import { InspectTransform } from "./utils/InspectTransform";
+import { InspectLight } from "./utils/InspectLight";
 
 export default function Inspector(props: CoreComponentProps) {
   const [lastRefresh, setLastRefresh] = useState(-1);
@@ -31,8 +32,6 @@ export default function Inspector(props: CoreComponentProps) {
       debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };
   }, []);
-
-  const isCamera = currentObject.type === 'OrthographicCamera' || currentObject.type === 'PerspectiveCamera';
 
   return (
     <div id="Inspector" className={props.class} key={lastRefresh}>
@@ -73,10 +72,10 @@ export default function Inspector(props: CoreComponentProps) {
           {InspectTransform(currentObject, app.three)}
           {/* Camera */}
           {currentObject.type.search('Camera') > -1 ? InspectCamera(currentObject, app.three) : null}
+          {/* Light */}
+          {currentObject.type.search('Light') > -1 ? InspectLight(currentObject, app.three) : null}
           {/* Material */}
-          {currentObject.material !== undefined ? InspectMaterial(currentObject, app.three) : null}
-          {/* Camera */}
-          {isCamera ? null : null}
+          {currentObject.type.search('Material') > -1 ? InspectMaterial(currentObject, app.three) : null}
         </>
       )}
     </div>

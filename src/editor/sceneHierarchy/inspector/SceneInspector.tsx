@@ -1,8 +1,8 @@
 import RemoteThree from "@/core/remote/RemoteThree";
 import { ToolEvents, debugDispatcher } from "@/editor/global";
 import { useEffect } from "react";
-import { RepeatWrapping, Scene, Texture } from "three";
-import { setItemProps } from "../utils";
+import { Scene, Texture } from "three";
+import { setItemProps, textureFromSrc } from "../utils";
 
 export interface SceneInspectorProps {
   scene: Scene
@@ -28,15 +28,9 @@ export default function SceneInspector(props: SceneInspectorProps) {
 
   const onCreateTexture = (evt: any) => {
     const data = evt.value;
-    const img = new Image();
-    img.onload = () => {
-      const texture = new Texture(img);
-      texture.wrapS = RepeatWrapping;
-      texture.wrapT = RepeatWrapping;
-      texture.needsUpdate = true;
+    textureFromSrc(data.value).then((texture: Texture) => {
       setChildProps(data.uuid, data.key, texture);
-    };
-    img.src = data.value;
+    });
   };
 
   const onGetScene = () => {
@@ -48,7 +42,6 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const child = props.scene.getObjectByProperty('uuid', uuid);
     if (child !== undefined) {
       try {
-        // @ts-ignore
         child[key](value);
       } catch (err: any) {
         console.log('Error requesting method:');

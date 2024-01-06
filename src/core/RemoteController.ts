@@ -61,6 +61,7 @@ export default function RemoteController(app: Application) {
         break;
       case 'updateSheetObject':
         value = app.components.get('theatre')?.sheetObjectCBs.get(msg.data.sheetObject);
+        // @ts-ignore
         if (value !== undefined) value(msg.data.values);
         break;
       case 'updateTimeline':

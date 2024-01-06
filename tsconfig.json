@@ -19,6 +19,7 @@
     "strict": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
+    "noImplicitAny": false,
     "baseUrl": "./",
     "paths": {
       "@": [

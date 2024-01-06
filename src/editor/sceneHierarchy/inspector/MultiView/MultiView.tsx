@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { Camera, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './MultiView.scss';
 import CameraWindow from './CameraWindow';
+import InfiniteGridHelper from './InfiniteGridHelper';
 
 export interface MultiViewProps {
   scene: Scene;
@@ -12,9 +13,10 @@ export interface MultiViewProps {
 
 const cameras: Map<string, Camera> = new Map();
 const controls: Map<string, OrbitControls> = new Map();
+const helpers: Map<string, CameraHelper> = new Map();
 
 function createOrtho(name: string, position: Vector3) {
-  const camera = new OrthographicCamera(-100, 100, 100, -100, 1, 2000);
+  const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 3000);
   camera.name = name;
   camera.position.copy(position);
   camera.lookAt(0, 0, 0);
@@ -37,13 +39,22 @@ export default function MultiView(props: MultiViewProps) {
   const brWindow = useRef<HTMLDivElement>(null);
 
   let tlCam = cameras.get('Top')!;
-  let trCam = cameras.get('Left')!;
+  let trCam = cameras.get('Right')!;
   let blCam = cameras.get('Front')!;
   let brCam = cameras.get('Orthographic')!;
+  let scene = props.scene;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
-    const prev = controls.get(camera.name);
-    if (prev !== undefined) prev.dispose();
+    // Previous items
+    const prevControls = controls.get(camera.name);
+    if (prevControls !== undefined) prevControls.dispose();
+    controls.delete(camera.name);
+
+    const prevHelper = helpers.get(camera.name);
+    if (prevHelper !== undefined) prevHelper.dispose();
+    helpers.delete(camera.name);
+
+    // New items
     const control = new OrbitControls(camera, element);
     switch (camera.name) {
       case 'Top':
@@ -56,9 +67,22 @@ export default function MultiView(props: MultiViewProps) {
         break;
     }
     controls.set(camera.name, control);
+    
+    const helper = new CameraHelper(camera);
+    helpers.set(camera.name, helper);
+    // scene.add(helper);
   };
 
   useEffect(() => {
+    scene = new Scene();
+    scene.name = 'Debug Scene';
+    scene.add(props.scene);
+    // Helpers
+    scene.add(new InfiniteGridHelper());
+    const axisHelper = new AxesHelper(500);
+    axisHelper.name = 'axisHelper';
+    scene.add(axisHelper);
+
     const size = props.renderer.getSize(new Vector2());
     let width = size.x;
     let height = size.y;
@@ -107,7 +131,7 @@ export default function MultiView(props: MultiViewProps) {
         x = 0;
         props.renderer.setViewport(x, y, bw, bh);
         props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(props.scene, tlCam);
+        props.renderer.render(scene, tlCam);
       }
 
       // TR
@@ -115,7 +139,7 @@ export default function MultiView(props: MultiViewProps) {
         x = bw;
         props.renderer.setViewport(x, y, bw, bh);
         props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(props.scene, trCam);
+        props.renderer.render(scene, trCam);
       }
 
       y = 0;
@@ -125,7 +149,7 @@ export default function MultiView(props: MultiViewProps) {
         x = 0;
         props.renderer.setViewport(x, y, bw, bh);
         props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(props.scene, blCam);
+        props.renderer.render(scene, blCam);
       }
 
       // BR
@@ -133,7 +157,7 @@ export default function MultiView(props: MultiViewProps) {
         x = bw;
         props.renderer.setViewport(x, y, bw, bh);
         props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(props.scene, brCam);
+        props.renderer.render(scene, brCam);
       }
 
       raf = requestAnimationFrame(onUpdate);
