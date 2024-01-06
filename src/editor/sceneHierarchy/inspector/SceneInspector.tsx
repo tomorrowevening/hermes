@@ -42,7 +42,6 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const child = props.scene.getObjectByProperty('uuid', uuid);
     if (child !== undefined) {
       try {
-        // @ts-ignore
         child[key](value);
       } catch (err: any) {
         console.log('Error requesting method:');

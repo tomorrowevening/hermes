@@ -1,11 +1,11 @@
-import { CubeTexture, CubeTextureLoader, DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader } from 'three'
+import { AmbientLight, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, SpotLight, SpotLightHelper, Texture, TextureLoader } from 'three'
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '@/editor/utils';
 
 export default class ExampleScene extends Scene {
-  camera: PerspectiveCamera;
+  camera!: PerspectiveCamera;
 
-  private customMat: CustomMaterial;
+  private customMat!: CustomMaterial;
   private lastUpdate = -1;
 
   constructor() {
@@ -22,8 +22,16 @@ export default class ExampleScene extends Scene {
         'dark-s_nz.jpg'
       ]);
 
-    // Cameras
+    this.createCameras();
+    this.createLights();
+    this.createWorld();
 
+    this.lastUpdate = Date.now();
+    hierarchyUUID(this);
+    console.log(this);
+  }
+
+  private createCameras() {
     const cameras = new Object3D();
     cameras.name = 'cameras';
     this.add(cameras);
@@ -32,34 +40,46 @@ export default class ExampleScene extends Scene {
     this.camera.name = 'Main';
     this.camera.position.z = 300;
     cameras.add(this.camera);
+  }
 
-    // Lighting
+  private createLights() {
+    const lights = new Object3D();
+    lights.name = 'lights';
+    this.add(lights);
+
+    const ambient = new AmbientLight(0xffffff, 0.1);
+    ambient.name = 'ambient';
+    lights.add(ambient);
 
     const sun = new DirectionalLight();
     sun.name = 'sun';
     sun.position.set(0, 50, 200);
-    this.add(sun);
+    lights.add(sun);
 
-    // World
-    
+    const hemi = new HemisphereLight(0x0000ff, 0xff0000);
+    hemi.name = 'hemi';
+    lights.add(hemi);
+  }
+
+  private createWorld() {
     const world = new Object3D();
     world.name = 'world';
     this.add(world);
 
     const geom = new SphereGeometry(45);
 
-    const mesh = new Mesh(geom, new MeshNormalMaterial({ name: 'normalMaterial' }));
+    const mesh = new Mesh(geom, new MeshNormalMaterial({ name: 'NormalMaterial' }));
     mesh.name = 'Normal';
     world.add(mesh);
 
-    const mesh2 = new Mesh(geom, new MeshBasicMaterial({ transparent: true, name: 'basicMaterial', wireframe: true }));
+    const mesh2 = new Mesh(geom, new MeshBasicMaterial({ transparent: true, name: 'BasicMaterial' }));
     mesh2.name = 'Basic';
     mesh2.position.x = 100;
     world.add(mesh2);
 
     const mesh3Mat = new MeshPhysicalMaterial({
       transparent: true,
-      name: 'physicalMaterial'
+      name: 'PhysicalMaterial'
     });
     new TextureLoader().load('images/uv_grid_opengl.jpg', (texture: Texture) => {
       mesh3Mat.map = texture;
@@ -77,9 +97,10 @@ export default class ExampleScene extends Scene {
     mesh4.position.y = -100;
     world.add(mesh4);
 
-    this.lastUpdate = Date.now();
-    hierarchyUUID(this);
-    console.log(this);
+    const mesh5 = new Mesh(geom, new MeshPhongMaterial({ name: 'PhongMaterial' }));
+    mesh5.name = 'Phong';
+    mesh5.position.y = 100;
+    world.add(mesh5);
   }
 
   resize(width: number, height: number) {

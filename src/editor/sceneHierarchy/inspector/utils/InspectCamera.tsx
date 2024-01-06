@@ -31,7 +31,6 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         prop: i,
         type: 'number',
         step: 0.01,
-        // @ts-ignore
         value: object.perspectiveCameraInfo[i],
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, prop, value);
@@ -40,8 +39,7 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
           const child = three.scene?.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
             setItemProps(child, prop, value);
-            // @ts-ignore
-            child.updateProjectionMatrix();
+            child['updateProjectionMatrix']();
           }
         }
       });
@@ -53,8 +51,7 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         prop: i,
         type: 'number',
         step: 0.01,
-        // @ts-ignore
-        value: object.perspectiveCameraInfo[i],
+        value: object.perspectiveCameraInfo![i],
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, prop, value);
           three.requestMethod(object.uuid, 'updateProjectionMatrix');
@@ -62,8 +59,7 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
           const child = three.scene?.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
             setItemProps(child, prop, value);
-            // @ts-ignore
-            child.updateProjectionMatrix();
+            child['updateProjectionMatrix']();
           }
         }
       });

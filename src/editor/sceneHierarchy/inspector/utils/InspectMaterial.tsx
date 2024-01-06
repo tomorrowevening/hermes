@@ -134,9 +134,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
   for (const i in material) {
     if (!acceptedMaterialNames(i)) continue;
 
-    // @ts-ignore
     const propType = typeof material[i];
-    // @ts-ignore
     const value = material[i];
     if (propType === 'boolean' || propType === 'number' || propType === 'string') {
       const newField = {
@@ -182,11 +180,10 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           },
         });
       } else if (Array.isArray(value)) {
-        const subChildren = [];
+        const subChildren: any[] = [];
         for (const index in value) {
           subChildren.push({
             title: `${index}`,
-            // @ts-ignore
             type: `${typeof value[index]}`,
             value: value[index],
             onChange: (prop: string, value: any) => {
@@ -202,7 +199,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           items: subChildren,
         });
       } else {
-        const subChildren = [];
+        const subChildren: any[] = [];
         for (const n in value) {
           const propValue = value[n];
           const propValueType = typeof propValue;
@@ -231,7 +228,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                 subChildren.push({
                   title: `${niceMaterialNames(n)}`,
                   prop: `material.${i}.${n}`,
-                  // @ts-ignore
                   type: `${typeof material[i][n]}`,
                   value: value[n],
                   onChange: (prop: string, value: any) => {
@@ -264,7 +260,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
               } else {
                 subChildren.push({
                   title: n,
-                  // @ts-ignore
                   type: `${typeof propValue.value}`,
                   value: propValue.value,
                   onChange: (prop: string, value: any) => {
@@ -287,7 +282,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
         }
       }
     } else if (value !== undefined) {
-      // @ts-ignore
       console.log('other:', i, propType, value);
     }
   }

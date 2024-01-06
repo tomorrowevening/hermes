@@ -4,6 +4,9 @@ export default class ExampleScene extends Scene {
     private customMat;
     private lastUpdate;
     constructor();
+    private createCameras;
+    private createLights;
+    private createWorld;
     resize(width: number, height: number): void;
     onBeforeRender(): void;
 }

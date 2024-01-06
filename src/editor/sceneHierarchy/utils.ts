@@ -1,4 +1,4 @@
-import { Camera, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
+import { Camera, Light, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -42,13 +42,10 @@ function cleanUniforms(obj: any) {
   const newObj = {};
   for (const i in obj) {
     const value = obj[i].value;
-    // @ts-ignore
     newObj[i] = { value: value };
     if (value === null) {
-      // @ts-ignore
       newObj[i].value = { src: '' };
     } else if (value.isTexture) {
-      // @ts-ignore
       newObj[i].value = { src: value.image.src };
     }
   }
@@ -60,26 +57,20 @@ function stripMaterialData(material: Material): RemoteMaterial {
   for (const i in material) {
     if (i.substring(0, 1) === '_' || i.substring(0, 2) === 'is') continue;
 
-    // @ts-ignore
     const type = typeof material[i];
-    // @ts-ignore
     const value = material[i];
     switch (type) {
       case 'boolean':
       case 'number':
       case 'string':
-        // @ts-ignore
         materialData[i] = value;
         break;
       case 'object':
         if (value !== null) {
-          // @ts-ignore
           materialData[i] = value;
           if (value.isTexture) {
-            // @ts-ignore
             materialData[i] = { src: convertImageToBase64(value.image) };
           } else if (i === 'uniforms') {
-            // @ts-ignore
             materialData[i] = cleanUniforms(materialData[i]);
           }
         }
@@ -151,6 +142,16 @@ export function stripObject(obj: Object3D): RemoteObject {
         bottom: obj.bottom,
       };
     }
+  } else if (obj instanceof Light) {
+    stripped.lightInfo = {
+      color: obj.color,
+      intensity: obj.intensity,
+      decay: obj['decay'],
+      distance: obj['distance'],
+      angle: obj['angle'],
+      penumbra: obj['penumbra'],
+      groundColor: obj['groundColor'],
+    };
   }
 
   return stripped;
@@ -161,23 +162,18 @@ export function setItemProps(child: any, key: string, value: any) {
   const total = keys.length;
   switch (total) {
     case 1:
-      // @ts-ignore
       child[keys[0]] = value;
       break;
     case 2:
-      // @ts-ignore
       child[keys[0]][keys[1]] = value;
       break;
     case 3:
-      // @ts-ignore
       child[keys[0]][keys[1]][keys[2]] = value;
       break;
     case 4:
-      // @ts-ignore
       child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
       break;
     case 5:
-      // @ts-ignore
       child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
       break;
   }
