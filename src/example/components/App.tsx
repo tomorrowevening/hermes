@@ -1,5 +1,5 @@
 // Libs
-import { CSSProperties, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { types } from '@theatre/core'
 import { WebGLRenderer } from 'three';
 // Models
@@ -9,15 +9,13 @@ import './App.css'
 import ExampleScene from '../three/ExampleScene';
 import SceneInspector from '@/editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
+import MultiView from '@/editor/sceneHierarchy/inspector/MultiView/MultiView';
 
-const elementStyle: CSSProperties = {
-  background: '#FF0000',
-  width: '100px',
-  height: '100px',
-  position: 'absolute',
-}
-
+let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;
+
+const useTweakpane = false;
+const threeCameras: any[] = [];
 
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!)
@@ -50,34 +48,36 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
-    const renderer = new WebGLRenderer({ antialias: true });
+    renderer = new WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(devicePixelRatio);
+    renderer.autoClear = false;
     elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
+    // threeCameras.push(exampleScene.camera);
 
     // Start RAF
-    let raf = -1
+    let raf = -1;
+
     const onResize = () => {
-      const width = window.innerWidth;
+      let width = window.innerWidth;
       const height = window.innerHeight;
+      if (app.editor) width -= 300;
       renderer.setSize(width, height);
       exampleScene.resize(width, height);
-    }
+    };
+
     const onUpdate = () => {
-      exampleScene.update();
-      renderer.render(exampleScene.scene, exampleScene.camera);
-      raf = requestAnimationFrame(onUpdate)
-    }
+      renderer.clear();
+      renderer.render(exampleScene, exampleScene.camera);
+      raf = requestAnimationFrame(onUpdate);
+    };
 
-    if (!app.editor) {
-      onResize();
-      onUpdate();
-      window.addEventListener('resize', onResize);
-      setShowSceneInspector(true);
-    }
-
-    app.three.setScene(exampleScene.scene);
+    app.three.setScene(exampleScene);
+    onResize();
+    window.addEventListener('resize', onResize);
+    if (!app.editor) onUpdate();
+    setShowSceneInspector(true);
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -90,33 +90,34 @@ function App() {
   // Debug Components
   if (IS_DEV) {
     useEffect(() => {
-      const container = elementRef.current!
-      container.style.visibility = app.editor ? 'hidden' : 'inherit'
+      const container = elementRef.current!;
+      container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
       // Tweakpane Example
+      if (useTweakpane) {
+        const testFolder = app.debug.addFolder('Test Folder');
 
-      const testFolder = app.debug.addFolder('Test Folder')
+        app.debug.button('Test Button', () => {
+          console.log('Test button works!');
+        }, testFolder);
 
-      app.debug.button('Test Button', () => {
-        console.log('Test button works!')
-      }, testFolder)
+        const test = { opacity: 1, rotation: 0 };
+        app.debug.bind(test, 'opacity', {
+          min: 0,
+          max: 1,
+          onChange: (value: number) => {
+            container.style.opacity = value.toFixed(2);
+          }
+        }, testFolder);
 
-      const test = { opacity: 1, rotation: 0 }
-      app.debug.bind(test, 'opacity', {
-        min: 0,
-        max: 1,
-        onChange: (value: number) => {
-          container.style.opacity = value.toFixed(2)
-        }
-      }, testFolder)
-
-      app.debug.bind(test, 'rotation', {
-        min: 0,
-        max: 360,
-        onChange: (value: number) => {
-          container.style.transform = `rotate(${value}deg)`
-        }
-      }, testFolder)
+        app.debug.bind(test, 'rotation', {
+          min: 0,
+          max: 360,
+          onChange: (value: number) => {
+            container.style.transform = `rotate(${value}deg)`;
+          }
+        }, testFolder);
+      }
 
       // Components Example
       const onCustom = (evt: any) => {
@@ -147,7 +148,11 @@ function App() {
       </div>
 
       {IS_DEV && showSceneInspector && (
-        <SceneInspector scene={exampleScene.scene} three={app.three} />
+        <SceneInspector scene={exampleScene} three={app.three} />
+      )}
+
+      {IS_DEV && showSceneInspector && app.editor && (
+        <MultiView scene={exampleScene} renderer={renderer} cameras={threeCameras} />
       )}
     </>
   )

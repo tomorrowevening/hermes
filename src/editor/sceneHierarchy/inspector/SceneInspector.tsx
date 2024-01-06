@@ -2,6 +2,7 @@ import RemoteThree from "@/core/remote/RemoteThree";
 import { ToolEvents, debugDispatcher } from "@/editor/global";
 import { useEffect } from "react";
 import { RepeatWrapping, Scene, Texture } from "three";
+import { setItemProps } from "../utils";
 
 export interface SceneInspectorProps {
   scene: Scene
@@ -16,32 +17,7 @@ export default function SceneInspector(props: SceneInspectorProps) {
 
   const setChildProps = (uuid: string, key: string, value: any) => {
     const child = props.scene.getObjectByProperty('uuid', uuid);
-    if (child !== undefined) {
-      const keys = key.split('.');
-      const total = keys.length;
-      switch (total) {
-        case 1:
-          // @ts-ignore
-          child[keys[0]] = value;
-          break;
-        case 2:
-          // @ts-ignore
-          child[keys[0]][keys[1]] = value;
-          break;
-        case 3:
-          // @ts-ignore
-          child[keys[0]][keys[1]][keys[2]] = value;
-          break;
-        case 4:
-          // @ts-ignore
-          child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
-          break;
-        case 5:
-          // @ts-ignore
-          child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
-          break;
-      }
-    }
+    if (child !== undefined) setItemProps(child, key, value);
   };
 
   const onUpdateObject = (evt: any) => {

@@ -1,27 +1,25 @@
 import { DirectionalLight, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, Texture, TextureLoader } from 'three'
 import CustomMaterial from './CustomMaterial';
+import { hierarchyUUID } from '@/editor/utils';
 
-export default class ExampleScene {
-  scene: Scene;
+export default class ExampleScene extends Scene {
   camera: PerspectiveCamera;
 
   private customMat: CustomMaterial;
   private lastUpdate = -1;
 
   constructor() {
-    // Scene
-
-    this.scene = new Scene();
-    this.scene.name = 'Example Scene';
+    super();
+    this.name = 'TestScene';
 
     // Cameras
 
     const cameras = new Object3D();
     cameras.name = 'cameras';
-    this.scene.add(cameras);
+    this.add(cameras);
 
     this.camera = new PerspectiveCamera(60, 1, 1, 2000);
-    this.camera.name = 'mainCamera';
+    this.camera.name = 'Main';
     this.camera.position.z = 300;
     cameras.add(this.camera);
 
@@ -30,22 +28,22 @@ export default class ExampleScene {
     const sun = new DirectionalLight();
     sun.name = 'sun';
     sun.position.set(0, 50, 200);
-    this.scene.add(sun);
+    this.add(sun);
 
     // World
     
     const world = new Object3D();
     world.name = 'world';
-    this.scene.add(world);
+    this.add(world);
 
     const geom = new SphereGeometry(45);
 
     const mesh = new Mesh(geom, new MeshNormalMaterial({ name: 'normalMaterial' }));
-    mesh.name = 'sphere-normal';
+    mesh.name = 'Normal';
     world.add(mesh);
 
     const mesh2 = new Mesh(geom, new MeshBasicMaterial({ transparent: true, name: 'basicMaterial', wireframe: true }));
-    mesh2.name = 'sphere-basic';
+    mesh2.name = 'Basic';
     mesh2.position.x = 100;
     world.add(mesh2);
 
@@ -58,18 +56,19 @@ export default class ExampleScene {
       mesh3Mat.needsUpdate = true;
     });
     const mesh3 = new Mesh(geom, mesh3Mat);
-    mesh3.name = 'sphere-physical';
+    mesh3.name = 'Physical';
     mesh3.position.x = -100;
     world.add(mesh3);
 
     // CustomMaterial
     this.customMat = new CustomMaterial();
     const mesh4 = new Mesh(geom, this.customMat);
-    mesh4.name = 'sphere-shader';
+    mesh4.name = 'Shader';
     mesh4.position.y = -100;
     world.add(mesh4);
 
     this.lastUpdate = Date.now();
+    hierarchyUUID(this);
   }
 
   resize(width: number, height: number) {
@@ -77,7 +76,8 @@ export default class ExampleScene {
     this.camera.updateProjectionMatrix();
   }
 
-  update() {
+  // @ts-ignore
+  override onBeforeRender() {
     const now = Date.now();
     const delta = (now - this.lastUpdate) / 1000;
     this.lastUpdate = now;

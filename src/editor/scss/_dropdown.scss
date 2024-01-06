@@ -12,6 +12,7 @@
   button {
     backdrop-filter: blur(2px);
     background-color: $BAR_COLOR;
+    border: none;
     color: rgba($color: #FFF, $alpha: 0.5);
     font-size: 12px;
     padding: 5px 10px;
