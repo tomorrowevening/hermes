@@ -1,7 +1,8 @@
-import { Color } from 'three';
+import { Color, Texture } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from "../../types";
 import RemoteThree from '@/core/remote/RemoteThree';
+import { setItemProps, textureFromSrc } from '../../utils';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -148,9 +149,9 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, `material.${prop}`, value);
           if (propType === 'boolean') three.updateObject(object.uuid, 'material.needsUpdate', true);
-
-          // const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-          // if (child !== undefined) setItemProps(child, prop, value);
+          // Local update
+          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${prop}`, value);
         },
       };
       if (clampedNames(i)) {
@@ -175,10 +176,9 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           onChange: (prop: string, value: any) => {
             const newValue = new Color(value);
             three.updateObject(object.uuid, `material.${prop}`, newValue);
-            
-            // const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-            // console.log('update color:', object.uuid, child, prop, newValue);
-            // if (child !== undefined) setItemProps(child, prop, newValue);
+            // Local update
+            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+            if (child !== undefined) setItemProps(child, `material.${prop}`, newValue);
           },
         });
       } else if (Array.isArray(value)) {
@@ -190,8 +190,10 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
             type: `${typeof value[index]}`,
             value: value[index],
             onChange: (prop: string, value: any) => {
-              console.log('change!', prop, value);
-              // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+              three.updateObject(object.uuid, `material.${i}`, value);
+              // Local update
+              const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+              if (child !== undefined) setItemProps(child, `material.${i}`, value);
             },
           });
         }
@@ -214,7 +216,15 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue,
                   onChange: (prop: string, value: any) => {
+                    console.log('texture:', prop, value, i);
                     three.createTexture(object.uuid, `material.${i}`, value);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) {
+                      textureFromSrc(value).then((texture: Texture) => {
+                        setItemProps(child, `material.${i}`, texture);
+                      });
+                    }
                   },
                 });
               } else {
@@ -225,15 +235,15 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: `${typeof material[i][n]}`,
                   value: value[n],
                   onChange: (prop: string, value: any) => {
-                    console.log('change!', prop, value);
-                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                    three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) setItemProps(child, `material.${i}.${n}`, value);
                   },
                 });
               }
               break;
             case 'object':
-              // @ts-ignore
-              // console.log(' >> add this object:', i, n, propValue);
               // Uniform textures
               if (propValue.value.src !== undefined) {
                 subChildren.push({
@@ -242,6 +252,13 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
                     three.createTexture(object.uuid, `material.${i}.${n}.value`, value);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) {
+                      textureFromSrc(value).then((texture: Texture) => {
+                        setItemProps(child, `material.${i}.${n}.value`, texture);
+                      });
+                    }
                   },
                 });
               } else {
@@ -251,8 +268,10 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: `${typeof propValue.value}`,
                   value: propValue.value,
                   onChange: (prop: string, value: any) => {
-                    console.log('change!', prop, value);
-                    // three.updateObject(object.uuid, `material.${i}.${n}`, value);
+                    three.updateObject(object.uuid, `material.${i}.${n}.value`, value);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) setItemProps(child, `material.${i}.${n}.value`, value);
                   },
                 });
               }
@@ -272,6 +291,8 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       console.log('other:', i, propType, value);
     }
   }
+
+  // Sort items
   items.sort((a: any, b: any) => {
     if (a.title < b.title) return -1;
     if (a.title > b.title) return 1;
