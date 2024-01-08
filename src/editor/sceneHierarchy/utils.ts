@@ -52,10 +52,24 @@ function cleanUniforms(obj: any) {
   return newObj;
 }
 
+function skipPropertyName(value: string): boolean {
+  switch (value) {
+    case 'blendSrcAlpha':
+    case 'blendDstAlpha':
+    case 'blendEquationAlpha':
+    case 'clippingPlanes':
+    case 'shadowSide':
+    case 'precision':
+      return true;
+  }
+  return false;
+}
+
 function stripMaterialData(material: Material): RemoteMaterial {
   const materialData = {};
   for (const i in material) {
     if (i.substring(0, 1) === '_' || i.substring(0, 2) === 'is') continue;
+    if (skipPropertyName(i)) continue;
 
     const type = typeof material[i];
     const value = material[i];
@@ -73,6 +87,8 @@ function stripMaterialData(material: Material): RemoteMaterial {
           } else if (i === 'uniforms') {
             materialData[i] = cleanUniforms(materialData[i]);
           }
+        } else {
+          materialData[i] = { src: '' };
         }
         break;
     }

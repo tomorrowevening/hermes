@@ -56,8 +56,8 @@ export function niceMaterialNames(name: string): string {
     case 'dithering': return 'Dithering';
     case 'emissive': return 'Emissive';
     case 'emissiveIntensity': return 'Emissive Intensity';
-    case 'envMap': return 'ENV Map';
-    case 'envMapIntensity': return 'ENV Map Intensity';
+    case 'envMap': return 'Environment Map';
+    case 'envMapIntensity': return 'Environment Map Intensity';
     case 'extensions': return 'Extensions';
     case 'flatShading': return 'Flat Shading';
     case 'fragmentShader': return 'Fragment Shader';
@@ -213,13 +213,13 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   type: 'image',
                   value: propValue,
                   onChange: (prop: string, value: any) => {
-                    console.log('texture:', prop, value, i);
                     three.createTexture(object.uuid, `material.${i}`, value);
                     // Local update
                     const child = three.scene?.getObjectByProperty('uuid', object.uuid);
                     if (child !== undefined) {
                       textureFromSrc(value).then((texture: Texture) => {
                         setItemProps(child, `material.${i}`, texture);
+                        setItemProps(child, `material.needsUpdate`, true);
                       });
                     }
                   },

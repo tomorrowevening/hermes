@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import './CameraWindow.scss';
+import { Camera } from 'three';
 interface CameraWindowProps {
-    index: number;
+    camera: Camera;
     onSelect: (value: string) => void;
     options: string[];
 }

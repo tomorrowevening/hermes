@@ -5,7 +5,7 @@ import './MultiView.scss';
 import CameraWindow from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 
-export interface MultiViewProps {
+interface MultiViewProps {
   scene: Scene;
   renderer: WebGLRenderer;
   cameras: Camera[]
@@ -24,6 +24,8 @@ function createOrtho(name: string, position: Vector3) {
   return camera;
 }
 
+// Cameras
+
 createOrtho('Top', new Vector3(0, 1000, 0));
 createOrtho('Bottom', new Vector3(0, -1000, 0));
 createOrtho('Left', new Vector3(-1000, 0, 0));
@@ -32,16 +34,22 @@ createOrtho('Front', new Vector3(0, 0, 1000));
 createOrtho('Back', new Vector3(0, 0, -1000));
 createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
 
+const debugCamera = new PerspectiveCamera(60, 1, 100, 3000);
+debugCamera.name = 'Debug';
+debugCamera.position.set(500, 500, 500);
+debugCamera.lookAt(0, 0, 0);
+cameras.set('Debug', debugCamera);
+
 export default function MultiView(props: MultiViewProps) {
   const tlWindow = useRef<HTMLDivElement>(null);
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
   const brWindow = useRef<HTMLDivElement>(null);
 
-  let tlCam = cameras.get('Top')!;
-  let trCam = cameras.get('Right')!;
+  let tlCam = cameras.get('Debug')!;
+  let trCam = cameras.get('Orthographic')!;
   let blCam = cameras.get('Front')!;
-  let brCam = cameras.get('Orthographic')!;
+  let brCam = cameras.get('Right')!;
   let scene = props.scene;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
@@ -68,9 +76,11 @@ export default function MultiView(props: MultiViewProps) {
     }
     controls.set(camera.name, control);
     
-    const helper = new CameraHelper(camera);
-    helpers.set(camera.name, helper);
-    // scene.add(helper);
+    if (camera instanceof PerspectiveCamera) {
+      const helper = new CameraHelper(camera);
+      helpers.set(camera.name, helper);
+      scene.add(helper);
+    }
   };
 
   useEffect(() => {
@@ -116,14 +126,16 @@ export default function MultiView(props: MultiViewProps) {
     };
 
     const onUpdate = () => {
+      scene.background = props.scene.background;
       controls.forEach((control: OrbitControls) => {
         control.update();
       });
 
+      props.renderer.clear();
+      props.scene['update']();
+
       let x = 0;
       let y = 0;
-
-      props.renderer.clear();
       y = height - bh;
 
       // TL
@@ -183,6 +195,7 @@ export default function MultiView(props: MultiViewProps) {
     'Front',
     'Back',
     'Orthographic',
+    'Debug',
   ];
   props.cameras.forEach((camera: Camera) => {
     cameras.set(camera.name, camera);
@@ -191,7 +204,7 @@ export default function MultiView(props: MultiViewProps) {
 
   return (
     <div className='multiview'>
-      <CameraWindow index={0} options={options} ref={tlWindow} onSelect={(value: string) => {
+      <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
         controls.get(tlCam.name)?.dispose();
         const camera = cameras.get(value);
         if (camera !== undefined) {
@@ -199,7 +212,7 @@ export default function MultiView(props: MultiViewProps) {
           createControls(camera, tlWindow.current!);
         }
       }} />
-      <CameraWindow index={2} options={options} ref={trWindow} onSelect={(value: string) => {
+      <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
         controls.get(trCam.name)?.dispose();
         const camera = cameras.get(value);
         if (camera !== undefined) {
@@ -207,7 +220,7 @@ export default function MultiView(props: MultiViewProps) {
           createControls(camera, trWindow.current!);
         }
       }} />
-      <CameraWindow index={4} options={options} ref={blWindow} onSelect={(value: string) => {
+      <CameraWindow camera={blCam} options={options} ref={blWindow} onSelect={(value: string) => {
         controls.get(blCam.name)?.dispose();
         const camera = cameras.get(value);
         if (camera !== undefined) {
@@ -215,7 +228,7 @@ export default function MultiView(props: MultiViewProps) {
           createControls(camera, blWindow.current!);
         }
       }} />
-      <CameraWindow index={6} options={options} ref={brWindow} onSelect={(value: string) => {
+      <CameraWindow camera={brCam} options={options} ref={brWindow} onSelect={(value: string) => {
         controls.get(brCam.name)?.dispose();
         const camera = cameras.get(value);
         if (camera !== undefined) {

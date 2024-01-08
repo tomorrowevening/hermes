@@ -30,6 +30,7 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const data = evt.value;
     textureFromSrc(data.value).then((texture: Texture) => {
       setChildProps(data.uuid, data.key, texture);
+      setChildProps(data.uuid, `material.needsUpdate`, true);
     });
   };
 

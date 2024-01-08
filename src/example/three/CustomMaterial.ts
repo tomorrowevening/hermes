@@ -31,7 +31,7 @@ export default class CustomMaterial extends ShaderMaterial {
     super({
       vertexShader: vertex,
       fragmentShader: fragment,
-      name: 'customMaterial',
+      name: 'ExampleScene/SimpleShader',
       uniforms: {
         opacity: {
           value: 1,

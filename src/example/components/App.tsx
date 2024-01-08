@@ -54,7 +54,7 @@ function App() {
     elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
-    // threeCameras.push(exampleScene.camera);
+    threeCameras.push(exampleScene.camera);
 
     // Start RAF
     let raf = -1;
@@ -69,6 +69,7 @@ function App() {
 
     const onUpdate = () => {
       renderer.clear();
+      exampleScene.update();
       renderer.render(exampleScene, exampleScene.camera);
       raf = requestAnimationFrame(onUpdate);
     };
