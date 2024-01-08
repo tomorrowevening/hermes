@@ -75,7 +75,7 @@ export default class ExampleScene extends Scene {
     sun.shadow.mapSize.height = 1024;
     sun.shadow.camera.near = 10;
     sun.shadow.camera.far = 1000;
-    sun.shadow.bias = 0.001;
+    sun.shadow.bias = 0.0001;
     lights.add(sun);
 
     const hemi = new HemisphereLight(0x6fb4e2, 0xc46d27, 0.5);

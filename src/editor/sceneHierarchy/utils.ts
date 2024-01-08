@@ -1,4 +1,4 @@
-import { Camera, Light, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
+import { Camera, CubeTexture, Light, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -83,7 +83,17 @@ function stripMaterialData(material: Material): RemoteMaterial {
         if (value !== null) {
           materialData[i] = value;
           if (value.isTexture) {
-            materialData[i] = { src: convertImageToBase64(value.image) };
+            if (value instanceof Texture) {
+              // materialData[i] = { src: convertImageToBase64(value.image) };
+              const textureSource = value.source.toJSON();
+              // @ts-ignore
+              materialData[i] = { src: textureSource.url };
+            } else if (value instanceof CubeTexture) {
+              console.log('env map');
+              console.log(value.source.data);
+              console.log(value.source.toJSON());
+              materialData[i] = { src: '' };
+            }
           } else if (i === 'uniforms') {
             materialData[i] = cleanUniforms(materialData[i]);
           }
