@@ -1,5 +1,4 @@
 import { ForwardedRef, forwardRef, useState } from 'react';
-import './CameraWindow.scss';
 import { Camera } from 'three';
 
 interface DropdownProps {
@@ -8,7 +7,7 @@ interface DropdownProps {
   options: string[];
 }
 
-const Dropdown = (props: DropdownProps) => {
+export const Dropdown = (props: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(props.options[props.index]);
 
@@ -17,8 +16,10 @@ const Dropdown = (props: DropdownProps) => {
   };
 
   const handleSelect = (option: any) => {
-    props.onSelect(option);
-    setSelectedOption(option);
+    if (option !== selectedOption) {
+      props.onSelect(option);
+      setSelectedOption(option);
+    }
     setIsOpen(false);
   };
 

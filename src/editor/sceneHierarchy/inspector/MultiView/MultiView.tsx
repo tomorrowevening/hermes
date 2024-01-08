@@ -1,14 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import './MultiView.scss';
-import CameraWindow from './CameraWindow';
+import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
+import './MultiView.scss';
 
+type MultiViewMode = 'Single' | 'Side by Side' | 'Stacked' |'Quad';
+const ModeOptions: MultiViewMode[] = [
+  'Single',
+  'Side by Side',
+  'Stacked',
+  'Quad'
+];
 interface MultiViewProps {
   scene: Scene;
   renderer: WebGLRenderer;
-  cameras: Camera[]
+  cameras: Camera[];
+  mode?: MultiViewMode;
 }
 
 const cameras: Map<string, Camera> = new Map();
@@ -40,7 +48,21 @@ debugCamera.position.set(500, 500, 500);
 debugCamera.lookAt(0, 0, 0);
 cameras.set('Debug', debugCamera);
 
+const options: string[] = [
+  'Top',
+  'Bottom',
+  'Left',
+  'Right',
+  'Front',
+  'Back',
+  'Orthographic',
+  'Debug',
+];
+const scene = new Scene();
+
 export default function MultiView(props: MultiViewProps) {
+  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
+
   const tlWindow = useRef<HTMLDivElement>(null);
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
@@ -50,7 +72,6 @@ export default function MultiView(props: MultiViewProps) {
   let trCam = cameras.get('Orthographic')!;
   let blCam = cameras.get('Front')!;
   let brCam = cameras.get('Top')!;
-  let scene = props.scene;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -59,7 +80,10 @@ export default function MultiView(props: MultiViewProps) {
     controls.delete(camera.name);
 
     const prevHelper = helpers.get(camera.name);
-    if (prevHelper !== undefined) prevHelper.dispose();
+    if (prevHelper !== undefined) {
+      scene.remove(prevHelper);
+      prevHelper.dispose();
+    }
     helpers.delete(camera.name);
 
     // New items
@@ -83,16 +107,55 @@ export default function MultiView(props: MultiViewProps) {
     }
   };
 
+  const killControls = () => {
+    controls.forEach((value: OrbitControls, key: string) => {
+      value.dispose();
+      const helper = helpers.get(key);
+      if (helper !== undefined) {
+        scene.remove(helper);
+        helper.dispose();
+      }
+      helpers.delete(key);
+      controls.delete(key);
+    });
+    controls.clear();
+    helpers.clear();
+  };
+
+  const assignControls = () => {
+    switch (mode) {
+      case 'Single':
+        createControls(tlCam, tlWindow.current!);
+        break;
+      case 'Side by Side':
+      case 'Stacked':
+        createControls(tlCam, tlWindow.current!);
+        createControls(trCam, trWindow.current!);
+        break;
+      case 'Quad':
+        createControls(tlCam, tlWindow.current!);
+        createControls(trCam, trWindow.current!);
+        createControls(blCam, blWindow.current!);
+        createControls(brCam, brWindow.current!);
+        break;
+    }
+  };
+
+  // Add scene + helpers
   useEffect(() => {
-    scene = new Scene();
     scene.name = 'Debug Scene';
     scene.add(props.scene);
-    // Helpers
-    scene.add(new InfiniteGridHelper());
+
+    const grid = new InfiniteGridHelper();
+    scene.add(grid);
+
     const axisHelper = new AxesHelper(500);
     axisHelper.name = 'axisHelper';
     scene.add(axisHelper);
+  }, []);
 
+  // Resize handling + drawing
+  useEffect(() => {
     const size = props.renderer.getSize(new Vector2());
     let width = size.x;
     let height = size.y;
@@ -100,82 +163,130 @@ export default function MultiView(props: MultiViewProps) {
     let bh = Math.floor(height / 2);
     let raf = -1;
 
-    createControls(tlCam, tlWindow.current!);
-    createControls(trCam, trWindow.current!);
-    createControls(blCam, blWindow.current!);
-    createControls(brCam, brWindow.current!);
-
     const onResize = () => {
       width = window.innerWidth - 300;
       height = window.innerHeight;
       bw = Math.floor(width / 2);
       bh = Math.floor(height / 2);
-      // Cameras
+
+      let cw = width;
+      let ch = height;
+      switch (mode) {
+        case 'Side by Side':
+          cw = bw;
+          ch = height;
+          break;
+        case 'Stacked':
+          cw = width;
+          ch = bh;
+          break;
+        case 'Quad':
+          cw = bw;
+          ch = bh;
+          break;
+      }
+
       cameras.forEach((camera) => {
         if (camera instanceof OrthographicCamera) {
-          camera.left = width / -2;
-          camera.right = width / 2;
-          camera.top = height / 2;
-          camera.bottom = height / -2;
+          camera.left = cw / -2;
+          camera.right = cw / 2;
+          camera.top = ch / 2;
+          camera.bottom = ch / -2;
           camera.updateProjectionMatrix();
         } else if (camera instanceof PerspectiveCamera) {
-          camera.aspect = width / height;
+          camera.aspect = cw / ch;
           camera.updateProjectionMatrix();
+          helpers.get(camera.name)?.update();
         }
       });
     };
 
-    const onUpdate = () => {
-      scene.background = props.scene.background;
-      controls.forEach((control: OrbitControls) => {
-        control.update();
-      });
+    const drawSingle = () => {
+      props.renderer.setViewport(0, 0, width, height);
+      props.renderer.setScissor(0, 0, width, height);
+      props.renderer.render(scene, tlCam);
+    };
 
-      props.renderer.clear();
-      props.scene['update']();
+    const drawDouble = () => {
+      if (mode === 'Side by Side') {
+        props.renderer.setViewport(0, 0, bw, height);
+        props.renderer.setScissor(0, 0, bw, height);
+        props.renderer.render(scene, tlCam);
 
+        props.renderer.setViewport(bw, 0, bw, height);
+        props.renderer.setScissor(bw, 0, bw, height);
+        props.renderer.render(scene, trCam);
+      } else {
+        const y = height - bh;
+        props.renderer.setViewport(0, y, width, bh);
+        props.renderer.setScissor(0, y, width, bh);
+        props.renderer.render(scene, tlCam);
+
+        props.renderer.setViewport(0, 0, width, bh);
+        props.renderer.setScissor(0, 0, width, bh);
+        props.renderer.render(scene, trCam);
+      }
+    };
+
+    const drawQuad = () => {
       let x = 0;
       let y = 0;
       y = height - bh;
 
       // TL
-      if (tlCam !== undefined) {
-        x = 0;
-        props.renderer.setViewport(x, y, bw, bh);
-        props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(scene, tlCam);
-      }
+      x = 0;
+      props.renderer.setViewport(x, y, bw, bh);
+      props.renderer.setScissor(x, y, bw, bh);
+      props.renderer.render(scene, tlCam);
 
       // TR
-      if (trCam !== undefined) {
-        x = bw;
-        props.renderer.setViewport(x, y, bw, bh);
-        props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(scene, trCam);
-      }
+      x = bw;
+      props.renderer.setViewport(x, y, bw, bh);
+      props.renderer.setScissor(x, y, bw, bh);
+      props.renderer.render(scene, trCam);
 
       y = 0;
 
       // BL
-      if (tlCam !== undefined) {
-        x = 0;
-        props.renderer.setViewport(x, y, bw, bh);
-        props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(scene, blCam);
-      }
+      x = 0;
+      props.renderer.setViewport(x, y, bw, bh);
+      props.renderer.setScissor(x, y, bw, bh);
+      props.renderer.render(scene, blCam);
 
       // BR
-      if (trCam !== undefined) {
-        x = bw;
-        props.renderer.setViewport(x, y, bw, bh);
-        props.renderer.setScissor(x, y, bw, bh);
-        props.renderer.render(scene, brCam);
+      x = bw;
+      props.renderer.setViewport(x, y, bw, bh);
+      props.renderer.setScissor(x, y, bw, bh);
+      props.renderer.render(scene, brCam);
+    };
+
+    const onUpdate = () => {
+      // Updates
+      controls.forEach((control: OrbitControls) => {
+        control.update();
+      });
+      props.scene['update']();
+
+      // Drawing
+      props.renderer.clear();
+      switch (mode) {
+        case 'Single':
+          drawSingle();
+          break;
+        case 'Side by Side':
+        case 'Stacked':
+          drawDouble();
+          break;
+        case 'Quad':
+          drawQuad();
+          break;
       }
 
       raf = requestAnimationFrame(onUpdate);
     };
 
     // Start rendering
+    assignControls();
     window.addEventListener('resize', onResize);
     onResize();
     onUpdate();
@@ -185,18 +296,8 @@ export default function MultiView(props: MultiViewProps) {
       cancelAnimationFrame(raf);
       raf = -1;
     };
-  }, []);
+  }, [mode]);
 
-  const options: string[] = [
-    'Top',
-    'Bottom',
-    'Left',
-    'Right',
-    'Front',
-    'Back',
-    'Orthographic',
-    'Debug',
-  ];
   props.cameras.forEach((camera: Camera) => {
     cameras.set(camera.name, camera);
     options.push(camera.name);
@@ -204,38 +305,88 @@ export default function MultiView(props: MultiViewProps) {
 
   return (
     <div className='multiview'>
-      <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
-        controls.get(tlCam.name)?.dispose();
-        const camera = cameras.get(value);
-        if (camera !== undefined) {
-          tlCam = camera;
-          createControls(camera, tlWindow.current!);
-        }
-      }} />
-      <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
-        controls.get(trCam.name)?.dispose();
-        const camera = cameras.get(value);
-        if (camera !== undefined) {
-          trCam = camera;
-          createControls(camera, trWindow.current!);
-        }
-      }} />
-      <CameraWindow camera={blCam} options={options} ref={blWindow} onSelect={(value: string) => {
-        controls.get(blCam.name)?.dispose();
-        const camera = cameras.get(value);
-        if (camera !== undefined) {
-          blCam = camera;
-          createControls(camera, blWindow.current!);
-        }
-      }} />
-      <CameraWindow camera={brCam} options={options} ref={brWindow} onSelect={(value: string) => {
-        controls.get(brCam.name)?.dispose();
-        const camera = cameras.get(value);
-        if (camera !== undefined) {
-          brCam = camera;
-          createControls(camera, brWindow.current!);
-        }
-      }} />
+      <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`}>
+        {mode === 'Single' && (
+          <>
+            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+              controls.get(tlCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                tlCam = camera;
+                createControls(camera, tlWindow.current!);
+              }
+            }} />
+          </>
+        )}
+
+        {(mode === 'Side by Side' || mode === 'Stacked') && (
+          <>
+            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+              controls.get(tlCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                tlCam = camera;
+                createControls(camera, tlWindow.current!);
+              }
+            }} />
+            <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
+              controls.get(trCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                trCam = camera;
+                createControls(camera, trWindow.current!);
+              }
+            }} />
+          </>
+        )}
+
+        {mode === 'Quad' && (
+          <>
+            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+              controls.get(tlCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                tlCam = camera;
+                createControls(camera, tlWindow.current!);
+              }
+            }} />
+            <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
+              controls.get(trCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                trCam = camera;
+                createControls(camera, trWindow.current!);
+              }
+            }} />
+            <CameraWindow camera={blCam} options={options} ref={blWindow} onSelect={(value: string) => {
+              controls.get(blCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                blCam = camera;
+                createControls(camera, blWindow.current!);
+              }
+            }} />
+            <CameraWindow camera={brCam} options={options} ref={brWindow} onSelect={(value: string) => {
+              controls.get(brCam.name)?.dispose();
+              const camera = cameras.get(value);
+              if (camera !== undefined) {
+                brCam = camera;
+                createControls(camera, brWindow.current!);
+              }
+            }} />
+          </>
+        )}
+      </div>
+
+      <Dropdown
+        index={ModeOptions.indexOf(mode)}
+        options={ModeOptions}
+        onSelect={(value: string) => {
+          if (value === mode) return;
+          killControls();
+          setMode(value as MultiViewMode);
+        }}
+      />
     </div>
   );
 }

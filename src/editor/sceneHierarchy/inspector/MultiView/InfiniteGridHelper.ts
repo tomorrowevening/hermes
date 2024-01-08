@@ -7,10 +7,18 @@ import InfiniteGridMaterial from './InfiniteGridMaterial';
  */
 
 export default class InfiniteGridHelper extends Mesh {
+  gridMaterial: InfiniteGridMaterial;
+
   constructor() {
-    super(new PlaneGeometry(2, 2), new InfiniteGridMaterial());
+    const material = new InfiniteGridMaterial();
+    super(new PlaneGeometry(2, 2), material);
+    this.gridMaterial = material;
     this.frustumCulled = false;
     this.name = 'InfiniteGridHelper';
     this.position.y = 0.1;
+  }
+
+  update() {
+    this.gridMaterial.needsUpdate = true;
   }
 }
