@@ -49,8 +49,10 @@ function App() {
   // ThreeJS
   useEffect(() => {
     renderer = new WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(devicePixelRatio);
     renderer.autoClear = false;
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(devicePixelRatio);
+    renderer.setClearColor(0x000000, 1);
     elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
