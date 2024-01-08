@@ -1,4 +1,4 @@
-import { CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, PlaneGeometry, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
+import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, PlaneGeometry, RepeatWrapping, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '@/editor/utils';
 import { IS_DEV } from '../constants';
@@ -27,6 +27,11 @@ export default class ExampleScene extends Scene {
         'dark-s_nz.jpg'
       ], (value: CubeTexture) => {
         this.background = value;
+
+        const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: value, side: BackSide }));
+        bg.name = 'bg';
+        bg.scale.setScalar(1000);
+        this.add(bg);
       });
 
     this.createCameras();
@@ -56,10 +61,21 @@ export default class ExampleScene extends Scene {
 
     const sun = new DirectionalLight();
     sun.name = 'sun';
-    sun.position.set(0, 50, 200);
+    sun.castShadow = true;
+    sun.position.set(0, 50, 50);
+    const shadow = 256;
+    sun.shadow.camera.top = shadow;
+    sun.shadow.camera.bottom = -shadow;
+    sun.shadow.camera.left = - shadow;
+    sun.shadow.camera.right = shadow;
+    sun.shadow.mapSize.width = 1024;
+    sun.shadow.mapSize.height = 1024;
+    sun.shadow.camera.near = 10;
+    sun.shadow.camera.far = 1000;
+    sun.shadow.bias = 0.001;
     lights.add(sun);
 
-    const hemi = new HemisphereLight(0x0000ff, 0xff0000);
+    const hemi = new HemisphereLight(0xa5defb, 0xf696e5);
     hemi.name = 'hemi';
     lights.add(hemi);
   }
@@ -69,17 +85,27 @@ export default class ExampleScene extends Scene {
     world.name = 'world';
     this.add(world);
 
-    const floor = new Mesh(new CircleGeometry(500, 36), new MeshPhongMaterial({ color: 0x666666 }));
+    const floorMaterial = new MeshPhongMaterial({ color: 0x666666 });
+    const floor = new Mesh(new CircleGeometry(500, 36), floorMaterial);
     floor.name = 'floor';
+    floor.receiveShadow = true;
     floor.rotateX(-Math.PI / 2);
     world.add(floor);
+    new TextureLoader().load('images/uv_grid_opengl.jpg', (texture: Texture) => {
+      texture.wrapS = RepeatWrapping;
+      texture.wrapT = RepeatWrapping;
+      texture.repeat.setScalar(10);
+      texture.needsUpdate = true;
+      floorMaterial.map = texture;
+      floorMaterial.needsUpdate = true;
+    });
 
     this.dance0 = new FBXAnimation('Thriller Part 2.fbx');
-    this.dance0.position.x = -100;
+    this.dance0.position.set(-100, 0, -150);
     world.add(this.dance0);
 
     this.dance1 = new FBXAnimation('Thriller Part 4.fbx');
-    this.dance1.position.x = 100;
+    this.dance1.position.set(100, 0, -150);
     world.add(this.dance1);
 
     this.createTestMaterials(world);
@@ -89,30 +115,22 @@ export default class ExampleScene extends Scene {
     const geom = new SphereGeometry(20);
 
     const items: Mesh[] = [];
-    const mesh = new Mesh(geom, new MeshBasicMaterial({ transparent: true, name: 'BasicMaterial' }));
+    const mesh = new Mesh(geom, new MeshBasicMaterial({ name: 'BasicMaterial', transparent: true }));
     mesh.name = 'Basic';
     world.add(mesh);
     items.push(mesh);
 
-    const mesh2 = new Mesh(geom, new MeshMatcapMaterial({}));
+    const mesh2 = new Mesh(geom, new MeshMatcapMaterial({ transparent: true }));
     mesh2.name = 'Matcap';
     world.add(mesh2);
     items.push(mesh2);
 
-    const mesh5 = new Mesh(geom, new MeshPhongMaterial({ name: 'PhongMaterial' }));
+    const mesh5 = new Mesh(geom, new MeshPhongMaterial({ name: 'PhongMaterial', transparent: true }));
     mesh5.name = 'Phong';
     world.add(mesh5);
     items.push(mesh5);
 
-    const mesh3Mat = new MeshPhysicalMaterial({
-      transparent: true,
-      name: 'PhysicalMaterial',
-    });
-    new TextureLoader().load('images/uv_grid_opengl.jpg', (texture: Texture) => {
-      mesh3Mat.map = texture;
-      mesh3Mat.needsUpdate = true;
-    });
-    const mesh3 = new Mesh(geom, mesh3Mat);
+    const mesh3 = new Mesh(geom, new MeshPhysicalMaterial({ name: 'PhysicalMaterial', transparent: true }));
     mesh3.name = 'Physical';
     world.add(mesh3);
     items.push(mesh3);
@@ -129,7 +147,8 @@ export default class ExampleScene extends Scene {
     const offset = ((total - 1) / 2) * spacing;
     for (let i = 0; i < total; i++) {
       const x = i * spacing - offset;
-      items[i].position.set(x, 100, -100);
+      items[i].position.set(x, 100, -150);
+      items[i].castShadow = true;
     }
   }
 

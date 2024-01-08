@@ -34,7 +34,7 @@ createOrtho('Front', new Vector3(0, 0, 1000));
 createOrtho('Back', new Vector3(0, 0, -1000));
 createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
 
-const debugCamera = new PerspectiveCamera(60, 1, 100, 3000);
+const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
 debugCamera.name = 'Debug';
 debugCamera.position.set(500, 500, 500);
 debugCamera.lookAt(0, 0, 0);
@@ -49,7 +49,7 @@ export default function MultiView(props: MultiViewProps) {
   let tlCam = cameras.get('Debug')!;
   let trCam = cameras.get('Orthographic')!;
   let blCam = cameras.get('Front')!;
-  let brCam = cameras.get('Right')!;
+  let brCam = cameras.get('Top')!;
   let scene = props.scene;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
