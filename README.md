@@ -11,3 +11,7 @@ Open the [Application](https://hermes-lovat.vercel.app/) and [editor](https://he
 - [ThreeJS](https://threejs.org/)
 - [Tweakpane](https://tweakpane.github.io/docs/)
 - Custom ThreeJS Scene + Object Inspector
+
+### Assets
+
+Animation / Models found at [Mixamo](https://www.mixamo.com/)

@@ -1,7 +1,7 @@
 import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, PlaneGeometry, RepeatWrapping, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '@/editor/utils';
-import { IS_DEV } from '../constants';
+import { IS_DEV, app } from '../constants';
 import FBXAnimation from './FBXAnimation';
 
 export default class ExampleScene extends Scene {
@@ -9,6 +9,7 @@ export default class ExampleScene extends Scene {
   envMap: CubeTexture;
   dance0!: FBXAnimation;
   dance1!: FBXAnimation;
+  dance2!: FBXAnimation;
 
   private customMat!: CustomMaterial;
   private lastUpdate = -1;
@@ -28,10 +29,12 @@ export default class ExampleScene extends Scene {
       ], (value: CubeTexture) => {
         this.background = value;
 
-        const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: value, side: BackSide }));
-        bg.name = 'bg';
-        bg.scale.setScalar(1000);
-        this.add(bg);
+        if (app.editor) {
+          const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: value, side: BackSide }));
+          bg.name = 'bg';
+          bg.scale.setScalar(1000);
+          this.add(bg);
+        }
       });
 
     this.createCameras();
@@ -75,7 +78,7 @@ export default class ExampleScene extends Scene {
     sun.shadow.bias = 0.001;
     lights.add(sun);
 
-    const hemi = new HemisphereLight(0xa5defb, 0xf696e5);
+    const hemi = new HemisphereLight(0x6fb4e2, 0xc46d27, 0.5);
     hemi.name = 'hemi';
     lights.add(hemi);
   }
@@ -85,7 +88,7 @@ export default class ExampleScene extends Scene {
     world.name = 'world';
     this.add(world);
 
-    const floorMaterial = new MeshPhongMaterial({ color: 0x666666 });
+    const floorMaterial = new MeshPhongMaterial();
     const floor = new Mesh(new CircleGeometry(500, 36), floorMaterial);
     floor.name = 'floor';
     floor.receiveShadow = true;
@@ -100,13 +103,17 @@ export default class ExampleScene extends Scene {
       floorMaterial.needsUpdate = true;
     });
 
-    this.dance0 = new FBXAnimation('Thriller Part 2.fbx');
-    this.dance0.position.set(-100, 0, -150);
+    this.dance0 = new FBXAnimation('Thriller2.fbx');
+    this.dance0.position.set(-150, 0, -150);
     world.add(this.dance0);
 
-    this.dance1 = new FBXAnimation('Thriller Part 4.fbx');
-    this.dance1.position.set(100, 0, -150);
+    this.dance1 = new FBXAnimation('Thriller4.fbx');
+    this.dance1.position.set(150, 0, -150);
     world.add(this.dance1);
+
+    this.dance2 = new FBXAnimation('Flair.fbx');
+    this.dance2.position.set(0, 0, 0);
+    world.add(this.dance2);
 
     this.createTestMaterials(world);
   }
@@ -164,5 +171,6 @@ export default class ExampleScene extends Scene {
     this.customMat.update(delta);
     this.dance0.update(delta);
     this.dance1.update(delta);
+    this.dance2.update(delta);
   }
 }

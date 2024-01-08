@@ -5,6 +5,7 @@ export default class ExampleScene extends Scene {
     envMap: CubeTexture;
     dance0: FBXAnimation;
     dance1: FBXAnimation;
+    dance2: FBXAnimation;
     private customMat;
     private lastUpdate;
     constructor();
