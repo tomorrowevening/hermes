@@ -1,5 +1,6 @@
 import { ForwardedRef, forwardRef, useState } from 'react';
 import './CameraWindow.scss';
+import { Camera } from 'three';
 
 interface DropdownProps {
   index: number
@@ -40,16 +41,17 @@ const Dropdown = (props: DropdownProps) => {
 };
 
 interface CameraWindowProps {
-  index: number
+  camera: Camera
   onSelect: (value: string) => void;
   options: string[];
 }
 
 const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, ref: ForwardedRef<HTMLDivElement>) {
+  const index = props.options.indexOf(props.camera.name);
   return (
     <div className='CameraWindow'>
       <div ref={ref} className='clickable'></div>
-      <Dropdown index={props.index} options={props.options} onSelect={props.onSelect} />
+      <Dropdown index={index} options={props.options} onSelect={props.onSelect} />
     </div>
   );
 });

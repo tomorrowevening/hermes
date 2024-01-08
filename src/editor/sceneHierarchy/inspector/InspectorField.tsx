@@ -1,6 +1,6 @@
 import { colorToHex } from "@/editor/utils";
 import { useEffect, useRef, useState } from "react";
-import { gridImage } from "@/editor/components/content";
+import { noImage } from "@/editor/components/content";
 import { uploadLocalImage } from "./utils/InspectMaterial";
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
@@ -171,7 +171,7 @@ export default function InspectorField(props: InspectorFieldProps) {
               imgRefRef.current!.src = value;
               if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
             });
-        }} src={fieldValue !== undefined ? fieldValue : gridImage} />
+        }} src={fieldValue.length > 0 ? fieldValue : noImage} />
       )}
     </div>
   );
