@@ -40,10 +40,12 @@ export function acceptedMaterialNames(name: string): boolean {
 
 export function niceMaterialNames(name: string): string {
   switch (name) {
+    case 'alphaMap': return 'Alpha Map';
     case 'anisotropyRotation': return 'Anisotropy Rotation';
     case 'aoMap': return 'AO Map';
     case 'aoMapIntensity': return 'AO Map Intensity';
     case 'attenuationColor': return 'Attenuation Color';
+    case 'bumpMap': return 'Bump Map';
     case 'bumpScale': return 'Bump Scale';
     case 'clearcoatNormalScale': return 'Clearcoat Normal Scale';
     case 'clearcoatRoughness': return 'Clearcoat Roughness';
@@ -52,6 +54,7 @@ export function niceMaterialNames(name: string): string {
     case 'depthTest': return 'Depth Test';
     case 'depthWrite': return 'Depth Write';
     case 'displacementBias': return 'Displacement Bias';
+    case 'displacementMap': return 'Displacement Map';
     case 'displacementScale': return 'Displacement Scale';
     case 'dithering': return 'Dithering';
     case 'emissive': return 'Emissive';
@@ -68,8 +71,10 @@ export function niceMaterialNames(name: string): string {
     case 'lights': return 'Lights';
     case 'lightMapIntensity': return 'Light Map Intensity';
     case 'map': return 'Map';
+    case 'matcap': return 'Matcap';
     case 'metalness': return 'Metalness';
     case 'name': return 'Name';
+    case 'normalMap': return 'Normal Map';
     case 'normalScale': return 'Normal Scale';
     case 'opacity': return 'Opacity';
     case 'reflectivity': return 'Reflectivity';
