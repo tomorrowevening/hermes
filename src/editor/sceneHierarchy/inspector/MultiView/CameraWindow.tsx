@@ -5,6 +5,7 @@ interface DropdownProps {
   index: number
   onSelect: (value: string) => void;
   options: string[];
+  up?: boolean;
 }
 
 export const Dropdown = (props: DropdownProps) => {
@@ -24,7 +25,7 @@ export const Dropdown = (props: DropdownProps) => {
   };
 
   return (
-    <div className="dropdown">
+    <div className={`dropdown ${props.up === true ? 'up' : ''}`}>
       <div className="dropdown-toggle" onClick={handleToggle}>
         {selectedOption}
       </div>
@@ -52,7 +53,7 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
   return (
     <div className='CameraWindow'>
       <div ref={ref} className='clickable'></div>
-      <Dropdown index={index} options={props.options} onSelect={props.onSelect} />
+      <Dropdown index={index} options={props.options} onSelect={props.onSelect} up={true} />
     </div>
   );
 });
