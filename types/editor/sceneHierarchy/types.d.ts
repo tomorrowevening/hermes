@@ -1,12 +1,16 @@
+import RemoteThree from '@/core/remote/RemoteThree';
 import { Color, Object3D } from 'three';
 export interface CoreComponentProps {
     class?: string;
+    three: RemoteThree;
 }
 export interface ChildObjectProps extends CoreComponentProps {
     child: Object3D;
+    three: RemoteThree;
 }
 export interface SceneHierarchyState {
-    scene: Object3D | null;
+    scene?: Object3D;
+    three: RemoteThree;
 }
 export interface MinimumObject {
     name: string;

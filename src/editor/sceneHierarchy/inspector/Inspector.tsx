@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CoreComponentProps, RemoteObject } from "../types";
 import { ToolEvents, debugDispatcher } from "../../global";
-import { app } from "@/example/constants";
 import './inspector.scss';
 import InspectorField from './InspectorField';
 // Utils
@@ -65,17 +64,17 @@ export default function Inspector(props: CoreComponentProps) {
             prop="visible"
             value={currentObject.visible}
             onChange={(key: string, value: any) => {
-              app.three.updateObject(currentObject.uuid, key, value);
+              props.three.updateObject(currentObject.uuid, key, value);
             }}
           />
           {/* Transform */}
-          {InspectTransform(currentObject, app.three)}
+          {InspectTransform(currentObject, props.three)}
           {/* Camera */}
-          {currentObject.type.search('Camera') > -1 ? InspectCamera(currentObject, app.three) : null}
+          {currentObject.type.search('Camera') > -1 ? InspectCamera(currentObject, props.three) : null}
           {/* Light */}
-          {currentObject.type.search('Light') > -1 ? InspectLight(currentObject, app.three) : null}
+          {currentObject.type.search('Light') > -1 ? InspectLight(currentObject, props.three) : null}
           {/* Material */}
-          {currentObject.material !== undefined ? InspectMaterial(currentObject, app.three) : null}
+          {currentObject.material !== undefined ? InspectMaterial(currentObject, props.three) : null}
         </>
       )}
     </div>

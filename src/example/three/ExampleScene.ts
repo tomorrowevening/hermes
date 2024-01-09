@@ -112,7 +112,7 @@ export default class ExampleScene extends Scene {
     world.add(this.dance1);
 
     this.dance2 = new FBXAnimation('Thriller4.fbx');
-    this.dance2.position.set(150, 0, -125);
+    this.dance2.position.set(150, 0, -185);
     world.add(this.dance2);
 
     this.createTestMaterials(world);
