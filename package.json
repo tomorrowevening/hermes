@@ -40,7 +40,9 @@
   "scripts": {
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
-    "build": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
+    "buildLib": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
+    "buildExample": "vite build --config vite.config.example.ts",
+    "build": "yarn buildLib && yarn buildExample",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
