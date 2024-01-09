@@ -4,6 +4,7 @@ interface DropdownProps {
     index: number;
     onSelect: (value: string) => void;
     options: string[];
+    up?: boolean;
 }
 export declare const Dropdown: (props: DropdownProps) => import("react/jsx-runtime").JSX.Element;
 interface CameraWindowProps {

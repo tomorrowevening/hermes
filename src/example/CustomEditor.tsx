@@ -34,7 +34,7 @@ export default function CustomEditor() {
           }}
         />
       ]}>
-        <SceneHierarchy key="SceneHierarchy" />
+        <SceneHierarchy key="SceneHierarchy" three={app.three} />
       </Editor>
   )
 }

@@ -8,14 +8,17 @@ import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
 import { SceneHierarchyState } from './types';
-import { app } from '@/example/constants';
+import RemoteThree from '@/core/remote/RemoteThree';
 
-export default class SceneHierarchy extends Component {
-  constructor(props: object | SceneHierarchyState) {
+export default class SceneHierarchy extends Component<SceneHierarchyState> {
+  private three: RemoteThree;
+
+  constructor(props: SceneHierarchyState) {
     super(props);
     this.state = {
-      scene: null,
-    } as SceneHierarchyState;
+      scene: props.scene !== undefined ? props.scene : null,
+    };
+    this.three = props.three;
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.setScene);
   }
 
@@ -44,12 +47,12 @@ export default class SceneHierarchy extends Component {
                 )}
                 open={true}
               >
-                <ContainerObject child={this.componentState.scene!} />
+                <ContainerObject child={this.componentState.scene!} three={this.three} />
               </Accordion>
             )}
 
             <Accordion label='Inspector'>
-              <Inspector key="Inspector" />
+              <Inspector key="Inspector" three={this.three} />
             </Accordion>
           </>
         )}
@@ -60,7 +63,7 @@ export default class SceneHierarchy extends Component {
   // Private
 
   private onRefresh = () => {
-    app.three.getScene();
+    this.three.getScene();
   };
 
   private setScene = (evt: any) => {

@@ -5,7 +5,6 @@ import { Object3D } from 'three';
 import { ChildObjectProps } from './types';
 // Utils
 import { determineIcon } from './utils';
-import { app } from '@/example/constants';
 
 export default function ChildObject(props: ChildObjectProps) {
   const [open, setOpen] = useState(props.child.children.length > 0);
@@ -14,7 +13,7 @@ export default function ChildObject(props: ChildObjectProps) {
   const children: Array<any> = [];
   if (props.child.children.length > 0) {
     props.child.children.map((child: Object3D) => {
-      children.push(<ChildObject child={child} key={Math.random()} />);
+      children.push(<ChildObject child={child} key={Math.random()} three={props.three} />);
     });
   }
 
@@ -38,7 +37,7 @@ export default function ChildObject(props: ChildObjectProps) {
             left: hasChildren ? '20px' : '5px',
           }}
           onClick={() => {
-            app.three.getObject(props.child.uuid);
+            props.three.getObject(props.child.uuid);
           }}
         >
           {props.child.name.length > 0
