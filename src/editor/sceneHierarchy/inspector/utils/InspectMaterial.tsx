@@ -250,7 +250,6 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
               break;
             case 'object':
               // Uniform textures
-              console.log(i, propValue);
               if (propValue.value !== undefined && propValue.value.src !== undefined) {
                 subChildren.push({
                   title: niceMaterialNames(n),
