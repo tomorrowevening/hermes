@@ -12,5 +12,7 @@ export default defineConfig({
   },
   build: {
 		emptyOutDir: false,
+    assetsDir: '',
+    outDir: 'dist'
   }
 });
