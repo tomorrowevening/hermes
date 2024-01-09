@@ -44,7 +44,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite build --config vite.config.example.ts && vite preview"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
     "framer-motion": "^10.16.0",
