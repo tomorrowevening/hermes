@@ -104,15 +104,15 @@ export default class ExampleScene extends Scene {
     });
 
     this.dance0 = new FBXAnimation('Thriller2.fbx');
-    this.dance0.position.set(-150, 0, -150);
+    this.dance0.position.set(-150, 0, -175);
     world.add(this.dance0);
 
-    this.dance1 = new FBXAnimation('Thriller4.fbx');
-    this.dance1.position.set(150, 0, -150);
+    this.dance1 = new FBXAnimation('Flair.fbx');
+    this.dance1.position.set(0, 0, 0);
     world.add(this.dance1);
 
-    this.dance2 = new FBXAnimation('Flair.fbx');
-    this.dance2.position.set(0, 0, 0);
+    this.dance2 = new FBXAnimation('Thriller4.fbx');
+    this.dance2.position.set(150, 0, -125);
     world.add(this.dance2);
 
     this.createTestMaterials(world);
