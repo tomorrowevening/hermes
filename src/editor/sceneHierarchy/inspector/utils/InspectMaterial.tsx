@@ -65,10 +65,12 @@ export function niceMaterialNames(name: string): string {
     case 'flatShading': return 'Flat Shading';
     case 'fragmentShader': return 'Fragment Shader';
     case 'fog': return 'Fog';
+    case 'gradientMap': return 'Gradient Map';
     case 'ior': return 'IOR';
     case 'iridescenceIOR': return 'Iridescence IOR';
     case 'iridescenceThicknessRange': return 'Iridescence Thickness Range';
     case 'lights': return 'Lights';
+    case 'lightMap': return 'Light Map';
     case 'lightMapIntensity': return 'Light Map Intensity';
     case 'map': return 'Map';
     case 'matcap': return 'Matcap';
@@ -82,6 +84,8 @@ export function niceMaterialNames(name: string): string {
     case 'roughness': return 'Roughness';
     case 'sheenColor': return 'Sheen Color';
     case 'sheenRoughness': return 'Sheen Roughness';
+    case 'shininess': return 'Shininess';
+    case 'specular': return 'Specular';
     case 'specularColor': return 'Specular Color';
     case 'specularIntensity': return 'Specular Intensity';
     case 'thickness': return 'Thickness';
