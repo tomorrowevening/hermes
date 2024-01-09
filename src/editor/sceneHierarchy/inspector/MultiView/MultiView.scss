@@ -17,12 +17,8 @@ $padding: 2px;
     display: inline-block;
     font-size: 10px;
     padding: $padding;
-    position: absolute;
     text-align: center;
-    top: 0;
     width: 100px;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .dropdown-toggle {
@@ -62,8 +58,10 @@ $padding: 2px;
     }
 
     .dropdown {
-      top: inherit;
-      bottom: 0;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     .CameraWindow {
@@ -76,5 +74,11 @@ $padding: 2px;
         height: 100%;
       }
     }
+  }
+
+  .settings {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, MeshBasicMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
@@ -48,16 +48,20 @@ debugCamera.position.set(500, 500, 500);
 debugCamera.lookAt(0, 0, 0);
 cameras.set('Debug', debugCamera);
 
-const options: string[] = [
-  'Top',
-  'Bottom',
-  'Left',
-  'Right',
-  'Front',
-  'Back',
-  'Orthographic',
-  'Debug',
+type RenderMode = 'Default' | 'Normals' | 'Wireframe';
+let currentRenderMode: RenderMode = 'Default';
+const renderOptions: RenderMode[] = [
+  'Default',
+  'Normals',
+  'Wireframe',
 ];
+const normalsMaterial = new MeshNormalMaterial();
+const wireframeMaterial = new MeshBasicMaterial({
+  opacity: 0.33,
+  transparent: true,
+  wireframe: true
+});
+
 const scene = new Scene();
 
 export default function MultiView(props: MultiViewProps) {
@@ -104,6 +108,20 @@ export default function MultiView(props: MultiViewProps) {
       const helper = new CameraHelper(camera);
       helpers.set(camera.name, helper);
       scene.add(helper);
+    }
+  };
+
+  const clearCamera = (camera: Camera) => {
+    const helper = helpers.get(camera.name);
+    if (helper !== undefined) {
+      scene.remove(helper);
+      helper.dispose();
+      helpers.delete(camera.name);
+    }
+    const control = controls.get(camera.name);
+    if (control !== undefined) {
+      control.dispose();
+      controls.delete(camera.name);
     }
   };
 
@@ -298,9 +316,19 @@ export default function MultiView(props: MultiViewProps) {
     };
   }, [mode]);
 
+  const cameraOptions: string[] = [
+    'Top',
+    'Bottom',
+    'Left',
+    'Right',
+    'Front',
+    'Back',
+    'Orthographic',
+    'Debug',
+  ];
   props.cameras.forEach((camera: Camera) => {
     cameras.set(camera.name, camera);
-    options.push(camera.name);
+    cameraOptions.push(camera.name);
   });
 
   return (
@@ -308,10 +336,11 @@ export default function MultiView(props: MultiViewProps) {
       <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`}>
         {mode === 'Single' && (
           <>
-            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
               controls.get(tlCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(tlCam);
                 tlCam = camera;
                 createControls(camera, tlWindow.current!);
               }
@@ -321,18 +350,20 @@ export default function MultiView(props: MultiViewProps) {
 
         {(mode === 'Side by Side' || mode === 'Stacked') && (
           <>
-            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
               controls.get(tlCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(tlCam);
                 tlCam = camera;
                 createControls(camera, tlWindow.current!);
               }
             }} />
-            <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
+            <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
               controls.get(trCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(trCam);
                 trCam = camera;
                 createControls(camera, trWindow.current!);
               }
@@ -342,34 +373,38 @@ export default function MultiView(props: MultiViewProps) {
 
         {mode === 'Quad' && (
           <>
-            <CameraWindow camera={tlCam} options={options} ref={tlWindow} onSelect={(value: string) => {
+            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
               controls.get(tlCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(tlCam);
                 tlCam = camera;
                 createControls(camera, tlWindow.current!);
               }
             }} />
-            <CameraWindow camera={trCam} options={options} ref={trWindow} onSelect={(value: string) => {
+            <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
               controls.get(trCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(trCam);
                 trCam = camera;
                 createControls(camera, trWindow.current!);
               }
             }} />
-            <CameraWindow camera={blCam} options={options} ref={blWindow} onSelect={(value: string) => {
+            <CameraWindow camera={blCam} options={cameraOptions} ref={blWindow} onSelect={(value: string) => {
               controls.get(blCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(blCam);
                 blCam = camera;
                 createControls(camera, blWindow.current!);
               }
             }} />
-            <CameraWindow camera={brCam} options={options} ref={brWindow} onSelect={(value: string) => {
+            <CameraWindow camera={brCam} options={cameraOptions} ref={brWindow} onSelect={(value: string) => {
               controls.get(brCam.name)?.dispose();
               const camera = cameras.get(value);
               if (camera !== undefined) {
+                clearCamera(brCam);
                 brCam = camera;
                 createControls(camera, brWindow.current!);
               }
@@ -378,15 +413,38 @@ export default function MultiView(props: MultiViewProps) {
         )}
       </div>
 
-      <Dropdown
-        index={ModeOptions.indexOf(mode)}
-        options={ModeOptions}
-        onSelect={(value: string) => {
-          if (value === mode) return;
-          killControls();
-          setMode(value as MultiViewMode);
-        }}
-      />
+      <div className='settings'>
+        {/* Mode */}
+        <Dropdown
+          index={ModeOptions.indexOf(mode)}
+          options={ModeOptions}
+          onSelect={(value: string) => {
+            if (value === mode) return;
+            killControls();
+            setMode(value as MultiViewMode);
+          }}
+        />
+        {/* Render Mode */}
+        <Dropdown
+          index={0}
+          options={renderOptions}
+          onSelect={(value: string) => {
+            if (value === currentRenderMode) return;
+            currentRenderMode = value as RenderMode;
+            switch (currentRenderMode) {
+              case 'Default':
+                scene.overrideMaterial = null;
+                break;
+              case 'Normals':
+                scene.overrideMaterial = normalsMaterial;
+                break;
+              case 'Wireframe':
+                scene.overrideMaterial = wireframeMaterial;
+                break;
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }
