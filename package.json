@@ -40,9 +40,9 @@
   "scripts": {
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
-    "build": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
+    "build": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build && rm -r dist/images && rm -r dist/models",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite build --config vite.config.example.ts && vite preview"
   },
   "dependencies": {
     "@theatre/core": "0.7.0",

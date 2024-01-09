@@ -1,19 +1,21 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-
-// @ts-ignore __dirname is part of environment
-const dirname = __dirname
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  /*
+  resolve: {
+    alias: {
+      '@': '/src',
+      '~@': '/src',
+    }
+  },
   build: {
+    assetsDir: 'public/',
+    emptyOutDir: false,
     lib: {
-      entry: path.resolve(dirname, 'src/index.ts'),
+      entry: 'src/index.ts',
       name: 'Hermes',
-      // the proper extensions will be added
       fileName: 'hermes'
     },
     rollupOptions: {
@@ -42,12 +44,5 @@ export default defineConfig({
         }
       }
     }
-  },
-  */
-  resolve: {
-    alias: {
-      '@': path.resolve(dirname, '/src'),
-      '~@': path.resolve(dirname, '/src'),
-    }
   }
-})
+});
