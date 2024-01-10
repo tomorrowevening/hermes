@@ -8,7 +8,6 @@ import type { BroadcastData, EditorEvent } from './types';
 
 export default function RemoteController(app: Application) {
   let activeSheet: ISheet | undefined = undefined;
-  const mode = app.editor ? 'editor' : 'app';
 
   // Handlers
 
@@ -174,10 +173,10 @@ export default function RemoteController(app: Application) {
   // Begin app
 
   app.listen((msg: BroadcastData) => {
-    if (mode === 'app') {
-      handleAppBroadcast(msg);
-    } else {
+    if (app.editor) {
       handleEditorBroadcast(msg);
+    } else {
+      handleAppBroadcast(msg);
     }
   });
 
