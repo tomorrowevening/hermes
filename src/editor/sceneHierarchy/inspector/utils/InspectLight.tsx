@@ -1,8 +1,8 @@
-import InspectorGroup from '../InspectorGroup';
-import { RemoteObject } from "../../types";
-import RemoteThree from '@/core/remote/RemoteThree';
-import { setItemProps } from '../../utils';
 import { Color } from 'three';
+import RemoteThree from '@/core/remote/RemoteThree';
+import InspectorGroup from '../InspectorGroup';
+import { RemoteObject } from '../../types';
+import { setItemProps } from '../../utils';
 
 function prettyName(value: string): string {
   switch (value) {
