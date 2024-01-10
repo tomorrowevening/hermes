@@ -36,6 +36,7 @@
   "exclude": [
     "dist",
     "node_modules",
+    "src/example",
     "types"
   ],
   "references": [
