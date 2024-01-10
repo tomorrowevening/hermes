@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -16,6 +16,7 @@
     "Editor",
     "Remote",
     "TheatreJS",
+    "ThreeJS",
     "Tweakpane"
   ],
   "files": [
@@ -24,7 +25,6 @@
     "src/**/*.scss",
     "dist",
     "dist/**/*.css",
-    "dist/**/*.scss",
     "types/**/*.d.ts"
   ],
   "exports": {
@@ -46,7 +46,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
     "framer-motion": "^10.16.0",
