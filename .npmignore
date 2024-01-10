@@ -2,7 +2,6 @@
 .vscode/
 .DS_Store
 .npmignore
-
 dist/images
 dist/models
 node_modules
