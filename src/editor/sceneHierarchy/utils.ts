@@ -1,4 +1,4 @@
-import { Camera, CubeTexture, Light, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three';
+import { CubeTexture, Material, Mesh, Object3D, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -132,9 +132,15 @@ export function stripObject(obj: Object3D): RemoteObject {
     uuid: obj.uuid,
     visible: obj.visible,
     matrix: obj.matrix.elements,
+    material: undefined,
+    perspectiveCameraInfo: undefined,
+    orthographicCameraInfo: undefined,
+    lightInfo: undefined,
   };
 
-  if (obj instanceof Mesh) {
+  const type = obj.type.toLowerCase();
+
+  if (type.search('mesh') > -1) {
     const mesh = obj as Mesh;
     if (Array.isArray(mesh.material)) {
       const data: RemoteMaterial[] = [];
@@ -145,33 +151,33 @@ export function stripObject(obj: Object3D): RemoteObject {
     } else {
       stripped.material = stripMaterialData(mesh.material);
     }
-  } else if (obj instanceof Camera) {
-    if (obj instanceof PerspectiveCamera) {
+  } else if (type.search('camera') > -1) {
+    if (obj.type === 'PerspectiveCamera') {
       stripped.perspectiveCameraInfo = {
-        fov: obj.fov,
-        zoom: obj.zoom,
-        near: obj.near,
-        far: obj.far,
-        focus: obj.focus,
-        aspect: obj.aspect,
-        filmGauge: obj.filmGauge,
-        filmOffset: obj.filmOffset,
+        fov: obj['fov'],
+        zoom: obj['zoom'],
+        near: obj['near'],
+        far: obj['far'],
+        focus: obj['focus'],
+        aspect: obj['aspect'],
+        filmGauge: obj['filmGauge'],
+        filmOffset: obj['filmOffset'],
       };
-    } else if (obj instanceof OrthographicCamera) {
+    } else if (obj.type === 'OrthographicCamera') {
       stripped.orthographicCameraInfo = {
-        zoom: obj.zoom,
-        near: obj.near,
-        far: obj.far,
-        left: obj.left,
-        right: obj.right,
-        top: obj.top,
-        bottom: obj.bottom,
+        zoom: obj['zoom'],
+        near: obj['near'],
+        far: obj['far'],
+        left: obj['left'],
+        right: obj['right'],
+        top: obj['top'],
+        bottom: obj['bottom'],
       };
     }
-  } else if (obj instanceof Light) {
+  } else if (type.search('light') > -1) {
     stripped.lightInfo = {
-      color: obj.color,
-      intensity: obj.intensity,
+      color: obj['color'],
+      intensity: obj['intensity'],
       decay: obj['decay'],
       distance: obj['distance'],
       angle: obj['angle'],

@@ -37,6 +37,8 @@ export default function Inspector(props: CoreComponentProps) {
     };
   }, []);
 
+  const objType = currentObject.type.toLowerCase();
+
   return (
     <div id="Inspector" className={props.class} key={lastRefresh}>
       {currentObject.uuid.length > 0 && (
@@ -82,11 +84,11 @@ export default function Inspector(props: CoreComponentProps) {
             {/* Transform */}
             {InspectTransform(currentObject, props.three)}
             {/* Cameras */}
-            {currentObject.orthographicCameraInfo !== undefined || currentObject.perspectiveCameraInfo !== undefined ? InspectCamera(currentObject, props.three) : null}
+            {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
             {/* Lights */}
-            {currentObject.lightInfo !== undefined ? InspectLight(currentObject, props.three) : null}
+            {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
             {/* Material */}
-            {currentObject.material !== undefined ? InspectMaterial(currentObject, props.three) : null}
+            {objType.search('mesh') > -1 ? InspectMaterial(currentObject, props.three) : null}
           </>
         </>
       )}
