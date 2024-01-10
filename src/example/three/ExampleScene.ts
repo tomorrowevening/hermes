@@ -1,6 +1,6 @@
-import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, PlaneGeometry, RepeatWrapping, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
+import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, RepeatWrapping, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
 import CustomMaterial from './CustomMaterial';
-import { hierarchyUUID } from '@/editor/utils';
+import { hierarchyUUID } from '../../editor/utils';
 import { IS_DEV, app } from '../constants';
 import FBXAnimation from './FBXAnimation';
 

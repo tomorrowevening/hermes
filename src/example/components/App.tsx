@@ -1,15 +1,15 @@
 // Libs
-import { useEffect, useRef, useState } from 'react'
-import { types } from '@theatre/core'
+import React, { useEffect, useRef, useState } from 'react';
+import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 // Models
-import { app, IS_DEV } from '../constants'
+import { app, IS_DEV } from '../constants';
 // Components
-import './App.css'
+import './App.css';
 import ExampleScene from '../three/ExampleScene';
-import SceneInspector from '@/editor/sceneHierarchy/inspector/SceneInspector';
+import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
-import MultiView from '@/editor/sceneHierarchy/inspector/MultiView/MultiView';
+import MultiView from '../../editor/sceneHierarchy/inspector/MultiView/MultiView';
 
 let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;
@@ -18,14 +18,14 @@ const useTweakpane = false;
 const threeCameras: any[] = [];
 
 function App() {
-  const elementRef = useRef<HTMLDivElement>(null!)
+  const elementRef = useRef<HTMLDivElement>(null!);
   const [showSceneInspector, setShowSceneInspector] = useState(false);
-  app.theatre?.sheet('App')
+  app.theatre?.sheet('App');
 
   // Theatre
   useEffect(() => {
-    const container = elementRef.current!
-    container.style.visibility = app.editor ? 'hidden' : 'inherit'
+    const container = elementRef.current!;
+    container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
     // Theatre Example
     const sheetObj = app.theatre?.sheetObject(
@@ -36,15 +36,15 @@ function App() {
         y: types.number(100, {range: [0, window.innerHeight]}),
       },
       (values: any) => {
-        container.style.left = `${values.x}px`
-        container.style.top = `${values.y}px`
+        container.style.left = `${values.x}px`;
+        container.style.top = `${values.y}px`;
       },
-    )
+    );
     return () => {
-      if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj)
-      app.dispose()
-    }
-  }, [])
+      if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj);
+      app.dispose();
+    };
+  }, []);
 
   // ThreeJS
   useEffect(() => {
@@ -87,8 +87,8 @@ function App() {
       renderer.dispose();
       cancelAnimationFrame(raf);
       raf = -1;
-    }
-  }, [])
+    };
+  }, []);
 
   // Debug Components
   if (IS_DEV) {
@@ -124,18 +124,18 @@ function App() {
 
       // Components Example
       const onCustom = (evt: any) => {
-        console.log('Custom:', evt.value)
-      }
+        console.log('Custom:', evt.value);
+      };
       const selectDropdown = (evt: any) => {
-        console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`)
-      }
-      debugDispatcher.addEventListener(ToolEvents.CUSTOM, onCustom)
-      debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
+        console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`);
+      };
+      debugDispatcher.addEventListener(ToolEvents.CUSTOM, onCustom);
+      debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
       return () => {
-        debugDispatcher.removeEventListener(ToolEvents.CUSTOM, onCustom)
-        debugDispatcher.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown)
-      }
-    }, [])
+        debugDispatcher.removeEventListener(ToolEvents.CUSTOM, onCustom);
+        debugDispatcher.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
+      };
+    }, []);
   }
 
   return (
@@ -158,7 +158,7 @@ function App() {
         <MultiView scene={exampleScene} renderer={renderer} cameras={threeCameras} />
       )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

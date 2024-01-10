@@ -5,6 +5,5 @@
 coverage
 dist
 public
-src/example
 types
 node_modules
