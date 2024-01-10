@@ -1,20 +1,20 @@
 // Libs
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import studio from '@theatre/studio'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import studio from '@theatre/studio';
 // Models
-import { app, IS_DEV } from './constants'
+import { app, IS_DEV } from './constants';
 // Components
-import './index.scss'
-import App from './components/App'
-import CustomEditor from './CustomEditor'
+import './index.scss';
+import App from './components/App';
+import CustomEditor from './CustomEditor';
 // Tools
-import RemoteController from '@/core/RemoteController'
+import RemoteController from '../core/RemoteController';
 
 // Debug tools
 if (IS_DEV) {
-  studio.initialize()
-  RemoteController(app)
+  studio.initialize();
+  RemoteController(app);
 }
 
 // React
@@ -32,4 +32,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </React.StrictMode>
     )}
   </>,
-)
+);

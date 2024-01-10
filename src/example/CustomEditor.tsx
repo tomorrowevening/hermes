@@ -1,7 +1,8 @@
-import { app } from './constants'
-import Editor from '@/editor/Editor'
-import Dropdown from '@/editor/components/Dropdown'
-import SceneHierarchy from '@/editor/sceneHierarchy/SceneHierarchy'
+import React from 'react';
+import { app } from './constants';
+import Editor from '../editor/Editor';
+import Dropdown from '../editor/components/Dropdown';
+import SceneHierarchy from '../editor/sceneHierarchy/SceneHierarchy';
 
 export default function CustomEditor() {
   return (
@@ -30,11 +31,11 @@ export default function CustomEditor() {
                 dropdown: 'Scenes',
                 value,
               },
-            })
+            });
           }}
         />
       ]}>
         <SceneHierarchy key="SceneHierarchy" three={app.three} />
       </Editor>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { textureFromSrc } from "@/editor/sceneHierarchy/utils";
 import { ShaderMaterial, Texture } from "three";
+import { textureFromSrc } from "../../editor/sceneHierarchy/utils";
 
 const vertex = `varying vec2 vUv;
 

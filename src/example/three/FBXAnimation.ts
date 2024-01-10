@@ -30,7 +30,7 @@ export default class FBXAnimation extends Object3D {
       .catch((reason: any) => {
         console.log(`Couldn't load:`, source);
         console.log(reason);
-      })
+      });
   }
 
   update(delta: number) {
