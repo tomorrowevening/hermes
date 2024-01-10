@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -21,10 +21,9 @@
   ],
   "files": [
     "src",
-    "src/**/*.css",
-    "src/**/*.scss",
-    "dist",
-    "dist/**/*.css",
+    "dist/hermes.js",
+    "dist/hermes.umd.cjs",
+    "dist/style.css",
     "types/**/*.d.ts"
   ],
   "exports": {
@@ -52,7 +51,6 @@
     "framer-motion": "^10.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "stats-gl": "^1.0.7",
     "three": "^0.160.0",
     "tweakpane": "^4.0.0"
   },
