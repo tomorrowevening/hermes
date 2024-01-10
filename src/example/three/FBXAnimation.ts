@@ -6,7 +6,7 @@ export default class FBXAnimation extends Object3D {
 
   constructor(source: string) {
     super();
-    this.name = source.replaceAll(' ', '').split('.')[0];
+    this.name = source.replace(/\s/g, '').split('.')[0];
     this.scale.setScalar(0.5);
 
     new FBXLoader()

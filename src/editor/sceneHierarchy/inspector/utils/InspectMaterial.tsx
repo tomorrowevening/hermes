@@ -38,17 +38,21 @@ export function acceptedMaterialNames(name: string): boolean {
   );
 }
 
-export function niceMaterialNames(name: string): string {
+export function prettyName(name: string): string {
   switch (name) {
     case 'alphaMap': return 'Alpha Map';
+    case 'anisotropyMap': return 'Anisotropy Map';
     case 'anisotropyRotation': return 'Anisotropy Rotation';
     case 'aoMap': return 'AO Map';
     case 'aoMapIntensity': return 'AO Map Intensity';
     case 'attenuationColor': return 'Attenuation Color';
     case 'bumpMap': return 'Bump Map';
     case 'bumpScale': return 'Bump Scale';
+    case 'clearcoatMap': return 'Clearcoat Map';
+    case 'clearcoatNormalMap': return 'Clearcoat Normal Map';
     case 'clearcoatNormalScale': return 'Clearcoat Normal Scale';
     case 'clearcoatRoughness': return 'Clearcoat Roughness';
+    case 'clearcoatRoughnessMap': return 'Clearcoat Roughness Map';
     case 'color': return 'Color';
     case 'defines': return 'Defines';
     case 'depthTest': return 'Depth Test';
@@ -58,6 +62,7 @@ export function niceMaterialNames(name: string): string {
     case 'displacementScale': return 'Displacement Scale';
     case 'dithering': return 'Dithering';
     case 'emissive': return 'Emissive';
+    case 'emissiveMap': return 'Emissive Map';
     case 'emissiveIntensity': return 'Emissive Intensity';
     case 'envMap': return 'Environment Map';
     case 'envMapIntensity': return 'Environment Map Intensity';
@@ -68,6 +73,8 @@ export function niceMaterialNames(name: string): string {
     case 'gradientMap': return 'Gradient Map';
     case 'ior': return 'IOR';
     case 'iridescenceIOR': return 'Iridescence IOR';
+    case 'iridescenceMap': return 'Iridescence Map';
+    case 'iridescenceThicknessMap': return 'Iridescence Thickness Map';
     case 'iridescenceThicknessRange': return 'Iridescence Thickness Range';
     case 'lights': return 'Lights';
     case 'lightMap': return 'Light Map';
@@ -75,6 +82,7 @@ export function niceMaterialNames(name: string): string {
     case 'map': return 'Map';
     case 'matcap': return 'Matcap';
     case 'metalness': return 'Metalness';
+    case 'metalnessMap': return 'Metalness Map';
     case 'name': return 'Name';
     case 'normalMap': return 'Normal Map';
     case 'normalScale': return 'Normal Scale';
@@ -82,13 +90,21 @@ export function niceMaterialNames(name: string): string {
     case 'reflectivity': return 'Reflectivity';
     case 'refractionRatio': return 'Refraction Ratio';
     case 'roughness': return 'Roughness';
+    case 'roughnessMap': return 'Roughness Map';
     case 'sheenColor': return 'Sheen Color';
+    case 'sheenColorMap': return 'Sheen Color Map';
     case 'sheenRoughness': return 'Sheen Roughness';
+    case 'sheenRoughnessMap': return 'Sheen Roughness Map';
     case 'shininess': return 'Shininess';
     case 'specular': return 'Specular';
     case 'specularColor': return 'Specular Color';
+    case 'specularColorMap': return 'Specular Color Map';
     case 'specularIntensity': return 'Specular Intensity';
+    case 'specularIntensityMap': return 'Specular Map Intensity';
     case 'thickness': return 'Thickness';
+    case 'thicknessMap': return 'Thickness Map';
+    case 'transmission': return 'Transmission';
+    case 'transmissionMap': return 'Transmission Map';
     case 'transparent': return 'Transparent';
     case 'type': return 'Type';
     case 'uuid': return 'UUID';
@@ -147,7 +163,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     const value = material[i];
     if (propType === 'boolean' || propType === 'number' || propType === 'string') {
       const newField = {
-        title: niceMaterialNames(i),
+        title: prettyName(i),
         prop: i,
         type: propType,
         value: value,
@@ -176,7 +192,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     } else if (propType === 'object') {
       if (value.isColor) {
         items.push({
-          title: niceMaterialNames(i),
+          title: prettyName(i),
           prop: i,
           type: 'color',
           value: value,
@@ -204,7 +220,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
           });
         }
         items.push({
-          title: niceMaterialNames(i),
+          title: prettyName(i),
           items: subChildren,
         });
       } else {
@@ -218,7 +234,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
             case 'string':
               if (n === 'src') {
                 items.push({
-                  title: niceMaterialNames(i),
+                  title: prettyName(i),
                   type: 'image',
                   value: propValue,
                   onChange: (prop: string, value: any) => {
@@ -235,7 +251,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                 });
               } else {
                 subChildren.push({
-                  title: `${niceMaterialNames(n)}`,
+                  title: `${prettyName(n)}`,
                   prop: `material.${i}.${n}`,
                   type: `${typeof material[i][n]}`,
                   value: value[n],
@@ -252,7 +268,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
               // Uniform textures
               if (propValue.value !== undefined && propValue.value.src !== undefined) {
                 subChildren.push({
-                  title: niceMaterialNames(n),
+                  title: prettyName(n),
                   type: 'image',
                   value: propValue.value.src,
                   onChange: (prop: string, value: any) => {
@@ -285,7 +301,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 
         if (subChildren.length > 0) {
           items.push({
-            title: niceMaterialNames(i),
+            title: prettyName(i),
             items: subChildren,
           });
         }
