@@ -1,6 +1,7 @@
 import { Scene } from 'three';
 import BaseRemote from './BaseRemote';
 import { stripObject, stripScene } from '@/editor/sceneHierarchy/utils';
+import { hierarchyUUID } from '@/editor/utils';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
@@ -67,6 +68,7 @@ export default class RemoteThree extends BaseRemote {
 
   setScene(value: Scene) {
     this.scene = value;
+    hierarchyUUID(value);
     const stripped = stripScene(value);
     this.app.send({
       event: 'setScene',
