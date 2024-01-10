@@ -1,0 +1,6 @@
+dist/images
+dist/models
+
+# Ignore development files
+.git/
+.vscode/
