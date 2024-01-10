@@ -7,7 +7,7 @@ import { ChildObjectProps } from './types';
 import { determineIcon } from './utils';
 
 export default function ChildObject(props: ChildObjectProps) {
-  const [open, setOpen] = useState(props.child.children.length > 0);
+  const [open, setOpen] = useState(false);
 
   const hasChildren = props.child.children.length > 0;
   const children: Array<any> = [];
