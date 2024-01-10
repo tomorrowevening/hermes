@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -16,6 +16,7 @@
     "Editor",
     "Remote",
     "TheatreJS",
+    "ThreeJS",
     "Tweakpane"
   ],
   "files": [
@@ -24,7 +25,6 @@
     "src/**/*.scss",
     "dist",
     "dist/**/*.css",
-    "dist/**/*.scss",
     "types/**/*.d.ts"
   ],
   "exports": {
@@ -53,7 +53,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "stats-gl": "^1.0.7",
-    "three": "^0.155.0",
+    "three": "^0.160.0",
     "tweakpane": "^4.0.0"
   },
   "devDependencies": {
