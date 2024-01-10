@@ -46,15 +46,14 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {},
-  "peerDependencies": {
+  "dependencies": {
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
     "framer-motion": "^10.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "stats-gl": "^1.0.7",
-    "three": "^0.155.0",
+    "three": "^0.160.0",
     "tweakpane": "^4.0.0"
   },
   "devDependencies": {
