@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -20,7 +20,9 @@
     "Tweakpane"
   ],
   "files": [
-    "src",
+    "src/index.ts",
+    "src/core",
+    "src/editor",
     "dist/hermes.js",
     "dist/hermes.umd.cjs",
     "dist/style.css",
@@ -39,7 +41,8 @@
   "scripts": {
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
-    "buildLib": "tsc --declaration --emitDeclarationOnly --declarationDir types && vite build",
+    "declare": "tsc --declaration --emitDeclarationOnly --declarationDir types",
+    "buildLib": "yarn declare && vite build",
     "buildExample": "vite build --config vite.config.example.ts",
     "build": "yarn buildLib && yarn buildExample",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
