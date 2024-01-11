@@ -9,7 +9,7 @@ export declare const helpers: Map<string, CameraHelper>;
 export declare const cameraOptions: string[];
 export declare function createOrtho(name: string, position: Vector3): OrthographicCamera;
 export declare const debugCamera: PerspectiveCamera;
-export type RenderMode = 'Default' | 'Normals' | 'Wireframe' | 'UVs';
+export type RenderMode = 'Default' | 'Normals' | 'UVs' | 'Wireframe';
 export declare const renderOptions: RenderMode[];
 export declare const normalsMaterial: MeshNormalMaterial;
 export declare const wireframeMaterial: MeshBasicMaterial;

@@ -1,7 +1,11 @@
-import { Object3D } from "three";
+import { Material, Object3D, Texture } from "three";
 export declare function clamp(min: number, max: number, value: number): number;
 export declare function distance(x: number, y: number): number;
 export declare function randomID(): string;
 export declare function isColor(obj: any): boolean;
 export declare function colorToHex(obj: any): string;
+export declare function round(value: number, precision?: number): number;
 export declare const hierarchyUUID: (object: Object3D) => void;
+export declare const disposeTexture: (texture?: Texture) => void;
+export declare const disposeMaterial: (material?: Material | Material[]) => void;
+export declare const dispose: (object: Object3D) => void;

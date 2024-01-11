@@ -5,6 +5,9 @@ import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 import { cameraOptions, cameras, controls, helpers, ModeOptions, MultiViewMode, normalsMaterial, RenderMode, renderOptions, uvMaterial, wireframeMaterial } from './MultiViewData';
 import './MultiView.scss';
+import RemoteThree from '@/core/remote/RemoteThree';
+import { ToolEvents, debugDispatcher } from '../global';
+import { dispose } from '../utils';
 
 let currentRenderMode: RenderMode = 'Default';
 
@@ -12,6 +15,9 @@ let currentRenderMode: RenderMode = 'Default';
 
 const scene = new Scene();
 scene.name = 'Debug Scene';
+
+let currentScene = new Scene();
+scene.add(currentScene);
 
 const grid = new InfiniteGridHelper();
 scene.add(grid);
@@ -28,8 +34,8 @@ let blCam = cameras.get('Front')!;
 let brCam = cameras.get('Top')!;
 
 interface MultiViewProps {
-  scene: Scene;
   renderer: WebGLRenderer;
+  three: RemoteThree;
   mode?: MultiViewMode;
 }
 
@@ -123,9 +129,19 @@ export default function MultiView(props: MultiViewProps) {
     }
   };
 
-  // Add scene + helpers
   useEffect(() => {
-    scene.add(props.scene);
+    const sceneUpdate = () => {
+      dispose(currentScene);
+      scene.remove(currentScene);
+      if (props.three.scene !== undefined) {
+        currentScene = props.three.scene;
+        scene.add(currentScene);
+      }
+    };
+    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, sceneUpdate);
+    return () => {
+      debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, sceneUpdate);
+    };
   }, []);
 
   // Resize handling + drawing
@@ -239,7 +255,6 @@ export default function MultiView(props: MultiViewProps) {
       controls.forEach((control: OrbitControls) => {
         control.update();
       });
-      props.scene['update']();
 
       // Drawing
       props.renderer.clear();

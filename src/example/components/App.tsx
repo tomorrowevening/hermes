@@ -62,16 +62,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    loadAssets()
-      .then(() => {
-        setLoaded(true);
-      })
-      .catch(() => {
-        console.log('Error loading files...');
-      });
-  }, [setLoaded]);
-
   // ThreeJS
   useEffect(() => {
     if (!loaded) return;
@@ -98,11 +88,9 @@ function App() {
       const vignette = new VignetteEffect({});
       post.addPass(new EffectPass(exampleScene.camera, noiseEffect, vignette));
 
-      if (IS_DEV) {
-        stats = new Stats();
-        stats.init(renderer);
-        document.body.appendChild(stats.dom);
-      }
+      stats = new Stats();
+      stats.init(renderer);
+      document.body.appendChild(stats.dom);
     }
 
     // Start RAF
@@ -120,23 +108,26 @@ function App() {
       exampleScene.resize(width, height);
     };
 
-    const onUpdate = () => {
+    const updateApp = () => {
       exampleScene.update();
-      if (IS_DEV) stats.begin();
+      stats.begin();
       renderer.clear();
       post.render();
-      if (IS_DEV) {
-        stats.end();
-        stats.update();
-      }
-      raf = requestAnimationFrame(onUpdate);
+      stats.end();
+      stats.update();
+      raf = requestAnimationFrame(updateApp);
+    };
+
+    const updateEditor = () => {
+      exampleScene.update();
+      raf = requestAnimationFrame(updateEditor);
     };
 
     app.three.setScene(exampleScene);
     onResize();
     window.addEventListener('resize', onResize);
-    if (!app.editor) onUpdate();
     setShowSceneInspector(true);
+    app.editor ? updateEditor() : updateApp();
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -144,6 +135,17 @@ function App() {
       raf = -1;
     };
   }, [loaded]);
+
+  // Preload
+  useEffect(() => {
+    loadAssets()
+      .then(() => {
+        setLoaded(true);
+      })
+      .catch(() => {
+        console.log('Error loading files...');
+      });
+  }, [setLoaded]);
 
   // Debug Components
   if (IS_DEV) {
@@ -206,11 +208,11 @@ function App() {
       </div>
 
       {IS_DEV && showSceneInspector && (
-        <SceneInspector scene={exampleScene} three={app.three} />
+        <SceneInspector three={app.three} />
       )}
 
       {IS_DEV && showSceneInspector && app.editor && (
-        <MultiView scene={exampleScene} renderer={renderer} />
+        <MultiView renderer={renderer} three={app.three} />
       )}
     </>
   );
