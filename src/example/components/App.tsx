@@ -120,6 +120,8 @@ function App() {
     };
 
     app.three.setScene(exampleScene);
+    app.three.addCamera(exampleScene.camera);
+
     if (app.editor) {
       updateEditor();
     } else {
@@ -129,6 +131,7 @@ function App() {
     }
 
     return () => {
+      app.three.removeCamera(exampleScene.camera);
       dispose(exampleScene);
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(raf);

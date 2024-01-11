@@ -14,4 +14,7 @@ export const ToolEvents = {
   UPDATE_OBJECT: 'ToolEvents::updateObject',
   CREATE_TEXTURE: 'ToolEvents::createTexture',
   REQUEST_METHOD: 'ToolEvents::requestMethod',
+  // MultiView
+  ADD_CAMERA: 'ToolEvents::addCamera',
+  REMOVE_CAMERA: 'ToolEvents::removeCamera',
 };
