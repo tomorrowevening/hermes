@@ -11,7 +11,7 @@ import './App.css';
 import ExampleScene from '../three/ExampleScene';
 import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
-import MultiView from '../../editor/MultiView/MultiView';
+import MultiView from '../../editor/multiView/MultiView';
 import { loadAssets } from '../three/loader';
 
 let renderer: WebGLRenderer;
