@@ -5,6 +5,8 @@ export declare function randomID(): string;
 export declare function isColor(obj: any): boolean;
 export declare function colorToHex(obj: any): string;
 export declare function round(value: number, precision?: number): number;
+export declare let totalThreeObjects: number;
+export declare const resetThreeObjects: () => void;
 export declare const hierarchyUUID: (object: Object3D) => void;
 export declare const disposeTexture: (texture?: Texture) => void;
 export declare const disposeMaterial: (material?: Material | Material[]) => void;
