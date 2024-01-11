@@ -51,12 +51,12 @@ cameras.set('Debug', debugCamera);
 
 // Rendering
 
-export type RenderMode = 'Default' | 'Normals' | 'Wireframe' | 'UVs';
+export type RenderMode = 'Default' | 'Normals' | 'UVs' | 'Wireframe';
 export const renderOptions: RenderMode[] = [
   'Default',
   'Normals',
-  'Wireframe',
   'UVs',
+  'Wireframe',
 ];
 export const normalsMaterial = new MeshNormalMaterial();
 export const wireframeMaterial = new MeshBasicMaterial({

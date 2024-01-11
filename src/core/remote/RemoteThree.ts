@@ -68,8 +68,8 @@ export default class RemoteThree extends BaseRemote {
 
   setScene(value: Scene) {
     this.scene = value;
-    hierarchyUUID(value);
-    const stripped = stripScene(value);
+    hierarchyUUID(this.scene);
+    const stripped = stripScene(this.scene);
     this.app.send({
       event: 'setScene',
       target: 'editor',
