@@ -12,15 +12,16 @@ import ExampleScene from '../three/ExampleScene';
 import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 import MultiView from '../../editor/MultiView/MultiView';
+import { loadAssets } from '../three/loader';
 
 let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;
 
 const useTweakpane = false;
-const threeCameras: any[] = [];
 
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!);
+  const [loaded, setLoaded] = useState(false);
   const [showSceneInspector, setShowSceneInspector] = useState(false);
   app.theatre?.sheet('App');
 
@@ -48,7 +49,7 @@ function App() {
     };
   }, []);
 
-  // ThreeJS
+  // Renderer setup
   useEffect(() => {
     renderer = new WebGLRenderer({ stencil: false });
     renderer.autoClear = false;
@@ -56,9 +57,25 @@ function App() {
     renderer.setPixelRatio(devicePixelRatio);
     renderer.setClearColor(0x000000);
     elementRef.current.parentElement!.appendChild(renderer.domElement);
+    return () => {
+      renderer.dispose();
+    };
+  }, []);
 
+  useEffect(() => {
+    loadAssets()
+      .then(() => {
+        setLoaded(true);
+      })
+      .catch(() => {
+        console.log('Error loading files...');
+      });
+  }, [setLoaded]);
+
+  // ThreeJS
+  useEffect(() => {
+    if (!loaded) return;
     exampleScene = new ExampleScene();
-    threeCameras.push(exampleScene.camera);
 
     let post: EffectComposer;
     let stats: Stats;
@@ -123,11 +140,10 @@ function App() {
 
     return () => {
       window.removeEventListener('resize', onResize);
-      renderer.dispose();
       cancelAnimationFrame(raf);
       raf = -1;
     };
-  }, []);
+  }, [loaded]);
 
   // Debug Components
   if (IS_DEV) {
