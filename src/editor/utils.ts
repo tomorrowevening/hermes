@@ -42,17 +42,22 @@ export function round(value: number, precision: number = 1): number {
   return Number(value.toFixed(precision));
 }
 
-let totalObjects = 0;
+export let totalThreeObjects = 0;
+export const resetThreeObjects = () => {
+  totalThreeObjects = 0;
+};
 export const hierarchyUUID = (object: Object3D): void => {
   if (!object) return;
 
   let uuid = object.name.replace(' ', '');
   // fallback in case there's no name
-  if (uuid.length === 0) uuid = `obj_${totalObjects}`;
+  if (uuid.length === 0) {
+    uuid = `obj_${totalThreeObjects}`;
+    totalThreeObjects++;
+  }
   // inherit parent's UUID for hierarchy
   if (object.parent !== null) uuid = `${object.parent.uuid}.${uuid}`;
   object.uuid = uuid;
-  totalObjects++;
 
   // Iterate children
   object.children.forEach((child: Object3D) => {
