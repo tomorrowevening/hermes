@@ -12,6 +12,7 @@ import ExampleScene from '../three/ExampleScene';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
+import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
 
 let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;
@@ -205,6 +206,10 @@ function App() {
           });
         }}>Click</button>
       </div>
+
+      {IS_DEV && (
+        <SceneInspector three={app.three} />
+      )}
     </>
   );
 }
