@@ -314,6 +314,9 @@ export default function MultiView(props: MultiViewProps) {
     cameraOptions.push(key);
   });
 
+  const [modeOpen, setModeOpen] = useState(false);
+  const [renderModeOpen, setRenderModeOpen] = useState(false);
+
   return (
     <div className='multiview'>
       <canvas ref={canvasRef} />
@@ -408,6 +411,11 @@ export default function MultiView(props: MultiViewProps) {
             killControls();
             setMode(value as MultiViewMode);
           }}
+          open={modeOpen}
+          onToggle={(value: boolean) => {
+            setModeOpen(value);
+            setRenderModeOpen(false);
+          }}
         />
         {/* Render Mode */}
         <Dropdown
@@ -434,6 +442,11 @@ export default function MultiView(props: MultiViewProps) {
                 scene.overrideMaterial = uvMaterial;
                 break;
             }
+          }}
+          open={renderModeOpen}
+          onToggle={(value: boolean) => {
+            setModeOpen(false);
+            setRenderModeOpen(value);
           }}
         />
       </div>
