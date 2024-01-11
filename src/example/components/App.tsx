@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
+import { BlendFunction, EffectComposer, EffectPass, FXAAEffect, NoiseEffect, RenderPass, TiltShiftEffect, VignetteEffect } from 'postprocessing';
+import Stats from 'stats-gl';
 // Models
 import { app, IS_DEV } from '../constants';
 // Components
@@ -48,15 +50,43 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
-    renderer = new WebGLRenderer({ antialias: true });
+    renderer = new WebGLRenderer({ stencil: false });
     renderer.autoClear = false;
     renderer.shadowMap.enabled = true;
     renderer.setPixelRatio(devicePixelRatio);
-    renderer.setClearColor(0x000000, 1);
+    renderer.setClearColor(0x000000);
     elementRef.current.parentElement!.appendChild(renderer.domElement);
 
     exampleScene = new ExampleScene();
     threeCameras.push(exampleScene.camera);
+
+    let post: EffectComposer;
+    let stats: Stats;
+    if (!app.editor) {
+      post = new EffectComposer(renderer);
+      post.addPass(new RenderPass(exampleScene, exampleScene.camera));
+
+      const fxaaEffect = new FXAAEffect();
+      fxaaEffect.minEdgeThreshold = 0.01;
+      post.addPass(new EffectPass(exampleScene.camera, fxaaEffect));
+      
+      const blur = new TiltShiftEffect({
+        focusArea: 0.6
+      });
+      post.addPass(new EffectPass(exampleScene.camera, blur));
+
+      const noiseEffect = new NoiseEffect({});
+      noiseEffect.blendMode.opacity.value = 0.33;
+      noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
+      const vignette = new VignetteEffect({});
+      post.addPass(new EffectPass(exampleScene.camera, noiseEffect, vignette));
+
+      if (IS_DEV) {
+        stats = new Stats();
+        stats.init(renderer);
+        document.body.appendChild(stats.dom);
+      }
+    }
 
     // Start RAF
     let raf = -1;
@@ -64,15 +94,24 @@ function App() {
     const onResize = () => {
       let width = window.innerWidth;
       const height = window.innerHeight;
-      if (app.editor) width -= 300;
-      renderer.setSize(width, height);
+      if (app.editor) {
+        width -= 300;
+        renderer.setSize(width, height);
+      } else {
+        post.setSize(width, height);
+      }
       exampleScene.resize(width, height);
     };
 
     const onUpdate = () => {
-      renderer.clear();
       exampleScene.update();
-      renderer.render(exampleScene, exampleScene.camera);
+      if (IS_DEV) stats.begin();
+      renderer.clear();
+      post.render();
+      if (IS_DEV) {
+        stats.end();
+        stats.update();
+      }
       raf = requestAnimationFrame(onUpdate);
     };
 
