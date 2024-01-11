@@ -1,8 +1,10 @@
 import { Euler, Matrix4, Vector3 } from 'three';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from "../../types";
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps } from '../../utils';
+import { round } from '@/editor/utils';
 
 export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
   const matrix = new Matrix4();
@@ -22,73 +24,67 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
     if (child !== undefined) setItemProps(child, prop, value);
   };
 
-  const items: any[] = [
-    {
-      title: 'Position',
-      items: [
+  const updateRotation = (prop: string, value: any) => {
+    updateTransform(prop, degToRad(value));
+  };
+
+  return (
+    <InspectorGroup
+      title="Transform"
+      items={[
         {
-          title: 'X',
+          title: 'Position X',
           prop: 'position.x',
           type: 'number',
           value: position.x,
           onChange: updateTransform,
         },
         {
-          title: 'Y',
+          title: 'Position Y',
           prop: 'position.y',
           type: 'number',
           value: position.y,
           onChange: updateTransform,
         },
         {
-          title: 'Z',
+          title: 'Position Z',
           prop: 'position.z',
           type: 'number',
           value: position.z,
           onChange: updateTransform,
         },
-      ],
-    },
-    {
-      title: 'Rotation',
-      items: [
         {
-          title: 'X',
+          title: 'Rotation X',
           prop: 'rotation.x',
           type: 'number',
-          value: rotation.x,
-          min: -Math.PI,
-          max: Math.PI,
-          step: 0.01,
-          onChange: updateTransform,
+          value: round(radToDeg(rotation.x)),
+          min: -360,
+          max: 360,
+          step: 0.1,
+          onChange: updateRotation,
         },
         {
-          title: 'Y',
+          title: 'Rotation Y',
           prop: 'rotation.y',
           type: 'number',
-          value: rotation.y,
-          min: -Math.PI,
-          max: Math.PI,
-          step: 0.01,
-          onChange: updateTransform,
+          value: round(radToDeg(rotation.y)),
+          min: -360,
+          max: 360,
+          step: 0.1,
+          onChange: updateRotation,
         },
         {
-          title: 'Z',
+          title: 'Rotation Z',
           prop: 'rotation.z',
           type: 'number',
-          value: rotation.z,
-          min: -Math.PI,
-          max: Math.PI,
-          step: 0.01,
-          onChange: updateTransform,
+          value: round(radToDeg(rotation.z)),
+          min: -360,
+          max: 360,
+          step: 0.1,
+          onChange: updateRotation,
         },
-      ],
-    },
-    {
-      title: 'Scale',
-      items: [
         {
-          title: 'X',
+          title: 'Scale X',
           prop: 'scale.x',
           type: 'number',
           value: scale.x,
@@ -96,7 +92,7 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
           onChange: updateTransform,
         },
         {
-          title: 'Y',
+          title: 'Scale Y',
           prop: 'scale.y',
           type: 'number',
           value: scale.y,
@@ -104,21 +100,14 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
           onChange: updateTransform,
         },
         {
-          title: 'Z',
+          title: 'Scale Z',
           prop: 'scale.z',
           type: 'number',
           value: scale.z,
           step: 0.01,
           onChange: updateTransform,
         },
-      ],
-    },
-  ];
-
-  return (
-    <InspectorGroup
-      title="Transform"
-      items={items}
+      ]}
     />
   );
 }
