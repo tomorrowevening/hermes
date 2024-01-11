@@ -1,36 +1,20 @@
-import { AnimationMixer, Group, Object3D } from "three";
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { AnimationMixer, Object3D } from "three";
+import { models } from "./loader";
 
 export default class FBXAnimation extends Object3D {
   mixer?: AnimationMixer;
 
-  constructor(source: string) {
+  constructor(name: string) {
     super();
-    this.name = source.replace(/\s/g, '').split('.')[0];
+    this.name = name;
     this.scale.setScalar(0.5);
 
-    new FBXLoader()
-      .setPath('./models/')
-      .loadAsync(source)
-      .then((model: Group) => {
-        this.add(model);
+    const model = models.get(name)!;
+    this.add(model);
 
-        // Shadows
-        model.traverse((obj: Object3D) => {
-          if (obj['isMesh']) {
-            obj.castShadow = true;
-            obj.receiveShadow = true;
-          }
-        });
-
-        this.mixer = new AnimationMixer(model);
-        const action = this.mixer.clipAction(model.animations[0]);
-        action.play();
-      })
-      .catch((reason: any) => {
-        console.log(`Couldn't load:`, source);
-        console.log(reason);
-      });
+    this.mixer = new AnimationMixer(model);
+    const action = this.mixer.clipAction(model.animations[0]);
+    action.play();
   }
 
   update(delta: number) {

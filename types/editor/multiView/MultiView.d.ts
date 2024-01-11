@@ -1,10 +1,8 @@
-import { Camera, Scene, WebGLRenderer } from 'three';
 import { MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
+import RemoteThree from '@/core/remote/RemoteThree';
 interface MultiViewProps {
-    scene: Scene;
-    renderer: WebGLRenderer;
-    cameras: Camera[];
+    three: RemoteThree;
     mode?: MultiViewMode;
 }
 export default function MultiView(props: MultiViewProps): import("react/jsx-runtime").JSX.Element;

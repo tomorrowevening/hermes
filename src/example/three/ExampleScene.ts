@@ -1,12 +1,12 @@
-import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, RepeatWrapping, Scene, SphereGeometry, SpotLight, Texture, TextureLoader } from 'three';
+import { BackSide, CircleGeometry, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, SpotLight } from 'three';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '../../editor/utils';
 import { IS_DEV, app } from '../constants';
 import FBXAnimation from './FBXAnimation';
+import { cubeTextures, textures } from './loader';
 
 export default class ExampleScene extends Scene {
   camera!: PerspectiveCamera;
-  envMap: CubeTexture;
   dance0!: FBXAnimation;
   dance1!: FBXAnimation;
   dance2!: FBXAnimation;
@@ -17,25 +17,15 @@ export default class ExampleScene extends Scene {
   constructor() {
     super();
     this.name = 'TestScene';
-    this.envMap = new CubeTextureLoader()
-      .setPath('images/milkyWay/')
-      .load([
-        'dark-s_px.jpg',
-        'dark-s_nx.jpg',
-        'dark-s_py.jpg',
-        'dark-s_ny.jpg',
-        'dark-s_pz.jpg',
-        'dark-s_nz.jpg'
-      ], (value: CubeTexture) => {
-        this.background = value;
+    const envMap = cubeTextures.get('environment')!;
+    this.background = envMap;
 
-        if (app.editor) {
-          const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: value, side: BackSide }));
-          bg.name = 'bg';
-          bg.scale.setScalar(1000);
-          this.add(bg);
-        }
-      });
+    if (app.editor) {
+      const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: envMap, side: BackSide }));
+      bg.name = 'bg';
+      bg.scale.setScalar(1000);
+      this.add(bg);
+    }
 
     this.createCameras();
     this.createLights();
@@ -99,30 +89,25 @@ export default class ExampleScene extends Scene {
     world.name = 'world';
     this.add(world);
 
-    const floorMaterial = new MeshPhongMaterial();
+    const gridTexture = textures.get('uv_grid')!;
+    gridTexture.repeat.setScalar(10);
+    gridTexture.needsUpdate = true;
+    const floorMaterial = new MeshPhongMaterial({ map: gridTexture });
     const floor = new Mesh(new CircleGeometry(500, 36), floorMaterial);
     floor.name = 'floor';
     floor.receiveShadow = true;
     floor.rotateX(-Math.PI / 2);
     world.add(floor);
-    new TextureLoader().load('images/uv_grid_opengl.jpg', (texture: Texture) => {
-      texture.wrapS = RepeatWrapping;
-      texture.wrapT = RepeatWrapping;
-      texture.repeat.setScalar(10);
-      texture.needsUpdate = true;
-      floorMaterial.map = texture;
-      floorMaterial.needsUpdate = true;
-    });
 
-    this.dance0 = new FBXAnimation('Thriller2.fbx');
+    this.dance0 = new FBXAnimation('Thriller2');
     this.dance0.position.set(-150, 0, -175);
     world.add(this.dance0);
 
-    this.dance1 = new FBXAnimation('Flair.fbx');
+    this.dance1 = new FBXAnimation('Flair');
     this.dance1.position.set(0, 0, 0);
     world.add(this.dance1);
 
-    this.dance2 = new FBXAnimation('Thriller4.fbx');
+    this.dance2 = new FBXAnimation('Thriller4');
     this.dance2.position.set(150, 0, -185);
     world.add(this.dance2);
 

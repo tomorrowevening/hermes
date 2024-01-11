@@ -339,6 +339,7 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
       items.push(
         <InspectorGroup
           title={`Material ${i}`}
+          key={`Material ${i}`}
           items={inspectMaterialItems(material[i], object, three)}
         />
       );

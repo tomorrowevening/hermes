@@ -1,4 +1,4 @@
-import { Object3D } from "three";
+import { Material, Mesh, Object3D, PositionalAudio, Texture } from "three";
 
 export function clamp(min: number, max: number, value: number) {
   return Math.min(max, Math.max(min, value));
@@ -38,20 +38,76 @@ export function colorToHex(obj: any) {
   return '#' + red + green + blue;
 }
 
-let totalObjects = 0;
+export function round(value: number, precision: number = 1): number {
+  return Number(value.toFixed(precision));
+}
+
+export let totalThreeObjects = 0;
+export const resetThreeObjects = () => {
+  totalThreeObjects = 0;
+};
 export const hierarchyUUID = (object: Object3D): void => {
   if (!object) return;
 
   let uuid = object.name.replace(' ', '');
   // fallback in case there's no name
-  if (uuid.length === 0) uuid = `obj_${totalObjects}`;
+  if (uuid.length === 0) {
+    uuid = `obj_${totalThreeObjects}`;
+    totalThreeObjects++;
+  }
   // inherit parent's UUID for hierarchy
   if (object.parent !== null) uuid = `${object.parent.uuid}.${uuid}`;
   object.uuid = uuid;
-  totalObjects++;
 
   // Iterate children
   object.children.forEach((child: Object3D) => {
     hierarchyUUID(child);
   });
+};
+
+// Dispose
+
+export const disposeTexture = (texture?: Texture): void => {
+  texture?.dispose();
+};
+
+// Dispose material
+export const disposeMaterial = (material?: Material | Material[]): void => {
+  if (!material) return;
+
+  if (Array.isArray(material)) {
+    material.forEach((mat: Material) => mat.dispose());
+  } else {
+    material.dispose();
+  }
+};
+
+// Dispose object
+export const dispose = (object: Object3D): void => {
+  if (!object) return;
+
+  // Dispose children
+  while (object.children.length > 0) {
+    const child = object.children[0];
+    if (child instanceof PositionalAudio) {
+      child.pause();
+      if (child.parent) {
+        child.parent.remove(child);
+      }
+    } else {
+      dispose(child);
+    }
+  }
+
+  // Dispose object
+  if (object.parent) object.parent.remove(object);
+  // @ts-ignore
+  if (object.isMesh) {
+    const mesh = object as Mesh;
+    mesh.geometry?.dispose();
+    disposeMaterial(mesh.material);
+  }
+
+  // @ts-ignore
+  if (object.dispose !== undefined) object.dispose();
 };

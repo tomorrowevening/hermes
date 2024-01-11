@@ -22,34 +22,24 @@ export default class SceneHierarchy extends Component<SceneHierarchyState> {
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.setScene);
   }
 
-  componentDidMount(): void {
-    this.onRefresh();
-  }
-
   componentWillUnmount(): void {
     debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, this.setScene);
   }
 
   render(): ReactNode {
     const hasScene = this.componentState.scene !== null;
-    const HierarchyName = 'Hierarchy' + (hasScene ? `: ${this.componentState.scene?.name}` : '');
+    const HierarchyName = 'Hierarchy - ' + (hasScene ? `${this.componentState.scene?.name}` : 'No Scene');
     return (
       <div id="SceneHierarchy" key="SceneHierarchy">
         {(
           <>
-            {hasScene && (
-              <Accordion
-                label={HierarchyName}
-                button={(
-                  <button className='icon refresh hideText' onClick={this.onRefresh}>
-                    Refresh
-                  </button>
+            <Accordion label={HierarchyName} open={true}>
+              <>
+                {hasScene && (
+                  <ContainerObject child={this.componentState.scene!} three={this.three} />
                 )}
-                open={true}
-              >
-                <ContainerObject child={this.componentState.scene!} three={this.three} />
-              </Accordion>
-            )}
+              </>
+            </Accordion>
 
             <Accordion label='Inspector'>
               <Inspector key="Inspector" three={this.three} />
@@ -61,10 +51,6 @@ export default class SceneHierarchy extends Component<SceneHierarchyState> {
   }
 
   // Private
-
-  private onRefresh = () => {
-    this.three.getScene();
-  };
 
   private setScene = (evt: any) => {
     this.setState(() => ({
