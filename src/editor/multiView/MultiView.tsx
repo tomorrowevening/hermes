@@ -8,7 +8,20 @@ import './MultiView.scss';
 
 let currentRenderMode: RenderMode = 'Default';
 
+// Scene
+
 const scene = new Scene();
+scene.name = 'Debug Scene';
+
+const grid = new InfiniteGridHelper();
+scene.add(grid);
+
+const axisHelper = new AxesHelper(500);
+axisHelper.name = 'axisHelper';
+scene.add(axisHelper);
+
+// Cameras
+
 let tlCam = cameras.get('Debug')!;
 let trCam = cameras.get('Orthographic')!;
 let blCam = cameras.get('Front')!;
@@ -17,9 +30,9 @@ let brCam = cameras.get('Top')!;
 interface MultiViewProps {
   scene: Scene;
   renderer: WebGLRenderer;
-  cameras: Camera[];
   mode?: MultiViewMode;
 }
+
 export default function MultiView(props: MultiViewProps) {
   const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
 
@@ -112,15 +125,7 @@ export default function MultiView(props: MultiViewProps) {
 
   // Add scene + helpers
   useEffect(() => {
-    scene.name = 'Debug Scene';
     scene.add(props.scene);
-
-    const grid = new InfiniteGridHelper();
-    scene.add(grid);
-
-    const axisHelper = new AxesHelper(500);
-    axisHelper.name = 'axisHelper';
-    scene.add(axisHelper);
   }, []);
 
   // Resize handling + drawing
@@ -266,11 +271,6 @@ export default function MultiView(props: MultiViewProps) {
       raf = -1;
     };
   }, [mode]);
-
-  props.cameras.forEach((camera: Camera) => {
-    cameras.set(camera.name, camera);
-    cameraOptions.push(camera.name);
-  });
 
   return (
     <div className='multiview'>
