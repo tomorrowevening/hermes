@@ -1,4 +1,4 @@
-import { Camera, CameraHelper, MeshBasicMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Vector3 } from 'three';
+import { Camera, CameraHelper, MeshBasicMaterial, MeshDepthMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import UVMaterial from './UVMaterial';
 
@@ -15,16 +15,6 @@ export const ModeOptions: MultiViewMode[] = [
 export const cameras: Map<string, Camera> = new Map();
 export const controls: Map<string, OrbitControls> = new Map();
 export const helpers: Map<string, CameraHelper> = new Map();
-export const cameraOptions: string[] = [
-  'Top',
-  'Bottom',
-  'Left',
-  'Right',
-  'Front',
-  'Back',
-  'Orthographic',
-  'Debug',
-];
 
 export function createOrtho(name: string, position: Vector3) {
   const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 3000);
@@ -51,17 +41,19 @@ cameras.set('Debug', debugCamera);
 
 // Rendering
 
-export type RenderMode = 'Default' | 'Normals' | 'UVs' | 'Wireframe';
+export type RenderMode = 'Depth' | 'Normals' | 'Renderer' | 'UVs' | 'Wireframe';
 export const renderOptions: RenderMode[] = [
-  'Default',
+  'Renderer',
+  'Depth',
   'Normals',
   'UVs',
   'Wireframe',
 ];
+export const depthMaterial = new MeshDepthMaterial();
 export const normalsMaterial = new MeshNormalMaterial();
+export const uvMaterial = new UVMaterial();
 export const wireframeMaterial = new MeshBasicMaterial({
   opacity: 0.33,
   transparent: true,
   wireframe: true
 });
-export const uvMaterial = new UVMaterial();

@@ -9,10 +9,9 @@ import { app, IS_DEV } from '../constants';
 // Components
 import './App.css';
 import ExampleScene from '../three/ExampleScene';
-import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
-import MultiView from '../../editor/multiView/MultiView';
 import { loadAssets } from '../three/loader';
+import { dispose } from '../../editor/utils';
 
 let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;
@@ -22,7 +21,6 @@ const useTweakpane = false;
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!);
   const [loaded, setLoaded] = useState(false);
-  const [showSceneInspector, setShowSceneInspector] = useState(false);
   app.theatre?.sheet('App');
 
   // Theatre
@@ -50,17 +48,19 @@ function App() {
   }, []);
 
   // Renderer setup
-  useEffect(() => {
-    renderer = new WebGLRenderer({ stencil: false });
-    renderer.autoClear = false;
-    renderer.shadowMap.enabled = true;
-    renderer.setPixelRatio(devicePixelRatio);
-    renderer.setClearColor(0x000000);
-    elementRef.current.parentElement!.appendChild(renderer.domElement);
-    return () => {
-      renderer.dispose();
-    };
-  }, []);
+  if (!app.editor) {
+    useEffect(() => {
+      renderer = new WebGLRenderer({ stencil: false });
+      renderer.autoClear = false;
+      renderer.shadowMap.enabled = true;
+      renderer.setPixelRatio(devicePixelRatio);
+      renderer.setClearColor(0x000000);
+      elementRef.current.parentElement!.appendChild(renderer.domElement);
+      return () => {
+        renderer.dispose();
+      };
+    }, []);
+  }
 
   // ThreeJS
   useEffect(() => {
@@ -97,14 +97,9 @@ function App() {
     let raf = -1;
 
     const onResize = () => {
-      let width = window.innerWidth;
+      const width = window.innerWidth;
       const height = window.innerHeight;
-      if (app.editor) {
-        width -= 300;
-        renderer.setSize(width, height);
-      } else {
-        post.setSize(width, height);
-      }
+      post.setSize(width, height);
       exampleScene.resize(width, height);
     };
 
@@ -124,12 +119,16 @@ function App() {
     };
 
     app.three.setScene(exampleScene);
-    onResize();
-    window.addEventListener('resize', onResize);
-    setShowSceneInspector(true);
-    app.editor ? updateEditor() : updateApp();
+    if (app.editor) {
+      updateEditor();
+    } else {
+      window.addEventListener('resize', onResize);
+      onResize();
+      updateApp();
+    }
 
     return () => {
+      dispose(exampleScene);
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(raf);
       raf = -1;
@@ -206,14 +205,6 @@ function App() {
           });
         }}>Click</button>
       </div>
-
-      {IS_DEV && showSceneInspector && (
-        <SceneInspector three={app.three} />
-      )}
-
-      {IS_DEV && showSceneInspector && app.editor && (
-        <MultiView renderer={renderer} three={app.three} />
-      )}
     </>
   );
 }

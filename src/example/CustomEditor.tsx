@@ -3,6 +3,8 @@ import { app } from './constants';
 import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
 import SceneHierarchy from '../editor/sceneHierarchy/SceneHierarchy';
+import SceneInspector from '../editor/sceneHierarchy/inspector/SceneInspector';
+import MultiView from '../editor/multiView/MultiView';
 
 export default function CustomEditor() {
   return (
@@ -35,7 +37,9 @@ export default function CustomEditor() {
           }}
         />
       ]}>
-        <SceneHierarchy key="SceneHierarchy" three={app.three} />
+        <SceneHierarchy three={app.three} />
+        <SceneInspector three={app.three} />
+        <MultiView three={app.three} />
       </Editor>
   );
 }

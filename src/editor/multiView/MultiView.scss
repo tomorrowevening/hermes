@@ -11,6 +11,11 @@ $padding: 2px;
   top: 0;
   right: 300px;
   bottom: 0;
+  z-index: 1;
+
+  canvas {
+    pointer-events: none;
+  }
 
   .dropdown {
     background-color: #222;
@@ -75,6 +80,7 @@ $padding: 2px;
 
     .CameraWindow {
       border: 1px dotted #333;
+      pointer-events: visible;
       position: relative;
     
       .clickable {

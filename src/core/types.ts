@@ -25,7 +25,6 @@ export type EditorEvent =
   | 'getObject'
   | 'setObject'
   | 'updateObject'
-  | 'getScene'
   | 'setScene'
   | 'createTexture'
   | 'requestMethod'

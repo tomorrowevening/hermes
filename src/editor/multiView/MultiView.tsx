@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
-import { cameraOptions, cameras, controls, helpers, ModeOptions, MultiViewMode, normalsMaterial, RenderMode, renderOptions, uvMaterial, wireframeMaterial } from './MultiViewData';
+import { cameras, controls, depthMaterial, helpers, ModeOptions, MultiViewMode, normalsMaterial, RenderMode, renderOptions, uvMaterial, wireframeMaterial } from './MultiViewData';
 import './MultiView.scss';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '../global';
 import { dispose } from '../utils';
 
-let currentRenderMode: RenderMode = 'Default';
+let currentRenderMode: RenderMode = 'Renderer';
 
 // Scene
 
@@ -34,13 +34,17 @@ let blCam = cameras.get('Front')!;
 let brCam = cameras.get('Top')!;
 
 interface MultiViewProps {
-  renderer: WebGLRenderer;
   three: RemoteThree;
   mode?: MultiViewMode;
 }
 
 export default function MultiView(props: MultiViewProps) {
+  // States
   const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
+  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+
+  // References
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const tlWindow = useRef<HTMLDivElement>(null);
   const trWindow = useRef<HTMLDivElement>(null);
@@ -62,6 +66,8 @@ export default function MultiView(props: MultiViewProps) {
 
     // New items
     const control = new OrbitControls(camera, element);
+    control.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    control.dampingFactor = 0.05;
     switch (camera.name) {
       case 'Top':
       case 'Bottom':
@@ -129,6 +135,20 @@ export default function MultiView(props: MultiViewProps) {
     }
   };
 
+  // Renderer
+  useEffect(() => {
+    const instance = new WebGLRenderer({
+      canvas: canvasRef.current!,
+      stencil: false
+    });
+    instance.autoClear = false;
+    instance.shadowMap.enabled = true;
+    instance.setPixelRatio(devicePixelRatio);
+    instance.setClearColor(0x000000);
+    setRenderer(instance);
+  }, []);
+
+  // Event handling
   useEffect(() => {
     const sceneUpdate = () => {
       dispose(currentScene);
@@ -146,9 +166,9 @@ export default function MultiView(props: MultiViewProps) {
 
   // Resize handling + drawing
   useEffect(() => {
-    const size = props.renderer.getSize(new Vector2());
-    let width = size.x;
-    let height = size.y;
+    if (renderer === null) return;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     let bw = Math.floor(width / 2);
     let bh = Math.floor(height / 2);
     let raf = -1;
@@ -158,6 +178,7 @@ export default function MultiView(props: MultiViewProps) {
       height = window.innerHeight;
       bw = Math.floor(width / 2);
       bh = Math.floor(height / 2);
+      renderer.setSize(width, height);
 
       let cw = width;
       let ch = height;
@@ -192,29 +213,29 @@ export default function MultiView(props: MultiViewProps) {
     };
 
     const drawSingle = () => {
-      props.renderer.setViewport(0, 0, width, height);
-      props.renderer.setScissor(0, 0, width, height);
-      props.renderer.render(scene, tlCam);
+      renderer.setViewport(0, 0, width, height);
+      renderer.setScissor(0, 0, width, height);
+      renderer.render(scene, tlCam);
     };
 
     const drawDouble = () => {
       if (mode === 'Side by Side') {
-        props.renderer.setViewport(0, 0, bw, height);
-        props.renderer.setScissor(0, 0, bw, height);
-        props.renderer.render(scene, tlCam);
+        renderer.setViewport(0, 0, bw, height);
+        renderer.setScissor(0, 0, bw, height);
+        renderer.render(scene, tlCam);
 
-        props.renderer.setViewport(bw, 0, bw, height);
-        props.renderer.setScissor(bw, 0, bw, height);
-        props.renderer.render(scene, trCam);
+        renderer.setViewport(bw, 0, bw, height);
+        renderer.setScissor(bw, 0, bw, height);
+        renderer.render(scene, trCam);
       } else {
         const y = height - bh;
-        props.renderer.setViewport(0, y, width, bh);
-        props.renderer.setScissor(0, y, width, bh);
-        props.renderer.render(scene, tlCam);
+        renderer.setViewport(0, y, width, bh);
+        renderer.setScissor(0, y, width, bh);
+        renderer.render(scene, tlCam);
 
-        props.renderer.setViewport(0, 0, width, bh);
-        props.renderer.setScissor(0, 0, width, bh);
-        props.renderer.render(scene, trCam);
+        renderer.setViewport(0, 0, width, bh);
+        renderer.setScissor(0, 0, width, bh);
+        renderer.render(scene, trCam);
       }
     };
 
@@ -225,29 +246,29 @@ export default function MultiView(props: MultiViewProps) {
 
       // TL
       x = 0;
-      props.renderer.setViewport(x, y, bw, bh);
-      props.renderer.setScissor(x, y, bw, bh);
-      props.renderer.render(scene, tlCam);
+      renderer.setViewport(x, y, bw, bh);
+      renderer.setScissor(x, y, bw, bh);
+      renderer.render(scene, tlCam);
 
       // TR
       x = bw;
-      props.renderer.setViewport(x, y, bw, bh);
-      props.renderer.setScissor(x, y, bw, bh);
-      props.renderer.render(scene, trCam);
+      renderer.setViewport(x, y, bw, bh);
+      renderer.setScissor(x, y, bw, bh);
+      renderer.render(scene, trCam);
 
       y = 0;
 
       // BL
       x = 0;
-      props.renderer.setViewport(x, y, bw, bh);
-      props.renderer.setScissor(x, y, bw, bh);
-      props.renderer.render(scene, blCam);
+      renderer.setViewport(x, y, bw, bh);
+      renderer.setScissor(x, y, bw, bh);
+      renderer.render(scene, blCam);
 
       // BR
       x = bw;
-      props.renderer.setViewport(x, y, bw, bh);
-      props.renderer.setScissor(x, y, bw, bh);
-      props.renderer.render(scene, brCam);
+      renderer.setViewport(x, y, bw, bh);
+      renderer.setScissor(x, y, bw, bh);
+      renderer.render(scene, brCam);
     };
 
     const onUpdate = () => {
@@ -257,7 +278,7 @@ export default function MultiView(props: MultiViewProps) {
       });
 
       // Drawing
-      props.renderer.clear();
+      renderer.clear();
       switch (mode) {
         case 'Single':
           drawSingle();
@@ -285,10 +306,18 @@ export default function MultiView(props: MultiViewProps) {
       cancelAnimationFrame(raf);
       raf = -1;
     };
-  }, [mode]);
+  }, [mode, renderer]);
+
+  // Camera names
+  const cameraOptions: string[] = [];
+  cameras.forEach((_: Camera, key: string) => {
+    cameraOptions.push(key);
+  });
 
   return (
     <div className='multiview'>
+      <canvas ref={canvasRef} />
+
       <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`}>
         {mode === 'Single' && (
           <>
@@ -382,22 +411,26 @@ export default function MultiView(props: MultiViewProps) {
         />
         {/* Render Mode */}
         <Dropdown
-          index={0}
+          index={renderOptions.indexOf(currentRenderMode)}
           options={renderOptions}
           onSelect={(value: string) => {
             if (value === currentRenderMode) return;
             currentRenderMode = value as RenderMode;
             switch (currentRenderMode) {
-              case 'Default':
-                scene.overrideMaterial = null;
+              case 'Depth':
+                scene.overrideMaterial = depthMaterial;
                 break;
               case 'Normals':
                 scene.overrideMaterial = normalsMaterial;
                 break;
+              default:
+              case 'Renderer':
+                scene.overrideMaterial = null;
+                break;
               case 'Wireframe':
                 scene.overrideMaterial = wireframeMaterial;
                 break;
-                case 'UVs':
+              case 'UVs':
                 scene.overrideMaterial = uvMaterial;
                 break;
             }

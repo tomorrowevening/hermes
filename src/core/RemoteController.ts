@@ -71,9 +71,6 @@ export default function RemoteController(app: Application) {
         break;
 
       // Three
-      case 'getScene':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.GET_SCENE });
-        break;
       case 'getObject':
         debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
         break;
