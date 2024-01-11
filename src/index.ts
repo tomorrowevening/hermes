@@ -15,6 +15,8 @@ export { default as DropdownItem } from './editor/components/DropdownItem';
 export { default as Dropdown } from './editor/components/Dropdown';
 export { default as RemoteController } from './core/RemoteController';
 // RemoteThree
+export { default as InfiniteGridHelper } from './editor/sceneHierarchy/inspector/MultiView/InfiniteGridHelper';
+export { default as UVMaterial } from './editor/sceneHierarchy/inspector/MultiView/UVMaterial';
 export { default as SceneHierarchy } from './editor/sceneHierarchy/SceneHierarchy';
 export { default as Accordion } from './editor/sceneHierarchy/Accordion';
 export { default as ChildObject } from './editor/sceneHierarchy/ChildObject';
@@ -22,5 +24,4 @@ export { default as ContainerObject } from './editor/sceneHierarchy/ContainerObj
 export { default as Inspector } from './editor/sceneHierarchy/inspector/Inspector';
 export { default as SceneInspector } from './editor/sceneHierarchy/inspector/SceneInspector';
 export { default as MultiView } from './editor/sceneHierarchy/inspector/MultiView/MultiView';
-export { default as InfiniteGridHelper } from './editor/sceneHierarchy/inspector/MultiView/InfiniteGridHelper';
 export { default as Editor } from './editor/Editor';

@@ -1,6 +1,6 @@
 import { Camera, Scene, WebGLRenderer } from 'three';
+import { MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
-type MultiViewMode = 'Single' | 'Side by Side' | 'Stacked' | 'Quad';
 interface MultiViewProps {
     scene: Scene;
     renderer: WebGLRenderer;

@@ -1,69 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, MeshBasicMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
+import { cameraOptions, cameras, controls, helpers, ModeOptions, MultiViewMode, normalsMaterial, RenderMode, renderOptions, uvMaterial, wireframeMaterial } from './MultiViewData';
 import './MultiView.scss';
 
-type MultiViewMode = 'Single' | 'Side by Side' | 'Stacked' |'Quad';
-const ModeOptions: MultiViewMode[] = [
-  'Single',
-  'Side by Side',
-  'Stacked',
-  'Quad'
-];
+let currentRenderMode: RenderMode = 'Default';
+
+const scene = new Scene();
+let tlCam = cameras.get('Debug')!;
+let trCam = cameras.get('Orthographic')!;
+let blCam = cameras.get('Front')!;
+let brCam = cameras.get('Top')!;
+
 interface MultiViewProps {
   scene: Scene;
   renderer: WebGLRenderer;
   cameras: Camera[];
   mode?: MultiViewMode;
 }
-
-const cameras: Map<string, Camera> = new Map();
-const controls: Map<string, OrbitControls> = new Map();
-const helpers: Map<string, CameraHelper> = new Map();
-
-function createOrtho(name: string, position: Vector3) {
-  const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 3000);
-  camera.name = name;
-  camera.position.copy(position);
-  camera.lookAt(0, 0, 0);
-  cameras.set(name, camera);
-  return camera;
-}
-
-// Cameras
-
-createOrtho('Top', new Vector3(0, 1000, 0));
-createOrtho('Bottom', new Vector3(0, -1000, 0));
-createOrtho('Left', new Vector3(-1000, 0, 0));
-createOrtho('Right', new Vector3(1000, 0, 0));
-createOrtho('Front', new Vector3(0, 0, 1000));
-createOrtho('Back', new Vector3(0, 0, -1000));
-createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
-
-const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
-debugCamera.name = 'Debug';
-debugCamera.position.set(500, 500, 500);
-debugCamera.lookAt(0, 0, 0);
-cameras.set('Debug', debugCamera);
-
-type RenderMode = 'Default' | 'Normals' | 'Wireframe';
-let currentRenderMode: RenderMode = 'Default';
-const renderOptions: RenderMode[] = [
-  'Default',
-  'Normals',
-  'Wireframe',
-];
-const normalsMaterial = new MeshNormalMaterial();
-const wireframeMaterial = new MeshBasicMaterial({
-  opacity: 0.33,
-  transparent: true,
-  wireframe: true
-});
-
-const scene = new Scene();
-
 export default function MultiView(props: MultiViewProps) {
   const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
 
@@ -71,11 +27,6 @@ export default function MultiView(props: MultiViewProps) {
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
   const brWindow = useRef<HTMLDivElement>(null);
-
-  let tlCam = cameras.get('Debug')!;
-  let trCam = cameras.get('Orthographic')!;
-  let blCam = cameras.get('Front')!;
-  let brCam = cameras.get('Top')!;
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -316,16 +267,6 @@ export default function MultiView(props: MultiViewProps) {
     };
   }, [mode]);
 
-  const cameraOptions: string[] = [
-    'Top',
-    'Bottom',
-    'Left',
-    'Right',
-    'Front',
-    'Back',
-    'Orthographic',
-    'Debug',
-  ];
   props.cameras.forEach((camera: Camera) => {
     cameras.set(camera.name, camera);
     cameraOptions.push(camera.name);
@@ -440,6 +381,9 @@ export default function MultiView(props: MultiViewProps) {
                 break;
               case 'Wireframe':
                 scene.overrideMaterial = wireframeMaterial;
+                break;
+                case 'UVs':
+                scene.overrideMaterial = uvMaterial;
                 break;
             }
           }}
