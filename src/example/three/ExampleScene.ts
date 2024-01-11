@@ -1,4 +1,4 @@
-import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, RepeatWrapping, Scene, SphereGeometry, Texture, TextureLoader } from 'three';
+import { BackSide, CircleGeometry, CubeTexture, CubeTextureLoader, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, RepeatWrapping, Scene, SphereGeometry, SpotLight, Texture, TextureLoader } from 'three';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '../../editor/utils';
 import { IS_DEV, app } from '../constants';
@@ -50,10 +50,10 @@ export default class ExampleScene extends Scene {
     cameras.name = 'cameras';
     this.add(cameras);
 
-    this.camera = new PerspectiveCamera(60, 1, 1, 2000);
+    this.camera = new PerspectiveCamera(90, 1, 10, 1000);
     this.camera.name = 'Main';
-    this.camera.position.set(0, 200, 300);
-    this.camera.lookAt(0, 0, 0);
+    this.camera.position.set(0, 100, 125);
+    this.camera.lookAt(0, 50, 0);
     cameras.add(this.camera);
   }
 
@@ -62,7 +62,7 @@ export default class ExampleScene extends Scene {
     lights.name = 'lights';
     this.add(lights);
 
-    const sun = new DirectionalLight();
+    const sun = new DirectionalLight(0xffffff, 0.25);
     sun.name = 'sun';
     sun.castShadow = true;
     sun.position.set(0, 50, 50);
@@ -81,6 +81,17 @@ export default class ExampleScene extends Scene {
     const hemi = new HemisphereLight(0x6fb4e2, 0xc46d27, 0.5);
     hemi.name = 'hemi';
     lights.add(hemi);
+
+    const spotlight = new SpotLight(0xffffff, 3);
+    spotlight.angle = 5.8;
+    spotlight.decay = 0;
+    spotlight.distance = 1000;
+    spotlight.penumbra = Math.PI;
+    spotlight.name = 'spotlight';
+    spotlight.castShadow = true;
+    spotlight.position.set(-50, 200, 200);
+    spotlight.lookAt(0, 50, 0);
+    lights.add(spotlight);
   }
 
   private createWorld() {

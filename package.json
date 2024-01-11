@@ -52,8 +52,10 @@
     "@theatre/core": "0.7.0",
     "@tweakpane/plugin-essentials": "^0.2.0",
     "framer-motion": "^10.16.0",
+    "postprocessing": "6.34.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stats-gl": "2.0.1",
     "three": "^0.160.0",
     "tweakpane": "^4.0.0"
   },
