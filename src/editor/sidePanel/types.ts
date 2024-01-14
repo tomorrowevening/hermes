@@ -11,7 +11,7 @@ export interface ChildObjectProps extends CoreComponentProps {
   three: RemoteThree
 }
 
-export interface SceneHierarchyState {
+export interface SidePanelState {
   scene?: Object3D
   three: RemoteThree
 }

@@ -12,7 +12,7 @@ import ExampleScene from '../three/ExampleScene';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
-import SceneInspector from '../../editor/sceneHierarchy/inspector/SceneInspector';
+import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 
 let renderer: WebGLRenderer;
 let exampleScene: ExampleScene;

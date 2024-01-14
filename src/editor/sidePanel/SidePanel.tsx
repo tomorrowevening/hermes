@@ -3,17 +3,17 @@ import { Component, ReactNode } from 'react';
 // Models
 import { debugDispatcher, ToolEvents } from '../global';
 // Components
-import '../scss/_sceneHierarchy.scss';
+import '../scss/_sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
-import { SceneHierarchyState } from './types';
+import { SidePanelState } from './types';
 import RemoteThree from '@/core/remote/RemoteThree';
 
-export default class SceneHierarchy extends Component<SceneHierarchyState> {
+export default class SidePanel extends Component<SidePanelState> {
   private three: RemoteThree;
 
-  constructor(props: SceneHierarchyState) {
+  constructor(props: SidePanelState) {
     super(props);
     this.state = {
       scene: props.scene !== undefined ? props.scene : null,
@@ -30,7 +30,7 @@ export default class SceneHierarchy extends Component<SceneHierarchyState> {
     const hasScene = this.componentState.scene !== null;
     const HierarchyName = 'Hierarchy - ' + (hasScene ? `${this.componentState.scene?.name}` : 'No Scene');
     return (
-      <div id="SceneHierarchy" key="SceneHierarchy">
+      <div id="SidePanel" key="SidePanel">
         {(
           <>
             <Accordion label={HierarchyName} open={true}>
@@ -60,7 +60,7 @@ export default class SceneHierarchy extends Component<SceneHierarchyState> {
 
   // Getters / Setters
 
-  get componentState(): SceneHierarchyState {
-    return this.state as SceneHierarchyState;
+  get componentState(): SidePanelState {
+    return this.state as SidePanelState;
   }
 }

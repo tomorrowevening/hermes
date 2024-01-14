@@ -1,6 +1,6 @@
 import { Camera, Scene } from 'three';
 import BaseRemote from './BaseRemote';
-import { stripObject, stripScene } from '@/editor/sceneHierarchy/utils';
+import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { hierarchyUUID, resetThreeObjects } from '@/editor/utils';
 
 export default class RemoteThree extends BaseRemote {
