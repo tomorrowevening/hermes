@@ -2,7 +2,7 @@ import React from 'react';
 import { app } from './constants';
 import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
-import SceneHierarchy from '../editor/sceneHierarchy/SceneHierarchy';
+import SidePanel from '../editor/sidePanel/SidePanel';
 import MultiView from '../editor/multiView/MultiView';
 
 export default function CustomEditor() {
@@ -36,7 +36,7 @@ export default function CustomEditor() {
           }}
         />
       ]}>
-        <SceneHierarchy three={app.three} />
+        <SidePanel three={app.three} />
         <MultiView three={app.three} />
       </Editor>
   );

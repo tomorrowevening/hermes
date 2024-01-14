@@ -10,4 +10,6 @@ export declare const ToolEvents: {
     UPDATE_OBJECT: string;
     CREATE_TEXTURE: string;
     REQUEST_METHOD: string;
+    ADD_CAMERA: string;
+    REMOVE_CAMERA: string;
 };

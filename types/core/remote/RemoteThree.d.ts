@@ -1,4 +1,4 @@
-import { Scene } from 'three';
+import { Camera, Scene } from 'three';
 import BaseRemote from './BaseRemote';
 export default class RemoteThree extends BaseRemote {
     scene?: Scene;
@@ -8,4 +8,6 @@ export default class RemoteThree extends BaseRemote {
     updateObject(uuid: string, key: string, value: any): void;
     createTexture(uuid: string, key: string, value: any): void;
     setScene(value: Scene): void;
+    addCamera(camera: Camera): void;
+    removeCamera(camera: Camera): void;
 }

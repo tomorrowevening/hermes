@@ -2,6 +2,8 @@
 import { Camera } from 'three';
 interface DropdownProps {
     index: number;
+    open: boolean;
+    onToggle: (value: boolean) => void;
     onSelect: (value: string) => void;
     options: string[];
     up?: boolean;
