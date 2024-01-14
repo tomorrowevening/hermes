@@ -28,6 +28,8 @@ export type EditorEvent =
   | 'setScene'
   | 'createTexture'
   | 'requestMethod'
+  | 'addCamera'
+  | 'removeCamera'
 // GUI
   | 'addFolder'
   | 'bindObject'

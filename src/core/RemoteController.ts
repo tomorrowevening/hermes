@@ -99,6 +99,13 @@ export default function RemoteController(app: Application) {
       case 'setScene':
         debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
         break;
+      case 'addCamera':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
+        break;
+      case 'removeCamera':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        break;
+      
     }
   }
 

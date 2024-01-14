@@ -2,18 +2,19 @@ import { ForwardedRef, forwardRef, useState } from 'react';
 import { Camera } from 'three';
 
 interface DropdownProps {
-  index: number
+  index: number;
+  open: boolean;
+  onToggle: (value: boolean) => void;
   onSelect: (value: string) => void;
   options: string[];
   up?: boolean;
 }
 
 export const Dropdown = (props: DropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(props.options[props.index]);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    props.onToggle(!props.open);
   };
 
   const handleSelect = (option: any) => {
@@ -21,7 +22,7 @@ export const Dropdown = (props: DropdownProps) => {
       props.onSelect(option);
       setSelectedOption(option);
     }
-    setIsOpen(false);
+    props.onToggle(false);
   };
 
   return (
@@ -29,7 +30,7 @@ export const Dropdown = (props: DropdownProps) => {
       <div className="dropdown-toggle" onClick={handleToggle}>
         {selectedOption}
       </div>
-      {isOpen && (
+      {props.open && (
         <ul className="dropdown-menu">
           {props.options.map((option) => (
             <li key={option} onClick={() => handleSelect(option)}>
@@ -49,11 +50,23 @@ interface CameraWindowProps {
 }
 
 const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, ref: ForwardedRef<HTMLDivElement>) {
+  const [open, setOpen] = useState(false);
   const index = props.options.indexOf(props.camera.name);
   return (
     <div className='CameraWindow'>
-      <div ref={ref} className='clickable'></div>
-      <Dropdown index={index} options={props.options} onSelect={props.onSelect} up={true} />
+      <div ref={ref} className='clickable' onClick={() => {
+        if (open) setOpen(false);
+      }} />
+      <Dropdown
+        index={index}
+        open={open}
+        options={props.options}
+        onSelect={props.onSelect}
+        onToggle={(value: boolean) => {
+          setOpen(value);
+        }}
+        up={true}
+      />
     </div>
   );
 });

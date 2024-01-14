@@ -1,4 +1,4 @@
-import { Scene } from 'three';
+import { Camera, Scene } from 'three';
 import BaseRemote from './BaseRemote';
 import { stripObject, stripScene } from '@/editor/sceneHierarchy/utils';
 import { hierarchyUUID, resetThreeObjects } from '@/editor/utils';
@@ -67,6 +67,24 @@ export default class RemoteThree extends BaseRemote {
     const stripped = stripScene(this.scene);
     this.app.send({
       event: 'setScene',
+      target: 'editor',
+      data: stripped,
+    });
+  }
+
+  addCamera(camera: Camera) {
+    const stripped = stripObject(camera);
+    this.app.send({
+      event: 'addCamera',
+      target: 'editor',
+      data: stripped,
+    });
+  }
+
+  removeCamera(camera: Camera) {
+    const stripped = stripObject(camera);
+    this.app.send({
+      event: 'removeCamera',
       target: 'editor',
       data: stripped,
     });

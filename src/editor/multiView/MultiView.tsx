@@ -42,10 +42,12 @@ export default function MultiView(props: MultiViewProps) {
   // States
   const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+  const [modeOpen, setModeOpen] = useState(false);
+  const [renderModeOpen, setRenderModeOpen] = useState(false);
+  const [, setLastUpdate] = useState(Date.now());
 
   // References
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const tlWindow = useRef<HTMLDivElement>(null);
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
@@ -158,9 +160,26 @@ export default function MultiView(props: MultiViewProps) {
         scene.add(currentScene);
       }
     };
+
+    const addCamera = (evt: any) => {
+      const data = evt.value;
+      const child = props.three.scene?.getObjectByProperty('uuid', data.uuid);
+      if (child !== undefined) cameras.set(data.name, child as Camera);
+      setLastUpdate(Date.now());
+    };
+
+    const removeCamera = (evt: any) => {
+      cameras.delete(evt.value.name);
+      setLastUpdate(Date.now());
+    };
+
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, sceneUpdate);
+    debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, addCamera);
+    debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, sceneUpdate);
+      debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, addCamera);
+      debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
     };
   }, []);
 
@@ -408,6 +427,11 @@ export default function MultiView(props: MultiViewProps) {
             killControls();
             setMode(value as MultiViewMode);
           }}
+          open={modeOpen}
+          onToggle={(value: boolean) => {
+            setModeOpen(value);
+            setRenderModeOpen(false);
+          }}
         />
         {/* Render Mode */}
         <Dropdown
@@ -434,6 +458,11 @@ export default function MultiView(props: MultiViewProps) {
                 scene.overrideMaterial = uvMaterial;
                 break;
             }
+          }}
+          open={renderModeOpen}
+          onToggle={(value: boolean) => {
+            setModeOpen(false);
+            setRenderModeOpen(value);
           }}
         />
       </div>
