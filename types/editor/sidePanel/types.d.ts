@@ -58,6 +58,11 @@ export interface RemoteMaterial {
     sheenColor?: Color;
     specularColor?: Color;
 }
+export interface AnimationClipInfo {
+    name: string;
+    duration: number;
+    blendMode: number;
+}
 export interface PerspectiveCameraInfo {
     fov: number;
     zoom: number;
@@ -92,6 +97,7 @@ export interface RemoteObject {
     type: string;
     visible: boolean;
     matrix: number[];
+    animations: AnimationClipInfo[];
     material?: RemoteMaterial | RemoteMaterial[];
     perspectiveCameraInfo?: PerspectiveCameraInfo;
     orthographicCameraInfo?: OrthographicCameraInfo;

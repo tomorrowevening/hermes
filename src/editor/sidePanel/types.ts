@@ -71,6 +71,14 @@ export interface RemoteMaterial {
   specularColor?: Color
 }
 
+// Animation Info
+
+export interface AnimationClipInfo {
+  name: string;
+  duration: number;
+  blendMode: number;
+}
+
 // Camera Info
 
 export interface PerspectiveCameraInfo {
@@ -114,6 +122,7 @@ export interface RemoteObject {
   type: string
   visible: boolean
   matrix: number[] // based on Matrix4.elements
+  animations: AnimationClipInfo[]
   material?: RemoteMaterial | RemoteMaterial[]
   perspectiveCameraInfo?: PerspectiveCameraInfo
   orthographicCameraInfo?: OrthographicCameraInfo

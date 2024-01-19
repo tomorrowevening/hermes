@@ -200,6 +200,7 @@ function App() {
 
   return (
     <>
+      {!loaded && <p>Loading...</p>}
       <div id='box' ref={elementRef}>
         <button onClick={() => {
           app.send({

@@ -11,6 +11,8 @@ import { InspectMaterial } from "./utils/InspectMaterial";
 import { InspectTransform } from "./utils/InspectTransform";
 import { InspectLight } from "./utils/InspectLight";
 import { setItemProps } from "../utils";
+import { AnimationMixer } from "three";
+import InspectAnimation from "./utils/InspectAnimation";
 
 export default function Inspector(props: CoreComponentProps) {
   const [lastRefresh, setLastRefresh] = useState(-1);
@@ -20,6 +22,7 @@ export default function Inspector(props: CoreComponentProps) {
     type: '',
     visible: false,
     matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    animations: [],
     material: undefined,
     perspectiveCameraInfo: undefined,
     orthographicCameraInfo: undefined,
@@ -31,6 +34,14 @@ export default function Inspector(props: CoreComponentProps) {
       const obj = evt.value as RemoteObject;
       setCurrentObject(obj);
       setLastRefresh(Date.now());
+      if (props.three.scene !== undefined) {
+        const child = props.three.scene.getObjectByProperty('uuid', obj.uuid);
+        if (child !== undefined && child.animations.length > 0) {
+          const mixer = new AnimationMixer(child);
+          console.log(mixer);
+          console.log(child.animations);
+        }
+      }
     }
 
     debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
@@ -86,6 +97,8 @@ export default function Inspector(props: CoreComponentProps) {
             <>
               {/* Transform */}
               {InspectTransform(currentObject, props.three)}
+              {/* Animations */}
+              {currentObject.animations.length > 0 ? InspectAnimation(currentObject, props.three) : null}
               {/* Cameras */}
               {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
               {/* Lights */}
