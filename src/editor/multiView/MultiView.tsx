@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, Group, OrthographicCamera, PerspectiveCamera, Raycaster, Scene, Vector2, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
@@ -8,6 +8,7 @@ import './MultiView.scss';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '../global';
 import { dispose } from '../utils';
+import { mapLinear } from 'three/src/math/MathUtils';
 
 let currentRenderMode: RenderMode = 'Renderer';
 
@@ -19,12 +20,23 @@ scene.name = 'Debug Scene';
 let currentScene = new Scene();
 scene.add(currentScene);
 
+const helpersContainer = new Group();
+helpersContainer.name = 'helpers';
+scene.add(helpersContainer);
+
 const grid = new InfiniteGridHelper();
-scene.add(grid);
+helpersContainer.add(grid);
 
 const axisHelper = new AxesHelper(500);
 axisHelper.name = 'axisHelper';
-scene.add(axisHelper);
+helpersContainer.add(axisHelper);
+
+const interactionHelper = new AxesHelper(100);
+interactionHelper.name = 'interactionHelper';
+helpersContainer.add(interactionHelper);
+interactionHelper.visible = false;
+
+let useRaycaster = false;
 
 // Cameras
 
@@ -44,10 +56,12 @@ export default function MultiView(props: MultiViewProps) {
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [modeOpen, setModeOpen] = useState(false);
   const [renderModeOpen, setRenderModeOpen] = useState(false);
+  const [interactionModeOpen, setInteractionModeOpen] = useState(false);
   const [, setLastUpdate] = useState(Date.now());
 
   // References
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const tlWindow = useRef<HTMLDivElement>(null);
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
@@ -327,6 +341,123 @@ export default function MultiView(props: MultiViewProps) {
     };
   }, [mode, renderer]);
 
+  // Raycaster
+  useEffect(() => {
+    if (renderer !== null) {
+      const raycaster = new Raycaster();
+      const pointer = new Vector2();
+
+      const updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
+        switch (mode) {
+          case 'Quad':
+            if (mouseX < hw) {
+              if (mouseY < hh) {
+                raycaster.setFromCamera(pointer, tlCam);
+              } else {
+                raycaster.setFromCamera(pointer, blCam);
+              }
+            } else {
+              if (mouseY < hh) {
+                raycaster.setFromCamera(pointer, trCam);
+              } else {
+                raycaster.setFromCamera(pointer, brCam);
+              }
+            }
+            break;
+          case 'Side by Side':
+            if (mouseX < hw) {
+              raycaster.setFromCamera(pointer, tlCam);
+            } else {
+              raycaster.setFromCamera(pointer, trCam);
+            }
+            break;
+          case 'Single':
+            raycaster.setFromCamera(pointer, tlCam);
+            break;
+          case 'Stacked':
+            if (mouseY < hh) {
+              raycaster.setFromCamera(pointer, tlCam);
+            } else {
+              raycaster.setFromCamera(pointer, trCam);
+            }
+            break;
+        }
+      };
+
+      const onMouseMove = (event: MouseEvent) => {
+        if (!useRaycaster) return;
+        const size = new Vector2();
+        renderer!.getSize(size);
+
+        const mouseX = Math.min(event.clientX, size.x);
+        const mouseY = Math.min(event.clientY, size.y);
+        pointer.x = mapLinear(mouseX, 0, size.x, -1, 1);
+        pointer.y = mapLinear(mouseY, 0, size.y, 1, -1);
+
+        const hw = size.x / 2;
+        const hh = size.y / 2;
+
+        const sideBySide = () => {
+          if (mouseX < hw) {
+            pointer.x = mapLinear(mouseX, 0, hw, -1, 1);
+          } else {
+            pointer.x = mapLinear(mouseX, hw, size.x, -1, 1);
+          }
+        };
+
+        const stacked = () => {
+          if (mouseY < hh) {
+            pointer.y = mapLinear(mouseY, 0, hh, 1, -1);
+          } else {
+            pointer.y = mapLinear(mouseY, hh, size.y, 1, -1);
+          }
+        };
+
+        // mapLinear
+        switch (mode) {
+          case 'Quad':
+            sideBySide();
+            stacked();
+            break;
+          case 'Side by Side':
+            sideBySide();
+            break;
+          case 'Stacked':
+            stacked();
+            stacked();
+            break;
+        }
+
+        updateCamera(mouseX, mouseY, hw, hh);
+        const intersects = raycaster.intersectObjects(currentScene.children);
+        if (intersects.length > 0) interactionHelper.position.copy(intersects[0].point);
+      };
+
+      const onClick = (event: MouseEvent) => {
+        if (!useRaycaster) return;
+
+        const size = new Vector2();
+        renderer!.getSize(size);
+        if (event.clientX >= size.x) return;
+
+        onMouseMove(event);
+
+        const intersects = raycaster.intersectObjects(currentScene.children);
+        if (intersects.length > 0) {
+          props.three.getObject(intersects[0].object.uuid);
+        }
+      };
+
+      const element = containerRef.current!;
+      element.addEventListener('mousemove', onMouseMove, false);
+      element.addEventListener('click', onClick, false);
+      return () => {
+        element.removeEventListener('mousemove', onMouseMove);
+        element.removeEventListener('click', onClick);
+      };
+    }
+  }, [mode, renderer]);
+
   // Camera names
   const cameraOptions: string[] = [];
   cameras.forEach((_: Camera, key: string) => {
@@ -337,7 +468,7 @@ export default function MultiView(props: MultiViewProps) {
     <div className='multiview'>
       <canvas ref={canvasRef} />
 
-      <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`}>
+      <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`} ref={containerRef}>
         {mode === 'Single' && (
           <>
             <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
@@ -430,9 +561,11 @@ export default function MultiView(props: MultiViewProps) {
           open={modeOpen}
           onToggle={(value: boolean) => {
             setModeOpen(value);
-            setRenderModeOpen(false);
+            if (renderModeOpen) setRenderModeOpen(false);
+            if (interactionModeOpen) setInteractionModeOpen(false);
           }}
         />
+
         {/* Render Mode */}
         <Dropdown
           index={renderOptions.indexOf(currentRenderMode)}
@@ -461,8 +594,28 @@ export default function MultiView(props: MultiViewProps) {
           }}
           open={renderModeOpen}
           onToggle={(value: boolean) => {
-            setModeOpen(false);
+            if (modeOpen) setModeOpen(false);
             setRenderModeOpen(value);
+            if (interactionModeOpen) setInteractionModeOpen(false);
+          }}
+        />
+
+        {/* Interaction Mode */}
+        <Dropdown
+          index={0}
+          options={[
+            'Orbit Mode',
+            'Selection Mode',
+          ]}
+          onSelect={(value: string) => {
+            useRaycaster = value === 'Selection Mode';
+            interactionHelper.visible = useRaycaster;
+          }}
+          open={interactionModeOpen}
+          onToggle={(value: boolean) => {
+            if (modeOpen) setModeOpen(false);
+            if (renderModeOpen) setRenderModeOpen(false);
+            setInteractionModeOpen(value);
           }}
         />
       </div>

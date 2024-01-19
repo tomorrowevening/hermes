@@ -41,9 +41,7 @@ export default class SidePanel extends Component<SidePanelState> {
               </>
             </Accordion>
 
-            <Accordion label='Inspector'>
-              <Inspector key="Inspector" three={this.three} />
-            </Accordion>
+            <Inspector three={this.three} />
           </>
         )}
     </div>

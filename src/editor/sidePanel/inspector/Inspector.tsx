@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { CoreComponentProps, RemoteObject } from "../types";
 import { ToolEvents, debugDispatcher } from "../../global";
+// Components
 import './inspector.scss';
+import Accordion from "../Accordion";
 import InspectorField from './InspectorField';
 // Utils
 import { InspectCamera } from "./utils/InspectCamera";
@@ -40,58 +42,60 @@ export default function Inspector(props: CoreComponentProps) {
   const objType = currentObject.type.toLowerCase();
 
   return (
-    <div id="Inspector" className={props.class} key={lastRefresh}>
-      {currentObject.uuid.length > 0 && (
-        <>
-          {/* Core */}
+    <Accordion label='Inspector' key='Inspector'>
+      <div id="Inspector" className={props.class} key={lastRefresh}>
+        {currentObject.uuid.length > 0 && (
           <>
-            <InspectorField
-              type="string"
-              title="Name"
-              prop="name"
-              value={currentObject.name}
-              disabled={true}
-            />
-            <InspectorField
-              type="string"
-              title="Type"
-              prop="type"
-              value={currentObject.type}
-              disabled={true}
-            />
-            <InspectorField
-              type="string"
-              title="UUID"
-              prop="uuid"
-              value={currentObject.uuid}
-              disabled={true}
-            />
-            <InspectorField
-              type="boolean"
-              title="Visible"
-              prop="visible"
-              value={currentObject.visible}
-              onChange={(key: string, value: any) => {
-                props.three.updateObject(currentObject.uuid, key, value);
-                const child = props.three.scene?.getObjectByProperty('uuid', currentObject.uuid);
-                if (child !== undefined) setItemProps(child, key, value);
-              }}
-            />
-          </>
+            {/* Core */}
+            <>
+              <InspectorField
+                type="string"
+                title="Name"
+                prop="name"
+                value={currentObject.name}
+                disabled={true}
+              />
+              <InspectorField
+                type="string"
+                title="Type"
+                prop="type"
+                value={currentObject.type}
+                disabled={true}
+              />
+              <InspectorField
+                type="string"
+                title="UUID"
+                prop="uuid"
+                value={currentObject.uuid}
+                disabled={true}
+              />
+              <InspectorField
+                type="boolean"
+                title="Visible"
+                prop="visible"
+                value={currentObject.visible}
+                onChange={(key: string, value: any) => {
+                  props.three.updateObject(currentObject.uuid, key, value);
+                  const child = props.three.scene?.getObjectByProperty('uuid', currentObject.uuid);
+                  if (child !== undefined) setItemProps(child, key, value);
+                }}
+              />
+            </>
 
-          {/* Data */}
-          <>
-            {/* Transform */}
-            {InspectTransform(currentObject, props.three)}
-            {/* Cameras */}
-            {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
-            {/* Lights */}
-            {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
-            {/* Material */}
-            {objType.search('mesh') > -1 ? InspectMaterial(currentObject, props.three) : null}
+            {/* Data */}
+            <>
+              {/* Transform */}
+              {InspectTransform(currentObject, props.three)}
+              {/* Cameras */}
+              {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
+              {/* Lights */}
+              {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
+              {/* Material */}
+              {objType.search('mesh') > -1 ? InspectMaterial(currentObject, props.three) : null}
+            </>
           </>
-        </>
-      )}
-    </div>
+        )}
+      </div>
+    </Accordion>
   );
 }
