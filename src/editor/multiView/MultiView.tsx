@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, Group, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
@@ -19,12 +19,16 @@ scene.name = 'Debug Scene';
 let currentScene = new Scene();
 scene.add(currentScene);
 
+const helpersContainer = new Group();
+helpersContainer.name = 'helpers';
+scene.add(helpersContainer);
+
 const grid = new InfiniteGridHelper();
-scene.add(grid);
+helpersContainer.add(grid);
 
 const axisHelper = new AxesHelper(500);
 axisHelper.name = 'axisHelper';
-scene.add(axisHelper);
+helpersContainer.add(axisHelper);
 
 // Cameras
 
