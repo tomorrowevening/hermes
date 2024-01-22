@@ -4,7 +4,7 @@ export default class Application {
     channel?: BroadcastChannel | undefined;
     components: Map<string, any>;
     protected _mode: ApplicationMode;
-    constructor(name: string, debugEnabled: boolean, editorHashtag: string);
+    constructor(name: string, debugEnabled: boolean, editorHashtag?: string);
     addComponent(name: string, component: BaseRemote): void;
     dispose(): void;
     send(data: BroadcastData): void;

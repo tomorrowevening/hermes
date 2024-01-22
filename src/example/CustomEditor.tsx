@@ -4,6 +4,15 @@ import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
 import SidePanel from '../editor/sidePanel/SidePanel';
 import MultiView from '../editor/multiView/MultiView';
+// Scenes
+import BaseScene from './three/BaseScene';
+import Scene1 from './three/Scene1';
+import Scene2 from './three/Scene2';
+
+// Referenced Scenes
+const scenes: Map<string, any> = new Map();
+scenes.set('Scene1', Scene1);
+scenes.set('Scene2', Scene2);
 
 export default function CustomEditor() {
   return (
@@ -36,8 +45,16 @@ export default function CustomEditor() {
           }}
         />
       ]}>
+        <MultiView
+          three={app.three}
+          scenes={scenes}
+          onSceneUpdate={(scene: any) => {
+            // Custom callback for animation updates
+            const baseScene = scene as BaseScene;
+            baseScene.update();
+          }}
+        />
         <SidePanel three={app.three} />
-        <MultiView three={app.three} />
       </Editor>
   );
 }

@@ -2,34 +2,36 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
-import { BlendFunction, EffectComposer, EffectPass, FXAAEffect, NoiseEffect, RenderPass, TiltShiftEffect, VignetteEffect } from 'postprocessing';
 import Stats from 'stats-gl';
 // Models
 import { app, IS_DEV } from '../constants';
 // Components
 import './App.css';
-import ExampleScene from '../three/ExampleScene';
+import BaseScene from '../three/BaseScene';
+import Scene1 from '../three/Scene1';
+import Scene2 from '../three/Scene2';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 
 let renderer: WebGLRenderer;
-let exampleScene: ExampleScene;
+let currentScene: BaseScene;
 
 const useTweakpane = false;
 
 function App() {
   const elementRef = useRef<HTMLDivElement>(null!);
   const [loaded, setLoaded] = useState(false);
-  app.theatre?.sheet('App');
 
   // Theatre
   useEffect(() => {
+    if (app.theatre === undefined) return;
     const container = elementRef.current!;
     container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
     // Theatre Example
+    app.theatre.sheet('App');
     const sheetObj = app.theatre?.sheetObject(
       'App',
       'Box',
@@ -66,29 +68,9 @@ function App() {
   // ThreeJS
   useEffect(() => {
     if (!loaded) return;
-    exampleScene = new ExampleScene();
-
-    let post: EffectComposer;
+    
     let stats: Stats;
     if (!app.editor) {
-      post = new EffectComposer(renderer);
-      post.addPass(new RenderPass(exampleScene, exampleScene.camera));
-
-      const fxaaEffect = new FXAAEffect();
-      fxaaEffect.minEdgeThreshold = 0.01;
-      post.addPass(new EffectPass(exampleScene.camera, fxaaEffect));
-      
-      const blur = new TiltShiftEffect({
-        focusArea: 0.6
-      });
-      post.addPass(new EffectPass(exampleScene.camera, blur));
-
-      const noiseEffect = new NoiseEffect({});
-      noiseEffect.blendMode.opacity.value = 0.33;
-      noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
-      const vignette = new VignetteEffect({});
-      post.addPass(new EffectPass(exampleScene.camera, noiseEffect, vignette));
-
       stats = new Stats();
       stats.init(renderer);
       document.body.appendChild(stats.dom);
@@ -100,39 +82,31 @@ function App() {
     const onResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      post.setSize(width, height);
-      exampleScene.resize(width, height);
+      currentScene?.resize(width, height);
+      renderer.setSize(width, height);
     };
 
     const updateApp = () => {
-      exampleScene.update();
+      currentScene?.update();
       stats.begin();
       renderer.clear();
-      post.render();
+      currentScene?.draw();
       stats.end();
       stats.update();
       raf = requestAnimationFrame(updateApp);
     };
 
-    const updateEditor = () => {
-      exampleScene.update();
-      raf = requestAnimationFrame(updateEditor);
-    };
-
-    app.three.setScene(exampleScene);
-    app.three.addCamera(exampleScene.camera);
-
-    if (app.editor) {
-      updateEditor();
-    } else {
+    if (!app.editor) {
       window.addEventListener('resize', onResize);
       onResize();
       updateApp();
     }
 
     return () => {
-      app.three.removeCamera(exampleScene.camera);
-      dispose(exampleScene);
+      if (currentScene !== undefined) {
+        app.three.removeCamera(currentScene.camera);
+        dispose(currentScene);
+      }
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(raf);
       raf = -1;
@@ -149,6 +123,25 @@ function App() {
         console.log('Error loading files...');
       });
   }, [setLoaded]);
+
+  const createScene = (newScene: BaseScene) => {
+    if (currentScene !== undefined) {
+      if (currentScene.camera !== undefined) app.three.removeCamera(currentScene.camera);
+      dispose(currentScene);
+    }
+    currentScene = newScene;
+    currentScene.resize(window.innerWidth, window.innerHeight);
+    app.three.setScene(currentScene);
+    app.three.addCamera(currentScene.camera);
+  };
+
+  const createScene1 = () => {
+    createScene(new Scene1(renderer));
+  };
+
+  const createScene2 = () => {
+    createScene(new Scene2(renderer));
+  };
 
   // Debug Components
   if (IS_DEV) {
@@ -209,6 +202,15 @@ function App() {
             data: 'hello editor!'
           });
         }}>Click</button>
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '20px',
+      }}>
+        <button onClick={createScene1}>Scene 1</button>
+        <button onClick={createScene2}>Scene 2</button>
       </div>
 
       {IS_DEV && (

@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -32,7 +32,8 @@
     ".": {
       "import": "./dist/hermes.js",
       "require": "./dist/hermes.umd.cjs"
-    }
+    },
+    "./dist/style.css": "./dist/style.css"
   },
   "repository": {
     "type": "git",

@@ -4,7 +4,7 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { noop } from '../types';
+import { BroadcastData, noop } from '../types';
 import type { DataUpdateCallback, VoidCallback } from '../types';
 
 export default class RemoteTweakpane extends BaseRemote {
@@ -166,4 +166,30 @@ export default class RemoteTweakpane extends BaseRemote {
       this.inspectorFolder.remove(this.inspectorFolder.children[i]);
     }
   }
+}
+
+export function HandleAppRemoteTweakpane(app: Application, msg: BroadcastData) {
+  app.components.forEach((component: any) => {
+    if (component instanceof RemoteTweakpane) {
+      const tweakpane: RemoteTweakpane = component;
+      switch (msg.event) {
+        case 'addFolder':
+          tweakpane.addFolder(msg.data.name, msg.data.params, msg.data.parent);
+          break;
+        case 'bindObject':
+          tweakpane.bind(msg.data.name, msg.data.params, msg.data.parent);
+          break;
+        case 'updateBind':
+          tweakpane.triggerBind(msg.data.id, msg.data.value);
+          break;
+        case 'addButton':
+          tweakpane.button(msg.data.name, msg.data.callback, msg.data.parent);
+          break;
+        case 'clickButton':
+          tweakpane.triggerButton(msg.data.id);
+          break;
+      }
+      return;
+    }
+  });
 }
