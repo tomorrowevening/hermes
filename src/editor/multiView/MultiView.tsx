@@ -7,7 +7,7 @@ import { cameras, controls, depthMaterial, helpers, ModeOptions, MultiViewMode, 
 import './MultiView.scss';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '../global';
-import { dispose } from '../utils';
+import { dispose, hierarchyUUID } from '../utils';
 import { mapLinear } from 'three/src/math/MathUtils';
 
 let currentRenderMode: RenderMode = 'Renderer';
@@ -44,15 +44,19 @@ let tlCam = cameras.get('Debug')!;
 let trCam = cameras.get('Orthographic')!;
 let blCam = cameras.get('Front')!;
 let brCam = cameras.get('Top')!;
+let sceneSet = false;
 
 interface MultiViewProps {
   three: RemoteThree;
   mode?: MultiViewMode;
+  scenes: Map<string, any>;
+  onSceneSet?: (scene: Scene) => void;
+  onSceneUpdate?: (scene: Scene) => void;
 }
 
 export default function MultiView(props: MultiViewProps) {
   // States
-  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Quad');
+  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Single');
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [modeOpen, setModeOpen] = useState(false);
   const [renderModeOpen, setRenderModeOpen] = useState(false);
@@ -166,12 +170,18 @@ export default function MultiView(props: MultiViewProps) {
 
   // Event handling
   useEffect(() => {
-    const sceneUpdate = () => {
+    const sceneUpdate = (evt: any) => {
       dispose(currentScene);
       scene.remove(currentScene);
-      if (props.three.scene !== undefined) {
-        currentScene = props.three.scene;
+
+      const sceneClass = props.scenes.get(evt.value.name);
+      if (sceneClass !== undefined) {
+        const sceneInstance = new sceneClass();
+        if (props.onSceneSet !== undefined) props.onSceneSet(sceneInstance);
+        currentScene = sceneInstance;
+        props.three.scene = currentScene;
         scene.add(currentScene);
+        sceneSet = true;
       }
     };
 
@@ -309,6 +319,8 @@ export default function MultiView(props: MultiViewProps) {
       controls.forEach((control: OrbitControls) => {
         control.update();
       });
+
+      if (props.onSceneUpdate !== undefined && sceneSet) props.onSceneUpdate(currentScene);
 
       // Drawing
       renderer.clear();
