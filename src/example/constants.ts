@@ -7,15 +7,15 @@ import RemoteTweakpane from '../core/remote/RemoteTweakpane';
 export const IS_DEV = true;
 
 class CustomApp extends Application {
-  constructor(name: string, debugEnabled: boolean, editorHashtag: string) {
-    super(name, debugEnabled, editorHashtag);
+  constructor() {
+    super('Hermes', IS_DEV);
 
     // Add components
     this.addComponent('theatre', new RemoteTheatre(this, 'RemoteApp', {}));
 
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this));
-      // this.addComponent('debug', new RemoteTweakpane(this));
+      this.addComponent('debug', new RemoteTweakpane(this));
       this.addComponent('three', new RemoteThree(this));
     }
   }
@@ -39,4 +39,4 @@ class CustomApp extends Application {
   }
 }
 
-export const app = new CustomApp('Hermes', IS_DEV, 'editor');
+export const app = new CustomApp();

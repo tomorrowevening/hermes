@@ -1,13 +1,14 @@
 // Libs
 import { getProject } from '@theatre/core';
 import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core';
-import {} from '@theatre/studio';
+import studio from '@theatre/studio';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { isColor } from '@/editor/utils';
-import { noop } from '../types';
+import { BroadcastData, EditorEvent, noop } from '../types';
 import type { DataUpdateCallback, VoidCallback } from '../types';
+// import { ToolEvents, debugDispatcher } from '@/editor/global';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
@@ -115,5 +116,115 @@ export default class RemoteTheatre extends BaseRemote {
     if (unsubscribe !== undefined) {
       unsubscribe();
     }
+  }
+}
+
+let activeSheet: ISheet | undefined;
+
+export function HandleAppRemoteTheatre(app: Application, msg: BroadcastData) {
+  app.components.forEach((component: any) => {
+    if (component instanceof RemoteTheatre) {
+      let value = undefined;
+      const theatre = component as RemoteTheatre;
+      switch (msg.event) {
+        case 'setSheet':
+          // @ts-ignore
+          value = theatre.sheets.get(msg.data.sheet);
+          if (value !== undefined) {
+            activeSheet = value as ISheet;
+            studio.setSelection([value]);
+          }
+          break;
+        case 'setSheetObject':
+          // @ts-ignore
+          value = theatre.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
+          if (value !== undefined) {
+            studio.setSelection([value]);
+          }
+          break;
+        case 'updateSheetObject':
+          // @ts-ignore
+          value = theatre.sheetObjectCBs.get(msg.data.sheetObject);
+          // @ts-ignore
+          if (value !== undefined) value(msg.data.values);
+          break;
+        case 'updateTimeline':
+          // @ts-ignore
+          value = theatre.sheets.get(msg.data.sheet);
+          if (activeSheet !== undefined) {
+            (activeSheet as ISheet).sequence.position = msg.data.position;
+          }
+          break;
+      }
+    }
+  });
+}
+
+export function HandleEditorRemoteTheatre(app: Application) {
+  if (app.editor) {
+    let theatre: RemoteTheatre;
+    app.components.forEach((component: any) => {
+      if (component instanceof RemoteTheatre) {
+        theatre = component;
+      }
+    });
+    studio.ui.restore();
+    studio.onSelectionChange((value: any[]) => {
+      if (value.length < 1) return;
+
+      value.forEach((obj: any) => {
+        let id = obj.address.sheetId;
+        let type: EditorEvent = 'setSheet';
+        let data = {};
+        switch (obj.type) {
+          case 'Theatre_Sheet_PublicAPI':
+            type = 'setSheet';
+            data = {
+              sheet: obj.address.sheetId,
+            };
+            activeSheet = theatre.sheets.get(obj.address.sheetId);
+            break;
+
+          case 'Theatre_SheetObject_PublicAPI':
+            type = 'setSheetObject';
+            id += `_${obj.address.objectKey}`;
+            data = {
+              id: id,
+              sheet: obj.address.sheetId,
+              key: obj.address.objectKey,
+            };
+            break;
+        }
+        app.send({ event: type, target: 'app', data: data });
+      });
+    });
+
+    // Timeline
+    let position = 0;
+    const onRafUpdate = () => {
+      if (
+        activeSheet !== undefined &&
+        position !== activeSheet.sequence.position
+      ) {
+        position = activeSheet.sequence.position;
+        const t = activeSheet as ISheet;
+        app.send({
+          event: 'updateTimeline',
+          target: 'app',
+          data: {
+            position: position,
+            sheet: t.address.sheetId,
+          },
+        });
+      }
+    };
+    const onRaf = () => {
+      onRafUpdate();
+      requestAnimationFrame(onRaf);
+    };
+    onRafUpdate(); // Initial position
+    onRaf();
+  } else {
+    studio.ui.hide();
   }
 }

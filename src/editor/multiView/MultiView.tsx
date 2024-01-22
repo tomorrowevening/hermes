@@ -7,7 +7,7 @@ import { cameras, controls, depthMaterial, helpers, ModeOptions, MultiViewMode, 
 import './MultiView.scss';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '../global';
-import { dispose, hierarchyUUID } from '../utils';
+import { dispose } from '../utils';
 import { mapLinear } from 'three/src/math/MathUtils';
 
 let currentRenderMode: RenderMode = 'Renderer';

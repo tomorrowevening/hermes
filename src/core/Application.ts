@@ -8,7 +8,7 @@ export default class Application {
   // Protected
   protected _mode: ApplicationMode = 'app';
 
-  constructor(name: string, debugEnabled: boolean, editorHashtag: string) {
+  constructor(name: string, debugEnabled: boolean, editorHashtag: string = 'editor') {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
     if (debugEnabled) this.channel = new BroadcastChannel(name);
   }
