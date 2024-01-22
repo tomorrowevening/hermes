@@ -1,22 +1,24 @@
-import { BackSide, CircleGeometry, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, PerspectiveCamera, Scene, SphereGeometry, SpotLight } from 'three';
+import { BackSide, CircleGeometry, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { BlendFunction, EffectComposer, EffectPass, FXAAEffect, NoiseEffect, RenderPass, TiltShiftEffect, VignetteEffect } from 'postprocessing';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '../../editor/utils';
 import { IS_DEV, app } from '../constants';
 import FBXAnimation from './FBXAnimation';
 import { cubeTextures, textures } from './loader';
+import BaseScene from './BaseScene';
 
-export default class ExampleScene extends Scene {
-  camera!: PerspectiveCamera;
+export default class Scene1 extends BaseScene {
   dance0!: FBXAnimation;
   dance1!: FBXAnimation;
   dance2!: FBXAnimation;
 
   private customMat!: CustomMaterial;
+  private post!: EffectComposer;
   private lastUpdate = -1;
 
-  constructor() {
-    super();
-    this.name = 'TestScene';
+  constructor(renderer: WebGLRenderer) {
+    super(renderer);
+    this.name = 'Scene1';
     const envMap = cubeTextures.get('environment')!;
     this.background = envMap;
 
@@ -27,24 +29,12 @@ export default class ExampleScene extends Scene {
       this.add(bg);
     }
 
-    this.createCameras();
     this.createLights();
     this.createWorld();
+    if (!app.editor) this.createPost();
 
     this.lastUpdate = Date.now();
     if (IS_DEV) hierarchyUUID(this);
-  }
-
-  private createCameras() {
-    const cameras = new Object3D();
-    cameras.name = 'cameras';
-    this.add(cameras);
-
-    this.camera = new PerspectiveCamera(90, 1, 10, 1000);
-    this.camera.name = 'Main';
-    this.camera.position.set(0, 100, 125);
-    this.camera.lookAt(0, 50, 0);
-    cameras.add(this.camera);
   }
 
   private createLights() {
@@ -155,12 +145,27 @@ export default class ExampleScene extends Scene {
     }
   }
 
-  resize(width: number, height: number) {
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
+  private createPost() {
+    this.post = new EffectComposer(this.renderer);
+    this.post.addPass(new RenderPass(this, this.camera));
+
+    const fxaaEffect = new FXAAEffect();
+    fxaaEffect.minEdgeThreshold = 0.01;
+    this.post.addPass(new EffectPass(this.camera, fxaaEffect));
+    
+    const blur = new TiltShiftEffect({
+      focusArea: 0.6
+    });
+    this.post.addPass(new EffectPass(this.camera, blur));
+
+    const noiseEffect = new NoiseEffect({});
+    noiseEffect.blendMode.opacity.value = 0.33;
+    noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
+    const vignette = new VignetteEffect({});
+    this.post.addPass(new EffectPass(this.camera, noiseEffect, vignette));
   }
 
-  update() {
+  override update() {
     const now = Date.now();
     const delta = (now - this.lastUpdate) / 1000;
     this.lastUpdate = now;
@@ -168,5 +173,19 @@ export default class ExampleScene extends Scene {
     this.dance0.update(delta);
     this.dance1.update(delta);
     this.dance2.update(delta);
+  }
+
+  override draw() {
+    if (app.editor) {
+      //
+    } else {
+      //
+    }
+    this.post.render();
+  }
+
+  override resize(width: number, height: number): void {
+    super.resize(width, height);
+    if (!app.editor) this.post.setSize(width, height);
   }
 }

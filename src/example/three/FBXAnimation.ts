@@ -1,4 +1,5 @@
 import { AnimationMixer, Object3D } from "three";
+import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 import { models } from "./loader";
 
 export default class FBXAnimation extends Object3D {
@@ -10,10 +11,11 @@ export default class FBXAnimation extends Object3D {
     this.scale.setScalar(0.5);
 
     const model = models.get(name)!;
-    this.add(model);
+    const modelInstance = clone(model);
+    this.add(modelInstance);
 
-    this.mixer = new AnimationMixer(model);
-    const action = this.mixer.clipAction(model.animations[0]);
+    this.mixer = new AnimationMixer(modelInstance);
+    const action = this.mixer.clipAction(modelInstance.animations[0]);
     action.play();
   }
 
