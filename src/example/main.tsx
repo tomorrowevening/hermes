@@ -14,11 +14,7 @@ import RemoteController from '../core/RemoteController';
 // Debug tools
 if (IS_DEV) {
   studio.initialize();
-  RemoteController(app, {
-    components: true,
-    theatre: true,
-    three: true,
-  });
+  RemoteController(app);
 }
 
 // React

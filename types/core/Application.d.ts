@@ -10,6 +10,7 @@ export default class Application {
     send(data: BroadcastData): void;
     listen(callback: BroadcastCallback): void;
     get mode(): ApplicationMode;
+    get isApp(): boolean;
     get editor(): boolean;
     set editor(value: boolean);
 }
