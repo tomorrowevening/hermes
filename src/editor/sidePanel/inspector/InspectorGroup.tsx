@@ -12,11 +12,6 @@ function isGroup(obj: any): obj is InspectorGroupProps {
 }
 
 export default function InspectorGroup(props: InspectorGroupProps) {
-  // console.log('Group:', props.title);
-  function onChange(label: string, value: any) {
-    console.log('onChange:', label, value);
-  }
-
   const children: any[] = [];
   props.items.forEach((child: InspectorFieldProps | InspectorGroupProps) => {
     if (isGroup(child)) {
@@ -38,8 +33,6 @@ export default function InspectorGroup(props: InspectorGroupProps) {
           onChange={(prop: string, value: any) => {
             if (child.onChange !== undefined) {
               child.onChange(prop, value);
-            } else {
-              onChange(prop, value);
             }
           }}
         />
@@ -48,7 +41,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
   });
 
   return (
-    <Accordion label={props.title} open={false}>
+    <Accordion label={props.title} open={props.expanded === true}>
       {children}
     </Accordion>
   );

@@ -14,7 +14,6 @@ export default class Scene1 extends BaseScene {
 
   private customMat!: CustomMaterial;
   private post!: EffectComposer;
-  private lastUpdate = -1;
 
   constructor(renderer: WebGLRenderer) {
     super(renderer);
@@ -32,8 +31,6 @@ export default class Scene1 extends BaseScene {
     this.createLights();
     this.createWorld();
     if (!app.editor) this.createPost();
-
-    this.lastUpdate = Date.now();
     if (IS_DEV) hierarchyUUID(this);
   }
 
@@ -166,9 +163,7 @@ export default class Scene1 extends BaseScene {
   }
 
   override update() {
-    const now = Date.now();
-    const delta = (now - this.lastUpdate) / 1000;
-    this.lastUpdate = now;
+    const delta = this.clock.getDelta();
     this.customMat.update(delta);
     this.dance0.update(delta);
     this.dance1.update(delta);
