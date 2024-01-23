@@ -25,18 +25,21 @@ const defaultObject: RemoteObject = {
   orthographicCameraInfo: undefined,
   lightInfo: undefined,
 };
+let currentObject = {...defaultObject};
 
 export default function Inspector(props: CoreComponentProps) {
-  const [currentObject, setCurrentObject] = useState<RemoteObject>(defaultObject);
+  const [lastUpdated, setLastUpdated] = useState<number>(-1);
 
   useEffect(() => {
     function onSelectItem(evt: any) {
       const obj = evt.value as RemoteObject;
-      setCurrentObject(obj);
+      currentObject = {...obj};
+      setLastUpdated(Date.now());
     }
 
     function setScene() {
-      setCurrentObject(defaultObject);
+      currentObject = {...defaultObject};
+      setLastUpdated(Date.now());
     }
 
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, setScene);
@@ -51,7 +54,7 @@ export default function Inspector(props: CoreComponentProps) {
 
   return (
     <Accordion label='Inspector' key='Inspector'>
-      <div id="Inspector" className={props.class}>
+      <div id="Inspector" className={props.class} key={lastUpdated}>
         {currentObject.uuid.length > 0 && (
           <>
             {/* Core */}

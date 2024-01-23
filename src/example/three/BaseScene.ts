@@ -1,12 +1,15 @@
-import { Object3D, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
 export default class BaseScene extends Scene {
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
+  clock: Clock;
 
   constructor(renderer: WebGLRenderer) {
     super();
     this.renderer = renderer;
+    this.clock = new Clock();
+    this.clock.start();
 
     const cameras = new Object3D();
     cameras.name = 'cameras';

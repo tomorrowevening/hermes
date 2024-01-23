@@ -1,2 +1,9 @@
 import Application from './Application';
-export default function RemoteController(app: Application, appHandlers: any[], editorHandlers: any[]): void;
+interface RemoteHandlers {
+    components?: boolean;
+    theatre?: boolean;
+    three?: boolean;
+    tweakpane?: boolean;
+}
+export default function RemoteController(app: Application, handlers: RemoteHandlers): void;
+export {};
