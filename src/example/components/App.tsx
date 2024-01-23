@@ -17,6 +17,7 @@ import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
+let sceneName = '';
 
 const useTweakpane = false;
 
@@ -136,10 +137,14 @@ function App() {
   };
 
   const createScene1 = () => {
+    if (sceneName === 'scene1') return;
+    sceneName = 'scene1';
     createScene(new Scene1(renderer));
   };
 
   const createScene2 = () => {
+    if (sceneName === 'scene2') return;
+    sceneName = 'scene2';
     createScene(new Scene2(renderer));
   };
 
@@ -180,7 +185,12 @@ function App() {
         console.log('Custom:', evt.value);
       };
       const selectDropdown = (evt: any) => {
-        console.log(`Dropdown: ${evt.value.dropdown}, value: ${evt.value.value}`);
+        const scene = evt.value.value;
+        if (scene === 'scene1') {
+          createScene1();
+        } else if (scene === 'scene2') {
+          createScene2();
+        }
       };
       debugDispatcher.addEventListener(ToolEvents.CUSTOM, onCustom);
       debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);

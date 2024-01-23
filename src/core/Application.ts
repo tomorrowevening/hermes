@@ -48,6 +48,10 @@ export default class Application {
     return this._mode;
   }
 
+  get isApp(): boolean {
+    return this._mode === 'app';
+  }
+
   get editor(): boolean {
     return this._mode === 'editor';
   }
