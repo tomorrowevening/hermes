@@ -1,5 +1,6 @@
 import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Texture, TextureLoader } from "three";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { Events, threeDispatcher } from "../constants";
 
 export const cubeTextures: Map<string, CubeTexture> = new Map();
 export const models: Map<string, Group> = new Map();
@@ -77,6 +78,7 @@ export function loadAssets(): Promise<void> {
 
     Promise.all(assets.map(load => load()))
       .then(() => {
+        threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
         resolve();
       })
       .catch(() => {

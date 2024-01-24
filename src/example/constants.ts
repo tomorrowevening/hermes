@@ -1,3 +1,4 @@
+import { EventDispatcher } from 'three';
 import Application from '../core/Application';
 import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
@@ -40,3 +41,7 @@ class CustomApp extends Application {
 }
 
 export const app = new CustomApp();
+export const threeDispatcher = new EventDispatcher();
+export const Events = {
+  LOAD_COMPLETE: 'Events::loadComplete'
+};

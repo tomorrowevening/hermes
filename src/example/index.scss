@@ -24,6 +24,7 @@ html, body {
 body {
   padding: 0;
   margin: 0;
+  overflow: hidden;
 }
 
 button {
@@ -34,4 +35,11 @@ button {
   &:hover {
     cursor: pointer;
   }
+}
+
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(calc(-50% - 150px), -50%);
 }
