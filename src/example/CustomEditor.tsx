@@ -1,5 +1,5 @@
-import React from 'react';
-import { app } from './constants';
+import React, { useEffect, useState } from 'react';
+import { Events, app, threeDispatcher } from './constants';
 import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
 import SidePanel from '../editor/sidePanel/SidePanel';
@@ -15,6 +15,18 @@ scenes.set('Scene1', Scene1);
 scenes.set('Scene2', Scene2);
 
 export default function CustomEditor() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const onLoad = () => {
+      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
+      setLoaded(true);
+    };
+    threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
+    return () => {
+      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
+    };
+  }, []);
+
   return (
     <Editor
       header={[
@@ -45,15 +57,19 @@ export default function CustomEditor() {
           }}
         />
       ]}>
-        <MultiView
-          three={app.three}
-          scenes={scenes}
-          onSceneUpdate={(scene: any) => {
-            // Custom callback for animation updates
-            const baseScene = scene as BaseScene;
-            baseScene.update();
-          }}
-        />
+        <>
+        {loaded && (
+          <MultiView
+            three={app.three}
+            scenes={scenes}
+            onSceneUpdate={(scene: any) => {
+              // Custom callback for animation updates
+              const baseScene = scene as BaseScene;
+              baseScene.update();
+            }}
+          />
+        )}
+        </>
         <SidePanel three={app.three} />
       </Editor>
   );

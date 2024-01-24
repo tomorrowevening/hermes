@@ -22,7 +22,8 @@ let sceneName = '';
 const useTweakpane = false;
 
 function App() {
-  const elementRef = useRef<HTMLDivElement>(null!);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [loaded, setLoaded] = useState(false);
 
   // Theatre
@@ -54,12 +55,14 @@ function App() {
   // Renderer setup
   if (!app.editor) {
     useEffect(() => {
-      renderer = new WebGLRenderer({ stencil: false });
+      renderer = new WebGLRenderer({
+        canvas: canvasRef.current!,
+        stencil: false
+      });
       renderer.autoClear = false;
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
-      elementRef.current.parentElement!.appendChild(renderer.domElement);
       return () => {
         renderer.dispose();
       };
@@ -203,7 +206,9 @@ function App() {
 
   return (
     <>
-      {!loaded && <p>Loading...</p>}
+      {!loaded && <p className="loading">Loading...</p>}
+      {app.isApp && <canvas ref={canvasRef} />}
+
       <div id='box' ref={elementRef}>
         <button onClick={() => {
           app.send({
