@@ -12,18 +12,13 @@ import type { DataUpdateCallback, VoidCallback } from '../types';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
-  sheets: Map<string, ISheet>;
-  sheetObjects: Map<string, ISheetObject>;
-  sheetObjectCBs: Map<string, DataUpdateCallback>;
-  sheetObjectUnsubscribe: Map<string, VoidCallback>;
+  sheets: Map<string, ISheet> = new Map();
+  sheetObjects: Map<string, ISheetObject> = new Map();
+  sheetObjectCBs: Map<string, DataUpdateCallback> = new Map();
+  sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
 
-  constructor(app: Application, projectName: string, projectConfig?: IProjectConfig | undefined) {
-    super(app);
+  init(projectName: string, projectConfig?: IProjectConfig | undefined) {
     this.project = getProject(projectName, projectConfig);
-    this.sheets = new Map();
-    this.sheetObjects = new Map();
-    this.sheetObjectCBs = new Map();
-    this.sheetObjectUnsubscribe = new Map();
   }
 
   override dispose(): void {
