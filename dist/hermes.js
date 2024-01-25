@@ -195,13 +195,13 @@ class Ut extends Ct {
     u = f.object(e, r), this.sheetObjects.set(l, u), this.sheetObjectCBs.set(l, s !== void 0 ? s : vn);
     const p = u.onValuesChange((v) => {
       if (this.app.editor) {
-        for (const E in v) {
-          const w = v[E];
-          typeof w == "object" && na(w) && (v[E] = {
-            r: w.r,
-            g: w.g,
-            b: w.b,
-            a: w.a
+        for (const x in v) {
+          const C = v[x];
+          typeof C == "object" && na(C) && (v[x] = {
+            r: C.r,
+            g: C.g,
+            b: C.b,
+            a: C.a
           });
         }
         this.app.send({
@@ -212,10 +212,9 @@ class Ut extends Ct {
             values: v
           }
         });
-      } else {
-        const E = this.sheetObjectCBs.get(l);
-        E !== void 0 && E(v);
       }
+      const E = this.sheetObjectCBs.get(l);
+      E !== void 0 && E(v);
     });
     return this.sheetObjectUnsubscribe.set(l, p), u;
   }
@@ -715,14 +714,14 @@ function va() {
   Xt = 1;
   var t = hn, n = Symbol.for("react.element"), a = Symbol.for("react.fragment"), e = Object.prototype.hasOwnProperty, r = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, s = { key: !0, ref: !0, __self: !0, __source: !0 };
   function f(l, u, p) {
-    var v, E = {}, w = null, R = null;
-    p !== void 0 && (w = "" + p), u.key !== void 0 && (w = "" + u.key), u.ref !== void 0 && (R = u.ref);
+    var v, E = {}, x = null, C = null;
+    p !== void 0 && (x = "" + p), u.key !== void 0 && (x = "" + u.key), u.ref !== void 0 && (C = u.ref);
     for (v in u)
       e.call(u, v) && !s.hasOwnProperty(v) && (E[v] = u[v]);
     if (l && l.defaultProps)
       for (v in u = l.defaultProps, u)
         E[v] === void 0 && (E[v] = u[v]);
-    return { $$typeof: n, type: l, key: w, ref: R, props: E, _owner: r.current };
+    return { $$typeof: n, type: l, key: x, ref: C, props: E, _owner: r.current };
   }
   return nt.Fragment = a, nt.jsx = f, nt.jsxs = f, nt;
 }
@@ -739,24 +738,24 @@ var at = {};
 var qt;
 function ba() {
   return qt || (qt = 1, process.env.NODE_ENV !== "production" && function() {
-    var t = hn, n = Symbol.for("react.element"), a = Symbol.for("react.portal"), e = Symbol.for("react.fragment"), r = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), f = Symbol.for("react.provider"), l = Symbol.for("react.context"), u = Symbol.for("react.forward_ref"), p = Symbol.for("react.suspense"), v = Symbol.for("react.suspense_list"), E = Symbol.for("react.memo"), w = Symbol.for("react.lazy"), R = Symbol.for("react.offscreen"), T = Symbol.iterator, G = "@@iterator";
+    var t = hn, n = Symbol.for("react.element"), a = Symbol.for("react.portal"), e = Symbol.for("react.fragment"), r = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), f = Symbol.for("react.provider"), l = Symbol.for("react.context"), u = Symbol.for("react.forward_ref"), p = Symbol.for("react.suspense"), v = Symbol.for("react.suspense_list"), E = Symbol.for("react.memo"), x = Symbol.for("react.lazy"), C = Symbol.for("react.offscreen"), M = Symbol.iterator, G = "@@iterator";
     function se(i) {
       if (i === null || typeof i != "object")
         return null;
-      var h = T && i[T] || i[G];
+      var h = M && i[M] || i[G];
       return typeof h == "function" ? h : null;
     }
     var H = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-    function C(i) {
+    function S(i) {
       {
-        for (var h = arguments.length, g = new Array(h > 1 ? h - 1 : 0), x = 1; x < h; x++)
-          g[x - 1] = arguments[x];
+        for (var h = arguments.length, g = new Array(h > 1 ? h - 1 : 0), w = 1; w < h; w++)
+          g[w - 1] = arguments[w];
         K("error", i, g);
       }
     }
     function K(i, h, g) {
       {
-        var x = H.ReactDebugCurrentFrame, k = x.getStackAddendum();
+        var w = H.ReactDebugCurrentFrame, k = w.getStackAddendum();
         k !== "" && (h += "%s", g = g.concat([k]));
         var L = g.map(function(P) {
           return String(P);
@@ -766,17 +765,17 @@ function ba() {
     }
     var fe = !1, le = !1, ee = !1, d = !1, m = !1, b;
     b = Symbol.for("react.module.reference");
-    function S(i) {
-      return !!(typeof i == "string" || typeof i == "function" || i === e || i === s || m || i === r || i === p || i === v || d || i === R || fe || le || ee || typeof i == "object" && i !== null && (i.$$typeof === w || i.$$typeof === E || i.$$typeof === f || i.$$typeof === l || i.$$typeof === u || // This needs to include all possible module reference object
+    function O(i) {
+      return !!(typeof i == "string" || typeof i == "function" || i === e || i === s || m || i === r || i === p || i === v || d || i === C || fe || le || ee || typeof i == "object" && i !== null && (i.$$typeof === x || i.$$typeof === E || i.$$typeof === f || i.$$typeof === l || i.$$typeof === u || // This needs to include all possible module reference object
       // types supported by any Flight configuration anywhere since
       // we don't know which Flight build this will end up being used
       // with.
       i.$$typeof === b || i.getModuleId !== void 0));
     }
     function B(i, h, g) {
-      var x = i.displayName;
-      if (x)
-        return x;
+      var w = i.displayName;
+      if (w)
+        return w;
       var k = h.displayName || h.name || "";
       return k !== "" ? g + "(" + k + ")" : g;
     }
@@ -786,7 +785,7 @@ function ba() {
     function F(i) {
       if (i == null)
         return null;
-      if (typeof i.tag == "number" && C("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), typeof i == "function")
+      if (typeof i.tag == "number" && S("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), typeof i == "function")
         return i.displayName || i.name || null;
       if (typeof i == "string")
         return i;
@@ -815,9 +814,9 @@ function ba() {
           case u:
             return B(i, i.render, "ForwardRef");
           case E:
-            var x = i.displayName || null;
-            return x !== null ? x : F(i.type) || "Memo";
-          case w: {
+            var w = i.displayName || null;
+            return w !== null ? w : F(i.type) || "Memo";
+          case x: {
             var k = i, L = k._payload, P = k._init;
             try {
               return F(P(L));
@@ -828,14 +827,14 @@ function ba() {
         }
       return null;
     }
-    var D = Object.assign, U = 0, J, M, I, X, me, Re, Xe;
+    var D = Object.assign, U = 0, J, R, I, X, me, Re, Xe;
     function ct() {
     }
     ct.__reactDisabledLog = !0;
     function Ot() {
       {
         if (U === 0) {
-          J = console.log, M = console.info, I = console.warn, X = console.error, me = console.group, Re = console.groupCollapsed, Xe = console.groupEnd;
+          J = console.log, R = console.info, I = console.warn, X = console.error, me = console.group, Re = console.groupCollapsed, Xe = console.groupEnd;
           var i = {
             configurable: !0,
             enumerable: !0,
@@ -868,7 +867,7 @@ function ba() {
               value: J
             }),
             info: D({}, i, {
-              value: M
+              value: R
             }),
             warn: D({}, i, {
               value: I
@@ -887,7 +886,7 @@ function ba() {
             })
           });
         }
-        U < 0 && C("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
+        U < 0 && S("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
       }
     }
     var qe = H.ReactCurrentDispatcher, Ze;
@@ -897,8 +896,8 @@ function ba() {
           try {
             throw Error();
           } catch (k) {
-            var x = k.stack.trim().match(/\n( *(at )?)/);
-            Ze = x && x[1] || "";
+            var w = k.stack.trim().match(/\n( *(at )?)/);
+            Ze = w && w[1] || "";
           }
         return `
 ` + Ze + i;
@@ -917,7 +916,7 @@ function ba() {
         if (g !== void 0)
           return g;
       }
-      var x;
+      var w;
       $e = !0;
       var k = Error.prepareStackTrace;
       Error.prepareStackTrace = void 0;
@@ -936,14 +935,14 @@ function ba() {
             try {
               Reflect.construct(P, []);
             } catch (Ee) {
-              x = Ee;
+              w = Ee;
             }
             Reflect.construct(i, [], P);
           } else {
             try {
               P.call();
             } catch (Ee) {
-              x = Ee;
+              w = Ee;
             }
             i.call(P.prototype);
           }
@@ -951,23 +950,23 @@ function ba() {
           try {
             throw Error();
           } catch (Ee) {
-            x = Ee;
+            w = Ee;
           }
           i();
         }
       } catch (Ee) {
-        if (Ee && x && typeof Ee.stack == "string") {
-          for (var O = Ee.stack.split(`
-`), ce = x.stack.split(`
-`), W = O.length - 1, q = ce.length - 1; W >= 1 && q >= 0 && O[W] !== ce[q]; )
+        if (Ee && w && typeof Ee.stack == "string") {
+          for (var T = Ee.stack.split(`
+`), ce = w.stack.split(`
+`), W = T.length - 1, q = ce.length - 1; W >= 1 && q >= 0 && T[W] !== ce[q]; )
             q--;
           for (; W >= 1 && q >= 0; W--, q--)
-            if (O[W] !== ce[q]) {
+            if (T[W] !== ce[q]) {
               if (W !== 1 || q !== 1)
                 do
-                  if (W--, q--, q < 0 || O[W] !== ce[q]) {
+                  if (W--, q--, q < 0 || T[W] !== ce[q]) {
                     var ge = `
-` + O[W].replace(" at new ", " at ");
+` + T[W].replace(" at new ", " at ");
                     return i.displayName && ge.includes("<anonymous>") && (ge = ge.replace("<anonymous>", i.displayName)), typeof i == "function" && _e.set(i, ge), ge;
                   }
                 while (W >= 1 && q >= 0);
@@ -1006,8 +1005,8 @@ function ba() {
             return ut(i.render);
           case E:
             return je(i.type, h, g);
-          case w: {
-            var x = i, k = x._payload, L = x._init;
+          case x: {
+            var w = i, k = w._payload, L = w._init;
             try {
               return je(L(k), h, g);
             } catch {
@@ -1024,22 +1023,22 @@ function ba() {
       } else
         Je.setExtraStackFrame(null);
     }
-    function ke(i, h, g, x, k) {
+    function ke(i, h, g, w, k) {
       {
         var L = Function.call.bind(Ge);
         for (var P in i)
           if (L(i, P)) {
-            var O = void 0;
+            var T = void 0;
             try {
               if (typeof i[P] != "function") {
-                var ce = Error((x || "React class") + ": " + g + " type `" + P + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof i[P] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                var ce = Error((w || "React class") + ": " + g + " type `" + P + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof i[P] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
                 throw ce.name = "Invariant Violation", ce;
               }
-              O = i[P](h, P, x, g, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
+              T = i[P](h, P, w, g, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
             } catch (W) {
-              O = W;
+              T = W;
             }
-            O && !(O instanceof Error) && (Se(k), C("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", x || "React class", g, P, typeof O), Se(null)), O instanceof Error && !(O.message in ft) && (ft[O.message] = !0, Se(k), C("Failed %s type: %s", g, O.message), Se(null));
+            T && !(T instanceof Error) && (Se(k), S("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", w || "React class", g, P, typeof T), Se(null)), T instanceof Error && !(T.message in ft) && (ft[T.message] = !0, Se(k), S("Failed %s type: %s", g, T.message), Se(null));
           }
       }
     }
@@ -1065,7 +1064,7 @@ function ba() {
     }
     function mt(i) {
       if (et(i))
-        return C("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", ht(i)), pt(i);
+        return S("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", ht(i)), pt(i);
     }
     var Oe = H.ReactCurrentOwner, Pt = {
       key: !0,
@@ -1093,13 +1092,13 @@ function ba() {
     function A(i, h) {
       if (typeof i.ref == "string" && Oe.current && h && Oe.current.stateNode !== h) {
         var g = F(Oe.current.type);
-        ve[g] || (C('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', F(Oe.current.type), i.ref), ve[g] = !0);
+        ve[g] || (S('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', F(Oe.current.type), i.ref), ve[g] = !0);
       }
     }
     function N(i, h) {
       {
         var g = function() {
-          gt || (gt = !0, C("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", h));
+          gt || (gt = !0, S("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", h));
         };
         g.isReactWarning = !0, Object.defineProperty(i, "key", {
           get: g,
@@ -1110,7 +1109,7 @@ function ba() {
     function te(i, h) {
       {
         var g = function() {
-          tt || (tt = !0, C("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", h));
+          tt || (tt = !0, S("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", h));
         };
         g.isReactWarning = !0, Object.defineProperty(i, "ref", {
           get: g,
@@ -1118,8 +1117,8 @@ function ba() {
         });
       }
     }
-    var be = function(i, h, g, x, k, L, P) {
-      var O = {
+    var be = function(i, h, g, w, k, L, P) {
+      var T = {
         // This tag allows us to uniquely identify this as a React Element
         $$typeof: n,
         // Built-in properties that belong on the element
@@ -1130,27 +1129,27 @@ function ba() {
         // Record the component responsible for creating this element.
         _owner: L
       };
-      return O._store = {}, Object.defineProperty(O._store, "validated", {
+      return T._store = {}, Object.defineProperty(T._store, "validated", {
         configurable: !1,
         enumerable: !1,
         writable: !0,
         value: !1
-      }), Object.defineProperty(O, "_self", {
+      }), Object.defineProperty(T, "_self", {
         configurable: !1,
         enumerable: !1,
         writable: !1,
-        value: x
-      }), Object.defineProperty(O, "_source", {
+        value: w
+      }), Object.defineProperty(T, "_source", {
         configurable: !1,
         enumerable: !1,
         writable: !1,
         value: k
-      }), Object.freeze && (Object.freeze(O.props), Object.freeze(O)), O;
+      }), Object.freeze && (Object.freeze(T.props), Object.freeze(T)), T;
     };
-    function ue(i, h, g, x, k) {
+    function ue(i, h, g, w, k) {
       {
-        var L, P = {}, O = null, ce = null;
-        g !== void 0 && (mt(g), O = "" + g), y(h) && (mt(h.key), O = "" + h.key), o(h) && (ce = h.ref, A(h, k));
+        var L, P = {}, T = null, ce = null;
+        g !== void 0 && (mt(g), T = "" + g), y(h) && (mt(h.key), T = "" + h.key), o(h) && (ce = h.ref, A(h, k));
         for (L in h)
           Ge.call(h, L) && !Pt.hasOwnProperty(L) && (P[L] = h[L]);
         if (i && i.defaultProps) {
@@ -1158,11 +1157,11 @@ function ba() {
           for (L in W)
             P[L] === void 0 && (P[L] = W[L]);
         }
-        if (O || ce) {
+        if (T || ce) {
           var q = typeof i == "function" ? i.displayName || i.name || "Unknown" : i;
-          O && N(P, q), ce && te(P, q);
+          T && N(P, q), ce && te(P, q);
         }
-        return be(i, O, ce, k, x, Oe.current, P);
+        return be(i, T, ce, k, w, Oe.current, P);
       }
     }
     var vt = H.ReactCurrentOwner, bt = H.ReactDebugCurrentFrame;
@@ -1223,8 +1222,8 @@ Check the top-level render call using <` + g + ">.");
         if (Te[g])
           return;
         Te[g] = !0;
-        var x = "";
-        i && i._owner && i._owner !== vt.current && (x = " It was passed a child from " + F(i._owner.type) + "."), ye(i), C('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', g, x), ye(null);
+        var w = "";
+        i && i._owner && i._owner !== vt.current && (w = " It was passed a child from " + F(i._owner.type) + "."), ye(i), S('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', g, w), ye(null);
       }
     }
     function Gt(i, h) {
@@ -1233,8 +1232,8 @@ Check the top-level render call using <` + g + ">.");
           return;
         if (Qe(i))
           for (var g = 0; g < i.length; g++) {
-            var x = i[g];
-            pe(x) && $t(x, h);
+            var w = i[g];
+            pe(w) && $t(w, h);
           }
         else if (pe(i))
           i._store && (i._store.validated = !0);
@@ -1261,38 +1260,38 @@ Check the top-level render call using <` + g + ">.");
         else
           return;
         if (g) {
-          var x = F(h);
-          ke(g, i.props, "prop", x, i);
+          var w = F(h);
+          ke(g, i.props, "prop", w, i);
         } else if (h.PropTypes !== void 0 && !he) {
           he = !0;
           var k = F(h);
-          C("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", k || "Unknown");
+          S("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", k || "Unknown");
         }
-        typeof h.getDefaultProps == "function" && !h.getDefaultProps.isReactClassApproved && C("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
+        typeof h.getDefaultProps == "function" && !h.getDefaultProps.isReactClassApproved && S("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
       }
     }
     function On(i) {
       {
         for (var h = Object.keys(i.props), g = 0; g < h.length; g++) {
-          var x = h[g];
-          if (x !== "children" && x !== "key") {
-            ye(i), C("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", x), ye(null);
+          var w = h[g];
+          if (w !== "children" && w !== "key") {
+            ye(i), S("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", w), ye(null);
             break;
           }
         }
-        i.ref !== null && (ye(i), C("Invalid attribute `ref` supplied to `React.Fragment`."), ye(null));
+        i.ref !== null && (ye(i), S("Invalid attribute `ref` supplied to `React.Fragment`."), ye(null));
       }
     }
-    function Vt(i, h, g, x, k, L) {
+    function Vt(i, h, g, w, k, L) {
       {
-        var P = S(i);
+        var P = O(i);
         if (!P) {
-          var O = "";
-          (i === void 0 || typeof i == "object" && i !== null && Object.keys(i).length === 0) && (O += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
+          var T = "";
+          (i === void 0 || typeof i == "object" && i !== null && Object.keys(i).length === 0) && (T += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
           var ce = Ae(k);
-          ce ? O += ce : O += Ve();
+          ce ? T += ce : T += Ve();
           var W;
-          i === null ? W = "null" : Qe(i) ? W = "array" : i !== void 0 && i.$$typeof === n ? (W = "<" + (F(i.type) || "Unknown") + " />", O = " Did you accidentally export a JSX literal instead of a component?") : W = typeof i, C("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", W, O);
+          i === null ? W = "null" : Qe(i) ? W = "array" : i !== void 0 && i.$$typeof === n ? (W = "<" + (F(i.type) || "Unknown") + " />", T = " Did you accidentally export a JSX literal instead of a component?") : W = typeof i, S("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", W, T);
         }
         var q = ue(i, h, g, k, L);
         if (q == null)
@@ -1300,13 +1299,13 @@ Check the top-level render call using <` + g + ">.");
         if (P) {
           var ge = h.children;
           if (ge !== void 0)
-            if (x)
+            if (w)
               if (Qe(ge)) {
                 for (var Ye = 0; Ye < ge.length; Ye++)
                   Gt(ge[Ye], i);
                 Object.freeze && Object.freeze(ge);
               } else
-                C("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
+                S("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
             else
               Gt(ge, i);
         }
@@ -1943,9 +1942,9 @@ function Zt(t, n, a) {
             type: `${typeof f[u]}`,
             value: f[u],
             onChange: (p, v) => {
-              var w;
+              var x;
               a.updateObject(n.uuid, `material.${r}`, v);
-              const E = (w = a.scene) == null ? void 0 : w.getObjectByProperty("uuid", n.uuid);
+              const E = (x = a.scene) == null ? void 0 : x.getObjectByProperty("uuid", n.uuid);
               E !== void 0 && Q(E, `material.${r}`, v);
             }
           });
@@ -1965,12 +1964,12 @@ function Zt(t, n, a) {
                 title: De(r),
                 type: "image",
                 value: p,
-                onChange: (E, w) => {
-                  var T;
-                  a.createTexture(n.uuid, `material.${r}`, w);
-                  const R = (T = a.scene) == null ? void 0 : T.getObjectByProperty("uuid", n.uuid);
-                  R !== void 0 && Nt(w).then((G) => {
-                    Q(R, `material.${r}`, G), Q(R, "material.needsUpdate", !0);
+                onChange: (E, x) => {
+                  var M;
+                  a.createTexture(n.uuid, `material.${r}`, x);
+                  const C = (M = a.scene) == null ? void 0 : M.getObjectByProperty("uuid", n.uuid);
+                  C !== void 0 && Nt(x).then((G) => {
+                    Q(C, `material.${r}`, G), Q(C, "material.needsUpdate", !0);
                   });
                 }
               }) : l.push({
@@ -1978,11 +1977,11 @@ function Zt(t, n, a) {
                 prop: `material.${r}.${u}`,
                 type: `${typeof t[r][u]}`,
                 value: f[u],
-                onChange: (E, w) => {
-                  var T;
-                  a.updateObject(n.uuid, `material.${r}.${u}`, w);
-                  const R = (T = a.scene) == null ? void 0 : T.getObjectByProperty("uuid", n.uuid);
-                  R !== void 0 && Q(R, `material.${r}.${u}`, w);
+                onChange: (E, x) => {
+                  var M;
+                  a.updateObject(n.uuid, `material.${r}.${u}`, x);
+                  const C = (M = a.scene) == null ? void 0 : M.getObjectByProperty("uuid", n.uuid);
+                  C !== void 0 && Q(C, `material.${r}.${u}`, x);
                 }
               });
               break;
@@ -1991,23 +1990,23 @@ function Zt(t, n, a) {
                 title: De(u),
                 type: "image",
                 value: p.value.src,
-                onChange: (E, w) => {
-                  var T;
-                  a.createTexture(n.uuid, `material.${r}.${u}.value`, w);
-                  const R = (T = a.scene) == null ? void 0 : T.getObjectByProperty("uuid", n.uuid);
-                  R !== void 0 && Nt(w).then((G) => {
-                    Q(R, `material.${r}.${u}.value`, G);
+                onChange: (E, x) => {
+                  var M;
+                  a.createTexture(n.uuid, `material.${r}.${u}.value`, x);
+                  const C = (M = a.scene) == null ? void 0 : M.getObjectByProperty("uuid", n.uuid);
+                  C !== void 0 && Nt(x).then((G) => {
+                    Q(C, `material.${r}.${u}.value`, G);
                   });
                 }
               }) : l.push({
                 title: u,
                 type: `${typeof p.value}`,
                 value: p.value,
-                onChange: (E, w) => {
-                  var T;
-                  a.updateObject(n.uuid, `material.${r}.${u}.value`, w);
-                  const R = (T = a.scene) == null ? void 0 : T.getObjectByProperty("uuid", n.uuid);
-                  R !== void 0 && Q(R, `material.${r}.${u}.value`, w);
+                onChange: (E, x) => {
+                  var M;
+                  a.updateObject(n.uuid, `material.${r}.${u}.value`, x);
+                  const C = (M = a.scene) == null ? void 0 : M.getObjectByProperty("uuid", n.uuid);
+                  C !== void 0 && Q(C, `material.${r}.${u}.value`, x);
                 }
               });
               break;
@@ -2060,22 +2059,22 @@ function it(t) {
   const [a, e] = oe(n), r = Ce(null), s = Ce(null), f = Ce(null);
   Fe(() => {
     var K;
-    let v = !1, E = -1, w = 0, R = Number(a);
-    const T = (fe) => {
-      v = !0, w = R, E = fe.clientX;
+    let v = !1, E = -1, x = 0, C = Number(a);
+    const M = (fe) => {
+      v = !0, x = C, E = fe.clientX;
     }, G = (fe) => {
       if (!v)
         return;
       const le = t.step !== void 0 ? t.step : 1, ee = (fe.clientX - E) * le;
-      R = Number((w + ee).toFixed(4)), s.current !== null && (s.current.value = R.toString()), t.onChange !== void 0 && t.onChange(t.prop !== void 0 ? t.prop : t.title, R);
+      C = Number((x + ee).toFixed(4)), s.current !== null && (s.current.value = C.toString()), t.onChange !== void 0 && t.onChange(t.prop !== void 0 ? t.prop : t.title, C);
     }, se = () => {
       v = !1;
     }, H = () => {
       v = !1;
-    }, C = t.type === "number";
-    return C && ((K = r.current) == null || K.addEventListener("mousedown", T, !1), document.addEventListener("mouseup", se, !1), document.addEventListener("mousemove", G, !1), document.addEventListener("contextmenu", H, !1)), () => {
+    }, S = t.type === "number";
+    return S && ((K = r.current) == null || K.addEventListener("mousedown", M, !1), document.addEventListener("mouseup", se, !1), document.addEventListener("mousemove", G, !1), document.addEventListener("contextmenu", H, !1)), () => {
       var fe;
-      C && ((fe = r.current) == null || fe.removeEventListener("mousedown", T), document.removeEventListener("mouseup", se), document.removeEventListener("mousemove", G), document.removeEventListener("contextmenu", H));
+      S && ((fe = r.current) == null || fe.removeEventListener("mousedown", M), document.removeEventListener("mouseup", se), document.removeEventListener("mousemove", G), document.removeEventListener("contextmenu", H));
     };
   }, [a]);
   const l = t.type === "string" && (a.length > 100 || a.search(`
@@ -2579,15 +2578,15 @@ function hi(t) {
       e(u.uuid, u.key, p), e(u.uuid, "material.needsUpdate", !0);
     });
   }, f = (l) => {
-    var w;
+    var x;
     if (!n())
       return;
-    const { key: u, uuid: p, value: v } = l.value, E = (w = t.three.scene) == null ? void 0 : w.getObjectByProperty("uuid", p);
+    const { key: u, uuid: p, value: v } = l.value, E = (x = t.three.scene) == null ? void 0 : x.getObjectByProperty("uuid", p);
     if (E !== void 0)
       try {
         E[u](v);
-      } catch (R) {
-        console.log("Error requesting method:"), console.log(R), console.log(u), console.log(v);
+      } catch (C) {
+        console.log("Error requesting method:"), console.log(C), console.log(u), console.log(v);
       }
   };
   return Fe(() => (_.addEventListener(j.GET_OBJECT, a), _.addEventListener(j.UPDATE_OBJECT, r), _.addEventListener(j.CREATE_TEXTURE, s), _.addEventListener(j.REQUEST_METHOD, f), () => {
@@ -2654,13 +2653,13 @@ class Ka extends sn {
     let s = r.NONE;
     const f = 1e-6, l = new Ht(), u = new Ht();
     let p = 1;
-    const v = new Y(), E = new de(), w = new de(), R = new de(), T = new de(), G = new de(), se = new de(), H = new de(), C = new de(), K = new de(), fe = new Y(), le = new de();
+    const v = new Y(), E = new de(), x = new de(), C = new de(), M = new de(), G = new de(), se = new de(), H = new de(), S = new de(), K = new de(), fe = new Y(), le = new de();
     let ee = !1;
     const d = [], m = {};
     function b(o) {
       return o !== null ? 2 * Math.PI / 60 * e.autoRotateSpeed * o : 2 * Math.PI / 60 / 60 * e.autoRotateSpeed;
     }
-    function S(o) {
+    function O(o) {
       const y = Math.abs(o) / (100 * (window.devicePixelRatio | 0));
       return Math.pow(0.95, e.zoomSpeed * y);
     }
@@ -2696,7 +2695,7 @@ class Ka extends sn {
     function J(o) {
       e.object.isPerspectiveCamera || e.object.isOrthographicCamera ? p /= o : (console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled."), e.enableZoom = !1);
     }
-    function M(o) {
+    function R(o) {
       e.object.isPerspectiveCamera || e.object.isOrthographicCamera ? p *= o : (console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled."), e.enableZoom = !1);
     }
     function I(o, y) {
@@ -2716,21 +2715,21 @@ class Ka extends sn {
       I(o.clientX, o.clientX), H.set(o.clientX, o.clientY);
     }
     function Xe(o) {
-      T.set(o.clientX, o.clientY);
+      M.set(o.clientX, o.clientY);
     }
     function ct(o) {
-      w.set(o.clientX, o.clientY), R.subVectors(w, E).multiplyScalar(e.rotateSpeed);
+      x.set(o.clientX, o.clientY), C.subVectors(x, E).multiplyScalar(e.rotateSpeed);
       const y = e.domElement;
-      B(2 * Math.PI * R.x / y.clientHeight), $(2 * Math.PI * R.y / y.clientHeight), E.copy(w), e.update();
+      B(2 * Math.PI * C.x / y.clientHeight), $(2 * Math.PI * C.y / y.clientHeight), E.copy(x), e.update();
     }
     function Ot(o) {
-      C.set(o.clientX, o.clientY), K.subVectors(C, H), K.y > 0 ? J(S(K.y)) : K.y < 0 && M(S(K.y)), H.copy(C), e.update();
+      S.set(o.clientX, o.clientY), K.subVectors(S, H), K.y > 0 ? J(O(K.y)) : K.y < 0 && R(O(K.y)), H.copy(S), e.update();
     }
     function Tt(o) {
-      G.set(o.clientX, o.clientY), se.subVectors(G, T).multiplyScalar(e.panSpeed), U(se.x, se.y), T.copy(G), e.update();
+      G.set(o.clientX, o.clientY), se.subVectors(G, M).multiplyScalar(e.panSpeed), U(se.x, se.y), M.copy(G), e.update();
     }
     function qe(o) {
-      I(o.clientX, o.clientY), o.deltaY < 0 ? M(S(o.deltaY)) : o.deltaY > 0 && J(S(o.deltaY)), e.update();
+      I(o.clientX, o.clientY), o.deltaY < 0 ? R(O(o.deltaY)) : o.deltaY > 0 && J(O(o.deltaY)), e.update();
     }
     function Ze(o) {
       let y = !1;
@@ -2760,10 +2759,10 @@ class Ka extends sn {
     }
     function $e(o) {
       if (d.length === 1)
-        T.set(o.pageX, o.pageY);
+        M.set(o.pageX, o.pageY);
       else {
         const y = ve(o), A = 0.5 * (o.pageX + y.x), N = 0.5 * (o.pageY + y.y);
-        T.set(A, N);
+        M.set(A, N);
       }
     }
     function _e(o) {
@@ -2778,14 +2777,14 @@ class Ka extends sn {
     }
     function ut(o) {
       if (d.length == 1)
-        w.set(o.pageX, o.pageY);
+        x.set(o.pageX, o.pageY);
       else {
         const A = ve(o), N = 0.5 * (o.pageX + A.x), te = 0.5 * (o.pageY + A.y);
-        w.set(N, te);
+        x.set(N, te);
       }
-      R.subVectors(w, E).multiplyScalar(e.rotateSpeed);
+      C.subVectors(x, E).multiplyScalar(e.rotateSpeed);
       const y = e.domElement;
-      B(2 * Math.PI * R.x / y.clientHeight), $(2 * Math.PI * R.y / y.clientHeight), E.copy(w);
+      B(2 * Math.PI * C.x / y.clientHeight), $(2 * Math.PI * C.y / y.clientHeight), E.copy(x);
     }
     function dt(o) {
       if (d.length === 1)
@@ -2794,11 +2793,11 @@ class Ka extends sn {
         const y = ve(o), A = 0.5 * (o.pageX + y.x), N = 0.5 * (o.pageY + y.y);
         G.set(A, N);
       }
-      se.subVectors(G, T).multiplyScalar(e.panSpeed), U(se.x, se.y), T.copy(G);
+      se.subVectors(G, M).multiplyScalar(e.panSpeed), U(se.x, se.y), M.copy(G);
     }
     function je(o) {
       const y = ve(o), A = o.pageX - y.x, N = o.pageY - y.y, te = Math.sqrt(A * A + N * N);
-      C.set(0, te), K.set(0, Math.pow(C.y / H.y, e.zoomSpeed)), J(K.y), H.copy(C);
+      S.set(0, te), K.set(0, Math.pow(S.y / H.y, e.zoomSpeed)), J(K.y), H.copy(S);
       const be = (o.pageX + y.x) * 0.5, ue = (o.pageY + y.y) * 0.5;
       I(be, ue);
     }
@@ -3062,11 +3061,11 @@ st.add(ot);
 ot.visible = !1;
 let wt = !1, V = ne.get("Debug"), re = ne.get("Orthographic"), Ne = ne.get("Front"), Le = ne.get("Top"), on = !1;
 function pi(t) {
-  const [n, a] = oe(t.mode !== void 0 ? t.mode : "Single"), [e, r] = oe(null), [s, f] = oe(!1), [l, u] = oe(!1), [p, v] = oe(!1), [, E] = oe(Date.now()), w = Ce(null), R = Ce(null), T = Ce(null), G = Ce(null), se = Ce(null), H = Ce(null), C = (d, m) => {
+  const [n, a] = oe(t.mode !== void 0 ? t.mode : "Single"), [e, r] = oe(null), [s, f] = oe(!1), [l, u] = oe(!1), [p, v] = oe(!1), [, E] = oe(Date.now()), x = Ce(null), C = Ce(null), M = Ce(null), G = Ce(null), se = Ce(null), H = Ce(null), S = (d, m) => {
     const b = ie.get(d.name);
     b !== void 0 && b.dispose(), ie.delete(d.name);
-    const S = we.get(d.name);
-    S !== void 0 && (z.remove(S), S.dispose()), we.delete(d.name);
+    const O = we.get(d.name);
+    O !== void 0 && (z.remove(O), O.dispose()), we.delete(d.name);
     const B = new Ka(d, m);
     switch (B.enableDamping = !0, B.dampingFactor = 0.05, d.name) {
       case "Top":
@@ -3096,37 +3095,37 @@ function pi(t) {
   }, le = () => {
     switch (n) {
       case "Single":
-        C(V, T.current);
+        S(V, M.current);
         break;
       case "Side by Side":
       case "Stacked":
-        C(V, T.current), C(re, G.current);
+        S(V, M.current), S(re, G.current);
         break;
       case "Quad":
-        C(V, T.current), C(re, G.current), C(Ne, se.current), C(Le, H.current);
+        S(V, M.current), S(re, G.current), S(Ne, se.current), S(Le, H.current);
         break;
     }
   };
   Fe(() => {
     const d = new Hn({
-      canvas: w.current,
+      canvas: x.current,
       stencil: !1
     });
     d.autoClear = !1, d.shadowMap.enabled = !0, d.setPixelRatio(devicePixelRatio), d.setClearColor(0), r(d);
   }, []), Fe(() => {
-    const d = (S) => {
+    const d = (O) => {
       gn(xe), z.remove(xe);
-      const B = t.scenes.get(S.value.name);
+      const B = t.scenes.get(O.value.name);
       if (B !== void 0) {
         const $ = new B();
         t.onSceneSet !== void 0 && t.onSceneSet($), xe = $, t.three.scene = xe, z.add(xe), on = !0;
       }
-    }, m = (S) => {
+    }, m = (O) => {
       var F;
-      const B = S.value, $ = (F = t.three.scene) == null ? void 0 : F.getObjectByProperty("uuid", B.uuid);
+      const B = O.value, $ = (F = t.three.scene) == null ? void 0 : F.getObjectByProperty("uuid", B.uuid);
       $ !== void 0 && ne.set(B.name, $), E(Date.now());
-    }, b = (S) => {
-      ne.delete(S.value.name), E(Date.now());
+    }, b = (O) => {
+      ne.delete(O.value.name), E(Date.now());
     };
     return _.addEventListener(j.SET_SCENE, d), _.addEventListener(j.ADD_CAMERA, m), _.addEventListener(j.REMOVE_CAMERA, b), () => {
       _.removeEventListener(j.SET_SCENE, d), _.removeEventListener(j.ADD_CAMERA, m), _.removeEventListener(j.REMOVE_CAMERA, b);
@@ -3134,24 +3133,24 @@ function pi(t) {
   }, []), Fe(() => {
     if (e === null)
       return;
-    let d = window.innerWidth, m = window.innerHeight, b = Math.floor(d / 2), S = Math.floor(m / 2), B = -1;
+    let d = window.innerWidth, m = window.innerHeight, b = Math.floor(d / 2), O = Math.floor(m / 2), B = -1;
     const $ = () => {
-      d = window.innerWidth - 300, m = window.innerHeight, b = Math.floor(d / 2), S = Math.floor(m / 2), e.setSize(d, m);
-      let M = d, I = m;
+      d = window.innerWidth - 300, m = window.innerHeight, b = Math.floor(d / 2), O = Math.floor(m / 2), e.setSize(d, m);
+      let R = d, I = m;
       switch (n) {
         case "Side by Side":
-          M = b, I = m;
+          R = b, I = m;
           break;
         case "Stacked":
-          M = d, I = S;
+          R = d, I = O;
           break;
         case "Quad":
-          M = b, I = S;
+          R = b, I = O;
           break;
       }
       ne.forEach((X) => {
         var me;
-        X instanceof un ? (X.left = M / -2, X.right = M / 2, X.top = I / 2, X.bottom = I / -2, X.updateProjectionMatrix()) : X instanceof Dt && (X.aspect = M / I, X.updateProjectionMatrix(), (me = we.get(X.name)) == null || me.update());
+        X instanceof un ? (X.left = R / -2, X.right = R / 2, X.top = I / 2, X.bottom = I / -2, X.updateProjectionMatrix()) : X instanceof Dt && (X.aspect = R / I, X.updateProjectionMatrix(), (me = we.get(X.name)) == null || me.update());
       });
     }, F = () => {
       e.setViewport(0, 0, d, m), e.setScissor(0, 0, d, m), e.render(z, V);
@@ -3159,15 +3158,15 @@ function pi(t) {
       if (n === "Side by Side")
         e.setViewport(0, 0, b, m), e.setScissor(0, 0, b, m), e.render(z, V), e.setViewport(b, 0, b, m), e.setScissor(b, 0, b, m), e.render(z, re);
       else {
-        const M = m - S;
-        e.setViewport(0, M, d, S), e.setScissor(0, M, d, S), e.render(z, V), e.setViewport(0, 0, d, S), e.setScissor(0, 0, d, S), e.render(z, re);
+        const R = m - O;
+        e.setViewport(0, R, d, O), e.setScissor(0, R, d, O), e.render(z, V), e.setViewport(0, 0, d, O), e.setScissor(0, 0, d, O), e.render(z, re);
       }
     }, U = () => {
-      let M = 0, I = 0;
-      I = m - S, M = 0, e.setViewport(M, I, b, S), e.setScissor(M, I, b, S), e.render(z, V), M = b, e.setViewport(M, I, b, S), e.setScissor(M, I, b, S), e.render(z, re), I = 0, M = 0, e.setViewport(M, I, b, S), e.setScissor(M, I, b, S), e.render(z, Ne), M = b, e.setViewport(M, I, b, S), e.setScissor(M, I, b, S), e.render(z, Le);
+      let R = 0, I = 0;
+      I = m - O, R = 0, e.setViewport(R, I, b, O), e.setScissor(R, I, b, O), e.render(z, V), R = b, e.setViewport(R, I, b, O), e.setScissor(R, I, b, O), e.render(z, re), I = 0, R = 0, e.setViewport(R, I, b, O), e.setScissor(R, I, b, O), e.render(z, Ne), R = b, e.setViewport(R, I, b, O), e.setScissor(R, I, b, O), e.render(z, Le);
     }, J = () => {
-      switch (ie.forEach((M) => {
-        M.update();
+      switch (ie.forEach((R) => {
+        R.update();
       }), t.onSceneUpdate !== void 0 && on && t.onSceneUpdate(xe), e.clear(), n) {
         case "Single":
           F();
@@ -3202,15 +3201,15 @@ function pi(t) {
             D < J ? d.setFromCamera(m, V) : d.setFromCamera(m, re);
             break;
         }
-      }, S = (F) => {
+      }, O = (F) => {
         if (!wt)
           return;
         const D = new de();
         e.getSize(D);
         const U = Math.min(F.clientX, D.x), J = Math.min(F.clientY, D.y);
         m.x = Ke(U, 0, D.x, -1, 1), m.y = Ke(J, 0, D.y, 1, -1);
-        const M = D.x / 2, I = D.y / 2, X = () => {
-          U < M ? m.x = Ke(U, 0, M, -1, 1) : m.x = Ke(U, M, D.x, -1, 1);
+        const R = D.x / 2, I = D.y / 2, X = () => {
+          U < R ? m.x = Ke(U, 0, R, -1, 1) : m.x = Ke(U, R, D.x, -1, 1);
         }, me = () => {
           J < I ? m.y = Ke(J, 0, I, 1, -1) : m.y = Ke(J, I, D.y, 1, -1);
         };
@@ -3225,7 +3224,7 @@ function pi(t) {
             me(), me();
             break;
         }
-        b(U, J, M, I);
+        b(U, J, R, I);
         const Re = d.intersectObjects(xe.children);
         Re.length > 0 && ot.position.copy(Re[0].point);
       }, B = (F) => {
@@ -3234,12 +3233,12 @@ function pi(t) {
         const D = new de();
         if (e.getSize(D), F.clientX >= D.x)
           return;
-        S(F);
+        O(F);
         const U = d.intersectObjects(xe.children);
         U.length > 0 && t.three.getObject(U[0].object.uuid);
-      }, $ = R.current;
-      return $.addEventListener("mousemove", S, !1), $.addEventListener("click", B, !1), () => {
-        $.removeEventListener("mousemove", S), $.removeEventListener("click", B);
+      }, $ = C.current;
+      return $.addEventListener("mousemove", O, !1), $.addEventListener("click", B, !1), () => {
+        $.removeEventListener("mousemove", O), $.removeEventListener("click", B);
       };
     }
   }, [n, e]);
@@ -3247,52 +3246,52 @@ function pi(t) {
   return ne.forEach((d, m) => {
     ee.push(m);
   }), /* @__PURE__ */ c.jsxs("div", { className: "multiview", children: [
-    /* @__PURE__ */ c.jsx("canvas", { ref: w }),
-    /* @__PURE__ */ c.jsxs("div", { className: `cameras ${n === "Single" || n === "Stacked" ? "single" : ""}`, ref: R, children: [
-      n === "Single" && /* @__PURE__ */ c.jsx(c.Fragment, { children: /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: T, onSelect: (d) => {
+    /* @__PURE__ */ c.jsx("canvas", { ref: x }),
+    /* @__PURE__ */ c.jsxs("div", { className: `cameras ${n === "Single" || n === "Stacked" ? "single" : ""}`, ref: C, children: [
+      n === "Single" && /* @__PURE__ */ c.jsx(c.Fragment, { children: /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: M, onSelect: (d) => {
         var b;
         (b = ie.get(V.name)) == null || b.dispose();
         const m = ne.get(d);
-        m !== void 0 && (K(V), V = m, C(m, T.current));
+        m !== void 0 && (K(V), V = m, S(m, M.current));
       } }) }),
       (n === "Side by Side" || n === "Stacked") && /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
-        /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: T, onSelect: (d) => {
+        /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: M, onSelect: (d) => {
           var b;
           (b = ie.get(V.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(V), V = m, C(m, T.current));
+          m !== void 0 && (K(V), V = m, S(m, M.current));
         } }),
         /* @__PURE__ */ c.jsx(Ie, { camera: re, options: ee, ref: G, onSelect: (d) => {
           var b;
           (b = ie.get(re.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(re), re = m, C(m, G.current));
+          m !== void 0 && (K(re), re = m, S(m, G.current));
         } })
       ] }),
       n === "Quad" && /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
-        /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: T, onSelect: (d) => {
+        /* @__PURE__ */ c.jsx(Ie, { camera: V, options: ee, ref: M, onSelect: (d) => {
           var b;
           (b = ie.get(V.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(V), V = m, C(m, T.current));
+          m !== void 0 && (K(V), V = m, S(m, M.current));
         } }),
         /* @__PURE__ */ c.jsx(Ie, { camera: re, options: ee, ref: G, onSelect: (d) => {
           var b;
           (b = ie.get(re.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(re), re = m, C(m, G.current));
+          m !== void 0 && (K(re), re = m, S(m, G.current));
         } }),
         /* @__PURE__ */ c.jsx(Ie, { camera: Ne, options: ee, ref: se, onSelect: (d) => {
           var b;
           (b = ie.get(Ne.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(Ne), Ne = m, C(m, se.current));
+          m !== void 0 && (K(Ne), Ne = m, S(m, se.current));
         } }),
         /* @__PURE__ */ c.jsx(Ie, { camera: Le, options: ee, ref: H, onSelect: (d) => {
           var b;
           (b = ie.get(Le.name)) == null || b.dispose();
           const m = ne.get(d);
-          m !== void 0 && (K(Le), Le = m, C(m, H.current));
+          m !== void 0 && (K(Le), Le = m, S(m, H.current));
         } })
       ] })
     ] }),
