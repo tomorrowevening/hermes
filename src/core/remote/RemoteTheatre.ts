@@ -53,17 +53,17 @@ export default class RemoteTheatre extends BaseRemote {
       console.error('Theatre Project hasn\'t been created yet.');
       return undefined;
     }
-    const sheet = this.sheets.get(sheetName);
+    const sheet = this.sheet(sheetName);
     if (sheet === undefined) return undefined;
 
     const objName = `${sheetName}_${key}`;
     let obj = this.sheetObjects.get(objName);
     if (obj !== undefined) {
       obj = sheet.object(key, {...props, ...obj.value}, {reconfigure: true});
-      return obj;
+    } else {
+      obj = sheet.object(key, props);
     }
 
-    obj = sheet.object(key, props);
     this.sheetObjects.set(objName, obj);
     this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop);
 
@@ -100,15 +100,23 @@ export default class RemoteTheatre extends BaseRemote {
     return obj;
   }
 
-  unsubscribe(sheet: ISheetObject) {
+  unsubscribe(sheetObject: ISheetObject) {
     if (this.project === undefined) {
       console.error('Theatre Project hasn\'t been created yet.');
       return undefined;
     }
 
-    const id = `${sheet.address.sheetId}_${sheet.address.objectKey}`;
+    const sheetName = sheetObject.address.sheetId;
+    const sheetObjectName = sheetObject.address.objectKey;
+    const sheet = this.sheets.get(sheetName);
+    sheet?.detachObject(sheetObjectName);
+    
+    const id = `${sheetName}_${sheetObjectName}`;
     const unsubscribe = this.sheetObjectUnsubscribe.get(id);
     if (unsubscribe !== undefined) {
+      this.sheetObjects.delete(id);
+      this.sheetObjectCBs.delete(id);
+      this.sheetObjectUnsubscribe.delete(id);
       unsubscribe();
     }
   }
