@@ -157,14 +157,16 @@ function sa(t, n) {
 const vn = () => {
 };
 class Ut extends Ct {
-  constructor(a, e, r) {
-    super(a);
+  constructor() {
+    super(...arguments);
     Z(this, "project");
-    Z(this, "sheets");
-    Z(this, "sheetObjects");
-    Z(this, "sheetObjectCBs");
-    Z(this, "sheetObjectUnsubscribe");
-    this.project = qn(e, r), this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
+    Z(this, "sheets", /* @__PURE__ */ new Map());
+    Z(this, "sheetObjects", /* @__PURE__ */ new Map());
+    Z(this, "sheetObjectCBs", /* @__PURE__ */ new Map());
+    Z(this, "sheetObjectUnsubscribe", /* @__PURE__ */ new Map());
+  }
+  init(a, e) {
+    this.project = qn(a, e);
   }
   dispose() {
     this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
