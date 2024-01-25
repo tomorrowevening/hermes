@@ -43,6 +43,13 @@ export default class RemoteTheatre extends BaseRemote {
     return sheet;
   }
 
+  clearSheetObjects(sheetName: string) {
+    this.sheetObjects.forEach((value: ISheetObject, key: string) => {
+      const sameSheet = key.search(`${sheetName}_`) > -1;
+      if (sameSheet) this.unsubscribe(value);
+    });
+  }
+
   sheetObject(
     sheetName: string,
     key: string,
