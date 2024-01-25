@@ -1,7 +1,7 @@
 import { Euler, Matrix4, Vector3 } from 'three';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils';
 import InspectorGroup from '../InspectorGroup';
-import { RemoteObject } from "../../types";
+import { RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps } from '../../utils';
 import { round } from '@/editor/utils';
@@ -30,7 +30,7 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 
   return (
     <InspectorGroup
-      title="Transform"
+      title='Transform'
       items={[
         {
           title: 'Position X',

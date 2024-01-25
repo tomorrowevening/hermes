@@ -1,4 +1,4 @@
-import { Material, Object3D, Texture } from "three";
+import { Material, Object3D, Texture } from 'three';
 export declare function clamp(min: number, max: number, value: number): number;
 export declare function distance(x: number, y: number): number;
 export declare function randomID(): string;

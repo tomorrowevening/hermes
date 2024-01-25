@@ -18,11 +18,11 @@ export default function ChildObject(props: ChildObjectProps) {
   }
 
   return (
-    <div className="childObject" key={Math.random()}>
-      <div className="child">
+    <div className='childObject' key={Math.random()}>
+      <div className='child'>
         {hasChildren ? (
           <button
-            className="status"
+            className='status'
             style={{
               backgroundPositionX: open ? '-14px' : '2px',
             }}
@@ -32,7 +32,7 @@ export default function ChildObject(props: ChildObjectProps) {
           ></button>
         ) : null}
         <button
-          className="name"
+          className='name'
           style={{
             left: hasChildren ? '20px' : '5px',
           }}
@@ -47,7 +47,7 @@ export default function ChildObject(props: ChildObjectProps) {
         <div className={`icon ${determineIcon(props.child)}`}></div>
       </div>
       <div className={open ? 'open' : ''}>
-        <div className="container">
+        <div className='container'>
           {children}
         </div>
       </div>

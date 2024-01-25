@@ -31,8 +31,8 @@ export default function CustomEditor() {
     <Editor
       header={[
         <Dropdown
-          title="Scenes"
-          key="Scenes"
+          title='Scenes'
+          key='Scenes'
           options={[
             {
               type: 'option',

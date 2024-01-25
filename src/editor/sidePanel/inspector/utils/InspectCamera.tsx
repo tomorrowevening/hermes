@@ -68,7 +68,7 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
 
   return (
     <InspectorGroup
-      title="Camera"
+      title='Camera'
       items={items}
     />
   );

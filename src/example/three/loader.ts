@@ -1,6 +1,6 @@
-import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Texture, TextureLoader } from "three";
+import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Texture, TextureLoader } from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { Events, app, threeDispatcher } from "../constants";
+import { Events, app, threeDispatcher } from '../constants';
 
 export const cubeTextures: Map<string, CubeTexture> = new Map();
 export const json: Map<string, any> = new Map();

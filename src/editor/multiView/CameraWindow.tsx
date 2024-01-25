@@ -27,11 +27,11 @@ export const Dropdown = (props: DropdownProps) => {
 
   return (
     <div className={`dropdown ${props.up === true ? 'up' : ''}`}>
-      <div className="dropdown-toggle" onClick={handleToggle}>
+      <div className='dropdown-toggle' onClick={handleToggle}>
         {selectedOption}
       </div>
       {props.open && (
-        <ul className="dropdown-menu">
+        <ul className='dropdown-menu'>
           {props.options.map((option) => (
             <li key={option} onClick={() => handleSelect(option)}>
               {option}

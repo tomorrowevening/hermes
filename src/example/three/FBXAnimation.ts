@@ -1,6 +1,6 @@
-import { AnimationMixer, Object3D } from "three";
+import { AnimationMixer, Object3D } from 'three';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
-import { models } from "./loader";
+import { models } from './loader';
 
 export default class FBXAnimation extends Object3D {
   mixer?: AnimationMixer;

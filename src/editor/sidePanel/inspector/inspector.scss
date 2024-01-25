@@ -39,11 +39,11 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       }
     }
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       flex: none;
     }
 
-    input[type="color"] {
+    input[type='color'] {
       block-size: revert;
       height: 21px;
       padding-block: revert;
@@ -51,16 +51,16 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
       margin: 0;
     }
 
-    input[type="number"], input[type="range"] {
+    input[type='number'], input[type='range'] {
       appearance: none;
       height: 11px;
     }
 
-    input[type="range"]::-webkit-slider-runnable-track {
+    input[type='range']::-webkit-slider-runnable-track {
       border: none;
     }
 
-    input[type="range"]::-webkit-slider-thumb {
+    input[type='range']::-webkit-slider-thumb {
       appearance: none;
       background-color: #666;
       height: 17px;

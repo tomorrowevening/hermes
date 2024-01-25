@@ -11,7 +11,7 @@ type EditorProps = {
 
 export default function Editor(props: EditorProps) {
   return (
-    <div className="editor" ref={props.ref} style={props.style}>
+    <div className='editor' ref={props.ref} style={props.style}>
       <header>{props.header}</header>
       {props.children}
       <footer>{props.footer}</footer>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 type AccordionProps = {
   label: string
@@ -15,7 +15,7 @@ export default function Accordion(props: AccordionProps) {
   return (
     <div className={`accordion ${hide ? 'hide' : ''}`}>
       <button
-        className="toggle"
+        className='toggle'
         onClick={() => {
           const value = !open;
           if (props.onToggle !== undefined) props.onToggle(value);
@@ -27,7 +27,7 @@ export default function Accordion(props: AccordionProps) {
         >
           Toggle
         </p>
-        <p className="label">{props.label}</p>
+        <p className='label'>{props.label}</p>
       </button>
       {props.button}
       <div className={open ? 'open' : ''}>

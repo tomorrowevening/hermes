@@ -1,6 +1,6 @@
 import { Color, Texture } from 'three';
 import InspectorGroup from '../InspectorGroup';
-import { RemoteMaterial, RemoteObject } from "../../types";
+import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 
@@ -348,7 +348,7 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
   } else {
     return (
       <InspectorGroup
-        title="Material"
+        title='Material'
         items={inspectMaterialItems(material, object, three)}
       />
     );

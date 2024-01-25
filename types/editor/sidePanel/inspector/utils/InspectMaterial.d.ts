@@ -1,4 +1,4 @@
-import { RemoteMaterial, RemoteObject } from "../../types";
+import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 export declare function acceptedMaterialNames(name: string): boolean;
 export declare function prettyName(name: string): string;

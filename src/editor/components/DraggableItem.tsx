@@ -11,7 +11,7 @@ export default function DraggableItem(props: DraggableItemProps) {
       <div>
         {DragIcon}
         <span>{props.title}</span>
-        <button className="closeIcon" onClick={() => {
+        <button className='closeIcon' onClick={() => {
           props.onDelete(props.index);
         }}>
           {CloseIcon}

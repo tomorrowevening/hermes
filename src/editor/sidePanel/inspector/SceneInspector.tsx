@@ -1,8 +1,8 @@
-import RemoteThree from "@/core/remote/RemoteThree";
-import { ToolEvents, debugDispatcher } from "@/editor/global";
-import { useEffect } from "react";
-import { Texture } from "three";
-import { setItemProps, textureFromSrc } from "../utils";
+import RemoteThree from '@/core/remote/RemoteThree';
+import { ToolEvents, debugDispatcher } from '@/editor/global';
+import { useEffect } from 'react';
+import { Texture } from 'three';
+import { setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
   three: RemoteThree

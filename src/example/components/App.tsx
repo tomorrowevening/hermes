@@ -212,7 +212,7 @@ function App() {
 
   return (
     <>
-      {!loaded && <p className="loading">Loading...</p>}
+      {!loaded && <p className='loading'>Loading...</p>}
       {app.isApp && <canvas ref={canvasRef} />}
 
       <div id='box' ref={elementRef}>

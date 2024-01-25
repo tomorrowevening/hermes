@@ -1,4 +1,4 @@
-import RemoteThree from "@/core/remote/RemoteThree";
+import RemoteThree from '@/core/remote/RemoteThree';
 export interface SceneInspectorProps {
     three: RemoteThree;
 }

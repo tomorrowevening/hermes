@@ -55,7 +55,7 @@ export function InspectLight(obj: RemoteObject, three: RemoteThree) {
   }
   return (
     <InspectorGroup
-      title="Light"
+      title='Light'
       items={items}
     />
   );

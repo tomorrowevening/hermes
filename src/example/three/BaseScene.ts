@@ -1,5 +1,5 @@
-import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from "three";
-import { app } from "../constants";
+import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { app } from '../constants';
 
 export default class BaseScene extends Scene {
   camera: PerspectiveCamera;
