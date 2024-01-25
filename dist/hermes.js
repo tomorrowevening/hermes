@@ -180,6 +180,11 @@ class Ut extends Ct {
     let e = this.sheets.get(a);
     return e !== void 0 || (e = (r = this.project) == null ? void 0 : r.sheet(a), this.sheets.set(a, e)), e;
   }
+  clearSheetObjects(a) {
+    this.sheetObjects.forEach((e, r) => {
+      r.search(`${a}_`) > -1 && this.unsubscribe(e);
+    });
+  }
   sheetObject(a, e, r, s) {
     if (this.project === void 0) {
       console.error("Theatre Project hasn't been created yet.");
