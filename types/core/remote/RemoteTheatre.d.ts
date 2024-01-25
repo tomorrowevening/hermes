@@ -12,6 +12,7 @@ export default class RemoteTheatre extends BaseRemote {
     init(projectName: string, projectConfig?: IProjectConfig | undefined): void;
     dispose(): void;
     sheet(name: string): ISheet | undefined;
+    clearSheetObjects(sheetName: string): void;
     sheetObject(sheetName: string, key: string, props: any, onUpdate?: DataUpdateCallback): ISheetObject | undefined;
     unsubscribe(sheetObject: ISheetObject): undefined;
 }
