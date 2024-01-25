@@ -13,7 +13,7 @@ export default class RemoteTheatre extends BaseRemote {
     dispose(): void;
     sheet(name: string): ISheet | undefined;
     sheetObject(sheetName: string, key: string, props: any, onUpdate?: DataUpdateCallback): ISheetObject | undefined;
-    unsubscribe(sheet: ISheetObject): undefined;
+    unsubscribe(sheetObject: ISheetObject): undefined;
 }
 export declare function HandleAppRemoteTheatre(app: Application, msg: BroadcastData): void;
 export declare function HandleEditorRemoteTheatre(app: Application): void;

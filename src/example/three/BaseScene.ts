@@ -1,9 +1,13 @@
+import { ISheetObject } from "@theatre/core";
 import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import { app } from "../constants";
 
 export default class BaseScene extends Scene {
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
   clock: Clock;
+
+  protected sheetObjects: ISheetObject[] = [];
 
   constructor(renderer: WebGLRenderer) {
     super();
@@ -20,6 +24,13 @@ export default class BaseScene extends Scene {
     this.camera.position.set(0, 100, 125);
     this.camera.lookAt(0, 50, 0);
     cameras.add(this.camera);
+  }
+
+  dispose() {
+    this.sheetObjects.forEach((value: ISheetObject) => {
+      app.theatre.unsubscribe(value);
+    });
+    this.sheetObjects = [];
   }
 
   resize(width: number, height: number) {

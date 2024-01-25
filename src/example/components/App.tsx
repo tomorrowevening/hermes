@@ -130,12 +130,16 @@ function App() {
       });
   }, [setLoaded]);
 
-  const createScene = (newScene: BaseScene) => {
+  const createScene = () => {
     if (currentScene !== undefined) {
       if (currentScene.camera !== undefined) app.three.removeCamera(currentScene.camera);
       dispose(currentScene);
     }
-    currentScene = newScene;
+    if (sceneName === 'scene1') {
+      currentScene = new Scene1(renderer);
+    } else {
+      currentScene = new Scene2(renderer);
+    }
     currentScene.resize(window.innerWidth, window.innerHeight);
     app.three.setScene(currentScene);
     app.three.addCamera(currentScene.camera);
@@ -144,13 +148,13 @@ function App() {
   const createScene1 = () => {
     if (sceneName === 'scene1') return;
     sceneName = 'scene1';
-    createScene(new Scene1(renderer));
+    createScene();
   };
 
   const createScene2 = () => {
     if (sceneName === 'scene2') return;
     sceneName = 'scene2';
-    createScene(new Scene2(renderer));
+    createScene();
   };
 
   // Debug Components
