@@ -61,7 +61,7 @@ export default class Scene2 extends BaseScene {
     app.theatre.sheet(this.name);
 
     // Camera
-    const cameraAnimation = app.theatre.sheetObject(
+    app.theatre.sheetObject(
       this.name,
       'Camera',
       {
@@ -81,10 +81,9 @@ export default class Scene2 extends BaseScene {
         this.camera.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
       }
     );
-    if (cameraAnimation !== undefined) this.sheetObjects.push(cameraAnimation);
 
     // Dancer
-    const dancerAnimation = app.theatre.sheetObject(
+    app.theatre.sheetObject(
       this.name,
       'Dancer',
       {
@@ -104,7 +103,6 @@ export default class Scene2 extends BaseScene {
         this.dance.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
       }
     );
-    if (dancerAnimation !== undefined) this.sheetObjects.push(dancerAnimation);
   }
 
   override update(): void {
