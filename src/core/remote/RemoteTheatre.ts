@@ -90,10 +90,10 @@ export default class RemoteTheatre extends BaseRemote {
             values: values,
           },
         });
-      } else {
-        const callback = this.sheetObjectCBs.get(objName);
-        if (callback !== undefined) callback(values);
       }
+
+      const callback = this.sheetObjectCBs.get(objName);
+      if (callback !== undefined) callback(values);
     });
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
 
