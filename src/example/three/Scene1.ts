@@ -31,6 +31,7 @@ export default class Scene1 extends BaseScene {
     this.createLights();
     this.createWorld();
     if (!app.editor) this.createPost();
+    this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
   }
 
@@ -160,6 +161,54 @@ export default class Scene1 extends BaseScene {
     noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
     const vignette = new VignetteEffect({});
     this.post.addPass(new EffectPass(this.camera, noiseEffect, vignette));
+  }
+
+  private createAnimation() {
+    app.theatre.sheet(this.name);
+
+    // Camera
+    app.theatre.sheetObject(
+      this.name,
+      'Camera',
+      {
+        position: {
+          x: this.camera.position.x,
+          y: this.camera.position.y,
+          z: this.camera.position.z,
+        },
+        rotation: {
+          x: this.camera.rotation.x,
+          y: this.camera.rotation.y,
+          z: this.camera.rotation.z,
+        },
+      },
+      (data: any) => {
+        this.camera.position.set(data.position.x, data.position.y, data.position.z);
+        this.camera.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+      }
+    );
+
+    // Dancer
+    app.theatre.sheetObject(
+      this.name,
+      'Break Dancer',
+      {
+        position: {
+          x: this.dance1.position.x,
+          y: this.dance1.position.y,
+          z: this.dance1.position.z,
+        },
+        rotation: {
+          x: this.dance1.rotation.x,
+          y: this.dance1.rotation.y,
+          z: this.dance1.rotation.z,
+        },
+      },
+      (data: any) => {
+        this.dance1.position.set(data.position.x, data.position.y, data.position.z);
+        this.dance1.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+      }
+    );
   }
 
   override update() {
