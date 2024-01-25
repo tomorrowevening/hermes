@@ -1,0 +1,149 @@
+{
+  "sheetsById": {
+    "App": {
+      "staticOverrides": {
+        "byObject": {
+          "Box": {
+            "x": 100
+          }
+        }
+      },
+      "sequence": {
+        "subUnitsPerUnit": 30,
+        "length": 4,
+        "type": "PositionalSequence",
+        "tracksByObject": {
+          "Box": {
+            "trackData": {
+              "uSjdwU4aYR": {
+                "type": "BasicKeyframedTrack",
+                "__debugName": "Box:[\"x\"]",
+                "keyframes": [
+                  {
+                    "id": "0k-ugV6SK6",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  },
+                  {
+                    "id": "6wsD5HSdd1",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "hold",
+                    "value": 200
+                  },
+                  {
+                    "id": "uSyMvnFyX7",
+                    "position": 2,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 200
+                  },
+                  {
+                    "id": "rsEY1UuudC",
+                    "position": 3,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  }
+                ]
+              },
+              "CxR48GLi8c": {
+                "type": "BasicKeyframedTrack",
+                "__debugName": "Box:[\"y\"]",
+                "keyframes": [
+                  {
+                    "id": "LkY9jBDvXK",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  },
+                  {
+                    "id": "kjFb1Gc3jw",
+                    "position": 2,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "hold",
+                    "value": 200
+                  },
+                  {
+                    "id": "j7EVhACBaE",
+                    "position": 3,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 200
+                  },
+                  {
+                    "id": "Tg48l1AU_M",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  }
+                ]
+              }
+            },
+            "trackIdByPropPath": {
+              "[\"x\"]": "uSjdwU4aYR",
+              "[\"y\"]": "CxR48GLi8c"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitionVersion": "0.4.0",
+  "revisionHistory": [
+    "Jll-K8zPIglssd9o",
+    "4agL4LiKH5qkwwHh"
+  ]
+}

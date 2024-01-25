@@ -14,6 +14,7 @@ import RemoteController from '../core/RemoteController';
 // Debug tools
 if (IS_DEV) {
   studio.initialize();
+  if (app.isApp) studio.ui.hide();
   RemoteController(app);
 }
 

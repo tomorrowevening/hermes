@@ -28,7 +28,9 @@ function App() {
 
   // Theatre
   useEffect(() => {
+    if (!loaded) return;
     if (app.theatre === undefined) return;
+
     const container = elementRef.current!;
     container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
@@ -50,7 +52,7 @@ function App() {
       if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj);
       app.dispose();
     };
-  }, []);
+  }, [loaded]);
 
   // Renderer setup
   if (!app.editor) {

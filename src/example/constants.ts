@@ -4,6 +4,7 @@ import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
 import RemoteTweakpane from '../core/remote/RemoteTweakpane';
+import { json } from './three/loader';
 
 export const IS_DEV = true;
 
@@ -11,14 +12,19 @@ class CustomApp extends Application {
   constructor() {
     super('Hermes', IS_DEV);
 
-    // Add components
-    this.addComponent('theatre', new RemoteTheatre(this, 'RemoteApp', {}));
+    this.addComponent('theatre', new RemoteTheatre(this));
 
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this));
       // this.addComponent('debug', new RemoteTweakpane(this));
       this.addComponent('three', new RemoteThree(this));
     }
+  }
+
+  onLoad() {
+    // Pass in loaded animations
+    const state = json.get('animation');
+    this.theatre.init('RemoteApp', { state });
   }
 
   // Components
