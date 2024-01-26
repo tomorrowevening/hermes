@@ -59,18 +59,20 @@ export default function CustomEditor() {
       ]}>
         <>
         {loaded && (
-          <MultiView
-            three={app.three}
-            scenes={scenes}
-            onSceneUpdate={(scene: any) => {
-              // Custom callback for animation updates
-              const baseScene = scene as BaseScene;
-              baseScene.update();
-            }}
-          />
+          <>
+            <MultiView
+              three={app.three}
+              scenes={scenes}
+              onSceneUpdate={(scene: any) => {
+                // Custom callback for animation updates
+                const baseScene = scene as BaseScene;
+                baseScene.update();
+              }}
+            />
+            <SidePanel three={app.three} />
+          </>
         )}
         </>
-        <SidePanel three={app.three} />
       </Editor>
   );
 }
