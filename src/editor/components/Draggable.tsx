@@ -32,7 +32,7 @@ export default function Draggable(props: DraggableProps) {
   return (
     <div className={ddClassName} onMouseEnter={() => setExpanded(true)} onMouseLeave={() => setExpanded(false)}>
       <NavButton title={props.title} />
-      <Reorder.Group axis="y" values={list} onReorder={updateList} style={{ visibility: expanded ? 'visible' : 'hidden' }}>
+      <Reorder.Group axis='y' values={list} onReorder={updateList} style={{ visibility: expanded ? 'visible' : 'hidden' }}>
         {elements}
       </Reorder.Group>
     </div>

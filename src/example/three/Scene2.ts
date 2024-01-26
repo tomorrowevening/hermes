@@ -1,8 +1,8 @@
-import { DirectionalLight, MeshMatcapMaterial, Object3D, SkinnedMesh, SpotLight, WebGLRenderer } from "three";
-import { IS_DEV, app } from "../constants";
-import { hierarchyUUID } from "../../editor/utils";
-import BaseScene from "./BaseScene";
-import FBXAnimation from "./FBXAnimation";
+import { DirectionalLight, MeshMatcapMaterial, Object3D, SkinnedMesh, SpotLight, WebGLRenderer } from 'three';
+import { IS_DEV, app } from '../constants';
+import { hierarchyUUID } from '../../editor/utils';
+import BaseScene from './BaseScene';
+import FBXAnimation from './FBXAnimation';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;

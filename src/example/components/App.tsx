@@ -14,6 +14,7 @@ import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
@@ -93,6 +94,7 @@ function App() {
     };
 
     const updateApp = () => {
+      RemoteTheatre.getRafDriver().tick(performance.now());
       currentScene?.update();
       stats.begin();
       renderer.clear();
@@ -212,7 +214,7 @@ function App() {
 
   return (
     <>
-      {!loaded && <p className="loading">Loading...</p>}
+      {!loaded && <p className='loading'>Loading...</p>}
       {app.isApp && <canvas ref={canvasRef} />}
 
       <div id='box' ref={elementRef}>

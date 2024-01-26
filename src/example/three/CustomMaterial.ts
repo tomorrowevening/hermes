@@ -1,5 +1,5 @@
-import { ShaderMaterial, Texture } from "three";
-import { textureFromSrc } from "../../editor/sidePanel/utils";
+import { ShaderMaterial, Texture } from 'three';
+import { textureFromSrc } from '../../editor/sidePanel/utils';
 
 const vertex = `varying vec2 vUv;
 

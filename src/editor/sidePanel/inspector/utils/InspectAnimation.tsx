@@ -1,8 +1,8 @@
-import RemoteThree from "@/core/remote/RemoteThree";
-import InspectorGroup from "../InspectorGroup";
+import RemoteThree from '@/core/remote/RemoteThree';
+import InspectorGroup from '../InspectorGroup';
 import { InspectorFieldProps } from '../InspectorField';
 import { AnimationClipInfo, RemoteObject } from '../../types';
-import { setItemProps } from "../../utils";
+import { setItemProps } from '../../utils';
 
 export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) {
   const items: InspectorFieldProps[] = [];
@@ -46,6 +46,6 @@ export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) 
     });
   });
   return (
-    <InspectorGroup title="Animations" items={items} />
+    <InspectorGroup title='Animations' items={items} />
   );
 }

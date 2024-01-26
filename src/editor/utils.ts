@@ -1,4 +1,4 @@
-import { Material, Mesh, Object3D, PositionalAudio, Texture } from "three";
+import { Material, Mesh, Object3D, PositionalAudio, Texture } from 'three';
 
 export function clamp(min: number, max: number, value: number) {
   return Math.min(max, Math.max(min, value));

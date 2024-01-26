@@ -30,7 +30,7 @@ export default class SidePanel extends Component<SidePanelState> {
     const hasScene = this.componentState.scene !== null;
     const HierarchyName = 'Hierarchy - ' + (hasScene ? `${this.componentState.scene?.name}` : 'No Scene');
     return (
-      <div id="SidePanel" key="SidePanel">
+      <div id='SidePanel' key='SidePanel'>
         {(
           <>
             <Accordion label={HierarchyName} open={true}>

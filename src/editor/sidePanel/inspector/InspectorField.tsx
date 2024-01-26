@@ -1,7 +1,7 @@
-import { colorToHex } from "@/editor/utils";
-import { useEffect, useRef, useState } from "react";
-import { noImage } from "@/editor/components/content";
-import { uploadLocalImage } from "./utils/InspectMaterial";
+import { colorToHex } from '@/editor/utils';
+import { useEffect, useRef, useState } from 'react';
+import { noImage } from '@/editor/components/content';
+import { uploadLocalImage } from './utils/InspectMaterial';
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
 
@@ -89,12 +89,12 @@ export default function InspectorField(props: InspectorFieldProps) {
   return (
     <div className={`field ${block ? 'block' : ''}`}>
       {props.type !== 'button' && (
-        <label key="fieldLabel" ref={labelRef}>{props.title}</label>
+        <label key='fieldLabel' ref={labelRef}>{props.title}</label>
       )}
 
       {props.type === 'string' && !textfield && (
         <input
-          type="text"
+          type='text'
           disabled={props.disabled}
           onChange={onChange}
           value={fieldValue}
@@ -113,7 +113,7 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'boolean' && (
         <input
-          type="checkbox"
+          type='checkbox'
           disabled={props.disabled}
           onChange={onChange}
           checked={fieldValue}
@@ -123,7 +123,7 @@ export default function InspectorField(props: InspectorFieldProps) {
       {props.type === 'number' && (
         <input
           ref={inputRef}
-          type="number"
+          type='number'
           value={fieldValue}
           min={props.min}
           max={props.max}
@@ -134,10 +134,10 @@ export default function InspectorField(props: InspectorFieldProps) {
       
       {props.type === 'range' && (
         <>
-          <input type="text" value={fieldValue.toString()} onChange={onChange} className="min" />
+          <input type='text' value={fieldValue.toString()} onChange={onChange} className='min' />
           <input
             disabled={props.disabled}
-            type="range"
+            type='range'
             value={fieldValue}
             min={props.min}
             max={props.max}
@@ -149,8 +149,8 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'color' && (
         <>
-          <input type="text" value={fieldValue.toString()} onChange={onChange} className="color" />
-          <input type="color" value={fieldValue} onChange={onChange} />
+          <input type='text' value={fieldValue.toString()} onChange={onChange} className='color' />
+          <input type='color' value={fieldValue} onChange={onChange} />
         </>
       )}
 

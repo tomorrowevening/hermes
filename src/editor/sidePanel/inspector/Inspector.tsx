@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { CoreComponentProps, RemoteObject } from "../types";
-import { ToolEvents, debugDispatcher } from "../../global";
+import { useEffect, useState } from 'react';
+import { CoreComponentProps, RemoteObject } from '../types';
+import { ToolEvents, debugDispatcher } from '../../global';
 // Components
 import './inspector.scss';
-import Accordion from "../Accordion";
+import Accordion from '../Accordion';
 import InspectorField from './InspectorField';
 // Utils
-import { InspectCamera } from "./utils/InspectCamera";
-import { InspectMaterial } from "./utils/InspectMaterial";
-import { InspectTransform } from "./utils/InspectTransform";
-import { InspectLight } from "./utils/InspectLight";
-import { setItemProps } from "../utils";
-import InspectAnimation from "./utils/InspectAnimation";
+import { InspectCamera } from './utils/InspectCamera';
+import { InspectMaterial } from './utils/InspectMaterial';
+import { InspectTransform } from './utils/InspectTransform';
+import { InspectLight } from './utils/InspectLight';
+import { setItemProps } from '../utils';
+import InspectAnimation from './utils/InspectAnimation';
 
 const defaultObject: RemoteObject = {
   name: '',
@@ -54,36 +54,36 @@ export default function Inspector(props: CoreComponentProps) {
 
   return (
     <Accordion label='Inspector' key='Inspector'>
-      <div id="Inspector" className={props.class} key={lastUpdated}>
+      <div id='Inspector' className={props.class} key={lastUpdated}>
         {currentObject.uuid.length > 0 && (
           <>
             {/* Core */}
             <>
               <InspectorField
-                type="string"
-                title="Name"
-                prop="name"
+                type='string'
+                title='Name'
+                prop='name'
                 value={currentObject.name}
                 disabled={true}
               />
               <InspectorField
-                type="string"
-                title="Type"
-                prop="type"
+                type='string'
+                title='Type'
+                prop='type'
                 value={currentObject.type}
                 disabled={true}
               />
               <InspectorField
-                type="string"
-                title="UUID"
-                prop="uuid"
+                type='string'
+                title='UUID'
+                prop='uuid'
                 value={currentObject.uuid}
                 disabled={true}
               />
               <InspectorField
-                type="boolean"
-                title="Visible"
-                prop="visible"
+                type='boolean'
+                title='Visible'
+                prop='visible'
                 value={currentObject.visible}
                 onChange={(key: string, value: any) => {
                   props.three.updateObject(currentObject.uuid, key, value);

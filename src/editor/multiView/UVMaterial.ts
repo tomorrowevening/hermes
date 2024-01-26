@@ -1,4 +1,4 @@
-import { ShaderMaterial } from "three";
+import { ShaderMaterial } from 'three';
 
 const vertex = `#include <common>
 #include <batching_pars_vertex>

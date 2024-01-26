@@ -1,4 +1,4 @@
-import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core';
+import type { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData } from '../types';
@@ -9,12 +9,14 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjects: Map<string, ISheetObject>;
     sheetObjectCBs: Map<string, DataUpdateCallback>;
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
+    private static rafDriver;
     init(projectName: string, projectConfig?: IProjectConfig | undefined): void;
     dispose(): void;
     sheet(name: string): ISheet | undefined;
     clearSheetObjects(sheetName: string): void;
     sheetObject(sheetName: string, key: string, props: any, onUpdate?: DataUpdateCallback): ISheetObject | undefined;
     unsubscribe(sheetObject: ISheetObject): undefined;
+    static getRafDriver(): IRafDriver;
 }
 export declare function HandleAppRemoteTheatre(app: Application, msg: BroadcastData): void;
 export declare function HandleEditorRemoteTheatre(app: Application): void;
