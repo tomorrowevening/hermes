@@ -2,11 +2,7 @@
   "sheetsById": {
     "App": {
       "staticOverrides": {
-        "byObject": {
-          "Box": {
-            "x": 100
-          }
-        }
+        "byObject": {}
       },
       "sequence": {
         "subUnitsPerUnit": 30,
@@ -15,12 +11,12 @@
         "tracksByObject": {
           "Box": {
             "trackData": {
-              "uSjdwU4aYR": {
+              "ZQqPq9Vs4r": {
                 "type": "BasicKeyframedTrack",
                 "__debugName": "Box:[\"x\"]",
                 "keyframes": [
                   {
-                    "id": "0k-ugV6SK6",
+                    "id": "X1gYGmagLB",
                     "position": 0,
                     "connectedRight": true,
                     "handles": [
@@ -33,7 +29,7 @@
                     "value": 100
                   },
                   {
-                    "id": "6wsD5HSdd1",
+                    "id": "oVRrwUsn9K",
                     "position": 1,
                     "connectedRight": true,
                     "handles": [
@@ -42,11 +38,11 @@
                       0.5,
                       0
                     ],
-                    "type": "hold",
-                    "value": 200
+                    "type": "bezier",
+                    "value": 300
                   },
                   {
-                    "id": "uSyMvnFyX7",
+                    "id": "jcoVIavgV5",
                     "position": 2,
                     "connectedRight": true,
                     "handles": [
@@ -56,11 +52,24 @@
                       0
                     ],
                     "type": "bezier",
-                    "value": 200
+                    "value": 300
                   },
                   {
-                    "id": "rsEY1UuudC",
+                    "id": "2BCxLcsYkV",
                     "position": 3,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  },
+                  {
+                    "id": "74cQoN1tVz",
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -73,12 +82,25 @@
                   }
                 ]
               },
-              "CxR48GLi8c": {
+              "PCyUfLD9Ml": {
                 "type": "BasicKeyframedTrack",
                 "__debugName": "Box:[\"y\"]",
                 "keyframes": [
                   {
-                    "id": "LkY9jBDvXK",
+                    "id": "HInkefuITD",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 100
+                  },
+                  {
+                    "id": "B3EQVu0fe2",
                     "position": 1,
                     "connectedRight": true,
                     "handles": [
@@ -91,7 +113,7 @@
                     "value": 100
                   },
                   {
-                    "id": "kjFb1Gc3jw",
+                    "id": "Zq__JeNqAB",
                     "position": 2,
                     "connectedRight": true,
                     "handles": [
@@ -100,11 +122,11 @@
                       0.5,
                       0
                     ],
-                    "type": "hold",
-                    "value": 200
+                    "type": "bezier",
+                    "value": 300
                   },
                   {
-                    "id": "j7EVhACBaE",
+                    "id": "NnEC92FsNb",
                     "position": 3,
                     "connectedRight": true,
                     "handles": [
@@ -114,10 +136,10 @@
                       0
                     ],
                     "type": "bezier",
-                    "value": 200
+                    "value": 300
                   },
                   {
-                    "id": "Tg48l1AU_M",
+                    "id": "uWzwPL4Qzg",
                     "position": 4,
                     "connectedRight": true,
                     "handles": [
@@ -133,8 +155,142 @@
               }
             },
             "trackIdByPropPath": {
-              "[\"x\"]": "uSjdwU4aYR",
-              "[\"y\"]": "CxR48GLi8c"
+              "[\"x\"]": "ZQqPq9Vs4r",
+              "[\"y\"]": "PCyUfLD9Ml"
+            }
+          }
+        }
+      }
+    },
+    "Scene2": {
+      "staticOverrides": {
+        "byObject": {}
+      },
+      "sequence": {
+        "subUnitsPerUnit": 30,
+        "length": 1,
+        "type": "PositionalSequence",
+        "tracksByObject": {
+          "Dancer": {
+            "trackData": {
+              "1mGR2OHaMn": {
+                "type": "BasicKeyframedTrack",
+                "__debugName": "Dancer:[\"position\",\"y\"]",
+                "keyframes": [
+                  {
+                    "id": "L_MkmKZbNL",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": -45
+                  },
+                  {
+                    "id": "urvYLO0Cmo",
+                    "position": 0.5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 50
+                  },
+                  {
+                    "id": "Np5nJPsCyi",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": -45
+                  }
+                ]
+              }
+            },
+            "trackIdByPropPath": {
+              "[\"position\",\"y\"]": "1mGR2OHaMn"
+            }
+          }
+        }
+      }
+    },
+    "Scene1": {
+      "staticOverrides": {
+        "byObject": {
+          "Break Dancer": {
+            "position": {
+              "z": -50
+            }
+          }
+        }
+      },
+      "sequence": {
+        "subUnitsPerUnit": 30,
+        "length": 1,
+        "type": "PositionalSequence",
+        "tracksByObject": {
+          "Break Dancer": {
+            "trackData": {
+              "L1lPIPQEFg": {
+                "type": "BasicKeyframedTrack",
+                "__debugName": "Break Dancer:[\"position\",\"z\"]",
+                "keyframes": [
+                  {
+                    "id": "FzIN3OJFIF",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": -50
+                  },
+                  {
+                    "id": "gMF3Zk6X_4",
+                    "position": 0.5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 50
+                  },
+                  {
+                    "id": "GT0ub2ar3r",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": -50
+                  }
+                ]
+              }
+            },
+            "trackIdByPropPath": {
+              "[\"position\",\"z\"]": "L1lPIPQEFg"
             }
           }
         }
@@ -143,7 +299,6 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
-    "Jll-K8zPIglssd9o",
-    "4agL4LiKH5qkwwHh"
+    "c8aUQUaX-l5m1q0_"
   ]
 }

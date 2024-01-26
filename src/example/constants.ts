@@ -4,7 +4,7 @@ import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
 import RemoteTweakpane from '../core/remote/RemoteTweakpane';
-// import { json } from './three/loader';
+import { json } from './three/loader';
 
 export const IS_DEV = true;
 
@@ -22,10 +22,8 @@ class CustomApp extends Application {
   }
 
   onLoad(): Promise<void> {
-    return this.theatre.init('RemoteApp');
-    // Pass in loaded animations
-    // const state = json.get('animation');
-    // this.theatre.init('RemoteApp', { state });
+    const state = json.get('animation');
+    return this.theatre.init('RemoteApp', { state });
   }
 
   // Components
