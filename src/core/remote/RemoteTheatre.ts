@@ -18,8 +18,9 @@ export default class RemoteTheatre extends BaseRemote {
 
   private static rafDriver: IRafDriver | null = null;
 
-  init(projectName: string, projectConfig?: IProjectConfig | undefined) {
+  init(projectName: string, projectConfig?: IProjectConfig | undefined): Promise<void> {
     this.project = getProject(projectName, projectConfig);
+    return this.project.ready;
   }
 
   override dispose(): void {

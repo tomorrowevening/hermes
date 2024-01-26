@@ -4,7 +4,7 @@ import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
-import { app, IS_DEV } from '../constants';
+import { app, Events, IS_DEV, threeDispatcher } from '../constants';
 // Components
 import './App.css';
 import BaseScene from '../three/BaseScene';
@@ -123,13 +123,12 @@ function App() {
 
   // Preload
   useEffect(() => {
-    loadAssets()
-      .then(() => {
-        setLoaded(true);
-      })
-      .catch(() => {
-        console.log('Error loading files...');
-      });
+    const onLoad = () => {
+      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
+      setLoaded(true);
+    };
+    threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
+    loadAssets();
   }, [setLoaded]);
 
   const createScene = () => {

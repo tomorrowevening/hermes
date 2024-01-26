@@ -21,8 +21,8 @@ class CustomApp extends Application {
     }
   }
 
-  onLoad() {
-    this.theatre.init('RemoteApp');
+  onLoad(): Promise<void> {
+    return this.theatre.init('RemoteApp');
     // Pass in loaded animations
     // const state = json.get('animation');
     // this.theatre.init('RemoteApp', { state });
