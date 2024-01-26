@@ -1,6 +1,6 @@
 // Libs
-import { getProject } from '@theatre/core';
-import type { IProject, IProjectConfig, ISheet, ISheetObject } from '@theatre/core';
+import { createRafDriver, getProject } from '@theatre/core';
+import type { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import studio from '@theatre/studio';
 // Core
 import Application from '../Application';
@@ -8,7 +8,6 @@ import BaseRemote from './BaseRemote';
 import { isColor } from '@/editor/utils';
 import { BroadcastData, EditorEvent, noop } from '../types';
 import type { DataUpdateCallback, VoidCallback } from '../types';
-// import { ToolEvents, debugDispatcher } from '@/editor/global';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
@@ -16,6 +15,8 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjects: Map<string, ISheetObject> = new Map();
   sheetObjectCBs: Map<string, DataUpdateCallback> = new Map();
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
+
+  private static rafDriver: IRafDriver | null = null;
 
   init(projectName: string, projectConfig?: IProjectConfig | undefined) {
     this.project = getProject(projectName, projectConfig);
@@ -127,6 +128,13 @@ export default class RemoteTheatre extends BaseRemote {
       unsubscribe();
     }
   }
+
+  public static getRafDriver(): IRafDriver {
+    if (!RemoteTheatre.rafDriver) {
+      RemoteTheatre.rafDriver = createRafDriver();
+    }
+    return RemoteTheatre.rafDriver;
+  }
 }
 
 let activeSheet: ISheet | undefined;
@@ -212,6 +220,8 @@ export function HandleEditorRemoteTheatre(app: Application) {
     // Timeline
     let position = 0;
     const onRafUpdate = () => {
+      RemoteTheatre.getRafDriver().tick(performance.now());
+
       if (
         activeSheet !== undefined &&
         position !== activeSheet.sequence.position
