@@ -4,7 +4,7 @@ import { ToolEvents, debugDispatcher } from '@/editor/global';
 import type { BroadcastData } from './types';
 import BaseRemote from './remote/BaseRemote';
 import RemoteComponents, { HandleAppRemoteComponents } from './remote/RemoteComponents';
-import RemoteTheatre, { HandleAppRemoteTheatre, HandleEditorRemoteTheatre } from './remote/RemoteTheatre';
+import RemoteTheatre, { HandleAppRemoteTheatre, HandleEditorRemoteTheatre, UpdateRemoteTheatre } from './remote/RemoteTheatre';
 import RemoteThree, { HandleAppRemoteThree, HandleEditorRemoteThree } from './remote/RemoteThree';
 import RemoteTweakpane, { HandleAppRemoteTweakpane } from './remote/RemoteTweakpane';
 
@@ -18,7 +18,8 @@ export default function RemoteController(app: Application) {
       appHandlers.push(HandleAppRemoteComponents);
     } else if (value instanceof RemoteTheatre) {
       appHandlers.push(HandleAppRemoteTheatre);
-      HandleEditorRemoteTheatre(app);
+      editorHandlers.push(HandleEditorRemoteTheatre);
+      UpdateRemoteTheatre(app);
     }  else if (value instanceof RemoteThree) {
       appHandlers.push(HandleAppRemoteThree);
       editorHandlers.push(HandleEditorRemoteThree);
