@@ -165,7 +165,7 @@ const bn = () => {
     H(this, "sheetObjectUnsubscribe", /* @__PURE__ */ new Map());
   }
   init(a, e) {
-    this.project = Zn(a, e);
+    return this.project = Zn(a, e), this.project.ready;
   }
   dispose() {
     this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
