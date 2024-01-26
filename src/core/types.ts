@@ -21,6 +21,8 @@ export type EditorEvent =
   | 'setSheetObject'
   | 'updateSheetObject'
   | 'updateTimeline'
+  | 'playSheet'
+  | 'pauseSheet'
 // Three
   | 'getObject'
   | 'setObject'

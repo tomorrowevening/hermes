@@ -45,6 +45,31 @@ export default class RemoteTheatre extends BaseRemote {
     return sheet;
   }
 
+  playSheet(name: string, params?: any) {
+    this.sheet(name)?.sequence.play(params);
+
+    this.app.send({
+      event: 'playSheet',
+      target: 'editor',
+      data: {
+        sheet: name,
+        value: params,
+      },
+    });
+  }
+
+  pauseSheet(name: string) {
+    this.sheet(name)?.sequence.pause();
+
+    this.app.send({
+      event: 'pauseSheet',
+      target: 'editor',
+      data: {
+        sheet: name,
+      },
+    });
+  }
+
   clearSheetObjects(sheetName: string) {
     this.sheetObjects.forEach((value: ISheetObject, key: string) => {
       const sameSheet = key.search(`${sheetName}_`) > -1;
@@ -179,7 +204,7 @@ export function HandleAppRemoteTheatre(app: Application, msg: BroadcastData) {
   });
 }
 
-export function HandleEditorRemoteTheatre(app: Application) {
+export function UpdateRemoteTheatre(app: Application) {
   if (app.editor) {
     let theatre: RemoteTheatre;
     app.components.forEach((component: any) => {
@@ -187,6 +212,7 @@ export function HandleEditorRemoteTheatre(app: Application) {
         theatre = component;
       }
     });
+    
     studio.ui.restore();
     studio.onSelectionChange((value: any[]) => {
       if (value.length < 1) return;
@@ -247,5 +273,24 @@ export function HandleEditorRemoteTheatre(app: Application) {
     onRaf();
   } else {
     studio.ui.hide();
+  }
+}
+
+export function HandleEditorRemoteTheatre(app: Application, msg: BroadcastData) {
+  if (app.editor) {
+    app.components.forEach((component: any) => {
+      if (component instanceof RemoteTheatre) {
+        const theatre = component;
+        switch (msg.event) {
+          case 'playSheet':
+            theatre.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
+            break;
+          case 'pauseSheet':
+            theatre.sheet(msg.data.sheet)?.sequence.pause();
+            break;
+        }
+        return;
+      }
+    });
   }
 }

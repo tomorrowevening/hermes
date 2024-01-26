@@ -218,11 +218,12 @@ function App() {
 
       <div id='box' ref={elementRef}>
         <button onClick={() => {
-          app.send({
-            target: 'editor',
-            event: 'custom',
-            data: 'hello editor!'
-          });
+          // app.send({
+          //   target: 'editor',
+          //   event: 'custom',
+          //   data: 'hello editor!'
+          // });
+          app.theatre.playSheet('Scene1');
         }}>Click</button>
       </div>
 

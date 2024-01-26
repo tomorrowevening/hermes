@@ -1,17 +1,17 @@
 var _n = Object.defineProperty;
 var kn = (t, n, a) => n in t ? _n(t, n, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[n] = a;
 var H = (t, n, a) => (kn(t, typeof n != "symbol" ? n + "" : n, a), a);
-import { PositionalAudio as Dn, EventDispatcher as cn, Texture as ln, CubeTexture as An, RepeatWrapping as Wt, ShaderMaterial as un, GLSL3 as In, DoubleSide as Nn, Color as Bt, Mesh as Ln, PlaneGeometry as Fn, Matrix4 as Un, Vector3 as Y, Euler as Bn, Ray as $n, Plane as Gn, MathUtils as Vn, MOUSE as We, TOUCH as He, Quaternion as Ht, Spherical as Kt, Vector2 as de, PerspectiveCamera as Nt, MeshDepthMaterial as zn, MeshNormalMaterial as Yn, MeshBasicMaterial as Wn, OrthographicCamera as dn, Scene as fn, Group as Hn, AxesHelper as hn, WebGLRenderer as Kn, Raycaster as Xn, CameraHelper as qn } from "three";
+import { PositionalAudio as Dn, EventDispatcher as cn, Texture as ln, CubeTexture as An, RepeatWrapping as Wt, ShaderMaterial as un, GLSL3 as In, DoubleSide as Nn, Color as Bt, Mesh as Ln, PlaneGeometry as Fn, Matrix4 as Un, Vector3 as Y, Euler as Bn, Ray as $n, Plane as Gn, MathUtils as Vn, MOUSE as He, TOUCH as Ke, Quaternion as Ht, Spherical as Kt, Vector2 as de, PerspectiveCamera as Nt, MeshDepthMaterial as zn, MeshNormalMaterial as Yn, MeshBasicMaterial as Wn, OrthographicCamera as dn, Scene as fn, Group as Hn, AxesHelper as hn, WebGLRenderer as Kn, Raycaster as Xn, CameraHelper as qn } from "three";
 import { getProject as Zn, createRafDriver as Jn } from "@theatre/core";
 import st from "@theatre/studio";
 import { Pane as Qn } from "tweakpane";
 import * as ea from "@tweakpane/plugin-essentials";
 import pn, { useState as oe, useRef as Ce, useEffect as Fe, Component as ta, forwardRef as na } from "react";
 import { Reorder as mn } from "framer-motion";
-function li(t, n, a) {
+function ui(t, n, a) {
   return Math.min(n, Math.max(t, a));
 }
-function ui(t, n) {
+function di(t, n) {
   const a = t - n;
   return Math.sqrt(a * a);
 }
@@ -41,7 +41,7 @@ const oa = () => {
   n.length === 0 && (n = `obj_${Lt}`, Lt++), t.parent !== null && (n = `${t.parent.uuid}.${n}`), t.uuid = n, t.children.forEach((a) => {
     gn(a);
   });
-}, di = (t) => {
+}, fi = (t) => {
   t == null || t.dispose();
 }, sa = (t) => {
   t && (Array.isArray(t) ? t.forEach((n) => n.dispose()) : t.dispose());
@@ -59,7 +59,7 @@ const oa = () => {
     t.dispose !== void 0 && t.dispose();
   }
 };
-class fi {
+class hi {
   constructor(n, a, e = "editor") {
     H(this, "channel");
     H(this, "components", /* @__PURE__ */ new Map());
@@ -155,7 +155,7 @@ function la(t, n) {
   }
 }
 const bn = () => {
-}, Xe = class Xe extends Ot {
+}, qe = class qe extends Ot {
   constructor() {
     super(...arguments);
     H(this, "project");
@@ -178,6 +178,27 @@ const bn = () => {
     }
     let e = this.sheets.get(a);
     return e !== void 0 || (e = (r = this.project) == null ? void 0 : r.sheet(a), this.sheets.set(a, e)), e;
+  }
+  playSheet(a, e) {
+    var r;
+    (r = this.sheet(a)) == null || r.sequence.play(e), this.app.send({
+      event: "playSheet",
+      target: "editor",
+      data: {
+        sheet: a,
+        value: e
+      }
+    });
+  }
+  pauseSheet(a) {
+    var e;
+    (e = this.sheet(a)) == null || e.sequence.pause(), this.app.send({
+      event: "pauseSheet",
+      target: "editor",
+      data: {
+        sheet: a
+      }
+    });
   }
   clearSheetObjects(a) {
     this.sheetObjects.forEach((e, r) => {
@@ -231,14 +252,14 @@ const bn = () => {
     l !== void 0 && (this.sheetObjects.delete(u), this.sheetObjectCBs.delete(u), this.sheetObjectUnsubscribe.delete(u), l());
   }
   static getRafDriver() {
-    return Xe.rafDriver || (Xe.rafDriver = Jn()), Xe.rafDriver;
+    return qe.rafDriver || (qe.rafDriver = Jn()), qe.rafDriver;
   }
 };
-H(Xe, "rafDriver", null);
-let qe = Xe, Me;
+H(qe, "rafDriver", null);
+let Ue = qe, Me;
 function ua(t, n) {
   t.components.forEach((a) => {
-    if (a instanceof qe) {
+    if (a instanceof Ue) {
       let e;
       const r = a;
       switch (n.event) {
@@ -262,7 +283,7 @@ function da(t) {
   if (t.editor) {
     let n;
     t.components.forEach((s) => {
-      s instanceof qe && (n = s);
+      s instanceof Ue && (n = s);
     }), st.ui.restore(), st.onSelectionChange((s) => {
       s.length < 1 || s.forEach((u) => {
         let l = u.address.sheetId, d = "setSheet", p = {};
@@ -285,7 +306,7 @@ function da(t) {
     });
     let a = 0;
     const e = () => {
-      if (qe.getRafDriver().tick(performance.now()), Me !== void 0 && a !== Me.sequence.position) {
+      if (Ue.getRafDriver().tick(performance.now()), Me !== void 0 && a !== Me.sequence.position) {
         a = Me.sequence.position;
         const s = Me;
         t.send({
@@ -304,7 +325,24 @@ function da(t) {
   } else
     st.ui.hide();
 }
-function fa(t) {
+function fa(t, n) {
+  t.editor && t.components.forEach((a) => {
+    var e, r;
+    if (a instanceof Ue) {
+      const s = a;
+      switch (n.event) {
+        case "playSheet":
+          (e = s.sheet(n.data.sheet)) == null || e.sequence.play(n.data.value);
+          break;
+        case "pauseSheet":
+          (r = s.sheet(n.data.sheet)) == null || r.sequence.pause();
+          break;
+      }
+      return;
+    }
+  });
+}
+function ha(t) {
   if (t.name === "cameras")
     return "camera";
   if (t.name === "interactive")
@@ -329,7 +367,7 @@ function yn(t) {
     n.children.push(yn(a));
   }), n;
 }
-function ha(t) {
+function pa(t) {
   const n = {};
   for (const a in t) {
     const e = t[a].value;
@@ -337,7 +375,7 @@ function ha(t) {
   }
   return n;
 }
-function pa(t) {
+function ma(t) {
   switch (t) {
     case "blendSrcAlpha":
     case "blendDstAlpha":
@@ -352,7 +390,7 @@ function pa(t) {
 function Xt(t) {
   const n = {};
   for (const a in t) {
-    if (a.substring(0, 1) === "_" || a.substring(0, 2) === "is" || pa(a))
+    if (a.substring(0, 1) === "_" || a.substring(0, 2) === "is" || ma(a))
       continue;
     const e = typeof t[a], r = t[a];
     switch (e) {
@@ -370,7 +408,7 @@ function Xt(t) {
             } else
               r instanceof An && (console.log("env map"), console.log(r.source.data), console.log(r.source.toJSON()), n[a] = { src: "" });
           else
-            a === "uniforms" && (n[a] = ha(n[a]));
+            a === "uniforms" && (n[a] = pa(n[a]));
         else
           n[a] = { src: "" };
         break;
@@ -467,7 +505,7 @@ function Ft(t) {
     }, e.onerror = a, e.src = t;
   });
 }
-class ma extends Ot {
+class ga extends Ot {
   constructor() {
     super(...arguments);
     H(this, "scene");
@@ -548,7 +586,7 @@ class ma extends Ot {
     });
   }
 }
-function ga(t, n) {
+function va(t, n) {
   switch (n.event) {
     case "getObject":
       j.dispatchEvent({ type: _.GET_OBJECT, value: n.data });
@@ -564,7 +602,7 @@ function ga(t, n) {
       break;
   }
 }
-function va(t, n) {
+function ba(t, n) {
   switch (n.event) {
     case "setObject":
       j.dispatchEvent({ type: _.SET_OBJECT, value: n.data });
@@ -680,7 +718,7 @@ class En extends Ot {
       this.inspectorFolder.remove(this.inspectorFolder.children[e]);
   }
 }
-function ba(t, n) {
+function ya(t, n) {
   t.components.forEach((a) => {
     if (a instanceof En) {
       const e = a;
@@ -716,7 +754,7 @@ var Ut = { exports: {} }, it = {};
  * LICENSE file in the root directory of this source tree.
  */
 var qt;
-function ya() {
+function Ea() {
   if (qt)
     return it;
   qt = 1;
@@ -744,7 +782,7 @@ var rt = {};
  * LICENSE file in the root directory of this source tree.
  */
 var Zt;
-function Ea() {
+function wa() {
   return Zt || (Zt = 1, process.env.NODE_ENV !== "production" && function() {
     var t = pn, n = Symbol.for("react.element"), a = Symbol.for("react.portal"), e = Symbol.for("react.fragment"), r = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), u = Symbol.for("react.provider"), l = Symbol.for("react.context"), d = Symbol.for("react.forward_ref"), p = Symbol.for("react.suspense"), v = Symbol.for("react.suspense_list"), E = Symbol.for("react.memo"), x = Symbol.for("react.lazy"), C = Symbol.for("react.offscreen"), M = Symbol.iterator, G = "@@iterator";
     function se(i) {
@@ -911,13 +949,13 @@ function Ea() {
 ` + Qe + i;
       }
     }
-    var $e = !1, je;
+    var Ge = !1, je;
     {
       var Pt = typeof WeakMap == "function" ? WeakMap : Map;
       je = new Pt();
     }
     function dt(i, h) {
-      if (!i || $e)
+      if (!i || Ge)
         return "";
       {
         var g = je.get(i);
@@ -925,7 +963,7 @@ function Ea() {
           return g;
       }
       var w;
-      $e = !0;
+      Ge = !0;
       var k = Error.prepareStackTrace;
       Error.prepareStackTrace = void 0;
       var L;
@@ -982,9 +1020,9 @@ function Ea() {
             }
         }
       } finally {
-        $e = !1, Je.current = L, Rt(), Error.prepareStackTrace = k;
+        Ge = !1, Je.current = L, Rt(), Error.prepareStackTrace = k;
       }
-      var Ye = i ? i.displayName || i.name : "", Yt = Ye ? Pe(Ye) : "";
+      var We = i ? i.displayName || i.name : "", Yt = We ? Pe(We) : "";
       return typeof i == "function" && je.set(i, Yt), Yt;
     }
     function ft(i, h, g) {
@@ -1023,7 +1061,7 @@ function Ea() {
         }
       return "";
     }
-    var Ge = Object.prototype.hasOwnProperty, pt = {}, et = K.ReactDebugCurrentFrame;
+    var Ve = Object.prototype.hasOwnProperty, pt = {}, et = K.ReactDebugCurrentFrame;
     function Se(i) {
       if (i) {
         var h = i._owner, g = _e(i.type, i._source, h ? h.type : null);
@@ -1033,7 +1071,7 @@ function Ea() {
     }
     function ke(i, h, g, w, k) {
       {
-        var L = Function.call.bind(Ge);
+        var L = Function.call.bind(Ve);
         for (var P in i)
           if (L(i, P)) {
             var T = void 0;
@@ -1082,7 +1120,7 @@ function Ea() {
     }, bt, at, ve;
     ve = {};
     function o(i) {
-      if (Ge.call(i, "ref")) {
+      if (Ve.call(i, "ref")) {
         var h = Object.getOwnPropertyDescriptor(i, "ref").get;
         if (h && h.isReactWarning)
           return !1;
@@ -1090,7 +1128,7 @@ function Ea() {
       return i.ref !== void 0;
     }
     function y(i) {
-      if (Ge.call(i, "key")) {
+      if (Ve.call(i, "key")) {
         var h = Object.getOwnPropertyDescriptor(i, "key").get;
         if (h && h.isReactWarning)
           return !1;
@@ -1159,7 +1197,7 @@ function Ea() {
         var L, P = {}, T = null, ce = null;
         g !== void 0 && (vt(g), T = "" + g), y(h) && (vt(h.key), T = "" + h.key), o(h) && (ce = h.ref, D(h, k));
         for (L in h)
-          Ge.call(h, L) && !_t.hasOwnProperty(L) && (P[L] = h[L]);
+          Ve.call(h, L) && !_t.hasOwnProperty(L) && (P[L] = h[L]);
         if (i && i.defaultProps) {
           var W = i.defaultProps;
           for (L in W)
@@ -1185,7 +1223,7 @@ function Ea() {
     function pe(i) {
       return typeof i == "object" && i !== null && i.$$typeof === n;
     }
-    function Ve() {
+    function ze() {
       {
         if (yt.current) {
           var i = F(yt.current.type);
@@ -1209,9 +1247,9 @@ Check your code at ` + h + ":" + g + ".";
       }
     }
     var Te = {};
-    function ze(i) {
+    function Ye(i) {
       {
-        var h = Ve();
+        var h = ze();
         if (!h) {
           var g = typeof i == "string" ? i : i.displayName || i.name;
           g && (h = `
@@ -1226,7 +1264,7 @@ Check the top-level render call using <` + g + ">.");
         if (!i._store || i._store.validated || i.key != null)
           return;
         i._store.validated = !0;
-        var g = ze(h);
+        var g = Ye(h);
         if (Te[g])
           return;
         Te[g] = !0;
@@ -1297,7 +1335,7 @@ Check the top-level render call using <` + g + ">.");
           var T = "";
           (i === void 0 || typeof i == "object" && i !== null && Object.keys(i).length === 0) && (T += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
           var ce = De(k);
-          ce ? T += ce : T += Ve();
+          ce ? T += ce : T += ze();
           var W;
           i === null ? W = "null" : tt(i) ? W = "array" : i !== void 0 && i.$$typeof === n ? (W = "<" + (F(i.type) || "Unknown") + " />", T = " Did you accidentally export a JSX literal instead of a component?") : W = typeof i, S("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", W, T);
         }
@@ -1309,8 +1347,8 @@ Check the top-level render call using <` + g + ">.");
           if (ge !== void 0)
             if (w)
               if (tt(ge)) {
-                for (var Ye = 0; Ye < ge.length; Ye++)
-                  Vt(ge[Ye], i);
+                for (var We = 0; We < ge.length; We++)
+                  Vt(ge[We], i);
                 Object.freeze && Object.freeze(ge);
               } else
                 S("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
@@ -1330,16 +1368,16 @@ Check the top-level render call using <` + g + ">.");
     rt.Fragment = e, rt.jsx = Pn, rt.jsxs = jn;
   }()), rt;
 }
-process.env.NODE_ENV === "production" ? Ut.exports = ya() : Ut.exports = Ea();
+process.env.NODE_ENV === "production" ? Ut.exports = Ea() : Ut.exports = wa();
 var c = Ut.exports;
 function wn(t) {
   return t.title.search("<") > -1 ? /* @__PURE__ */ c.jsx("button", { className: "svg", dangerouslySetInnerHTML: { __html: t.title } }) : /* @__PURE__ */ c.jsx("button", { children: t.title });
 }
-const wa = /* @__PURE__ */ c.jsxs("svg", { className: "closeIcon", width: "14", height: "14", fill: "none", stroke: "#666666", strokeMiterlimit: "10", children: [
+const xa = /* @__PURE__ */ c.jsxs("svg", { className: "closeIcon", width: "14", height: "14", fill: "none", stroke: "#666666", strokeMiterlimit: "10", children: [
   /* @__PURE__ */ c.jsx("circle", { cx: "7", cy: "7", r: "6" }),
   /* @__PURE__ */ c.jsx("line", { x1: "4", y1: "4", x2: "10", y2: "10" }),
   /* @__PURE__ */ c.jsx("line", { x1: "4", y1: "10", x2: "10", y2: "4" })
-] }), xa = /* @__PURE__ */ c.jsx("svg", { className: "dragIcon", width: "14", height: "14", fill: "#666666", stroke: "none", children: /* @__PURE__ */ c.jsx(
+] }), Ca = /* @__PURE__ */ c.jsx("svg", { className: "dragIcon", width: "14", height: "14", fill: "#666666", stroke: "none", children: /* @__PURE__ */ c.jsx(
   "path",
   {
     d: `M10.43,4H3.57C3.26,4,3,4.22,3,4.5v1C3,5.78,3.26,6,3.57,6h6.86C10.74,6,11,5.78,11,5.5v-1
@@ -1347,16 +1385,16 @@ C11,4.22,10.74,4,10.43,4z M10.43,8H3.57C3.26,8,3,8.22,3,8.5v1C3,9.78,3.26,10,3.5
 C11,8.22,10.74,8,10.43,8z`
   }
 ) });
-function Ca(t) {
+function Sa(t) {
   return /* @__PURE__ */ c.jsx(mn.Item, { value: t.title, children: /* @__PURE__ */ c.jsxs("div", { children: [
-    xa,
+    Ca,
     /* @__PURE__ */ c.jsx("span", { children: t.title }),
     /* @__PURE__ */ c.jsx("button", { className: "closeIcon", onClick: () => {
       t.onDelete(t.index);
-    }, children: wa })
+    }, children: xa })
   ] }) }, t.title);
 }
-function Sa(t) {
+function Oa(t) {
   const [n, a] = oe(!1), [e, r] = oe(t.options), s = (p) => {
     t.onDragComplete(p), r(p);
   }, u = (p) => {
@@ -1364,7 +1402,7 @@ function Sa(t) {
     v.splice(p, 1), s(v);
   }, l = [];
   e.forEach((p, v) => {
-    l.push(/* @__PURE__ */ c.jsx(Ca, { index: v, title: p, onDelete: u }, p));
+    l.push(/* @__PURE__ */ c.jsx(Sa, { index: v, title: p, onDelete: u }, p));
   });
   let d = "dropdown draggable";
   return t.subdropdown && (d += " subdropdown"), /* @__PURE__ */ c.jsxs("div", { className: d, onMouseEnter: () => a(!0), onMouseLeave: () => a(!1), children: [
@@ -1372,10 +1410,10 @@ function Sa(t) {
     /* @__PURE__ */ c.jsx(mn.Group, { axis: "y", values: e, onReorder: s, style: { visibility: n ? "visible" : "hidden" }, children: l })
   ] });
 }
-function Oa(t) {
+function Ta(t) {
   const [n, a] = oe(!1), e = [];
   t.options.map((s, u) => {
-    t.onSelect !== void 0 && (s.onSelect = t.onSelect), e.push(/* @__PURE__ */ c.jsx(Ta, { option: s }, u));
+    t.onSelect !== void 0 && (s.onSelect = t.onSelect), e.push(/* @__PURE__ */ c.jsx(Ma, { option: s }, u));
   });
   let r = "dropdown";
   return t.subdropdown && (r += " subdropdown"), /* @__PURE__ */ c.jsxs(
@@ -1397,13 +1435,13 @@ function Oa(t) {
     }
   );
 }
-function Ta(t) {
+function Ma(t) {
   const { option: n } = t, [a, e] = oe("");
   let r;
   switch (n.type) {
     case "draggable":
       r = /* @__PURE__ */ c.jsx(
-        Sa,
+        Oa,
         {
           title: n.title,
           options: n.value,
@@ -1416,7 +1454,7 @@ function Ta(t) {
       break;
     case "dropdown":
       r = /* @__PURE__ */ c.jsx(
-        Oa,
+        Ta,
         {
           title: n.title,
           options: n.value,
@@ -1439,10 +1477,10 @@ function Ta(t) {
   }
   return /* @__PURE__ */ c.jsx("li", { className: a === n.title ? "selected" : "", children: r }, aa());
 }
-function hi(t) {
+function pi(t) {
   const n = [], a = [];
   t.components.forEach((s) => {
-    s instanceof ca ? n.push(la) : s instanceof qe ? (n.push(ua), da(t)) : s instanceof ma ? (n.push(ga), a.push(va)) : s instanceof En && n.push(ba);
+    s instanceof ca ? n.push(la) : s instanceof Ue ? (n.push(ua), a.push(fa), da(t)) : s instanceof ga ? (n.push(va), a.push(ba)) : s instanceof En && n.push(ya);
   });
   function e(s) {
     switch (n.forEach((u) => u(t, s)), s.event) {
@@ -1462,7 +1500,7 @@ function hi(t) {
     t.editor ? r(s) : e(s);
   });
 }
-const Ma = `out vec3 worldPosition;
+const Ra = `out vec3 worldPosition;
 uniform float uDistance;
 
 void main() {
@@ -1471,7 +1509,7 @@ void main() {
   worldPosition.xz += cameraPosition.xz;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(worldPosition, 1.0);
-}`, Ra = `out vec4 fragColor;
+}`, Pa = `out vec4 fragColor;
 in vec3 worldPosition;
 
 uniform float uDivisions;
@@ -1539,7 +1577,7 @@ void main() {
 
   if (fragColor.a <= 0.0) discard;
 }`;
-class Pa extends un {
+class ja extends un {
   constructor(n) {
     super({
       extensions: {
@@ -1568,16 +1606,16 @@ class Pa extends un {
           value: (n == null ? void 0 : n.gridOpacity) !== void 0 ? n == null ? void 0 : n.gridOpacity : 0.25
         }
       },
-      vertexShader: Ma,
-      fragmentShader: Ra,
+      vertexShader: Ra,
+      fragmentShader: Pa,
       name: "InfiniteGrid",
       depthWrite: !1
     });
   }
 }
-class ja extends Ln {
+class _a extends Ln {
   constructor() {
-    const a = new Pa();
+    const a = new ja();
     super(new Fn(2, 2), a);
     H(this, "gridMaterial");
     this.gridMaterial = a, this.frustumCulled = !1, this.name = "InfiniteGridHelper", this.position.y = 0.1;
@@ -1586,7 +1624,7 @@ class ja extends Ln {
     this.gridMaterial.needsUpdate = !0;
   }
 }
-const _a = `#include <common>
+const ka = `#include <common>
 #include <batching_pars_vertex>
 #include <uv_pars_vertex>
 #include <color_pars_vertex>
@@ -1616,7 +1654,7 @@ void main() {
 	#include <logdepthbuf_vertex>
 	#include <clipping_planes_vertex>
 	#include <worldpos_vertex>
-}`, ka = `
+}`, Da = `
 #include <common>
 #include <uv_pars_fragment>
 #include <clipping_planes_pars_fragment>
@@ -1625,14 +1663,14 @@ void main() {
 	#include <clipping_planes_fragment>
 	gl_FragColor = vec4(vec3(vUv, 0.0), 1.0);
 }`;
-class Da extends un {
+class Aa extends un {
   constructor() {
     super({
       defines: {
         USE_UV: ""
       },
-      vertexShader: _a,
-      fragmentShader: ka
+      vertexShader: ka,
+      fragmentShader: Da
     });
   }
 }
@@ -1694,26 +1732,26 @@ function xn(t) {
           children: t.child.name.length > 0 ? `${t.child.name} (${t.child.type})` : `${t.child.type}::${t.child.uuid}`
         }
       ),
-      /* @__PURE__ */ c.jsx("div", { className: `icon ${fa(t.child)}` })
+      /* @__PURE__ */ c.jsx("div", { className: `icon ${ha(t.child)}` })
     ] }),
     /* @__PURE__ */ c.jsx("div", { className: n ? "open" : "", children: /* @__PURE__ */ c.jsx("div", { className: "container", children: r }) })
   ] }, Math.random());
 }
-function Aa(t) {
+function Ia(t) {
   const n = [];
   return t.child.children.map((a) => {
     n.push(/* @__PURE__ */ c.jsx(xn, { child: a, three: t.three }, Math.random()));
   }), /* @__PURE__ */ c.jsx("div", { className: `scene ${t.class !== void 0 ? t.class : ""}`, children: n });
 }
-const Ia = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA5klEQVRoge2Y0Q6EIAwE6cX//+X6cCFpSMEKVTdk501OpRNKiyelFC0b8Ps6gCwoggZF0KAIGhRBgyJoUAQNiqCxjciR9SLV//eZiAyvK3U8i/QVaQO2YyLSFVvlkdTKDjJCukh2ykR5ZEW+kHmlatl90RaBtDkK/w7CYhuRUEO0ee3l+J3m55Vm+17vtwjTnV1V3QA8qfbeUXCzRWDpiLLS+OyzvRW7IzW9R+okvclsqR09743bo0yUpc1+lSJvNsa002+Euk9GKzV7SmZDRIMiaFAEDYqgQRE0KIIGRdCgCBoUQeMEMERadX7YUz8AAAAASUVORK5CYII=";
-function Na(t) {
+const Na = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA5klEQVRoge2Y0Q6EIAwE6cX//+X6cCFpSMEKVTdk501OpRNKiyelFC0b8Ps6gCwoggZF0KAIGhRBgyJoUAQNiqCxjciR9SLV//eZiAyvK3U8i/QVaQO2YyLSFVvlkdTKDjJCukh2ykR5ZEW+kHmlatl90RaBtDkK/w7CYhuRUEO0ee3l+J3m55Vm+17vtwjTnV1V3QA8qfbeUXCzRWDpiLLS+OyzvRW7IzW9R+okvclsqR09743bo0yUpc1+lSJvNsa002+Euk9GKzV7SmZDRIMiaFAEDYqgQRE0KIIGRdCgCBoUQeMEMERadX7YUz8AAAAASUVORK5CYII=";
+function La(t) {
   return "items" in t;
 }
-function Ue(t) {
+function Be(t) {
   const n = [];
   return t.items.forEach((a) => {
-    Na(a) ? n.push(
-      /* @__PURE__ */ c.jsx(Ue, { title: a.title, items: a.items }, Math.random())
+    La(a) ? n.push(
+      /* @__PURE__ */ c.jsx(Be, { title: a.title, items: a.items }, Math.random())
     ) : n.push(
       /* @__PURE__ */ c.jsx(
         ot,
@@ -1735,7 +1773,7 @@ function Ue(t) {
     );
   }), /* @__PURE__ */ c.jsx($t, { label: t.title, open: t.expanded === !0, children: n });
 }
-function La(t) {
+function Fa(t) {
   return !(t === "alphaHash" || t === "alphaToCoverage" || t === "attenuationDistance" || t === "colorWrite" || t === "combine" || t === "defaultAttributeValues" || t === "depthFunc" || t === "forceSinglePass" || t === "glslVersion" || t === "linewidth" || t === "normalMapType" || t === "precision" || t === "premultipliedAlpha" || t === "shadowSide" || t === "side" || t === "toneMapped" || t === "uniformsGroups" || t === "uniformsNeedUpdate" || t === "userData" || t === "vertexColors" || t === "version" || t === "wireframeLinecap" || t === "wireframeLinejoin" || t === "wireframeLinewidth" || t.slice(0, 5) === "blend" || t.slice(0, 4) === "clip" || t.slice(0, 7) === "polygon" || t.slice(0, 7) === "stencil" || t.slice(0, 2) === "is");
 }
 function Ae(t) {
@@ -1887,10 +1925,10 @@ function Ae(t) {
   }
   return t;
 }
-function Fa(t) {
+function Ua(t) {
   return t.toLowerCase().search("intensity") > -1 || t === "anisotropyRotation" || t === "bumpScale" || t === "clearcoatRoughness" || t === "displacementBias" || t === "displacementScale" || t === "metalness" || t === "opacity" || t === "reflectivity" || t === "refractionRatio" || t === "roughness" || t === "sheenRoughness" || t === "thickness";
 }
-function Ua() {
+function Ba() {
   const t = document.createElement("input");
   return t.type = "file", new Promise((n, a) => {
     t.addEventListener("change", function() {
@@ -1908,7 +1946,7 @@ function Ua() {
 function Jt(t, n, a) {
   const e = [];
   for (const r in t) {
-    if (!La(r))
+    if (!Fa(r))
       continue;
     const s = typeof t[r], u = t[r];
     if (s === "boolean" || s === "number" || s === "string") {
@@ -1926,7 +1964,7 @@ function Jt(t, n, a) {
           v !== void 0 && Q(v, `material.${d}`, p);
         }
       };
-      Fa(r) && (l.value = Number(u), l.type = "range", l.min = 0, l.max = 1, l.step = 0.01), e.push(l);
+      Ua(r) && (l.value = Number(u), l.type = "range", l.min = 0, l.max = 1, l.step = 0.01), e.push(l);
     } else if (s === "object")
       if (u.isColor)
         e.push({
@@ -2036,14 +2074,14 @@ function Jt(t, n, a) {
     }
   }), e;
 }
-function Ba(t, n) {
+function $a(t, n) {
   const a = t.material;
   if (Array.isArray(a)) {
     const e = [], r = a.length;
     for (let s = 0; s < r; s++)
       e.push(
         /* @__PURE__ */ c.jsx(
-          Ue,
+          Be,
           {
             title: `Material ${s}`,
             items: Jt(a[s], t, n)
@@ -2054,7 +2092,7 @@ function Ba(t, n) {
     return /* @__PURE__ */ c.jsx(c.Fragment, { children: e });
   } else
     return /* @__PURE__ */ c.jsx(
-      Ue,
+      Be,
       {
         title: "Material",
         items: Jt(a, t, n)
@@ -2161,10 +2199,10 @@ function ot(t) {
       }
     ),
     t.type === "image" && /* @__PURE__ */ c.jsx("img", { ref: u, onClick: () => {
-      Ua().then((v) => {
+      Ba().then((v) => {
         u.current.src = v, t.onChange !== void 0 && t.onChange(t.prop !== void 0 ? t.prop : t.title, v);
       });
-    }, src: a.length > 0 ? a : Ia })
+    }, src: a.length > 0 ? a : Na })
   ] });
 }
 function Qt(t) {
@@ -2196,7 +2234,7 @@ function Qt(t) {
   }
   return t;
 }
-function $a(t, n) {
+function Ga(t, n) {
   const a = [];
   if (t.perspectiveCameraInfo !== void 0)
     for (const e in t.perspectiveCameraInfo)
@@ -2229,24 +2267,24 @@ function $a(t, n) {
         }
       });
   return /* @__PURE__ */ c.jsx(
-    Ue,
+    Be,
     {
       title: "Camera",
       items: a
     }
   );
 }
-const Ga = Math.PI / 180, Va = 180 / Math.PI;
-function Ke(t, n, a, e, r) {
+const Va = Math.PI / 180, za = 180 / Math.PI;
+function Xe(t, n, a, e, r) {
   return e + (t - n) * (r - e) / (a - n);
 }
-function za(t) {
-  return t * Ga;
-}
-function At(t) {
+function Ya(t) {
   return t * Va;
 }
-function Ya(t, n) {
+function At(t) {
+  return t * za;
+}
+function Wa(t, n) {
   const a = new Un();
   a.elements = t.matrix;
   const e = new Y(), r = new Bn(), s = new Y();
@@ -2257,10 +2295,10 @@ function Ya(t, n) {
     const v = (E = n.scene) == null ? void 0 : E.getObjectByProperty("uuid", t.uuid);
     v !== void 0 && Q(v, d, p);
   }, l = (d, p) => {
-    u(d, za(p));
+    u(d, Ya(p));
   };
   return /* @__PURE__ */ c.jsx(
-    Ue,
+    Be,
     {
       title: "Transform",
       items: [
@@ -2362,7 +2400,7 @@ function en(t) {
   }
   return t;
 }
-function Wa(t, n) {
+function Ha(t, n) {
   const a = [];
   if (t.lightInfo !== void 0)
     for (const e in t.lightInfo) {
@@ -2394,14 +2432,14 @@ function Wa(t, n) {
       }));
     }
   return /* @__PURE__ */ c.jsx(
-    Ue,
+    Be,
     {
       title: "Light",
       items: a
     }
   );
 }
-function Ha(t, n) {
+function Ka(t, n) {
   const a = [];
   return t.animations.forEach((e) => {
     a.push({
@@ -2441,7 +2479,7 @@ function Ha(t, n) {
         u !== void 0 && Q(u, r, s);
       }
     });
-  }), /* @__PURE__ */ c.jsx(Ue, { title: "Animations", items: a });
+  }), /* @__PURE__ */ c.jsx(Be, { title: "Animations", items: a });
 }
 const Cn = {
   name: "",
@@ -2456,7 +2494,7 @@ const Cn = {
   lightInfo: void 0
 };
 let ae = { ...Cn };
-function Ka(t) {
+function Xa(t) {
   const [n, a] = oe(-1);
   Fe(() => {
     function r(u) {
@@ -2519,15 +2557,15 @@ function Ka(t) {
       )
     ] }),
     /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
-      Ya(ae, t.three),
-      ae.animations.length > 0 ? Ha(ae, t.three) : null,
-      e.search("camera") > -1 ? $a(ae, t.three) : null,
-      e.search("light") > -1 ? Wa(ae, t.three) : null,
-      e.search("mesh") > -1 ? Ba(ae, t.three) : null
+      Wa(ae, t.three),
+      ae.animations.length > 0 ? Ka(ae, t.three) : null,
+      e.search("camera") > -1 ? Ga(ae, t.three) : null,
+      e.search("light") > -1 ? Ha(ae, t.three) : null,
+      e.search("mesh") > -1 ? $a(ae, t.three) : null
     ] })
   ] }) }, n) }, "Inspector");
 }
-class pi extends ta {
+class mi extends ta {
   constructor(a) {
     super(a);
     H(this, "three");
@@ -2548,8 +2586,8 @@ class pi extends ta {
     var r;
     const a = this.componentState.scene !== null, e = "Hierarchy - " + (a ? `${(r = this.componentState.scene) == null ? void 0 : r.name}` : "No Scene");
     return /* @__PURE__ */ c.jsx("div", { id: "SidePanel", children: /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
-      /* @__PURE__ */ c.jsx($t, { label: e, open: !0, children: /* @__PURE__ */ c.jsx(c.Fragment, { children: a && /* @__PURE__ */ c.jsx(Aa, { child: this.componentState.scene, three: this.three }) }) }),
-      /* @__PURE__ */ c.jsx(Ka, { three: this.three })
+      /* @__PURE__ */ c.jsx($t, { label: e, open: !0, children: /* @__PURE__ */ c.jsx(c.Fragment, { children: a && /* @__PURE__ */ c.jsx(Ia, { child: this.componentState.scene, three: this.three }) }) }),
+      /* @__PURE__ */ c.jsx(Xa, { three: this.three })
     ] }) }, "SidePanel");
   }
   // Getters / Setters
@@ -2557,7 +2595,7 @@ class pi extends ta {
     return this.state;
   }
 }
-function mi(t) {
+function gi(t) {
   function n() {
     return t.three.scene === void 0 ? (console.log("No scene:", t.three), !1) : !0;
   }
@@ -2601,10 +2639,10 @@ function mi(t) {
     j.removeEventListener(_.GET_OBJECT, a), j.removeEventListener(_.UPDATE_OBJECT, r), j.removeEventListener(_.CREATE_TEXTURE, s), j.removeEventListener(_.REQUEST_METHOD, u);
   }), []), null;
 }
-const tn = { type: "change" }, It = { type: "start" }, nn = { type: "end" }, wt = new $n(), an = new Gn(), Xa = Math.cos(70 * Vn.DEG2RAD);
-class qa extends cn {
+const tn = { type: "change" }, It = { type: "start" }, nn = { type: "end" }, wt = new $n(), an = new Gn(), qa = Math.cos(70 * Vn.DEG2RAD);
+class Za extends cn {
   constructor(n, a) {
-    super(), this.object = n, this.domElement = a, this.domElement.style.touchAction = "none", this.enabled = !0, this.target = new Y(), this.cursor = new Y(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: We.ROTATE, MIDDLE: We.DOLLY, RIGHT: We.PAN }, this.touches = { ONE: He.ROTATE, TWO: He.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this.getPolarAngle = function() {
+    super(), this.object = n, this.domElement = a, this.domElement.style.touchAction = "none", this.enabled = !0, this.target = new Y(), this.cursor = new Y(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: He.ROTATE, MIDDLE: He.DOLLY, RIGHT: He.PAN }, this.touches = { ONE: Ke.ROTATE, TWO: Ke.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this.getPolarAngle = function() {
       return l.phi;
     }, this.getAzimuthalAngle = function() {
       return l.theta;
@@ -2625,25 +2663,25 @@ class qa extends cn {
         o.copy(ye).sub(e.target), o.applyQuaternion(y), l.setFromVector3(o), e.autoRotate && s === r.NONE && B(b(Et)), e.enableDamping ? (l.theta += d.theta * e.dampingFactor, l.phi += d.phi * e.dampingFactor) : (l.theta += d.theta, l.phi += d.phi);
         let he = e.minAzimuthAngle, pe = e.maxAzimuthAngle;
         isFinite(he) && isFinite(pe) && (he < -Math.PI ? he += ue : he > Math.PI && (he -= ue), pe < -Math.PI ? pe += ue : pe > Math.PI && (pe -= ue), he <= pe ? l.theta = Math.max(he, Math.min(pe, l.theta)) : l.theta = l.theta > (he + pe) / 2 ? Math.max(he, l.theta) : Math.min(pe, l.theta)), l.phi = Math.max(e.minPolarAngle, Math.min(e.maxPolarAngle, l.phi)), l.makeSafe(), e.enableDamping === !0 ? e.target.addScaledVector(v, e.dampingFactor) : e.target.add(v), e.target.sub(e.cursor), e.target.clampLength(e.minTargetRadius, e.maxTargetRadius), e.target.add(e.cursor), e.zoomToCursor && ee || e.object.isOrthographicCamera ? l.radius = q(l.radius) : l.radius = q(l.radius * p), o.setFromSpherical(l), o.applyQuaternion(D), ye.copy(e.target).add(o), e.object.lookAt(e.target), e.enableDamping === !0 ? (d.theta *= 1 - e.dampingFactor, d.phi *= 1 - e.dampingFactor, v.multiplyScalar(1 - e.dampingFactor)) : (d.set(0, 0, 0), v.set(0, 0, 0));
-        let Ve = !1;
+        let ze = !1;
         if (e.zoomToCursor && ee) {
           let De = null;
           if (e.object.isPerspectiveCamera) {
             const Te = o.length();
             De = q(Te * p);
-            const ze = Te - De;
-            e.object.position.addScaledVector(fe, ze), e.object.updateMatrixWorld();
+            const Ye = Te - De;
+            e.object.position.addScaledVector(fe, Ye), e.object.updateMatrixWorld();
           } else if (e.object.isOrthographicCamera) {
             const Te = new Y(le.x, le.y, 0);
-            Te.unproject(e.object), e.object.zoom = Math.max(e.minZoom, Math.min(e.maxZoom, e.object.zoom / p)), e.object.updateProjectionMatrix(), Ve = !0;
-            const ze = new Y(le.x, le.y, 0);
-            ze.unproject(e.object), e.object.position.sub(ze).add(Te), e.object.updateMatrixWorld(), De = o.length();
+            Te.unproject(e.object), e.object.zoom = Math.max(e.minZoom, Math.min(e.maxZoom, e.object.zoom / p)), e.object.updateProjectionMatrix(), ze = !0;
+            const Ye = new Y(le.x, le.y, 0);
+            Ye.unproject(e.object), e.object.position.sub(Ye).add(Te), e.object.updateMatrixWorld(), De = o.length();
           } else
             console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled."), e.zoomToCursor = !1;
-          De !== null && (this.screenSpacePanning ? e.target.set(0, 0, -1).transformDirection(e.object.matrix).multiplyScalar(De).add(e.object.position) : (wt.origin.copy(e.object.position), wt.direction.set(0, 0, -1).transformDirection(e.object.matrix), Math.abs(e.object.up.dot(wt.direction)) < Xa ? n.lookAt(e.target) : (an.setFromNormalAndCoplanarPoint(e.object.up, e.target), wt.intersectPlane(an, e.target))));
+          De !== null && (this.screenSpacePanning ? e.target.set(0, 0, -1).transformDirection(e.object.matrix).multiplyScalar(De).add(e.object.position) : (wt.origin.copy(e.object.position), wt.direction.set(0, 0, -1).transformDirection(e.object.matrix), Math.abs(e.object.up.dot(wt.direction)) < qa ? n.lookAt(e.target) : (an.setFromNormalAndCoplanarPoint(e.object.up, e.target), wt.intersectPlane(an, e.target))));
         } else
-          e.object.isOrthographicCamera && (e.object.zoom = Math.max(e.minZoom, Math.min(e.maxZoom, e.object.zoom / p)), e.object.updateProjectionMatrix(), Ve = !0);
-        return p = 1, ee = !1, Ve || N.distanceToSquared(e.object.position) > u || 8 * (1 - te.dot(e.object.quaternion)) > u || be.distanceToSquared(e.target) > 0 ? (e.dispatchEvent(tn), N.copy(e.object.position), te.copy(e.object.quaternion), be.copy(e.target), !0) : !1;
+          e.object.isOrthographicCamera && (e.object.zoom = Math.max(e.minZoom, Math.min(e.maxZoom, e.object.zoom / p)), e.object.updateProjectionMatrix(), ze = !0);
+        return p = 1, ee = !1, ze || N.distanceToSquared(e.object.position) > u || 8 * (1 - te.dot(e.object.quaternion)) > u || be.distanceToSquared(e.target) > 0 ? (e.dispatchEvent(tn), N.copy(e.object.position), te.copy(e.object.quaternion), be.copy(e.target), !0) : !1;
       };
     }(), this.dispose = function() {
       e.domElement.removeEventListener("contextmenu", Oe), e.domElement.removeEventListener("pointerdown", et), e.domElement.removeEventListener("pointercancel", ke), e.domElement.removeEventListener("wheel", mt), e.domElement.removeEventListener("pointermove", Se), e.domElement.removeEventListener("pointerup", ke), e._domElementKeyEvents !== null && (e._domElementKeyEvents.removeEventListener("keydown", nt), e._domElementKeyEvents = null);
@@ -2765,7 +2803,7 @@ class qa extends cn {
         E.set(D, N);
       }
     }
-    function $e(o) {
+    function Ge(o) {
       if (f.length === 1)
         M.set(o.pageX, o.pageY);
       else {
@@ -2778,7 +2816,7 @@ class qa extends cn {
       K.set(0, te);
     }
     function Pt(o) {
-      e.enableZoom && je(o), e.enablePan && $e(o);
+      e.enableZoom && je(o), e.enablePan && Ge(o);
     }
     function dt(o) {
       e.enableZoom && je(o), e.enableRotate && Pe(o);
@@ -2809,7 +2847,7 @@ class qa extends cn {
       const be = (o.pageX + y.x) * 0.5, ue = (o.pageY + y.y) * 0.5;
       I(be, ue);
     }
-    function Ge(o) {
+    function Ve(o) {
       e.enableZoom && _e(o), e.enablePan && ht(o);
     }
     function pt(o) {
@@ -2840,12 +2878,12 @@ class qa extends cn {
           y = -1;
       }
       switch (y) {
-        case We.DOLLY:
+        case He.DOLLY:
           if (e.enableZoom === !1)
             return;
           Re(o), s = r.DOLLY;
           break;
-        case We.ROTATE:
+        case He.ROTATE:
           if (o.ctrlKey || o.metaKey || o.shiftKey) {
             if (e.enablePan === !1)
               return;
@@ -2856,7 +2894,7 @@ class qa extends cn {
             me(o), s = r.ROTATE;
           }
           break;
-        case We.PAN:
+        case He.PAN:
           if (o.ctrlKey || o.metaKey || o.shiftKey) {
             if (e.enableRotate === !1)
               return;
@@ -2901,15 +2939,15 @@ class qa extends cn {
       switch (at(o), f.length) {
         case 1:
           switch (e.touches.ONE) {
-            case He.ROTATE:
+            case Ke.ROTATE:
               if (e.enableRotate === !1)
                 return;
               Pe(o), s = r.TOUCH_ROTATE;
               break;
-            case He.PAN:
+            case Ke.PAN:
               if (e.enablePan === !1)
                 return;
-              $e(o), s = r.TOUCH_PAN;
+              Ge(o), s = r.TOUCH_PAN;
               break;
             default:
               s = r.NONE;
@@ -2917,12 +2955,12 @@ class qa extends cn {
           break;
         case 2:
           switch (e.touches.TWO) {
-            case He.DOLLY_PAN:
+            case Ke.DOLLY_PAN:
               if (e.enableZoom === !1 && e.enablePan === !1)
                 return;
               Pt(o), s = r.TOUCH_DOLLY_PAN;
               break;
-            case He.DOLLY_ROTATE:
+            case Ke.DOLLY_ROTATE:
               if (e.enableZoom === !1 && e.enableRotate === !1)
                 return;
               dt(o), s = r.TOUCH_DOLLY_ROTATE;
@@ -2951,7 +2989,7 @@ class qa extends cn {
         case r.TOUCH_DOLLY_PAN:
           if (e.enableZoom === !1 && e.enablePan === !1)
             return;
-          Ge(o), e.update();
+          Ve(o), e.update();
           break;
         case r.TOUCH_DOLLY_ROTATE:
           if (e.enableZoom === !1 && e.enableRotate === !1)
@@ -3023,17 +3061,17 @@ const St = (t) => {
   "Stacked",
   "Quad"
 ], ne = /* @__PURE__ */ new Map(), ie = /* @__PURE__ */ new Map(), we = /* @__PURE__ */ new Map();
-function Be(t, n) {
+function $e(t, n) {
   const a = new dn(-100, 100, 100, -100, 50, 3e3);
   return a.name = t, a.position.copy(n), a.lookAt(0, 0, 0), ne.set(t, a), a;
 }
-Be("Top", new Y(0, 1e3, 0));
-Be("Bottom", new Y(0, -1e3, 0));
-Be("Left", new Y(-1e3, 0, 0));
-Be("Right", new Y(1e3, 0, 0));
-Be("Front", new Y(0, 0, 1e3));
-Be("Back", new Y(0, 0, -1e3));
-Be("Orthographic", new Y(1e3, 1e3, 1e3));
+$e("Top", new Y(0, 1e3, 0));
+$e("Bottom", new Y(0, -1e3, 0));
+$e("Left", new Y(-1e3, 0, 0));
+$e("Right", new Y(1e3, 0, 0));
+$e("Front", new Y(0, 0, 1e3));
+$e("Back", new Y(0, 0, -1e3));
+$e("Orthographic", new Y(1e3, 1e3, 1e3));
 const Tt = new Nt(60, 1, 50, 3e3);
 Tt.name = "Debug";
 Tt.position.set(500, 500, 500);
@@ -3045,7 +3083,7 @@ const on = [
   "Normals",
   "UVs",
   "Wireframe"
-], Za = new zn(), Ja = new Yn(), Qa = new Da(), ei = new Wn({
+], Ja = new zn(), Qa = new Yn(), ei = new Aa(), ti = new Wn({
   opacity: 0.33,
   transparent: !0,
   wireframe: !0
@@ -3058,8 +3096,8 @@ z.add(xe);
 const lt = new Hn();
 lt.name = "helpers";
 z.add(lt);
-const ti = new ja();
-lt.add(ti);
+const ni = new _a();
+lt.add(ni);
 const Sn = new hn(500);
 Sn.name = "axisHelper";
 lt.add(Sn);
@@ -3068,13 +3106,13 @@ ct.name = "interactionHelper";
 lt.add(ct);
 ct.visible = !1;
 let Ct = !1, V = ne.get("Debug"), re = ne.get("Orthographic"), Ne = ne.get("Front"), Le = ne.get("Top"), sn = !1;
-function gi(t) {
+function vi(t) {
   const [n, a] = oe(t.mode !== void 0 ? t.mode : "Single"), [e, r] = oe(null), [s, u] = oe(!1), [l, d] = oe(!1), [p, v] = oe(!1), [, E] = oe(Date.now()), x = Ce(null), C = Ce(null), M = Ce(null), G = Ce(null), se = Ce(null), K = Ce(null), S = (f, m) => {
     const b = ie.get(f.name);
     b !== void 0 && b.dispose(), ie.delete(f.name);
     const O = we.get(f.name);
     O !== void 0 && (z.remove(O), O.dispose()), we.delete(f.name);
-    const B = new qa(f, m);
+    const B = new Za(f, m);
     switch (B.enableDamping = !0, B.dampingFactor = 0.05, f.name) {
       case "Top":
       case "Bottom":
@@ -3215,11 +3253,11 @@ function gi(t) {
         const A = new de();
         e.getSize(A);
         const U = Math.min(F.clientX, A.x), J = Math.min(F.clientY, A.y);
-        m.x = Ke(U, 0, A.x, -1, 1), m.y = Ke(J, 0, A.y, 1, -1);
+        m.x = Xe(U, 0, A.x, -1, 1), m.y = Xe(J, 0, A.y, 1, -1);
         const R = A.x / 2, I = A.y / 2, q = () => {
-          U < R ? m.x = Ke(U, 0, R, -1, 1) : m.x = Ke(U, R, A.x, -1, 1);
+          U < R ? m.x = Xe(U, 0, R, -1, 1) : m.x = Xe(U, R, A.x, -1, 1);
         }, me = () => {
-          J < I ? m.y = Ke(J, 0, I, 1, -1) : m.y = Ke(J, I, A.y, 1, -1);
+          J < I ? m.y = Xe(J, 0, I, 1, -1) : m.y = Xe(J, I, A.y, 1, -1);
         };
         switch (n) {
           case "Quad":
@@ -3327,20 +3365,20 @@ function gi(t) {
             if (f !== xt)
               switch (xt = f, xt) {
                 case "Depth":
-                  z.overrideMaterial = Za;
+                  z.overrideMaterial = Ja;
                   break;
                 case "Normals":
-                  z.overrideMaterial = Ja;
+                  z.overrideMaterial = Qa;
                   break;
                 default:
                 case "Renderer":
                   z.overrideMaterial = null;
                   break;
                 case "Wireframe":
-                  z.overrideMaterial = ei;
+                  z.overrideMaterial = ti;
                   break;
                 case "UVs":
-                  z.overrideMaterial = Qa;
+                  z.overrideMaterial = ei;
                   break;
               }
           },
@@ -3370,7 +3408,7 @@ function gi(t) {
     ] })
   ] });
 }
-function vi(t) {
+function bi(t) {
   return /* @__PURE__ */ c.jsxs("div", { className: "editor", ref: t.ref, style: t.style, children: [
     /* @__PURE__ */ c.jsx("header", { children: t.header }),
     t.children,
@@ -3379,35 +3417,35 @@ function vi(t) {
 }
 export {
   $t as Accordion,
-  fi as Application,
+  hi as Application,
   Ot as BaseRemote,
   xn as ChildObject,
-  Aa as ContainerObject,
-  Sa as Draggable,
-  Ca as DraggableItem,
-  Oa as Dropdown,
-  Ta as DropdownItem,
-  vi as Editor,
-  ja as InfiniteGridHelper,
-  Ka as Inspector,
-  gi as MultiView,
+  Ia as ContainerObject,
+  Oa as Draggable,
+  Sa as DraggableItem,
+  Ta as Dropdown,
+  Ma as DropdownItem,
+  bi as Editor,
+  _a as InfiniteGridHelper,
+  Xa as Inspector,
+  vi as MultiView,
   wn as NavButton,
   ca as RemoteComponents,
-  hi as RemoteController,
-  qe as RemoteTheatre,
-  ma as RemoteThree,
+  pi as RemoteController,
+  Ue as RemoteTheatre,
+  ga as RemoteThree,
   En as RemoteTweakpane,
-  mi as SceneInspector,
-  pi as SidePanel,
+  gi as SceneInspector,
+  mi as SidePanel,
   _ as ToolEvents,
-  Da as UVMaterial,
-  li as clamp,
+  Aa as UVMaterial,
+  ui as clamp,
   ra as colorToHex,
   j as debugDispatcher,
   vn as dispose,
   sa as disposeMaterial,
-  di as disposeTexture,
-  ui as distance,
+  fi as disposeTexture,
+  di as distance,
   gn as hierarchyUUID,
   ia as isColor,
   aa as randomID,
