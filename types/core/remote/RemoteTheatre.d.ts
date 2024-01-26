@@ -10,7 +10,7 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjectCBs: Map<string, DataUpdateCallback>;
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
     private static rafDriver;
-    init(projectName: string, projectConfig?: IProjectConfig | undefined): void;
+    init(projectName: string, projectConfig?: IProjectConfig | undefined): Promise<void>;
     dispose(): void;
     sheet(name: string): ISheet | undefined;
     clearSheetObjects(sheetName: string): void;
