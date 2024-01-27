@@ -210,7 +210,7 @@ export default class Scene1 extends BaseScene {
       }
     );
 
-    // app.theatre.playSheet(this.name, { iterationCount: Infinity });
+    app.theatre.playSheet(this.name, { iterationCount: Infinity });
   }
 
   override update() {
