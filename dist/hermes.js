@@ -1,7 +1,7 @@
 var _n = Object.defineProperty;
 var kn = (t, n, a) => n in t ? _n(t, n, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[n] = a;
-var H = (t, n, a) => (kn(t, typeof n != "symbol" ? n + "" : n, a), a);
-import { PositionalAudio as Dn, EventDispatcher as cn, Texture as ln, CubeTexture as An, RepeatWrapping as Wt, ShaderMaterial as un, GLSL3 as In, DoubleSide as Nn, Color as Bt, Mesh as Ln, PlaneGeometry as Fn, Matrix4 as Un, Vector3 as Y, Euler as Bn, Ray as $n, Plane as Gn, MathUtils as Vn, MOUSE as He, TOUCH as Ke, Quaternion as Ht, Spherical as Kt, Vector2 as de, PerspectiveCamera as Nt, MeshDepthMaterial as zn, MeshNormalMaterial as Yn, MeshBasicMaterial as Wn, OrthographicCamera as dn, Scene as fn, Group as Hn, AxesHelper as hn, WebGLRenderer as Kn, Raycaster as Xn, CameraHelper as qn } from "three";
+var Y = (t, n, a) => (kn(t, typeof n != "symbol" ? n + "" : n, a), a);
+import { PositionalAudio as Dn, EventDispatcher as cn, Texture as ln, CubeTexture as An, RepeatWrapping as Wt, ShaderMaterial as un, GLSL3 as In, DoubleSide as Nn, Color as Bt, Mesh as Ln, PlaneGeometry as Fn, Matrix4 as Un, Vector3 as W, Euler as Bn, Ray as $n, Plane as Gn, MathUtils as Vn, MOUSE as He, TOUCH as Ke, Quaternion as Ht, Spherical as Kt, Vector2 as de, PerspectiveCamera as Nt, MeshDepthMaterial as zn, MeshNormalMaterial as Yn, MeshBasicMaterial as Wn, OrthographicCamera as dn, Scene as fn, Group as Hn, AxesHelper as hn, WebGLRenderer as Kn, Raycaster as Xn, CameraHelper as qn } from "three";
 import { getProject as Zn, createRafDriver as Jn } from "@theatre/core";
 import st from "@theatre/studio";
 import { Pane as Qn } from "tweakpane";
@@ -61,11 +61,12 @@ const oa = () => {
 };
 class hi {
   constructor(n, a, e = "editor") {
-    H(this, "channel");
-    H(this, "components", /* @__PURE__ */ new Map());
+    Y(this, "channel");
+    Y(this, "components", /* @__PURE__ */ new Map());
+    Y(this, "debugEnabled");
     // Protected
-    H(this, "_mode", "app");
-    this.editor = a && document.location.hash.search(e) > -1, a && (this.channel = new BroadcastChannel(n));
+    Y(this, "_mode", "app");
+    this.editor = a && document.location.hash.search(e) > -1, this.debugEnabled = a, a && (this.channel = new BroadcastChannel(n));
   }
   addComponent(n, a) {
     this.components.set(n, a);
@@ -116,7 +117,7 @@ const j = new cn(), _ = {
 };
 class Ot {
   constructor(n) {
-    H(this, "app");
+    Y(this, "app");
     this.app = n;
   }
   dispose() {
@@ -158,11 +159,11 @@ const bn = () => {
 }, qe = class qe extends Ot {
   constructor() {
     super(...arguments);
-    H(this, "project");
-    H(this, "sheets", /* @__PURE__ */ new Map());
-    H(this, "sheetObjects", /* @__PURE__ */ new Map());
-    H(this, "sheetObjectCBs", /* @__PURE__ */ new Map());
-    H(this, "sheetObjectUnsubscribe", /* @__PURE__ */ new Map());
+    Y(this, "project");
+    Y(this, "sheets", /* @__PURE__ */ new Map());
+    Y(this, "sheetObjects", /* @__PURE__ */ new Map());
+    Y(this, "sheetObjectCBs", /* @__PURE__ */ new Map());
+    Y(this, "sheetObjectUnsubscribe", /* @__PURE__ */ new Map());
   }
   init(a, e) {
     return this.project = Zn(a, e), this.project.ready;
@@ -255,7 +256,7 @@ const bn = () => {
     return qe.rafDriver || (qe.rafDriver = Jn()), qe.rafDriver;
   }
 };
-H(qe, "rafDriver", null);
+Y(qe, "rafDriver", null);
 let Ue = qe, Me;
 function ua(t, n) {
   t.components.forEach((a) => {
@@ -508,10 +509,10 @@ function Ft(t) {
 class ga extends Ot {
   constructor() {
     super(...arguments);
-    H(this, "scene");
+    Y(this, "scene");
   }
   getObject(a) {
-    this.app.send({
+    this.app.debugEnabled && this.app.send({
       event: "getObject",
       target: "app",
       data: a
@@ -559,9 +560,9 @@ class ga extends Ot {
     });
   }
   setScene(a) {
-    if (a === void 0)
+    if (a === void 0 || (this.scene = a, !this.app.debugEnabled))
       return;
-    this.scene = a, oa(), gn(this.scene);
+    oa(), gn(this.scene);
     const e = yn(this.scene);
     this.app.send({
       event: "setScene",
@@ -570,6 +571,8 @@ class ga extends Ot {
     });
   }
   addCamera(a) {
+    if (!this.app.debugEnabled)
+      return;
     const e = Dt(a);
     this.app.send({
       event: "addCamera",
@@ -578,6 +581,8 @@ class ga extends Ot {
     });
   }
   removeCamera(a) {
+    if (!this.app.debugEnabled)
+      return;
     const e = Dt(a);
     this.app.send({
       event: "removeCamera",
@@ -621,12 +626,12 @@ function ba(t, n) {
 class En extends Ot {
   constructor(a) {
     super(a);
-    H(this, "bindCBs");
-    H(this, "buttonCBs");
-    H(this, "pane");
-    H(this, "appCallbacks", 0);
-    H(this, "editorCallbacks", 0);
-    H(this, "inspectorFolder");
+    Y(this, "bindCBs");
+    Y(this, "buttonCBs");
+    Y(this, "pane");
+    Y(this, "appCallbacks", 0);
+    Y(this, "editorCallbacks", 0);
+    Y(this, "inspectorFolder");
     this.bindCBs = /* @__PURE__ */ new Map(), this.buttonCBs = /* @__PURE__ */ new Map(), a.editor && this.createGUI();
   }
   createGUI() {
@@ -1004,18 +1009,18 @@ function wa() {
         if (Ee && w && typeof Ee.stack == "string") {
           for (var T = Ee.stack.split(`
 `), ce = w.stack.split(`
-`), W = T.length - 1, Z = ce.length - 1; W >= 1 && Z >= 0 && T[W] !== ce[Z]; )
+`), H = T.length - 1, Z = ce.length - 1; H >= 1 && Z >= 0 && T[H] !== ce[Z]; )
             Z--;
-          for (; W >= 1 && Z >= 0; W--, Z--)
-            if (T[W] !== ce[Z]) {
-              if (W !== 1 || Z !== 1)
+          for (; H >= 1 && Z >= 0; H--, Z--)
+            if (T[H] !== ce[Z]) {
+              if (H !== 1 || Z !== 1)
                 do
-                  if (W--, Z--, Z < 0 || T[W] !== ce[Z]) {
+                  if (H--, Z--, Z < 0 || T[H] !== ce[Z]) {
                     var ge = `
-` + T[W].replace(" at new ", " at ");
+` + T[H].replace(" at new ", " at ");
                     return i.displayName && ge.includes("<anonymous>") && (ge = ge.replace("<anonymous>", i.displayName)), typeof i == "function" && je.set(i, ge), ge;
                   }
-                while (W >= 1 && Z >= 0);
+                while (H >= 1 && Z >= 0);
               break;
             }
         }
@@ -1081,8 +1086,8 @@ function wa() {
                 throw ce.name = "Invariant Violation", ce;
               }
               T = i[P](h, P, w, g, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
-            } catch (W) {
-              T = W;
+            } catch (H) {
+              T = H;
             }
             T && !(T instanceof Error) && (Se(k), S("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", w || "React class", g, P, typeof T), Se(null)), T instanceof Error && !(T.message in pt) && (pt[T.message] = !0, Se(k), S("Failed %s type: %s", g, T.message), Se(null));
           }
@@ -1199,9 +1204,9 @@ function wa() {
         for (L in h)
           Ve.call(h, L) && !_t.hasOwnProperty(L) && (P[L] = h[L]);
         if (i && i.defaultProps) {
-          var W = i.defaultProps;
-          for (L in W)
-            P[L] === void 0 && (P[L] = W[L]);
+          var H = i.defaultProps;
+          for (L in H)
+            P[L] === void 0 && (P[L] = H[L]);
         }
         if (T || ce) {
           var Z = typeof i == "function" ? i.displayName || i.name || "Unknown" : i;
@@ -1336,8 +1341,8 @@ Check the top-level render call using <` + g + ">.");
           (i === void 0 || typeof i == "object" && i !== null && Object.keys(i).length === 0) && (T += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
           var ce = De(k);
           ce ? T += ce : T += ze();
-          var W;
-          i === null ? W = "null" : tt(i) ? W = "array" : i !== void 0 && i.$$typeof === n ? (W = "<" + (F(i.type) || "Unknown") + " />", T = " Did you accidentally export a JSX literal instead of a component?") : W = typeof i, S("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", W, T);
+          var H;
+          i === null ? H = "null" : tt(i) ? H = "array" : i !== void 0 && i.$$typeof === n ? (H = "<" + (F(i.type) || "Unknown") + " />", T = " Did you accidentally export a JSX literal instead of a component?") : H = typeof i, S("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", H, T);
         }
         var Z = ue(i, h, g, k, L);
         if (Z == null)
@@ -1617,7 +1622,7 @@ class _a extends Ln {
   constructor() {
     const a = new ja();
     super(new Fn(2, 2), a);
-    H(this, "gridMaterial");
+    Y(this, "gridMaterial");
     this.gridMaterial = a, this.frustumCulled = !1, this.name = "InfiniteGridHelper", this.position.y = 0.1;
   }
   update() {
@@ -2287,7 +2292,7 @@ function At(t) {
 function Wa(t, n) {
   const a = new Un();
   a.elements = t.matrix;
-  const e = new Y(), r = new Bn(), s = new Y();
+  const e = new W(), r = new Bn(), s = new W();
   t.uuid.length > 0 && (e.setFromMatrixPosition(a), r.setFromRotationMatrix(a), s.setFromMatrixScale(a));
   const u = (d, p) => {
     var E;
@@ -2568,9 +2573,9 @@ function Xa(t) {
 class mi extends ta {
   constructor(a) {
     super(a);
-    H(this, "three");
+    Y(this, "three");
     // Private
-    H(this, "setScene", (a) => {
+    Y(this, "setScene", (a) => {
       this.setState(() => ({
         scene: a.value
       }));
@@ -2642,7 +2647,7 @@ function gi(t) {
 const tn = { type: "change" }, It = { type: "start" }, nn = { type: "end" }, wt = new $n(), an = new Gn(), qa = Math.cos(70 * Vn.DEG2RAD);
 class Za extends cn {
   constructor(n, a) {
-    super(), this.object = n, this.domElement = a, this.domElement.style.touchAction = "none", this.enabled = !0, this.target = new Y(), this.cursor = new Y(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: He.ROTATE, MIDDLE: He.DOLLY, RIGHT: He.PAN }, this.touches = { ONE: Ke.ROTATE, TWO: Ke.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this.getPolarAngle = function() {
+    super(), this.object = n, this.domElement = a, this.domElement.style.touchAction = "none", this.enabled = !0, this.target = new W(), this.cursor = new W(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: He.ROTATE, MIDDLE: He.DOLLY, RIGHT: He.PAN }, this.touches = { ONE: Ke.ROTATE, TWO: Ke.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this.getPolarAngle = function() {
       return l.phi;
     }, this.getAzimuthalAngle = function() {
       return l.theta;
@@ -2657,7 +2662,7 @@ class Za extends cn {
     }, this.reset = function() {
       e.target.copy(e.target0), e.object.position.copy(e.position0), e.object.zoom = e.zoom0, e.object.updateProjectionMatrix(), e.dispatchEvent(tn), e.update(), s = r.NONE;
     }, this.update = function() {
-      const o = new Y(), y = new Ht().setFromUnitVectors(n.up, new Y(0, 1, 0)), D = y.clone().invert(), N = new Y(), te = new Ht(), be = new Y(), ue = 2 * Math.PI;
+      const o = new W(), y = new Ht().setFromUnitVectors(n.up, new W(0, 1, 0)), D = y.clone().invert(), N = new W(), te = new Ht(), be = new W(), ue = 2 * Math.PI;
       return function(Et = null) {
         const ye = e.object.position;
         o.copy(ye).sub(e.target), o.applyQuaternion(y), l.setFromVector3(o), e.autoRotate && s === r.NONE && B(b(Et)), e.enableDamping ? (l.theta += d.theta * e.dampingFactor, l.phi += d.phi * e.dampingFactor) : (l.theta += d.theta, l.phi += d.phi);
@@ -2672,9 +2677,9 @@ class Za extends cn {
             const Ye = Te - De;
             e.object.position.addScaledVector(fe, Ye), e.object.updateMatrixWorld();
           } else if (e.object.isOrthographicCamera) {
-            const Te = new Y(le.x, le.y, 0);
+            const Te = new W(le.x, le.y, 0);
             Te.unproject(e.object), e.object.zoom = Math.max(e.minZoom, Math.min(e.maxZoom, e.object.zoom / p)), e.object.updateProjectionMatrix(), ze = !0;
-            const Ye = new Y(le.x, le.y, 0);
+            const Ye = new W(le.x, le.y, 0);
             Ye.unproject(e.object), e.object.position.sub(Ye).add(Te), e.object.updateMatrixWorld(), De = o.length();
           } else
             console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled."), e.zoomToCursor = !1;
@@ -2699,7 +2704,7 @@ class Za extends cn {
     let s = r.NONE;
     const u = 1e-6, l = new Kt(), d = new Kt();
     let p = 1;
-    const v = new Y(), E = new de(), x = new de(), C = new de(), M = new de(), G = new de(), se = new de(), K = new de(), S = new de(), X = new de(), fe = new Y(), le = new de();
+    const v = new W(), E = new de(), x = new de(), C = new de(), M = new de(), G = new de(), se = new de(), K = new de(), S = new de(), X = new de(), fe = new W(), le = new de();
     let ee = !1;
     const f = [], m = {};
     function b(o) {
@@ -2716,17 +2721,17 @@ class Za extends cn {
       d.phi -= o;
     }
     const F = function() {
-      const o = new Y();
+      const o = new W();
       return function(D, N) {
         o.setFromMatrixColumn(N, 0), o.multiplyScalar(-D), v.add(o);
       };
     }(), A = function() {
-      const o = new Y();
+      const o = new W();
       return function(D, N) {
         e.screenSpacePanning === !0 ? o.setFromMatrixColumn(N, 1) : (o.setFromMatrixColumn(N, 0), o.crossVectors(e.object.up, o)), o.multiplyScalar(D), v.add(o);
       };
     }(), U = function() {
-      const o = new Y();
+      const o = new W();
       return function(D, N) {
         const te = e.domElement;
         if (e.object.isPerspectiveCamera) {
@@ -3065,13 +3070,13 @@ function $e(t, n) {
   const a = new dn(-100, 100, 100, -100, 50, 3e3);
   return a.name = t, a.position.copy(n), a.lookAt(0, 0, 0), ne.set(t, a), a;
 }
-$e("Top", new Y(0, 1e3, 0));
-$e("Bottom", new Y(0, -1e3, 0));
-$e("Left", new Y(-1e3, 0, 0));
-$e("Right", new Y(1e3, 0, 0));
-$e("Front", new Y(0, 0, 1e3));
-$e("Back", new Y(0, 0, -1e3));
-$e("Orthographic", new Y(1e3, 1e3, 1e3));
+$e("Top", new W(0, 1e3, 0));
+$e("Bottom", new W(0, -1e3, 0));
+$e("Left", new W(-1e3, 0, 0));
+$e("Right", new W(1e3, 0, 0));
+$e("Front", new W(0, 0, 1e3));
+$e("Back", new W(0, 0, -1e3));
+$e("Orthographic", new W(1e3, 1e3, 1e3));
 const Tt = new Nt(60, 1, 50, 3e3);
 Tt.name = "Debug";
 Tt.position.set(500, 500, 500);
