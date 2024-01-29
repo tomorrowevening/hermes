@@ -4,12 +4,14 @@ import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types'
 export default class Application {
   channel?: BroadcastChannel | undefined = undefined;
   components: Map<string, any> = new Map();
+  debugEnabled: boolean;
 
   // Protected
   protected _mode: ApplicationMode = 'app';
 
   constructor(name: string, debugEnabled: boolean, editorHashtag: string = 'editor') {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
+    this.debugEnabled = debugEnabled;
     if (debugEnabled) this.channel = new BroadcastChannel(name);
   }
 
