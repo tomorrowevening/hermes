@@ -10,6 +10,7 @@ export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
 
   getObject(uuid: string) {
+    if (!this.app.debugEnabled) return;
     this.app.send({
       event: 'getObject',
       target: 'app',
@@ -65,6 +66,8 @@ export default class RemoteThree extends BaseRemote {
   setScene(value: Scene) {
     if (value === undefined) return;
     this.scene = value;
+
+    if (!this.app.debugEnabled) return;
     resetThreeObjects();
     hierarchyUUID(this.scene);
     const stripped = stripScene(this.scene);
@@ -76,6 +79,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   addCamera(camera: Camera) {
+    if (!this.app.debugEnabled) return;
     const stripped = stripObject(camera);
     this.app.send({
       event: 'addCamera',
@@ -85,6 +89,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   removeCamera(camera: Camera) {
+    if (!this.app.debugEnabled) return;
     const stripped = stripObject(camera);
     this.app.send({
       event: 'removeCamera',
