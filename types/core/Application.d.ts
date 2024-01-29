@@ -3,6 +3,7 @@ import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types'
 export default class Application {
     channel?: BroadcastChannel | undefined;
     components: Map<string, any>;
+    debugEnabled: boolean;
     protected _mode: ApplicationMode;
     constructor(name: string, debugEnabled: boolean, editorHashtag?: string);
     addComponent(name: string, component: BaseRemote): void;
