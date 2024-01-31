@@ -23,7 +23,12 @@ server.on('connection', (ws) => {
   const newUser = createNewUser(ws);
   ws.on('message', (message) => {
     const content = JSON.parse(message);
-    ws.send(JSON.stringify(content));
+    const data = JSON.stringify(content);
+    users.forEach((user) => {
+      if (user.userID !== newUser.userID) {
+        user.socket.send(data);
+      }
+    });
   });
 
   // User left

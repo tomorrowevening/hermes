@@ -1,15 +1,19 @@
 import BaseRemote from './remote/BaseRemote';
 import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 export default class Application {
-    channel?: BroadcastChannel | undefined;
+    connection?: WebSocket | undefined;
     components: Map<string, any>;
     debugEnabled: boolean;
+    listen?: BroadcastCallback;
     protected _mode: ApplicationMode;
-    constructor(name: string, debugEnabled: boolean, editorHashtag?: string);
+    protected _connected: boolean;
+    constructor(url: string, debugEnabled: boolean, editorHashtag?: string);
     addComponent(name: string, component: BaseRemote): void;
     dispose(): void;
     send(data: BroadcastData): void;
-    listen(callback: BroadcastCallback): void;
+    private messageHandler;
+    private openHandler;
+    private closeHandler;
     get mode(): ApplicationMode;
     get isApp(): boolean;
     get editor(): boolean;
