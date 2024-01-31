@@ -2,7 +2,7 @@ import BaseRemote from './remote/BaseRemote';
 import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 
 export default class Application {
-  channel?: BroadcastChannel | undefined = undefined;
+  connection?: BroadcastChannel | undefined = undefined;
   components: Map<string, any> = new Map();
   debugEnabled: boolean;
 
@@ -12,7 +12,7 @@ export default class Application {
   constructor(name: string, debugEnabled: boolean, editorHashtag: string = 'editor') {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
     this.debugEnabled = debugEnabled;
-    if (debugEnabled) this.channel = new BroadcastChannel(name);
+    if (debugEnabled) this.connection = new BroadcastChannel(name);
   }
 
   addComponent(name: string, component: BaseRemote) {
@@ -29,16 +29,16 @@ export default class Application {
   // Remote
 
   send(data: BroadcastData) {
-    if (this.channel !== undefined) {
+    if (this.connection !== undefined) {
       if (this._mode !== data.target) {
-        this.channel.postMessage(data);
+        this.connection.postMessage(data);
       }
     }
   }
 
   listen(callback: BroadcastCallback) {
-    if (this.channel !== undefined) {
-      this.channel.onmessage = (event: MessageEvent) => {
+    if (this.connection !== undefined) {
+      this.connection.onmessage = (event: MessageEvent) => {
         callback(event.data);
       };
     }

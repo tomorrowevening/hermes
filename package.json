@@ -40,6 +40,7 @@
     "url": "git+https://github.com/tomorrowevening/hermes.git"
   },
   "scripts": {
+    "server": "node server/index.mjs",
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
     "declare": "tsc --declaration --emitDeclarationOnly --declarationDir types",
@@ -75,6 +76,7 @@
     "path": "^0.12.7",
     "sass": "^1.66.1",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "ws": "^8.16.0"
   }
 }
