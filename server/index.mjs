@@ -34,6 +34,6 @@ server.on('connection', (ws) => {
   // User left
   ws.on('close', () => {
     users.delete(newUser.userID);
-    console.log('User disconnected:', newUser.userID, 'Total left:', users.size);
+    console.log('User disconnected:', newUser.userID, 'Total users:', users.size);
   });
 });

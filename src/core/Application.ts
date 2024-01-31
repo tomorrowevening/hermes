@@ -2,23 +2,32 @@ import BaseRemote from './remote/BaseRemote';
 import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 
 export default class Application {
-  connection?: WebSocket | undefined = undefined;
   components: Map<string, any> = new Map();
-  debugEnabled: boolean;
   listen?: BroadcastCallback;
-
+  
   // Protected
+  protected _debugEnabled: boolean;
+  protected broadcastChannel?: BroadcastChannel | undefined = undefined;
+  protected webSocket?: WebSocket | undefined = undefined;
   protected _mode: ApplicationMode = 'app';
   protected _connected = false;
+  protected useBC = false;
 
-  constructor(url: string, debugEnabled: boolean, editorHashtag: string = 'editor') {
+  constructor(id: string, debugEnabled: boolean, useBC:boolean = true, editorHashtag: string = 'editor') {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
-    this.debugEnabled = debugEnabled;
+    this._debugEnabled = debugEnabled;
+
     if (debugEnabled) {
-      this.connection = new WebSocket(url);
-      this.connection.addEventListener('open', this.openHandler);
-      this.connection.addEventListener('close', this.closeHandler);
-      this.connection.addEventListener('message', this.messageHandler);
+      this.useBC = useBC;
+      if (useBC) {
+        this.broadcastChannel = new BroadcastChannel(id);
+        this.broadcastChannel.addEventListener('message', this.messageHandler);
+      } else {
+        this.webSocket = new WebSocket(id);
+        this.webSocket.addEventListener('open', this.openHandler);
+        this.webSocket.addEventListener('close', this.closeHandler);
+        this.webSocket.addEventListener('message', this.messageHandler);
+      }
     }
   }
 
@@ -27,10 +36,13 @@ export default class Application {
   }
 
   dispose() {
-    if (this.connection !== undefined) {
-      this.connection.removeEventListener('open', this.openHandler);
-      this.connection.removeEventListener('close', this.closeHandler);
-      this.connection.removeEventListener('message', this.messageHandler);
+    if (this.broadcastChannel !== undefined) {
+      this.broadcastChannel.removeEventListener('message', this.messageHandler);
+    }
+    if (this.webSocket !== undefined) {
+      this.webSocket.removeEventListener('open', this.openHandler);
+      this.webSocket.removeEventListener('close', this.closeHandler);
+      this.webSocket.removeEventListener('message', this.messageHandler);
     }
     this.components.forEach((value: BaseRemote) => {
       value.dispose();
@@ -41,13 +53,23 @@ export default class Application {
   // Remote
 
   send(data: BroadcastData) {
-    if (this.connection !== undefined && this._connected && this._mode !== data.target) {
-      this.connection.send(JSON.stringify(data));
+    if (this._mode !== data.target) {
+      if (this.useBC) {
+        this.broadcastChannel?.postMessage(data);
+      } else if (this._connected) {
+        this.webSocket?.send(JSON.stringify(data));
+      }
     }
   }
 
   private messageHandler = (evt: MessageEvent) => {
-    if (this.listen !== undefined) this.listen(JSON.parse(evt.data));
+    if (this.listen !== undefined) {
+      if (this.useBC) {
+        this.listen(evt.data);
+      } else {
+        this.listen(JSON.parse(evt.data));
+      }
+    }
   };
 
   private openHandler = () => {
@@ -59,6 +81,14 @@ export default class Application {
   };
 
   // Getters / Setters
+
+  get connected(): boolean {
+    return this._connected;
+  }
+
+  get debugEnabled(): boolean {
+    return this._debugEnabled;
+  }
 
   get mode(): ApplicationMode {
     return this._mode;
