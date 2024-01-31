@@ -5,6 +5,7 @@ export default class Application {
   connection?: BroadcastChannel | undefined = undefined;
   components: Map<string, any> = new Map();
   debugEnabled: boolean;
+  listen?: BroadcastCallback;
 
   // Protected
   protected _mode: ApplicationMode = 'app';
@@ -12,7 +13,10 @@ export default class Application {
   constructor(name: string, debugEnabled: boolean, editorHashtag: string = 'editor') {
     this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
     this.debugEnabled = debugEnabled;
-    if (debugEnabled) this.connection = new BroadcastChannel(name);
+    if (debugEnabled) {
+      this.connection = new BroadcastChannel(name);
+      this.connection.addEventListener('message', this.messageHandler);
+    }
   }
 
   addComponent(name: string, component: BaseRemote) {
@@ -20,6 +24,9 @@ export default class Application {
   }
 
   dispose() {
+    if (this.connection !== undefined) {
+      this.connection.removeEventListener('message', this.messageHandler);
+    }
     this.components.forEach((value: BaseRemote) => {
       value.dispose();
     });
@@ -36,13 +43,9 @@ export default class Application {
     }
   }
 
-  listen(callback: BroadcastCallback) {
-    if (this.connection !== undefined) {
-      this.connection.onmessage = (event: MessageEvent) => {
-        callback(event.data);
-      };
-    }
-  }
+  private messageHandler = (evt: MessageEvent) => {
+    if (this.listen !== undefined) this.listen(evt.data);
+  };
 
   // Getters / Setters
 
