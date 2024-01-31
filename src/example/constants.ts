@@ -10,7 +10,7 @@ export const IS_DEV = true;
 
 class CustomApp extends Application {
   constructor() {
-    super('Hermes', IS_DEV);
+    super('ws://localhost:8080', IS_DEV);
 
     this.addComponent('theatre', new RemoteTheatre(this));
 

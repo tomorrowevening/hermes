@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -33,13 +33,15 @@
       "import": "./dist/hermes.js",
       "require": "./dist/hermes.umd.cjs"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": "./dist/style.css",
+    "./server/index.mjs": "./server/index.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomorrowevening/hermes.git"
   },
   "scripts": {
+    "server": "node server/index.mjs",
     "clean": "rm -r dist && rm -r types",
     "dev": "vite",
     "declare": "tsc --declaration --emitDeclarationOnly --declarationDir types",
@@ -75,6 +77,7 @@
     "path": "^0.12.7",
     "sass": "^1.66.1",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "ws": "^8.16.0"
   }
 }

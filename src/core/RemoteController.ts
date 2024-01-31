@@ -48,11 +48,11 @@ export default function RemoteController(app: Application) {
 
   // Begin app
 
-  app.listen((msg: BroadcastData) => {
-    if (app.editor) {
+  app.listen = (msg: BroadcastData) => {
+    if (msg.target === 'editor') {
       handleEditorBroadcast(msg);
     } else {
       handleAppBroadcast(msg);
     }
-  });
+  };
 }
