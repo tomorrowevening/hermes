@@ -120,6 +120,7 @@ export default class RemoteTheatre extends BaseRemote {
           event: 'updateSheetObject',
           target: 'app',
           data: {
+            sheet: sheetName,
             sheetObject: objName,
             values: values,
           },
@@ -187,6 +188,10 @@ export function HandleAppRemoteTheatre(app: Application, msg: BroadcastData) {
           }
           break;
         case 'updateSheetObject':
+          // @ts-ignore
+          value = theatre.sheets.get(msg.data.sheet); // pause current animation
+          // @ts-ignore
+          if (value !== undefined) value.sequence.pause();
           // @ts-ignore
           value = theatre.sheetObjectCBs.get(msg.data.sheetObject);
           // @ts-ignore
