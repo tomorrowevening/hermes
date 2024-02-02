@@ -1,4 +1,4 @@
-import { AnimationClip, CubeTexture, Material, Mesh, Object3D, RepeatWrapping, Texture } from 'three';
+import { AnimationClip, CubeTexture, Line, Material, Mesh, Object3D, Points, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
 export function determineIcon(obj: Object3D): string {
@@ -151,6 +151,28 @@ export function stripObject(obj: Object3D): RemoteObject {
   const type = obj.type.toLowerCase();
   if (type.search('mesh') > -1) {
     const mesh = obj as Mesh;
+    if (Array.isArray(mesh.material)) {
+      const data: RemoteMaterial[] = [];
+      mesh.material.forEach((material: Material) => {
+        data.push(stripMaterialData(material));
+      });
+      stripped.material = data;
+    } else {
+      stripped.material = stripMaterialData(mesh.material);
+    }
+  } else if (type.search('points') > -1) {
+    const mesh = obj as Points;
+    if (Array.isArray(mesh.material)) {
+      const data: RemoteMaterial[] = [];
+      mesh.material.forEach((material: Material) => {
+        data.push(stripMaterialData(material));
+      });
+      stripped.material = data;
+    } else {
+      stripped.material = stripMaterialData(mesh.material);
+    }
+  } else if (type.search('line') > -1) {
+    const mesh = obj as Line;
     if (Array.isArray(mesh.material)) {
       const data: RemoteMaterial[] = [];
       mesh.material.forEach((material: Material) => {
