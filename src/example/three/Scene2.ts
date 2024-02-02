@@ -1,4 +1,4 @@
-import { DirectionalLight, MeshMatcapMaterial, Object3D, SkinnedMesh, SpotLight, WebGLRenderer } from 'three';
+import { DirectionalLight, LineBasicMaterial, LineSegments, MeshMatcapMaterial, Object3D, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
 import { IS_DEV, app } from '../constants';
 import { hierarchyUUID } from '../../editor/utils';
 import BaseScene from './BaseScene';
@@ -45,6 +45,16 @@ export default class Scene2 extends BaseScene {
     const world = new Object3D();
     world.name = 'world';
     this.add(world);
+
+    const points = new Points(new SphereGeometry(50), new PointsMaterial({ size: 2 }));
+    points.name = 'points';
+    points.position.x = -100;
+    world.add(points);
+
+    const lines = new LineSegments(new SphereGeometry(50), new LineBasicMaterial());
+    lines.name = 'lines';
+    lines.position.x = 100;
+    world.add(lines);
 
     this.dance = new FBXAnimation('Flair');
     this.dance.name = 'flair';

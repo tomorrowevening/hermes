@@ -15,6 +15,8 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'depthFunc' ||
     name === 'forceSinglePass' ||
     name === 'glslVersion' ||
+    name === 'linecap' ||
+    name === 'linejoin' ||
     name === 'linewidth' ||
     name === 'normalMapType' ||
     name === 'precision' ||
@@ -96,6 +98,8 @@ export function prettyName(name: string): string {
     case 'sheenRoughness': return 'Sheen Roughness';
     case 'sheenRoughnessMap': return 'Sheen Roughness Map';
     case 'shininess': return 'Shininess';
+    case 'size': return 'Size';
+    case 'sizeAttenuation': return 'Size Attenuation';
     case 'specular': return 'Specular';
     case 'specularColor': return 'Specular Color';
     case 'specularColorMap': return 'Specular Color Map';

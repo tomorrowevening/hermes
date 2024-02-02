@@ -51,6 +51,9 @@ export default function Inspector(props: CoreComponentProps) {
   }, []);
 
   const objType = currentObject.type.toLowerCase();
+  const hasMaterial = objType.search('mesh') > -1
+    || objType.search('line') > -1
+    || objType.search('points') > -1;
 
   return (
     <Accordion label='Inspector' key='Inspector'>
@@ -104,7 +107,7 @@ export default function Inspector(props: CoreComponentProps) {
               {/* Lights */}
               {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
               {/* Material */}
-              {objType.search('mesh') > -1 ? InspectMaterial(currentObject, props.three) : null}
+              {hasMaterial ? InspectMaterial(currentObject, props.three) : null}
             </>
           </>
         )}
