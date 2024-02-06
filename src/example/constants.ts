@@ -13,11 +13,11 @@ class CustomApp extends Application {
     super('ws://localhost:8080', IS_DEV);
 
     this.addComponent('theatre', new RemoteTheatre(this));
+    this.addComponent('three', new RemoteThree(this));
 
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this));
       // this.addComponent('debug', new RemoteTweakpane(this));
-      this.addComponent('three', new RemoteThree(this));
     }
   }
 
