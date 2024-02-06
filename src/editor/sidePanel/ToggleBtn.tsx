@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { capitalize } from '@/editor/utils';
 
 type ToggleBtnProps = {
   expanded: boolean
@@ -20,7 +21,7 @@ export default function ToggleBtn(props: ToggleBtnProps) {
         backgroundPositionY: `${expanded ? 1 : -10}px`
       }}
     >
-      <p>{props.label}</p>
+      <p>{capitalize(props.label)}</p>
     </button>
   );
 }

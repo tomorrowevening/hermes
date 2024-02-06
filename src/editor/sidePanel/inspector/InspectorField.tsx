@@ -2,6 +2,7 @@ import { colorToHex } from '@/editor/utils';
 import { useEffect, useRef, useState } from 'react';
 import { noImage } from '@/editor/components/content';
 import { uploadLocalImage } from './utils/InspectMaterial';
+import { capitalize } from '@/editor/utils';
 
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
 
@@ -89,7 +90,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   return (
     <div className={`field ${block ? 'block' : ''}`}>
       {props.type !== 'button' && (
-        <label key='fieldLabel' ref={labelRef}>{props.title}</label>
+        <label key='fieldLabel' ref={labelRef}>{capitalize(props.title)}</label>
       )}
 
       {props.type === 'string' && !textfield && (
@@ -105,7 +106,7 @@ export default function InspectorField(props: InspectorFieldProps) {
         <textarea
           cols={50}
           rows={10}
-          disabled={true}
+          disabled={props.disabled !== undefined ? props.disabled : true}
           onChange={onChange}
           value={fieldValue}
         />

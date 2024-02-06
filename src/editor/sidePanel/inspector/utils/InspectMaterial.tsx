@@ -3,6 +3,7 @@ import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
+import { capitalize } from '@/editor/utils';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -192,7 +193,33 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
         // @ts-ignore
         newField.step = 0.01;
       }
+
+      const isShader = propType === 'string' && (i === 'vertexShader' || i === 'fragmentShader');
+      if (isShader) {
+        newField['disabled'] = false;
+        newField['latest'] = newField.value;
+        newField.onChange = (_: string, updatedValue: string) => {
+          newField['latest'] = updatedValue;
+        };
+      }
       items.push(newField);
+
+      if (isShader) {
+        items.push({
+          title: `${capitalize(i)} - Update`,
+          type: 'button',
+          onChange: () => {
+            three.updateObject(object.uuid, `material.${i}`, newField['latest']);
+            three.updateObject(object.uuid, 'material.needsUpdate', true);
+            // Local update
+            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+            if (child !== undefined) {
+              setItemProps(child, `material.${i}`, newField['latest']);
+              child['material'].needsUpdate = true;
+            }
+          },
+        });
+      }
     } else if (propType === 'object') {
       if (value.isColor) {
         items.push({
@@ -294,6 +321,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                     title: vTitle,
                     type: 'number',
                     value: floatValue,
+                    step: 0.01,
                     onChange: (_: string, updatedValue: any) => {
                       const id = `material.uniforms.${n}.value.${vProp}`;
                       three.updateObject(object.uuid, id, updatedValue);
