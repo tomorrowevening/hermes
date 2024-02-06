@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { capitalize } from '@/editor/utils';
 
 type AccordionProps = {
   label: string
@@ -27,7 +28,7 @@ export default function Accordion(props: AccordionProps) {
         >
           Toggle
         </p>
-        <p className='label'>{props.label}</p>
+        <p className='label'>{capitalize(props.label)}</p>
       </button>
       {props.button}
       <div className={open ? 'open' : ''}>

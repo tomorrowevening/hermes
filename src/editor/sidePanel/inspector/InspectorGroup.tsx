@@ -1,5 +1,6 @@
 import Accordion from '../Accordion';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
+import { capitalize } from '@/editor/utils';
 
 export interface InspectorGroupProps {
   title: string
@@ -16,7 +17,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
   props.items.forEach((child: InspectorFieldProps | InspectorGroupProps) => {
     if (isGroup(child)) {
       children.push(
-        <InspectorGroup title={child.title} items={child.items} key={Math.random()} />
+        <InspectorGroup title={capitalize(child.title)} items={child.items} key={Math.random()} />
       );
     } else {
       children.push(
