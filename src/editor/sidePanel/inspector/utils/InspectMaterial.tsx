@@ -275,27 +275,119 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                   title: prettyName(n),
                   type: 'image',
                   value: propValue.value.src,
-                  onChange: (prop: string, value: any) => {
+                  onChange: (_: string, newValue: any) => {
                     three.createTexture(object.uuid, `material.${i}.${n}.value`, value);
                     // Local update
                     const child = three.scene?.getObjectByProperty('uuid', object.uuid);
                     if (child !== undefined) {
-                      textureFromSrc(value).then((texture: Texture) => {
+                      textureFromSrc(newValue).then((texture: Texture) => {
                         setItemProps(child, `material.${i}.${n}.value`, texture);
                       });
                     }
                   },
                 });
+              } else if (i === 'uniforms') {
+                const pv = propValue.value;
+                // Probably in Uniforms
+                const makeFloat = (vTitle: string, vProp: string, floatValue: number) => {
+                  return {
+                    title: vTitle,
+                    type: 'number',
+                    value: floatValue,
+                    onChange: (_: string, updatedValue: any) => {
+                      const id = `material.uniforms.${n}.value.${vProp}`;
+                      three.updateObject(object.uuid, id, updatedValue);
+                      // Local update
+                      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                      if (child !== undefined) setItemProps(child, id, updatedValue);
+                    },
+                  };
+                };
+                if (typeof propValue.value === 'number') {
+                  subChildren.push({
+                    title: n,
+                    type: 'number',
+                    value: propValue.value,
+                    onChange: (prop: string, value: any) => {
+                      const id = `material.${i}.${prop}.value`;
+                      three.updateObject(object.uuid, id, value);
+                      // Local update
+                      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                      if (child !== undefined) setItemProps(child, id, value);
+                    },
+                  });
+                } else if (pv['r'] !== undefined && pv['g'] !== undefined && pv['b'] !== undefined) {
+                  subChildren.push({
+                    title: n,
+                    type: 'color',
+                    value: propValue.value,
+                    onChange: (prop: string, value: any) => {
+                      const newValue = new Color(value);
+                      const id = `material.${i}.${prop}.value`;
+                      three.updateObject(object.uuid, id, newValue);
+                      // Local update
+                      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                      if (child !== undefined) setItemProps(child, id, newValue);
+                    },
+                  });
+                } else if (pv['x'] !== undefined && pv['y'] !== undefined && pv['z'] === undefined && pv['w'] === undefined) {
+                  subChildren.push(
+                    {
+                      title: n,
+                      items: [
+                        makeFloat('X', 'x', propValue.value.x),
+                        makeFloat('Y', 'y', propValue.value.y),
+                      ]
+                    }
+                  );
+                } else if (pv['x'] !== undefined && pv['y'] !== undefined && pv['z'] !== undefined && pv['w'] === undefined) {
+                  subChildren.push(
+                    {
+                      title: n,
+                      items: [
+                        makeFloat('X', 'x', propValue.value.x),
+                        makeFloat('Y', 'y', propValue.value.y),
+                        makeFloat('Z', 'z', propValue.value.z),
+                      ]
+                    }
+                  );
+                } else if (pv['x'] !== undefined && pv['y'] !== undefined && pv['z'] !== undefined && pv['w'] !== undefined) {
+                  subChildren.push(
+                    {
+                      title: n,
+                      items: [
+                        makeFloat('X', 'x', propValue.value.x),
+                        makeFloat('Y', 'y', propValue.value.y),
+                        makeFloat('Z', 'z', propValue.value.z),
+                        makeFloat('W', 'w', propValue.value.w),
+                      ]
+                    }
+                  );
+                } else if (pv['elements'] !== undefined) {
+                  const matrix = pv.elements;
+                  const matrixChildren: any[] = [];
+                  for (let i = 0; i < matrix.length; i++) {
+                    matrixChildren.push(makeFloat(i.toString(), i.toString(), matrix[i]));
+                  }
+                  subChildren.push(
+                    {
+                      title: n,
+                      items: matrixChildren
+                    }
+                  );
+                } else {
+                  console.log('>>> need to add this format:', n, pv);
+                }
               } else {
                 subChildren.push({
                   title: n,
                   type: `${typeof propValue.value}`,
                   value: propValue.value,
-                  onChange: (prop: string, value: any) => {
-                    three.updateObject(object.uuid, `material.${i}.${n}.value`, value);
+                  onChange: (_: string, newValue: any) => {
+                    three.updateObject(object.uuid, `material.${i}.${n}.value`, newValue);
                     // Local update
                     const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `material.${i}.${n}.value`, value);
+                    if (child !== undefined) setItemProps(child, `material.${i}.${n}.value`, newValue);
                   },
                 });
               }

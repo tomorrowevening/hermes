@@ -8,9 +8,7 @@ import { cubeTextures, textures } from './loader';
 import BaseScene from './BaseScene';
 
 export default class Scene1 extends BaseScene {
-  dance0!: FBXAnimation;
-  dance1!: FBXAnimation;
-  dance2!: FBXAnimation;
+  dance!: FBXAnimation;
 
   private customMat!: CustomMaterial;
   private post!: EffectComposer;
@@ -87,17 +85,9 @@ export default class Scene1 extends BaseScene {
     floor.rotateX(-Math.PI / 2);
     world.add(floor);
 
-    this.dance0 = new FBXAnimation('Thriller2');
-    this.dance0.position.set(-150, 0, -175);
-    world.add(this.dance0);
-
-    this.dance1 = new FBXAnimation('Flair');
-    this.dance1.position.set(0, 0, 0);
-    world.add(this.dance1);
-
-    this.dance2 = new FBXAnimation('Thriller4');
-    this.dance2.position.set(150, 0, -185);
-    world.add(this.dance2);
+    this.dance = new FBXAnimation('Flair');
+    this.dance.position.set(0, 0, 0);
+    world.add(this.dance);
 
     this.createTestMaterials(world);
   }
@@ -194,19 +184,19 @@ export default class Scene1 extends BaseScene {
       'Break Dancer',
       {
         position: {
-          x: this.dance1.position.x,
-          y: this.dance1.position.y,
-          z: this.dance1.position.z,
+          x: this.dance.position.x,
+          y: this.dance.position.y,
+          z: this.dance.position.z,
         },
         rotation: {
-          x: this.dance1.rotation.x,
-          y: this.dance1.rotation.y,
-          z: this.dance1.rotation.z,
+          x: this.dance.rotation.x,
+          y: this.dance.rotation.y,
+          z: this.dance.rotation.z,
         },
       },
       (data: any) => {
-        this.dance1.position.set(data.position.x, data.position.y, data.position.z);
-        this.dance1.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+        this.dance.position.set(data.position.x, data.position.y, data.position.z);
+        this.dance.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
       }
     );
 
@@ -216,9 +206,7 @@ export default class Scene1 extends BaseScene {
   override update() {
     const delta = this.clock.getDelta();
     this.customMat.update(delta);
-    this.dance0.update(delta);
-    this.dance1.update(delta);
-    this.dance2.update(delta);
+    this.dance.update(delta);
   }
 
   override draw() {

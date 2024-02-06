@@ -92,9 +92,7 @@ export function loadAssets(): Promise<void> {
         'dark-s_nz.jpg'
       ]),
       () => loadTexture('uv_grid', 'images/uv_grid_opengl.jpg'),
-      () => loadModel('Thriller2', 'Thriller2.fbx'),
       () => loadModel('Flair', 'Flair.fbx'),
-      () => loadModel('Thriller4', 'Thriller4.fbx'),
       () => loadJSON('animation', 'json/animation.json'),
     ];
 
