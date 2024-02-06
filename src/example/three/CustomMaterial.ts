@@ -1,4 +1,4 @@
-import { ShaderMaterial, Texture } from 'three';
+import { Color, Matrix3, Matrix4, ShaderMaterial, Texture, Vector3 } from 'three';
 import { textureFromSrc } from '../../editor/sidePanel/utils';
 
 const vertex = `varying vec2 vUv;
@@ -10,6 +10,8 @@ void main() {
 
 const fragment = `uniform float time;
 uniform float opacity;
+uniform vec3 diffuse;
+uniform vec3 mouse;
 uniform sampler2D map;
 varying vec2 vUv;
 
@@ -17,10 +19,10 @@ varying vec2 vUv;
 
 void main() {
   if (opacity < MIN_ALPHA) discard;
-  vec3 gradient = 0.5 + 0.5 * cos(time + vUv.xyx + vec3(0.0, 2.0, 4.0));
-  vec3 image = texture2D(map, vUv * 10.0).rgb;
-  // vec3 col = mix(image, gradient, 0.15);
-  vec3 col = image + gradient;
+  vec2 imageUV = vUv * 10.0 + (mouse.xy * mouse.z);
+  vec3 image = texture2D(map, imageUV).rgb;
+  vec3 col = image * diffuse;
+  col += (sin(time * 0.1) * 0.5 + 0.5) * 0.2;
   gl_FragColor = vec4(col, opacity);
 }`;
 
@@ -34,6 +36,9 @@ export default class CustomMaterial extends ShaderMaterial {
       name: 'ExampleScene/SimpleShader',
       transparent: true,
       uniforms: {
+        diffuse: {
+          value: new Color(0xffffff)
+        },
         opacity: {
           value: 1,
         },
@@ -42,7 +47,16 @@ export default class CustomMaterial extends ShaderMaterial {
         },
         map: {
           value: null,
-        }
+        },
+        mouse: {
+          value: new Vector3()
+        },
+        testM3: {
+          value: new Matrix3()
+        },
+        testM4: {
+          value: new Matrix4()
+        },
       },
     });
 
