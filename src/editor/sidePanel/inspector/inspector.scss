@@ -10,6 +10,7 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
     min-height: 21px;
     overflow: hidden;
     padding: 1px;
+    position: relative;
     
     label {
       line-height: normal;
@@ -79,11 +80,12 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
     img {
       border: 1px dotted #333;
       cursor: pointer;
-      object-fit: contain;
+      object-fit: cover;
       max-width: 100%;
       min-width: 50px;
-      min-height: 30px;
-      max-height: 50px;
+      min-height: 50px;
+      max-height: 100px;
+      width: 100%;
       position: relative;
       left: 50%;
       transform: translateX(-50%);
@@ -110,6 +112,15 @@ $icon_folder: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAB1CAYAAAD
         max-width: 100%;
         width: 100%;
       }
+    }
+
+    select {
+      background-color: #222;
+      border: 1px solid #333;
+      font-size: 12px;
+      padding: 1px 5px;
+      position: absolute;
+      right: 4px;
     }
   }
 

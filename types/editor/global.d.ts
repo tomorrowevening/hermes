@@ -1,5 +1,5 @@
 import { EventDispatcher } from 'three';
-export declare const debugDispatcher: EventDispatcher<import("three").Event>;
+export declare const debugDispatcher: EventDispatcher<{}>;
 export declare const ToolEvents: {
     CUSTOM: string;
     SELECT_DROPDOWN: string;

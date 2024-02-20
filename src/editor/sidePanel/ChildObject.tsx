@@ -38,6 +38,7 @@ export default function ChildObject(props: ChildObjectProps) {
           }}
           onClick={() => {
             props.three.getObject(props.child.uuid);
+            if (!open) setOpen(true);
           }}
         >
           {props.child.name.length > 0

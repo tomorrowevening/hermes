@@ -1,4 +1,4 @@
-import { Color, Texture } from 'three';
+import { AddEquation, AdditiveBlending, BackSide, Color, ConstantAlphaFactor, ConstantColorFactor, CustomBlending, DoubleSide, DstAlphaFactor, DstColorFactor, FrontSide, MaxEquation, MinEquation, MultiplyBlending, NoBlending, NormalBlending, OneFactor, OneMinusConstantAlphaFactor, OneMinusConstantColorFactor, OneMinusDstAlphaFactor, OneMinusDstColorFactor, OneMinusSrcAlphaFactor, OneMinusSrcColorFactor, ReverseSubtractEquation, SrcAlphaFactor, SrcAlphaSaturateFactor, SrcColorFactor, SubtractEquation, SubtractiveBlending, Texture, ZeroFactor } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
@@ -10,6 +10,7 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'alphaHash' ||
     name === 'alphaToCoverage' ||
     name === 'attenuationDistance' ||
+    name === 'blendDstAlpha' ||
     name === 'colorWrite' ||
     name === 'combine' ||
     name === 'defaultAttributeValues' ||
@@ -23,7 +24,6 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'precision' ||
     name === 'premultipliedAlpha' ||
     name === 'shadowSide' ||
-    name === 'side' ||
     name === 'toneMapped' ||
     name === 'uniformsGroups' ||
     name === 'uniformsNeedUpdate' ||
@@ -33,7 +33,6 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'wireframeLinecap' ||
     name === 'wireframeLinejoin' ||
     name === 'wireframeLinewidth' ||
-    name.slice(0, 5) === 'blend' ||
     name.slice(0, 4) === 'clip' ||
     name.slice(0, 7) === 'polygon' ||
     name.slice(0, 7) === 'stencil' ||
@@ -49,6 +48,15 @@ export function prettyName(name: string): string {
     case 'aoMap': return 'AO Map';
     case 'aoMapIntensity': return 'AO Map Intensity';
     case 'attenuationColor': return 'Attenuation Color';
+    case 'blendAlpha': return 'Blend Alpha';
+    case 'blendColor': return 'Blend Color';
+    case 'blendDst': return 'Blend Dst';
+    case 'blendDstAlpha': return 'Blend Dst Alha';
+    case 'blendEquation': return 'Blend Equation';
+    case 'blendEquationAlpha': return 'Blend Equation Alpha';
+    case 'blending': return 'Blending';
+    case 'blendSrc': return 'Blend Src';
+    case 'blendSrcAlpha': return 'Blend Src Alpha';
     case 'bumpMap': return 'Bump Map';
     case 'bumpScale': return 'Bump Scale';
     case 'clearcoatMap': return 'Clearcoat Map';
@@ -99,6 +107,7 @@ export function prettyName(name: string): string {
     case 'sheenRoughness': return 'Sheen Roughness';
     case 'sheenRoughnessMap': return 'Sheen Roughness Map';
     case 'shininess': return 'Shininess';
+    case 'side': return 'Side';
     case 'size': return 'Size';
     case 'sizeAttenuation': return 'Size Attenuation';
     case 'specular': return 'Specular';
@@ -125,6 +134,7 @@ export function clampedNames(name: string): boolean {
   return (
     name.toLowerCase().search('intensity') > -1 ||
     name === 'anisotropyRotation' ||
+    name === 'blendAlpha' ||
     name === 'bumpScale' ||
     name === 'clearcoatRoughness' ||
     name === 'displacementBias' ||
@@ -159,6 +169,205 @@ export function uploadLocalImage(): Promise<string> {
   });
 }
 
+// Material side
+
+const materialSideOpts: any[] = [
+  {
+    title: 'Front',
+    value: FrontSide,
+  },
+  {
+    title: 'Back',
+    value: BackSide,
+  },
+  {
+    title: 'Double',
+    value: DoubleSide,
+  },
+];
+
+// Blending
+
+const blendingOpts: any[] = [
+  {
+    title: 'No Blending',
+    value: NoBlending,
+  },
+  {
+    title: 'Normal',
+    value: NormalBlending,
+  },
+  {
+    title: 'Additive',
+    value: AdditiveBlending,
+  },
+  {
+    title: 'Subtractive',
+    value: SubtractiveBlending,
+  },
+  {
+    title: 'Multiply',
+    value: MultiplyBlending,
+  },
+  {
+    title: 'Custom',
+    value: CustomBlending,
+  }
+];
+
+const blendingEquationOpts: any[] = [
+  {
+    title: 'Add',
+    value: AddEquation,
+  }, 
+  {
+    title: 'Subtract',
+    value: SubtractEquation,
+  }, 
+  {
+    title: 'Reverse Subtract',
+    value: ReverseSubtractEquation,
+  },
+  {
+    title: 'Min',
+    value: MinEquation,
+  }, 
+  {
+    title: 'Max',
+    value: MaxEquation,
+  },
+];
+
+// Blending Equations (Source)
+const blendSourceOpts: any[] = [
+  {
+    title: 'Zero',
+    valye: ZeroFactor,
+  },
+  {
+    title: 'One',
+    valye: OneFactor,
+  },
+  {
+    title: 'Src Color',
+    valye: SrcColorFactor,
+  },
+  {
+    title: 'One Minus Src Color',
+    valye: OneMinusSrcColorFactor,
+  },
+  {
+    title: 'Src Alpha',
+    valye: SrcAlphaFactor,
+  },
+  {
+    title: 'One Minus Src Alpha',
+    valye: OneMinusSrcAlphaFactor,
+  },
+  {
+    title: 'Dst Alpha',
+    valye: DstAlphaFactor,
+  },
+  {
+    title: 'One Minus Dst Alpha',
+    valye: OneMinusDstAlphaFactor,
+  },
+  {
+    title: 'Dst Color',
+    valye: DstColorFactor,
+  },
+  {
+    title: 'One Minus Dst Color',
+    valye: OneMinusDstColorFactor,
+  },
+  {
+    title: 'Src Alpha Saturate',
+    valye: SrcAlphaSaturateFactor,
+  },
+  {
+    title: 'Constant Color',
+    valye: ConstantColorFactor,
+  },
+  {
+    title: 'One Minus Constant Color',
+    valye: OneMinusConstantColorFactor,
+  },
+  {
+    title: 'Constant Alpha',
+    valye: ConstantAlphaFactor,
+  },
+  {
+    title: 'One Minus Constant Alpha',
+    valye: OneMinusConstantAlphaFactor,
+  },
+];
+
+// Blending Equations (Destination)
+const blendDestinationOpts: any[] = [
+  {
+    title: 'Zero',
+    valye: ZeroFactor,
+  },
+  {
+    title: 'One',
+    valye: OneFactor,
+  },
+  {
+    title: 'Src Color',
+    valye: SrcColorFactor,
+  },
+  {
+    title: 'One Minus Src Color',
+    valye: OneMinusSrcColorFactor,
+  },
+  {
+    title: 'Src Alpha',
+    valye: SrcAlphaFactor,
+  },
+  {
+    title: 'One Minus Src Alpha',
+    valye: OneMinusSrcAlphaFactor,
+  },
+  {
+    title: 'Dst Alpha',
+    valye: DstAlphaFactor,
+  },
+  {
+    title: 'One Minus Dst Alpha',
+    valye: OneMinusDstAlphaFactor,
+  },
+  {
+    title: 'Dst Color',
+    valye: DstColorFactor,
+  },
+  {
+    title: 'One Minus Dst Color',
+    valye: OneMinusDstColorFactor,
+  },
+  {
+    title: 'Constant Color',
+    valye: ConstantColorFactor,
+  },
+  {
+    title: 'One Minus Constant Color',
+    valye: OneMinusConstantColorFactor,
+  },
+  {
+    title: 'Constant Alpha',
+    valye: ConstantAlphaFactor,
+  },
+  {
+    title: 'One Minus Constant Alpha',
+    valye: OneMinusConstantAlphaFactor,
+  },
+];
+
+function updateFieldOptions(obj: any, options: any[]) {
+  obj.needsUpdate = true;
+  obj.type = 'option';
+  obj.options = options;
+}
+
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
   const items: any[] = [];
   for (const i in material) {
@@ -174,14 +383,34 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
         value: value,
         min: undefined,
         max: undefined,
+        needsUpdate: propType === 'boolean',
         onChange: (prop: string, value: any) => {
           three.updateObject(object.uuid, `material.${prop}`, value);
-          if (propType === 'boolean') three.updateObject(object.uuid, 'material.needsUpdate', true);
+          if (newField.needsUpdate) three.updateObject(object.uuid, 'material.needsUpdate', true);
           // Local update
           const child = three.scene?.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) setItemProps(child, `material.${prop}`, value);
         },
       };
+
+      switch (i) {
+        case 'blending':
+          updateFieldOptions(newField, blendingOpts);
+          break;
+        case 'blendDst':
+          updateFieldOptions(newField, blendDestinationOpts);
+          break;
+        case 'blendEquation':
+          updateFieldOptions(newField, blendingEquationOpts);
+          break;
+        case 'blendSrc':
+          updateFieldOptions(newField, blendSourceOpts);
+          break;
+        case 'side':
+          updateFieldOptions(newField, materialSideOpts);
+          break;
+      }
+
       if (clampedNames(i)) {
         newField.value = Number(value);
         // @ts-ignore

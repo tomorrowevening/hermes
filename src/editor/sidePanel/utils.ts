@@ -220,6 +220,26 @@ export function stripObject(obj: Object3D): RemoteObject {
   return stripped;
 }
 
+export function getSubItem(child: any, key: string): any {
+  const keys = key.split('.');
+  const total = keys.length;
+  switch (total) {
+    case 1:
+      return child[keys[0]];
+    case 2:
+      return child[keys[0]][keys[1]];
+    case 3:
+      return child[keys[0]][keys[1]][keys[2]];
+    case 4:
+      return child[keys[0]][keys[1]][keys[2]][keys[3]];
+    case 5:
+      return child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]];
+    case 6:
+      return child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]][keys[5]];
+  }
+  return undefined;
+}
+
 export function setItemProps(child: any, key: string, value: any) {
   const keys = key.split('.');
   const total = keys.length;

@@ -32,6 +32,7 @@ export default function RemoteController(app: Application) {
     appHandlers.forEach((handler: any) => handler(app, msg));
     switch (msg.event) {
       case 'custom':
+        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }
@@ -41,6 +42,7 @@ export default function RemoteController(app: Application) {
     editorHandlers.forEach((handler: any) => handler(app, msg));
     switch (msg.event) {
       case 'custom':
+        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }

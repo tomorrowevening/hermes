@@ -2,7 +2,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { useEffect } from 'react';
 import { Texture } from 'three';
-import { setItemProps, textureFromSrc } from '../utils';
+import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
   three: RemoteThree
@@ -25,7 +25,9 @@ export default function SceneInspector(props: SceneInspectorProps) {
   const setChildProps = (uuid: string, key: string, value: any) => {
     if (!hasScene()) return;
     const child = props.three.scene?.getObjectByProperty('uuid', uuid);
-    if (child !== undefined) setItemProps(child, key, value);
+    if (child !== undefined) {
+      setItemProps(child, key, value);
+    }
   };
 
   const onUpdateObject = (evt: any) => {
@@ -46,11 +48,16 @@ export default function SceneInspector(props: SceneInspectorProps) {
 
   const onRequestMethod = (evt: any) => {
     if (!hasScene()) return;
-    const { key, uuid, value } = evt.value;
+    const { key, uuid, value, subitem } = evt.value;
     const child = props.three.scene?.getObjectByProperty('uuid', uuid);
     if (child !== undefined) {
       try {
-        child[key](value);
+        if (subitem !== undefined) {
+          const target = getSubItem(child, subitem);
+          target[key](value);
+        } else {
+          child[key](value);
+        }
       } catch (err: any) {
         console.log('Error requesting method:');
         console.log(err);

@@ -4,7 +4,7 @@ import { noImage } from '@/editor/components/content';
 import { uploadLocalImage } from './utils/InspectMaterial';
 import { capitalize } from '@/editor/utils';
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option'
 
 export interface InspectorFieldProps {
   title: string
@@ -15,6 +15,7 @@ export interface InspectorFieldProps {
   max?: number
   step?: number
   disabled?: boolean
+  options?: any[]
   onChange?: (prop: string, value: any) => void
 }
 
@@ -25,6 +26,7 @@ export default function InspectorField(props: InspectorFieldProps) {
       propsValue = colorToHex(props.value);
     }
   }
+
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -82,7 +84,12 @@ export default function InspectorField(props: InspectorFieldProps) {
 
   const onChange = (evt: any) => {
     let value = evt.target.value;
-    if (props.type === 'boolean') value = evt.target.checked;
+    if (props.type === 'boolean') {
+      value = evt.target.checked;
+    } else if (props.type === 'option') {
+      // @ts-ignore
+      value = props.options[value].value;
+    }
     setFieldValue(value);
     if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
   };
@@ -129,13 +136,14 @@ export default function InspectorField(props: InspectorFieldProps) {
           min={props.min}
           max={props.max}
           step={props.step}
+          disabled={props.disabled}
           onChange={onChange}
         />
       )}
       
       {props.type === 'range' && (
         <>
-          <input type='text' value={fieldValue.toString()} onChange={onChange} className='min' />
+          <input type='text' value={fieldValue.toString()} onChange={onChange} disabled={props.disabled} className='min' />
           <input
             disabled={props.disabled}
             type='range'
@@ -150,13 +158,14 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'color' && (
         <>
-          <input type='text' value={fieldValue.toString()} onChange={onChange} className='color' />
-          <input type='color' value={fieldValue} onChange={onChange} />
+          <input type='text' value={fieldValue.toString()} onChange={onChange} disabled={props.disabled} className='color' />
+          <input type='color' value={fieldValue} onChange={onChange} disabled={props.disabled} />
         </>
       )}
 
       {props.type === 'button' && (
         <button
+          disabled={props.disabled}
           onClick={() => {
             if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, true);
           }}
@@ -173,6 +182,16 @@ export default function InspectorField(props: InspectorFieldProps) {
               if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
             });
         }} src={fieldValue.length > 0 ? fieldValue : noImage} />
+      )}
+
+      {props.type === 'option' && (
+        <>
+          <select onChange={onChange} disabled={props.disabled} defaultValue={props.value}>
+            {props.options?.map((option, index) => (
+              <option key={index} value={option.value}>{capitalize(option.title)}</option>
+            ))}
+          </select>
+        </>
       )}
     </div>
   );

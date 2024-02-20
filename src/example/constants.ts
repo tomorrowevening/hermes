@@ -17,7 +17,7 @@ class CustomApp extends Application {
 
     if (IS_DEV) {
       this.addComponent('components', new RemoteComponents(this));
-      // this.addComponent('debug', new RemoteTweakpane(this));
+      this.addComponent('debug', new RemoteTweakpane(this));
     }
   }
 

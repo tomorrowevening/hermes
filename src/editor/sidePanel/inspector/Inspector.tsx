@@ -51,6 +51,8 @@ export default function Inspector(props: CoreComponentProps) {
   }, []);
 
   const objType = currentObject.type.toLowerCase();
+  const hasAnimation = currentObject.animations.length > 0
+    || currentObject['mixer'] !== undefined;
   const hasMaterial = objType.search('mesh') > -1
     || objType.search('line') > -1
     || objType.search('points') > -1;
@@ -101,7 +103,7 @@ export default function Inspector(props: CoreComponentProps) {
               {/* Transform */}
               {InspectTransform(currentObject, props.three)}
               {/* Animations */}
-              {currentObject.animations.length > 0 ? InspectAnimation(currentObject, props.three) : null}
+              {hasAnimation ? InspectAnimation(currentObject, props.three) : null}
               {/* Cameras */}
               {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
               {/* Lights */}

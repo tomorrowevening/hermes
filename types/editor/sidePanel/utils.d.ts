@@ -4,5 +4,6 @@ export declare function determineIcon(obj: Object3D): string;
 export declare function stripScene(obj: Object3D): MinimumObject;
 export declare function convertImageToBase64(imgElement: HTMLImageElement): string;
 export declare function stripObject(obj: Object3D): RemoteObject;
+export declare function getSubItem(child: any, key: string): any;
 export declare function setItemProps(child: any, key: string, value: any): void;
 export declare function textureFromSrc(imgSource: string): Promise<Texture>;

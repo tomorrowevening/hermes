@@ -1,8 +1,9 @@
-import { DirectionalLight, LineBasicMaterial, LineSegments, MeshMatcapMaterial, Object3D, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { DirectionalLight, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
 import { IS_DEV, app } from '../constants';
 import { hierarchyUUID } from '../../editor/utils';
 import BaseScene from './BaseScene';
 import FBXAnimation from './FBXAnimation';
+import { textures } from './loader';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
@@ -45,6 +46,19 @@ export default class Scene2 extends BaseScene {
     const world = new Object3D();
     world.name = 'world';
     this.add(world);
+
+    const gridTexture = textures.get('uv_grid')!;
+    gridTexture.repeat.setScalar(10);
+    gridTexture.needsUpdate = true;
+    const floorMaterial = new MeshBasicMaterial({
+      map: gridTexture,
+    });
+    const floor = new Mesh(new SphereGeometry(250, 36), floorMaterial);
+    floor.name = 'floor';
+    floor.receiveShadow = true;
+    floor.position.y = -75;
+    floor.scale.y = 0.1;
+    world.add(floor);
 
     const points = new Points(new SphereGeometry(50), new PointsMaterial({ size: 2 }));
     points.name = 'points';

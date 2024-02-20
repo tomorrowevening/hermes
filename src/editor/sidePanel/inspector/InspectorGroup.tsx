@@ -31,6 +31,7 @@ export default function InspectorGroup(props: InspectorGroupProps) {
           max={child.max}
           step={child.step}
           disabled={child.disabled}
+          options={child.options}
           onChange={(prop: string, value: any) => {
             if (child.onChange !== undefined) {
               child.onChange(prop, value);
