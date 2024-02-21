@@ -3,11 +3,11 @@
   "author": "Colin Duffy <http://tomorrowevening.com/>",
   "description": "An extendable set of Web Tools controlled via a separate window for non-intereference with content.",
   "license": "GPL-3.0-or-later",
-  "main": "./dist/hermes.umd.cjs",
-  "module": "./dist/hermes.js",
+  "main": "./dist/hermes.cjs.js",
+  "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -20,15 +20,18 @@
     "Tweakpane"
   ],
   "files": [
-    "dist/hermes.js",
-    "dist/hermes.umd.cjs",
+    "dist/hermes.esm.js",
+    "dist/hermes.cjs.js",
+    "dist/hermes.umd.js",
     "dist/style.css",
     "types/**/*.d.ts"
   ],
   "exports": {
     ".": {
-      "import": "./dist/hermes.js",
-      "require": "./dist/hermes.umd.cjs",
+      "import": "./dist/hermes.esm.js",
+      "require": "./dist/hermes.cjs.js",
+      "umd": "./dist/hermes.umd.js",
+      "default": "./dist/hermes.umd.js",
       "types": "./types/index.d.ts"
     },
     "./dist/style.css": "./dist/style.css",
@@ -50,18 +53,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@theatre/core": "0.7.0",
-    "@tweakpane/plugin-essentials": "^0.2.0",
-    "framer-motion": "^10.16.0",
-    "postprocessing": "6.34.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "stats-gl": "2.0.1",
-    "three": "^0.161.0",
-    "tweakpane": "^4.0.0"
   },
   "devDependencies": {
+    "@theatre/core": "0.7.0",
     "@theatre/studio": "0.7.0",
+    "@tweakpane/plugin-essentials": "^0.2.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.161.2",
@@ -72,8 +68,15 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "framer-motion": "^10.16.0",
     "path": "^0.12.7",
+    "postprocessing": "6.34.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.66.1",
+    "stats-gl": "2.0.1",
+    "three": "^0.161.0",
+    "tweakpane": "^4.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "ws": "^8.16.0"

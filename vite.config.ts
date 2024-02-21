@@ -11,12 +11,21 @@ export default defineConfig({
     }
   },
   build: {
-    assetsDir: 'public/',
-    emptyOutDir: false,
     lib: {
       entry: 'src/index.ts',
       name: 'Hermes',
-      fileName: 'hermes'
+      fileName: (format) => {
+        switch (format) {
+          case 'cjs':
+            return 'hermes.cjs.js';
+          case 'es':
+            return 'hermes.esm.js';
+          case 'umd':
+            return 'hermes.umd.js';
+        }
+        return 'hermes.js';
+      },
+      formats: ['cjs', 'es', 'umd']
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
@@ -34,8 +43,8 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          react: 'react',
-          three: 'three',
+          'react': 'react',
+          'three': 'three',
           'framer-motion': 'framer-motion',
           '@theatre/core': '@theatre/core',
           '@theatre/studio': '@theatre/studio',
