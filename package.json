@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -20,9 +20,6 @@
     "Tweakpane"
   ],
   "files": [
-    "src/index.ts",
-    "src/core",
-    "src/editor",
     "dist/hermes.js",
     "dist/hermes.umd.cjs",
     "dist/style.css",
