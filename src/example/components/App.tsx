@@ -14,7 +14,7 @@ import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
+// import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
@@ -94,7 +94,7 @@ function App() {
     };
 
     const updateApp = () => {
-      RemoteTheatre.getRafDriver().tick(performance.now());
+      // RemoteTheatre.getRafDriver().tick(performance.now());
       currentScene?.update();
       stats.begin();
       renderer.clear();
