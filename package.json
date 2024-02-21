@@ -7,7 +7,7 @@
   "module": "./dist/hermes.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -30,7 +30,6 @@
   ],
   "exports": {
     ".": {
-      "default": "./dist/hermes.umd.cjs",
       "import": "./dist/hermes.js",
       "require": "./dist/hermes.umd.cjs",
       "types": "./types/index.d.ts"
