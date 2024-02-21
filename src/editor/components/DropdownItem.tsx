@@ -3,7 +3,7 @@ import { useState } from 'react';
 // Components
 import Draggable from './Draggable';
 import Dropdown from './Dropdown';
-import type { DropdownItemProps, DropdownOption } from './types';
+import { DropdownItemProps, DropdownOption } from './types';
 // Utils
 import { randomID } from '../utils';
 

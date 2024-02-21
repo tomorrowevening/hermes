@@ -1,8 +1,7 @@
 import { Pane } from 'tweakpane';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { BroadcastData } from '../types';
-import type { DataUpdateCallback, VoidCallback } from '../types';
+import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 export default class RemoteTweakpane extends BaseRemote {
     bindCBs: Map<string, DataUpdateCallback>;
     buttonCBs: Map<string, VoidCallback>;

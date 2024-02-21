@@ -1,5 +1,5 @@
 import BaseRemote from './remote/BaseRemote';
-import type { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
+import { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 
 export default class Application {
   components: Map<string, any> = new Map();

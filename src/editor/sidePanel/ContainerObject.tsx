@@ -1,6 +1,6 @@
 import { Object3D } from 'three';
 import ChildObject from './ChildObject';
-import type { ChildObjectProps } from './types';
+import { ChildObjectProps } from './types';
 
 export default function ContainerObject(props: ChildObjectProps) {
   const children: Array<any> = [];
