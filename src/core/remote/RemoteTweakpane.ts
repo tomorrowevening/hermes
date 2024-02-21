@@ -4,8 +4,7 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { BroadcastData, noop } from '../types';
-import type { DataUpdateCallback, VoidCallback } from '../types';
+import { BroadcastData, DataUpdateCallback, VoidCallback, noop } from '../types';
 
 export default class RemoteTweakpane extends BaseRemote {
   bindCBs: Map<string, DataUpdateCallback>;

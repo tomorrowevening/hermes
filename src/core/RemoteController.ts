@@ -1,7 +1,7 @@
 // Core
 import Application from './Application';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
-import type { BroadcastData } from './types';
+import { BroadcastData } from './types';
 import BaseRemote from './remote/BaseRemote';
 import RemoteComponents, { HandleAppRemoteComponents } from './remote/RemoteComponents';
 import RemoteTheatre, { HandleAppRemoteTheatre, HandleEditorRemoteTheatre, UpdateRemoteTheatre } from './remote/RemoteTheatre';

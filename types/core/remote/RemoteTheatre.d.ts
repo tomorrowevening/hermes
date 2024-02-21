@@ -1,8 +1,7 @@
-import type { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { BroadcastData } from '../types';
-import type { DataUpdateCallback, VoidCallback } from '../types';
+import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 export default class RemoteTheatre extends BaseRemote {
     project: IProject | undefined;
     sheets: Map<string, ISheet>;

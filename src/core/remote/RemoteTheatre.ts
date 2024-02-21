@@ -1,13 +1,12 @@
 // Libs
 import { createRafDriver, getProject } from '@theatre/core';
-import type { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import studio from '@theatre/studio';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { isColor } from '@/editor/utils';
-import { BroadcastData, EditorEvent, noop } from '../types';
-import type { DataUpdateCallback, VoidCallback } from '../types';
+import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
