@@ -34,11 +34,11 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          react: 'React',
-          three: 'Three',
+          react: 'react',
+          three: 'three',
           'framer-motion': 'framer-motion',
-          '@theatre/core': 'Theatre Core',
-          '@theatre/studio': 'Theatre Studio',
+          '@theatre/core': '@theatre/core',
+          '@theatre/studio': '@theatre/studio',
           'tweakpane': 'tweakpane',
           '@tweakpane/plugin-essentials': 'tweakpane-plugin-essentials',
         }
