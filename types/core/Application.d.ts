@@ -4,12 +4,13 @@ export default class Application {
     components: Map<string, any>;
     listen?: BroadcastCallback;
     protected _debugEnabled: boolean;
-    protected broadcastChannel?: BroadcastChannel | undefined;
-    protected webSocket?: WebSocket | undefined;
+    protected _broadcastChannel?: BroadcastChannel | undefined;
+    protected _webSocket?: WebSocket | undefined;
     protected _mode: ApplicationMode;
     protected _connected: boolean;
-    protected useBC: boolean;
-    constructor(id: string, debugEnabled: boolean, useBC?: boolean, editorHashtag?: string);
+    protected _useBC: boolean;
+    constructor(id: string, debugEnabled: boolean, useBC?: boolean);
+    init(): Promise<void>;
     addComponent(name: string, component: BaseRemote): void;
     dispose(): void;
     send(data: BroadcastData): void;
