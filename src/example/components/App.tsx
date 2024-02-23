@@ -1,17 +1,15 @@
 // Libs
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
-import { app, Events, IS_DEV, threeDispatcher } from '../constants';
+import { app, IS_DEV } from '../constants';
 // Components
-import './App.css';
 import BaseScene from '../three/BaseScene';
 import Scene1 from '../three/Scene1';
 import Scene2 from '../three/Scene2';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
-import { loadAssets } from '../three/loader';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
@@ -25,11 +23,9 @@ const useTweakpane = false;
 function App() {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loaded, setLoaded] = useState(false);
 
   // Theatre
   useEffect(() => {
-    if (!loaded) return;
     if (app.theatre === undefined) return;
 
     const container = elementRef.current!;
@@ -53,7 +49,7 @@ function App() {
       if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj);
       app.dispose();
     };
-  }, [loaded]);
+  }, []);
 
   // Renderer setup
   if (!app.editor) {
@@ -74,8 +70,6 @@ function App() {
 
   // ThreeJS
   useEffect(() => {
-    if (!loaded) return;
-    
     let stats: Stats;
     if (!app.editor) {
       stats = new Stats();
@@ -119,17 +113,7 @@ function App() {
       cancelAnimationFrame(raf);
       raf = -1;
     };
-  }, [loaded]);
-
-  // Preload
-  useEffect(() => {
-    const onLoad = () => {
-      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-      setLoaded(true);
-    };
-    threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
-    loadAssets();
-  }, [setLoaded]);
+  }, []);
 
   const createScene = () => {
     if (currentScene !== undefined) {
@@ -213,7 +197,6 @@ function App() {
 
   return (
     <>
-      {!loaded && <p className='loading'>Loading...</p>}
       {app.isApp && <canvas ref={canvasRef} />}
 
       <div id='box' ref={elementRef}>
@@ -236,9 +219,7 @@ function App() {
         <button onClick={createScene2}>Scene 2</button>
       </div>
 
-      {IS_DEV && (
-        <SceneInspector three={app.three} />
-      )}
+      {IS_DEV && <SceneInspector three={app.three} />}
     </>
   );
 }

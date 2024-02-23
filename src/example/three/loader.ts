@@ -98,10 +98,9 @@ export function loadAssets(): Promise<void> {
 
     Promise.all(assets.map(load => load()))
       .then(() => {
-        app.onLoad().then(() => {
-          threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
-          resolve();
-        });
+        // @ts-ignore
+        threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
+        resolve();
       })
       .catch(() => {
         reject();
