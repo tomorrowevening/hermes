@@ -29,17 +29,20 @@ export default class RemoteComponents extends BaseRemote {
       }
     });
   }
-}
 
-export function HandleAppRemoteComponents(_: Application, msg: BroadcastData) {
-  switch (msg.event) {
-    case 'selectComponent':
-      // @ts-ignore
-      debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data });
-      break;
-    case 'draggableListUpdate':
-      // @ts-ignore
-      debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data });
-      break;
+  // Remote Controller
+
+  // Receives App events
+  override handleApp(msg: BroadcastData) {
+    switch (msg.event) {
+      case 'selectComponent':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data });
+        break;
+      case 'draggableListUpdate':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data });
+        break;
+    }
   }
 }

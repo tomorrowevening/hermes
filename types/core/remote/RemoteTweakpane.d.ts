@@ -20,5 +20,5 @@ export default class RemoteTweakpane extends BaseRemote {
     triggerButton(id: string): void;
     createInspector(): void;
     clearInspector(): void;
+    handleApp(msg: BroadcastData): void;
 }
-export declare function HandleAppRemoteTweakpane(app: Application, msg: BroadcastData): void;

@@ -3,33 +3,13 @@ import Application from './Application';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { BroadcastData } from './types';
 import BaseRemote from './remote/BaseRemote';
-import RemoteComponents, { HandleAppRemoteComponents } from './remote/RemoteComponents';
-import RemoteTheatre, { HandleAppRemoteTheatre, HandleEditorRemoteTheatre, UpdateRemoteTheatre } from './remote/RemoteTheatre';
-import RemoteThree, { HandleAppRemoteThree, HandleEditorRemoteThree } from './remote/RemoteThree';
-import RemoteTweakpane, { HandleAppRemoteTweakpane } from './remote/RemoteTweakpane';
 
 export default function RemoteController(app: Application) {
-  const appHandlers: any[] = [];
-  const editorHandlers: any[] = [];
-
-  // Correct handlers based on the App's components
-  app.components.forEach((value: BaseRemote) => {
-    if (value instanceof RemoteComponents) {
-      appHandlers.push(HandleAppRemoteComponents);
-    } else if (value instanceof RemoteTheatre) {
-      appHandlers.push(HandleAppRemoteTheatre);
-      editorHandlers.push(HandleEditorRemoteTheatre);
-      UpdateRemoteTheatre(app);
-    }  else if (value instanceof RemoteThree) {
-      appHandlers.push(HandleAppRemoteThree);
-      editorHandlers.push(HandleEditorRemoteThree);
-    } else if (value instanceof RemoteTweakpane) {
-      appHandlers.push(HandleAppRemoteTweakpane);
-    }
-  });
-
   function handleAppBroadcast(msg: BroadcastData) {
-    appHandlers.forEach((handler: any) => handler(app, msg));
+    app.components.forEach((value: BaseRemote) => {
+      value.handleApp(msg);
+    });
+
     switch (msg.event) {
       case 'custom':
         // @ts-ignore
@@ -39,7 +19,10 @@ export default function RemoteController(app: Application) {
   }
 
   function handleEditorBroadcast(msg: BroadcastData) {
-    editorHandlers.forEach((handler: any) => handler(app, msg));
+    app.components.forEach((value: BaseRemote) => {
+      value.handleEditor(msg);
+    });
+
     switch (msg.event) {
       case 'custom':
         // @ts-ignore

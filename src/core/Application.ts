@@ -7,28 +7,37 @@ export default class Application {
   
   // Protected
   protected _debugEnabled: boolean;
-  protected broadcastChannel?: BroadcastChannel | undefined = undefined;
-  protected webSocket?: WebSocket | undefined = undefined;
+  protected _broadcastChannel?: BroadcastChannel | undefined = undefined;
+  protected _webSocket?: WebSocket | undefined = undefined;
   protected _mode: ApplicationMode = 'app';
   protected _connected = false;
-  protected useBC = false;
+  protected _useBC = false;
 
-  constructor(id: string, debugEnabled: boolean, useBC:boolean = true, editorHashtag: string = 'editor') {
-    this.editor = debugEnabled && document.location.hash.search(editorHashtag) > -1;
+  constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
     this._debugEnabled = debugEnabled;
 
     if (debugEnabled) {
-      this.useBC = useBC;
+      this._useBC = useBC;
       if (useBC) {
-        this.broadcastChannel = new BroadcastChannel(id);
-        this.broadcastChannel.addEventListener('message', this.messageHandler);
+        this._broadcastChannel = new BroadcastChannel(id);
+        this._broadcastChannel.addEventListener('message', this.messageHandler);
       } else {
-        this.webSocket = new WebSocket(id);
-        this.webSocket.addEventListener('open', this.openHandler);
-        this.webSocket.addEventListener('close', this.closeHandler);
-        this.webSocket.addEventListener('message', this.messageHandler);
+        this._webSocket = new WebSocket(id);
+        this._webSocket.addEventListener('open', this.openHandler);
+        this._webSocket.addEventListener('close', this.closeHandler);
+        this._webSocket.addEventListener('message', this.messageHandler);
       }
     }
+  }
+
+  // Set editor and add components here
+  init(): Promise<void> {
+    return new Promise((resolve) => {
+      this.components.forEach((value: BaseRemote) => {
+        value.handleEditorApp();
+      });
+      resolve();
+    });
   }
 
   addComponent(name: string, component: BaseRemote) {
@@ -36,13 +45,13 @@ export default class Application {
   }
 
   dispose() {
-    if (this.broadcastChannel !== undefined) {
-      this.broadcastChannel.removeEventListener('message', this.messageHandler);
+    if (this._broadcastChannel !== undefined) {
+      this._broadcastChannel.removeEventListener('message', this.messageHandler);
     }
-    if (this.webSocket !== undefined) {
-      this.webSocket.removeEventListener('open', this.openHandler);
-      this.webSocket.removeEventListener('close', this.closeHandler);
-      this.webSocket.removeEventListener('message', this.messageHandler);
+    if (this._webSocket !== undefined) {
+      this._webSocket.removeEventListener('open', this.openHandler);
+      this._webSocket.removeEventListener('close', this.closeHandler);
+      this._webSocket.removeEventListener('message', this.messageHandler);
     }
     this.components.forEach((value: BaseRemote) => {
       value.dispose();
@@ -54,17 +63,17 @@ export default class Application {
 
   send(data: BroadcastData) {
     if (this._mode !== data.target) {
-      if (this.useBC) {
-        this.broadcastChannel?.postMessage(data);
+      if (this._useBC) {
+        this._broadcastChannel?.postMessage(data);
       } else if (this._connected) {
-        this.webSocket?.send(JSON.stringify(data));
+        this._webSocket?.send(JSON.stringify(data));
       }
     }
   }
 
   private messageHandler = (evt: MessageEvent) => {
     if (this.listen !== undefined) {
-      if (this.useBC) {
+      if (this._useBC) {
         this.listen(evt.data);
       } else {
         this.listen(JSON.parse(evt.data));
@@ -105,7 +114,6 @@ export default class Application {
   set editor(value: boolean) {
     if (value) {
       this._mode = 'editor';
-      document.title += ' - Editor';
     }
   }
 }
