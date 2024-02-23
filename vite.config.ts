@@ -25,7 +25,7 @@ export default defineConfig({
         }
         return 'hermes.js';
       },
-      formats: ['cjs', 'es', 'umd']
+      formats: ['cjs', 'es']
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
