@@ -8,6 +8,7 @@ import BaseRemote from './BaseRemote';
 import { isColor } from '@/editor/utils';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 
+let activeSheet: ISheet | undefined;
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
   sheets: Map<string, ISheet> = new Map();
@@ -155,146 +156,124 @@ export default class RemoteTheatre extends BaseRemote {
     }
   }
 
+  // Remote Controller
+
+  // Receives App events
+  override handleApp(msg: BroadcastData) {
+    let value: any = undefined;
+    switch (msg.event) {
+      case 'setSheet':
+        value = this.sheets.get(msg.data.sheet);
+        if (value !== undefined) {
+          activeSheet = value as ISheet;
+          studio.setSelection([value]);
+        }
+        break;
+      case 'setSheetObject':
+        value = this.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
+        if (value !== undefined) {
+          studio.setSelection([value]);
+        }
+        break;
+      case 'updateSheetObject':
+        value = this.sheets.get(msg.data.sheet); // pause current animation
+        if (value !== undefined) value.sequence.pause();
+        value = this.sheetObjectCBs.get(msg.data.sheetObject);
+        if (value !== undefined) value(msg.data.values);
+        break;
+      case 'updateTimeline':
+        value = this.sheets.get(msg.data.sheet);
+        if (activeSheet !== undefined) {
+          activeSheet.sequence.position = msg.data.position;
+        }
+        break;
+    }
+  }
+
+  // Receives Editor events
+  override handleEditor(msg: BroadcastData) {
+    if (this.app.editor) {
+      switch (msg.event) {
+        case 'playSheet':
+          this.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
+          break;
+        case 'pauseSheet':
+          this.sheet(msg.data.sheet)?.sequence.pause();
+          break;
+      }
+    }
+  }
+
+  // Runs only in-editor
+  override handleEditorApp() {
+    if (this.app.editor) {
+      studio.ui.restore();
+      studio.onSelectionChange((value: any[]) => {
+        if (value.length < 1) return;
+  
+        value.forEach((obj: any) => {
+          let id = obj.address.sheetId;
+          let type: EditorEvent = 'setSheet';
+          let data = {};
+          switch (obj.type) {
+            case 'Theatre_Sheet_PublicAPI':
+              type = 'setSheet';
+              data = {
+                sheet: obj.address.sheetId,
+              };
+              activeSheet = this.sheets.get(obj.address.sheetId);
+              break;
+  
+            case 'Theatre_SheetObject_PublicAPI':
+              type = 'setSheetObject';
+              id += `_${obj.address.objectKey}`;
+              data = {
+                id: id,
+                sheet: obj.address.sheetId,
+                key: obj.address.objectKey,
+              };
+              break;
+          }
+          this.app.send({ event: type, target: 'app', data: data });
+        });
+      });
+  
+      // Timeline
+      let position = 0;
+      const onRafUpdate = () => {
+        // RemoteTheatre.getRafDriver().tick(performance.now());
+  
+        if (
+          activeSheet !== undefined &&
+          position !== activeSheet.sequence.position
+        ) {
+          position = activeSheet.sequence.position;
+          const t = activeSheet as ISheet;
+          this.app.send({
+            event: 'updateTimeline',
+            target: 'app',
+            data: {
+              position: position,
+              sheet: t.address.sheetId,
+            },
+          });
+        }
+      };
+      const onRaf = () => {
+        onRafUpdate();
+        requestAnimationFrame(onRaf);
+      };
+      onRafUpdate(); // Initial position
+      onRaf();
+    } else {
+      studio.ui.hide();
+    }
+  }
+
   public static getRafDriver(): IRafDriver {
     if (!RemoteTheatre.rafDriver) {
       RemoteTheatre.rafDriver = createRafDriver();
     }
     return RemoteTheatre.rafDriver;
-  }
-}
-
-let activeSheet: ISheet | undefined;
-
-export function HandleAppRemoteTheatre(app: Application, msg: BroadcastData) {
-  app.components.forEach((component: any) => {
-    if (component instanceof RemoteTheatre) {
-      let value = undefined;
-      const theatre = component as RemoteTheatre;
-      switch (msg.event) {
-        case 'setSheet':
-          // @ts-ignore
-          value = theatre.sheets.get(msg.data.sheet);
-          if (value !== undefined) {
-            activeSheet = value as ISheet;
-            studio.setSelection([value]);
-          }
-          break;
-        case 'setSheetObject':
-          // @ts-ignore
-          value = theatre.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
-          if (value !== undefined) {
-            studio.setSelection([value]);
-          }
-          break;
-        case 'updateSheetObject':
-          // @ts-ignore
-          value = theatre.sheets.get(msg.data.sheet); // pause current animation
-          // @ts-ignore
-          if (value !== undefined) value.sequence.pause();
-          // @ts-ignore
-          value = theatre.sheetObjectCBs.get(msg.data.sheetObject);
-          // @ts-ignore
-          if (value !== undefined) value(msg.data.values);
-          break;
-        case 'updateTimeline':
-          // @ts-ignore
-          value = theatre.sheets.get(msg.data.sheet);
-          if (activeSheet !== undefined) {
-            (activeSheet as ISheet).sequence.position = msg.data.position;
-          }
-          break;
-      }
-    }
-  });
-}
-
-export function UpdateRemoteTheatre(app: Application) {
-  if (app.editor) {
-    let theatre: RemoteTheatre;
-    app.components.forEach((component: any) => {
-      if (component instanceof RemoteTheatre) {
-        theatre = component;
-      }
-    });
-    
-    studio.ui.restore();
-    studio.onSelectionChange((value: any[]) => {
-      if (value.length < 1) return;
-
-      value.forEach((obj: any) => {
-        let id = obj.address.sheetId;
-        let type: EditorEvent = 'setSheet';
-        let data = {};
-        switch (obj.type) {
-          case 'Theatre_Sheet_PublicAPI':
-            type = 'setSheet';
-            data = {
-              sheet: obj.address.sheetId,
-            };
-            activeSheet = theatre.sheets.get(obj.address.sheetId);
-            break;
-
-          case 'Theatre_SheetObject_PublicAPI':
-            type = 'setSheetObject';
-            id += `_${obj.address.objectKey}`;
-            data = {
-              id: id,
-              sheet: obj.address.sheetId,
-              key: obj.address.objectKey,
-            };
-            break;
-        }
-        app.send({ event: type, target: 'app', data: data });
-      });
-    });
-
-    // Timeline
-    let position = 0;
-    const onRafUpdate = () => {
-      // RemoteTheatre.getRafDriver().tick(performance.now());
-
-      if (
-        activeSheet !== undefined &&
-        position !== activeSheet.sequence.position
-      ) {
-        position = activeSheet.sequence.position;
-        const t = activeSheet as ISheet;
-        app.send({
-          event: 'updateTimeline',
-          target: 'app',
-          data: {
-            position: position,
-            sheet: t.address.sheetId,
-          },
-        });
-      }
-    };
-    const onRaf = () => {
-      onRafUpdate();
-      requestAnimationFrame(onRaf);
-    };
-    onRafUpdate(); // Initial position
-    onRaf();
-  } else {
-    studio.ui.hide();
-  }
-}
-
-export function HandleEditorRemoteTheatre(app: Application, msg: BroadcastData) {
-  if (app.editor) {
-    app.components.forEach((component: any) => {
-      if (component instanceof RemoteTheatre) {
-        const theatre = component;
-        switch (msg.event) {
-          case 'playSheet':
-            theatre.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
-            break;
-          case 'pauseSheet':
-            theatre.sheet(msg.data.sheet)?.sequence.pause();
-            break;
-        }
-        return;
-      }
-    });
   }
 }

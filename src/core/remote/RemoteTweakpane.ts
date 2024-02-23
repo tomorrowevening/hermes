@@ -165,30 +165,27 @@ export default class RemoteTweakpane extends BaseRemote {
       this.inspectorFolder.remove(this.inspectorFolder.children[i]);
     }
   }
-}
 
-export function HandleAppRemoteTweakpane(app: Application, msg: BroadcastData) {
-  app.components.forEach((component: any) => {
-    if (component instanceof RemoteTweakpane) {
-      const tweakpane: RemoteTweakpane = component;
-      switch (msg.event) {
-        case 'addFolder':
-          tweakpane.addFolder(msg.data.name, msg.data.params, msg.data.parent);
-          break;
-        case 'bindObject':
-          tweakpane.bind(msg.data.name, msg.data.params, msg.data.parent);
-          break;
-        case 'updateBind':
-          tweakpane.triggerBind(msg.data.id, msg.data.value);
-          break;
-        case 'addButton':
-          tweakpane.button(msg.data.name, msg.data.callback, msg.data.parent);
-          break;
-        case 'clickButton':
-          tweakpane.triggerButton(msg.data.id);
-          break;
-      }
-      return;
+  // Remote Controller
+
+  // Receives App events
+  override handleApp(msg: BroadcastData) {
+    switch (msg.event) {
+      case 'addFolder':
+        this.addFolder(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'bindObject':
+        this.bind(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'updateBind':
+        this.triggerBind(msg.data.id, msg.data.value);
+        break;
+      case 'addButton':
+        this.button(msg.data.name, msg.data.callback, msg.data.parent);
+        break;
+      case 'clickButton':
+        this.triggerButton(msg.data.id);
+        break;
     }
-  });
+  }
 }

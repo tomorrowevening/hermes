@@ -3,10 +3,6 @@ import Application from './Application';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { BroadcastData } from './types';
 import BaseRemote from './remote/BaseRemote';
-import RemoteComponents, { HandleAppRemoteComponents } from './remote/RemoteComponents';
-import RemoteTheatre, { HandleAppRemoteTheatre, HandleEditorRemoteTheatre, UpdateRemoteTheatre } from './remote/RemoteTheatre';
-import RemoteThree, { HandleAppRemoteThree, HandleEditorRemoteThree } from './remote/RemoteThree';
-import RemoteTweakpane, { HandleAppRemoteTweakpane } from './remote/RemoteTweakpane';
 
 export default function RemoteController(app: Application) {
   const appHandlers: any[] = [];
@@ -14,18 +10,9 @@ export default function RemoteController(app: Application) {
 
   // Correct handlers based on the App's components
   app.components.forEach((value: BaseRemote) => {
-    if (value instanceof RemoteComponents) {
-      appHandlers.push(HandleAppRemoteComponents);
-    } else if (value instanceof RemoteTheatre) {
-      appHandlers.push(HandleAppRemoteTheatre);
-      editorHandlers.push(HandleEditorRemoteTheatre);
-      UpdateRemoteTheatre(app);
-    }  else if (value instanceof RemoteThree) {
-      appHandlers.push(HandleAppRemoteThree);
-      editorHandlers.push(HandleEditorRemoteThree);
-    } else if (value instanceof RemoteTweakpane) {
-      appHandlers.push(HandleAppRemoteTweakpane);
-    }
+    appHandlers.push(value.handleApp);
+    editorHandlers.push(value.handleEditor);
+    value.handleEditorApp();
   });
 
   function handleAppBroadcast(msg: BroadcastData) {
