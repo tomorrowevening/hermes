@@ -9,10 +9,12 @@ import './index.scss';
 import Wrapper from './components/Wrapper';
 // Tools
 import RemoteTheatre from '../core/remote/RemoteTheatre';
+import { createRafDriver } from '@theatre/core';
 
 // Debug tools
 if (IS_DEV) {
-  studio.initialize({ __experimental_rafDriver: RemoteTheatre.getRafDriver() });
+  RemoteTheatre.rafDriver = createRafDriver();
+  studio.initialize({ __experimental_rafDriver: RemoteTheatre.rafDriver });
 }
 
 // React

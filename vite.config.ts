@@ -14,17 +14,7 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'Hermes',
-      fileName: (format) => {
-        switch (format) {
-          case 'cjs':
-            return 'hermes.cjs.js';
-          case 'es':
-            return 'hermes.esm.js';
-          case 'umd':
-            return 'hermes.umd.js';
-        }
-        return 'hermes.js';
-      },
+      fileName: (format) => `hermes.${format}.js`,
       formats: ['cjs', 'es']
     },
     rollupOptions: {
@@ -39,21 +29,7 @@ export default defineConfig({
         'tweakpane',
         '@tweakpane/plugin-essentials',
         'postprocessing'
-      ],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          'react': 'react',
-          'three': 'three',
-          'framer-motion': 'framer-motion',
-          '@theatre/core': '@theatre/core',
-          '@theatre/studio': '@theatre/studio',
-          'tweakpane': 'tweakpane',
-          '@tweakpane/plugin-essentials': 'tweakpane-plugin-essentials',
-          'postprocessing': 'postprocessing'
-        }
-      }
+      ]
     }
   }
 });

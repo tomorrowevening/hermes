@@ -1,6 +1,5 @@
 // Libs
-import { createRafDriver, getProject } from '@theatre/core';
-import { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import studio from '@theatre/studio';
 // Core
 import BaseRemote from './BaseRemote';
@@ -15,12 +14,7 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectCBs: Map<string, DataUpdateCallback> = new Map();
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
 
-  private static rafDriver: IRafDriver | null = null;
-
-  init(projectName: string, projectConfig?: IProjectConfig | undefined): Promise<void> {
-    this.project = getProject(projectName, projectConfig);
-    return this.project.ready;
-  }
+  public static rafDriver?: IRafDriver | undefined = undefined;
 
   override dispose(): void {
     this.project = undefined;
@@ -241,7 +235,7 @@ export default class RemoteTheatre extends BaseRemote {
       // Timeline
       let position = -1;
       const onRafUpdate = () => {
-        RemoteTheatre.getRafDriver().tick(performance.now());
+        RemoteTheatre.rafDriver?.tick(performance.now());
   
         if (
           activeSheet !== undefined &&
@@ -268,12 +262,5 @@ export default class RemoteTheatre extends BaseRemote {
     } else {
       studio.ui.hide();
     }
-  }
-
-  public static getRafDriver(): IRafDriver {
-    if (!RemoteTheatre.rafDriver) {
-      RemoteTheatre.rafDriver = createRafDriver();
-    }
-    return RemoteTheatre.rafDriver;
   }
 }

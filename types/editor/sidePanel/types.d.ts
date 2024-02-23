@@ -5,7 +5,7 @@ export interface CoreComponentProps {
     three: RemoteThree;
 }
 export interface ChildObjectProps extends CoreComponentProps {
-    child: Object3D;
+    child?: Object3D;
     three: RemoteThree;
 }
 export interface SidePanelState {

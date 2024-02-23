@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -20,14 +20,14 @@
     "Tweakpane"
   ],
   "files": [
-    "dist/hermes.esm.js",
+    "dist/hermes.es.js",
     "dist/hermes.cjs.js",
     "dist/style.css",
     "types/**/*.d.ts"
   ],
   "exports": {
     ".": {
-      "import": "./dist/hermes.esm.js",
+      "import": "./dist/hermes.es.js",
       "require": "./dist/hermes.cjs.js",
       "types": "./types/index.d.ts"
     },

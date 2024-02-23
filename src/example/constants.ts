@@ -6,19 +6,17 @@ import RemoteThree from '../core/remote/RemoteThree';
 import RemoteTweakpane from '../core/remote/RemoteTweakpane';
 import { json } from './three/loader';
 import BaseRemote from '../core/remote/BaseRemote';
+import { getProject } from '@theatre/core';
 
 export const IS_DEV = true;
 
 class CustomApp extends Application {
-  constructor() {
-    super('ws://localhost:8080', IS_DEV);
-  }
-
   override init(): Promise<void> {
     return new Promise((resolve) => {
       this.editor = IS_DEV && document.location.hash.search('editor') > -1;
 
-      this.addComponent('theatre', new RemoteTheatre(this));
+      const theatre = new RemoteTheatre(this);
+      this.addComponent('theatre', theatre);
       this.addComponent('three', new RemoteThree(this));
       if (IS_DEV) {
         this.addComponent('components', new RemoteComponents(this));
@@ -30,9 +28,8 @@ class CustomApp extends Application {
       });
 
       const state = json.get('animation');
-      this.theatre.init('RemoteApp', { state }).then(() => {
-        resolve();
-      });
+      theatre.project = getProject('RemoteApp', { state });
+      theatre.project.ready.then(() => resolve());
     });
   }
 
@@ -55,7 +52,7 @@ class CustomApp extends Application {
   }
 }
 
-export const app = new CustomApp();
+export const app = new CustomApp('ws://localhost:8080', IS_DEV);
 export const threeDispatcher = new EventDispatcher();
 export const Events = {
   LOAD_COMPLETE: 'Events::loadComplete'
