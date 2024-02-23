@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -24,6 +24,7 @@
     "dist/hermes.cjs.js",
     "dist/hermes.umd.js",
     "dist/style.css",
+    "src/",
     "types/**/*.d.ts"
   ],
   "exports": {

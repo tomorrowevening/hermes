@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -11,6 +10,7 @@ export default defineConfig({
     }
   },
   build: {
+    target: 'esnext',
     lib: {
       entry: 'src/index.ts',
       name: 'Hermes',
@@ -37,7 +37,8 @@ export default defineConfig({
         '@theatre/core',
         '@theatre/studio',
         'tweakpane',
-        '@tweakpane/plugin-essentials'
+        '@tweakpane/plugin-essentials',
+        'postprocessing'
       ],
       output: {
         // Provide global variables to use in the UMD build
@@ -50,6 +51,7 @@ export default defineConfig({
           '@theatre/studio': '@theatre/studio',
           'tweakpane': 'tweakpane',
           '@tweakpane/plugin-essentials': 'tweakpane-plugin-essentials',
+          'postprocessing': 'postprocessing'
         }
       }
     }
