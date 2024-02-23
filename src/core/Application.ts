@@ -33,6 +33,9 @@ export default class Application {
   // Set editor and add components here
   init(): Promise<void> {
     return new Promise((resolve) => {
+      this.components.forEach((value: BaseRemote) => {
+        value.handleEditorApp();
+      });
       resolve();
     });
   }

@@ -5,18 +5,11 @@ import { BroadcastData } from './types';
 import BaseRemote from './remote/BaseRemote';
 
 export default function RemoteController(app: Application) {
-  const appHandlers: any[] = [];
-  const editorHandlers: any[] = [];
-
-  // Correct handlers based on the App's components
-  app.components.forEach((value: BaseRemote) => {
-    appHandlers.push(value.handleApp);
-    editorHandlers.push(value.handleEditor);
-    value.handleEditorApp();
-  });
-
   function handleAppBroadcast(msg: BroadcastData) {
-    appHandlers.forEach((handler: any) => handler(app, msg));
+    app.components.forEach((value: BaseRemote) => {
+      value.handleApp(msg);
+    });
+
     switch (msg.event) {
       case 'custom':
         // @ts-ignore
@@ -26,7 +19,10 @@ export default function RemoteController(app: Application) {
   }
 
   function handleEditorBroadcast(msg: BroadcastData) {
-    editorHandlers.forEach((handler: any) => handler(app, msg));
+    app.components.forEach((value: BaseRemote) => {
+      value.handleEditor(msg);
+    });
+
     switch (msg.event) {
       case 'custom':
         // @ts-ignore

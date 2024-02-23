@@ -3,7 +3,6 @@ import { createRafDriver, getProject } from '@theatre/core';
 import { IProject, IProjectConfig, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 import studio from '@theatre/studio';
 // Core
-import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { isColor } from '@/editor/utils';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
@@ -232,6 +231,7 @@ export default class RemoteTheatre extends BaseRemote {
                 sheet: obj.address.sheetId,
                 key: obj.address.objectKey,
               };
+              activeSheet = this.sheets.get(obj.address.sheetId);
               break;
           }
           this.app.send({ event: type, target: 'app', data: data });
@@ -239,9 +239,9 @@ export default class RemoteTheatre extends BaseRemote {
       });
   
       // Timeline
-      let position = 0;
+      let position = -1;
       const onRafUpdate = () => {
-        // RemoteTheatre.getRafDriver().tick(performance.now());
+        RemoteTheatre.getRafDriver().tick(performance.now());
   
         if (
           activeSheet !== undefined &&
