@@ -5,7 +5,7 @@ import { BroadcastData } from '../types';
  * Base class for remote-related extensions
  */
 export default class BaseRemote {
-  protected app: Application;
+  app: Application;
 
   constructor(app: Application) {
     this.app = app;
@@ -24,11 +24,6 @@ export default class BaseRemote {
 
   // Receives Editor events
   handleEditor(_: BroadcastData) {
-    //
-  }
-
-  // Runs only in-editor
-  handleEditorApp() {
     //
   }
 }
