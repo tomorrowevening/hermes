@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Events, app, threeDispatcher } from '../constants';
+import { Events, IS_DEV, app, threeDispatcher } from '../constants';
 import { loadAssets } from '../three/loader';
 import './App.css';
 import App from './App';

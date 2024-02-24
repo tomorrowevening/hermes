@@ -1,12 +1,12 @@
 import { EventDispatcher } from 'three';
+import { getProject } from '@theatre/core';
+import studio from '@theatre/studio';
 import Application from '../core/Application';
 import RemoteComponents from '../core/remote/RemoteComponents';
-import RemoteTheatre from '../core/remote/RemoteTheatre';
+import RemoteTheatre, { theatreEditorApp } from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
 import RemoteTweakpane from '../core/remote/RemoteTweakpane';
 import { json } from './three/loader';
-import BaseRemote from '../core/remote/BaseRemote';
-import { getProject } from '@theatre/core';
 
 export const IS_DEV = true;
 
@@ -23,13 +23,13 @@ class CustomApp extends Application {
         this.addComponent('debug', new RemoteTweakpane(this));
       }
 
-      this.components.forEach((value: BaseRemote) => {
-        value.handleEditorApp();
-      });
+      theatreEditorApp(app, app.theatre, studio);
 
       const state = json.get('animation');
       theatre.project = getProject('RemoteApp', { state });
-      theatre.project.ready.then(() => resolve());
+      theatre.project.ready.then(() => {
+        resolve();
+      });
     });
   }
 

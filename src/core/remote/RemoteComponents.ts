@@ -1,6 +1,5 @@
 // Core
 import { ToolEvents, debugDispatcher } from '@/editor/global';
-import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData } from '../types';
 
