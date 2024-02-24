@@ -1,6 +1,7 @@
 // Libs
 import React, { useEffect, useRef } from 'react';
 import { types } from '@theatre/core';
+import studio from '@theatre/studio';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
@@ -13,6 +14,7 @@ import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
+import { theatreEditorApp } from '../../editor/theatreUtils';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
@@ -23,6 +25,12 @@ const useTweakpane = false;
 function App() {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  if (IS_DEV) {
+    useEffect(() => {
+      theatreEditorApp(app, app.theatre, studio);
+    }, []);
+  }
 
   // Theatre
   useEffect(() => {
