@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { app } from './constants';
 import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
