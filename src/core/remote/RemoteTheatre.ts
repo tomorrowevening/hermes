@@ -1,9 +1,8 @@
 // Libs
 import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
-import studio from '@theatre/studio';
 // Core
 import BaseRemote from './BaseRemote';
-import { BroadcastData, DataUpdateCallback, VoidCallback, noop } from '../types';
+import { DataUpdateCallback, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
 
@@ -147,54 +146,6 @@ export default class RemoteTheatre extends BaseRemote {
       this.sheetObjectCBs.delete(id);
       this.sheetObjectUnsubscribe.delete(id);
       unsubscribe();
-    }
-  }
-
-  // Remote Controller
-
-  // Receives App events
-  override handleApp(msg: BroadcastData) {
-    let value: any = undefined;
-    switch (msg.event) {
-      case 'setSheet':
-        value = this.sheets.get(msg.data.sheet);
-        if (value !== undefined) {
-          this.activeSheet = value as ISheet;
-          studio.setSelection([value]);
-        }
-        break;
-      case 'setSheetObject':
-        value = this.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
-        if (value !== undefined) {
-          studio.setSelection([value]);
-        }
-        break;
-      case 'updateSheetObject':
-        value = this.sheets.get(msg.data.sheet); // pause current animation
-        if (value !== undefined) value.sequence.pause();
-        value = this.sheetObjectCBs.get(msg.data.sheetObject);
-        if (value !== undefined) value(msg.data.values);
-        break;
-      case 'updateTimeline':
-        value = this.sheets.get(msg.data.sheet);
-        if (this.activeSheet !== undefined) {
-          this.activeSheet.sequence.position = msg.data.position;
-        }
-        break;
-    }
-  }
-
-  // Receives Editor events
-  override handleEditor(msg: BroadcastData) {
-    if (this.app.editor) {
-      switch (msg.event) {
-        case 'playSheet':
-          this.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
-          break;
-        case 'pauseSheet':
-          this.sheet(msg.data.sheet)?.sequence.pause();
-          break;
-      }
     }
   }
 }

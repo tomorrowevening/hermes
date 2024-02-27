@@ -30,13 +30,6 @@ export default class Application {
     }
   }
 
-  // Set editor and add components here
-  init(): Promise<void> {
-    return new Promise((resolve) => {
-      resolve();
-    });
-  }
-
   addComponent(name: string, component: BaseRemote) {
     this.components.set(name, component);
   }
