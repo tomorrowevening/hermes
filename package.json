@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -76,6 +76,7 @@
     "tweakpane": "^4.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
+    "vite-plugin-glsl": "^1.2.1",
     "ws": "^8.16.0"
   }
 }

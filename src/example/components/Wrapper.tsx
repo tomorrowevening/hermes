@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { getProject } from '@theatre/core';
 import { Events, IS_DEV, app, threeDispatcher } from '../constants';
-import { loadAssets } from '../three/loader';
+import { json, loadAssets } from '../three/loader';
 import './App.css';
 import App from './App';
-import RemoteController from '../../core/RemoteController';
-import CustomEditor from '../CustomEditor';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export default function Wrapper() {
   const [loaded, setLoaded] = useState(false);
@@ -12,11 +12,14 @@ export default function Wrapper() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-      app.init().then(() => {
-        RemoteController(app);
+      const theatre = app.components.get('theatre') as RemoteTheatre;
+      const state = json.get('animation');
+      theatre.project = getProject('RemoteApp', { state });
+      theatre.project.ready.then(() => {
         setLoaded(true);
       });
     };
+
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
     loadAssets();
   }, [setLoaded]);
@@ -24,12 +27,7 @@ export default function Wrapper() {
   return (
     <>
       {!loaded && <p>Loading...</p>}
-      {loaded && (
-        <>
-          {app.editor ? <CustomEditor /> : null}
-          <App />
-        </>
-      )}
+      {loaded && <App />}
     </>
   );
 }

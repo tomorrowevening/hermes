@@ -6,14 +6,15 @@ import studio from '@theatre/studio';
 import { IS_DEV } from './constants';
 // Components
 import './index.scss';
+import CustomEditor from './CustomEditor';
 import Wrapper from './components/Wrapper';
 // Tools
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import { createRafDriver } from '@theatre/core';
 
 // Debug tools
+RemoteTheatre.rafDriver = createRafDriver();
 if (IS_DEV) {
-  RemoteTheatre.rafDriver = createRafDriver();
   studio.initialize({ __experimental_rafDriver: RemoteTheatre.rafDriver });
 }
 
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
     {IS_DEV ? (
       <>
+        <CustomEditor />
         <Wrapper />
       </>
     ) : (
