@@ -14,7 +14,8 @@ import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
-import { theatreEditorApp } from '../../editor/theatreUtils';
+import RemoteThree from '../../core/remote/RemoteThree';
+import RemoteTweakpane from '../../core/remote/RemoteTweakpane';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
@@ -22,26 +23,26 @@ let sceneName = '';
 
 const useTweakpane = false;
 
+app.editor = IS_DEV && document.location.hash.search('editor') > -1;
+
 function App() {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  if (IS_DEV) {
-    useEffect(() => {
-      theatreEditorApp(app, app.theatre, studio);
-    }, []);
-  }
+  const theatre = app.components.get('theatre') as RemoteTheatre;
+  const three = app.components.get('three') as RemoteThree;
+  const debug = app.components.get('debug') as RemoteTweakpane;
 
   // Theatre
   useEffect(() => {
-    if (app.theatre === undefined) return;
+    if (theatre === undefined) return;
 
     const container = elementRef.current!;
     container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
     // Theatre Example
-    app.theatre.sheet('App');
-    const sheetObj = app.theatre?.sheetObject(
+    theatre.sheet('App');
+    const sheetObj = theatre?.sheetObject(
       'App',
       'Box',
       {
@@ -54,7 +55,7 @@ function App() {
       },
     );
     return () => {
-      if (sheetObj !== undefined) app.theatre?.unsubscribe(sheetObj);
+      if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
       app.dispose();
     };
   }, []);
@@ -114,7 +115,7 @@ function App() {
 
     return () => {
       if (currentScene !== undefined) {
-        app.three.removeCamera(currentScene.camera);
+        three.removeCamera(currentScene.camera);
         dispose(currentScene);
       }
       window.removeEventListener('resize', onResize);
@@ -125,7 +126,7 @@ function App() {
 
   const createScene = () => {
     if (currentScene !== undefined) {
-      if (currentScene.camera !== undefined) app.three.removeCamera(currentScene.camera);
+      if (currentScene.camera !== undefined) three.removeCamera(currentScene.camera);
       dispose(currentScene);
     }
     if (sceneName === 'scene1') {
@@ -134,8 +135,8 @@ function App() {
       currentScene = new Scene2(renderer);
     }
     currentScene.resize(window.innerWidth, window.innerHeight);
-    app.three.setScene(currentScene);
-    app.three.addCamera(currentScene.camera);
+    three.setScene(currentScene);
+    three.addCamera(currentScene.camera);
   };
 
   const createScene1 = () => {
@@ -158,14 +159,14 @@ function App() {
 
       // Tweakpane Example
       if (useTweakpane) {
-        const testFolder = app.debug.addFolder('Test Folder');
+        const testFolder = debug.addFolder('Test Folder');
 
-        app.debug.button('Test Button', () => {
+        debug.button('Test Button', () => {
           console.log('Test button works!');
         }, testFolder);
 
         const test = { opacity: 1, rotation: 0 };
-        app.debug.bind(test, 'opacity', {
+        debug.bind(test, 'opacity', {
           min: 0,
           max: 1,
           onChange: (value: number) => {
@@ -173,7 +174,7 @@ function App() {
           }
         }, testFolder);
 
-        app.debug.bind(test, 'rotation', {
+        debug.bind(test, 'rotation', {
           min: 0,
           max: 360,
           onChange: (value: number) => {
@@ -214,7 +215,7 @@ function App() {
           //   event: 'custom',
           //   data: 'hello editor!'
           // });
-          app.theatre.playSheet('Scene1');
+          theatre.playSheet('Scene1');
         }}>Click</button>
       </div>
 
@@ -227,7 +228,7 @@ function App() {
         <button onClick={createScene2}>Scene 2</button>
       </div>
 
-      {IS_DEV && <SceneInspector three={app.three} />}
+      {IS_DEV && <SceneInspector three={three} />}
     </>
   );
 }

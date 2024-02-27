@@ -1,5 +1,6 @@
 import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { app } from '../constants';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export default class BaseScene extends Scene {
   camera: PerspectiveCamera;
@@ -24,7 +25,8 @@ export default class BaseScene extends Scene {
   }
 
   dispose() {
-    app.theatre.clearSheetObjects(this.name);
+    const theatre = app.components.get('theatre') as RemoteTheatre;
+    theatre.clearSheetObjects(this.name);
   }
 
   resize(width: number, height: number) {

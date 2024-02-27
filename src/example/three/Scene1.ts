@@ -6,6 +6,7 @@ import { IS_DEV, app } from '../constants';
 import FBXAnimation from './FBXAnimation';
 import { cubeTextures, textures } from './loader';
 import BaseScene from './BaseScene';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
@@ -154,10 +155,11 @@ export default class Scene1 extends BaseScene {
   }
 
   private createAnimation() {
-    app.theatre.sheet(this.name);
+    const theatre = app.components.get('theatre') as RemoteTheatre;
+    theatre.sheet(this.name);
 
     // Camera
-    app.theatre.sheetObject(
+    theatre.sheetObject(
       this.name,
       'Camera',
       {
@@ -179,7 +181,7 @@ export default class Scene1 extends BaseScene {
     );
 
     // Dancer
-    app.theatre.sheetObject(
+    theatre.sheetObject(
       this.name,
       'Break Dancer',
       {
@@ -200,7 +202,7 @@ export default class Scene1 extends BaseScene {
       }
     );
 
-    app.theatre.playSheet(this.name, { iterationCount: Infinity });
+    theatre.playSheet(this.name, { iterationCount: Infinity });
   }
 
   override update() {
