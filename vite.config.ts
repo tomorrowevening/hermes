@@ -1,14 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import glsl from 'vite-plugin-glsl';
 
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': '/src',
-      '~@': '/src',
-    }
-  },
   build: {
     target: 'esnext',
     lib: {
@@ -31,5 +25,12 @@ export default defineConfig({
         'postprocessing'
       ]
     }
-  }
+  },
+  plugins: [glsl(), react()],
+  resolve: {
+    alias: {
+      '@': '/src',
+      '~@': '/src',
+    }
+  },
 });

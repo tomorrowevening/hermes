@@ -10,7 +10,6 @@ export default class Application {
     protected _connected: boolean;
     protected _useBC: boolean;
     constructor(id: string, debugEnabled: boolean, useBC?: boolean);
-    init(): Promise<void>;
     addComponent(name: string, component: BaseRemote): void;
     dispose(): void;
     send(data: BroadcastData): void;
