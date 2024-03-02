@@ -1,7 +1,7 @@
 import { Scene } from 'three';
+import RemoteThree from '@/core/remote/RemoteThree';
 import { MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
-import RemoteThree from '@/core/remote/RemoteThree';
 interface MultiViewProps {
     three: RemoteThree;
     mode?: MultiViewMode;

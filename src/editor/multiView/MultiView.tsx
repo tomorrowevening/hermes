@@ -1,50 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, Group, OrthographicCamera, PerspectiveCamera, Raycaster, Scene, Vector2, WebGLRenderer } from 'three';
+// Libs
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AxesHelper, Camera, CameraHelper, Group, MeshBasicMaterial, MeshDepthMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { mapLinear } from 'three/src/math/MathUtils';
+import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
-import { cameras, controls, depthMaterial, helpers, ModeOptions, MultiViewMode, normalsMaterial, RenderMode, renderOptions, uvMaterial, wireframeMaterial } from './MultiViewData';
-import './MultiView.scss';
-import RemoteThree from '@/core/remote/RemoteThree';
+import { MultiViewMode, RenderMode } from './MultiViewData';
+// Models
 import { ToolEvents, debugDispatcher } from '../global';
+// Components
+import './MultiView.scss';
+import UVMaterial from './UVMaterial';
+// Utils
 import { dispose } from '../utils';
-import { mapLinear } from 'three/src/math/MathUtils';
 
 let currentRenderMode: RenderMode = 'Renderer';
 
 // Scene
-
-const scene = new Scene();
-scene.name = 'Debug Scene';
-
-let currentScene = new Scene();
-scene.add(currentScene);
-
-const helpersContainer = new Group();
-helpersContainer.name = 'helpers';
-scene.add(helpersContainer);
-
-const grid = new InfiniteGridHelper();
-helpersContainer.add(grid);
-
-const axisHelper = new AxesHelper(500);
-axisHelper.name = 'axisHelper';
-helpersContainer.add(axisHelper);
-
-const interactionHelper = new AxesHelper(100);
-interactionHelper.name = 'interactionHelper';
-helpersContainer.add(interactionHelper);
-interactionHelper.visible = false;
-
+let currentScene: any = undefined;
 let useRaycaster = false;
 
 // Cameras
-
-let tlCam = cameras.get('Debug')!;
-let trCam = cameras.get('Orthographic')!;
-let blCam = cameras.get('Front')!;
-let brCam = cameras.get('Top')!;
 let sceneSet = false;
+let tlCam: any = undefined;
+let trCam: any = undefined;
+let blCam: any = undefined;
+let brCam: any = undefined;
 
 interface MultiViewProps {
   three: RemoteThree;
@@ -55,13 +37,84 @@ interface MultiViewProps {
 }
 
 export default function MultiView(props: MultiViewProps) {
-  // States
-  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Single');
-  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
-  const [modeOpen, setModeOpen] = useState(false);
-  const [renderModeOpen, setRenderModeOpen] = useState(false);
-  const [interactionModeOpen, setInteractionModeOpen] = useState(false);
-  const [, setLastUpdate] = useState(Date.now());
+  // Memo
+  const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
+  const controls: Map<string, OrbitControls> = useMemo(() => new Map(), []);
+  const helpers: Map<string, CameraHelper> = useMemo(() => new Map(), []);
+  const scene = useMemo(() => new Scene(), []);
+  const helpersContainer = useMemo(() => new Group(), []);
+  const grid = useMemo(() => new InfiniteGridHelper(), []);
+  const axisHelper = useMemo(() => new AxesHelper(500), []);
+  const interactionHelper = useMemo(() => new AxesHelper(100), []);
+  const depthMaterial = useMemo(() => new MeshDepthMaterial(), []);
+  const normalsMaterial = useMemo(() => new MeshNormalMaterial(), []);
+  const uvMaterial = useMemo(() => new UVMaterial(), []);
+  const wireframeMaterial = useMemo(() => new MeshBasicMaterial({
+    opacity: 0.33,
+    transparent: true,
+    wireframe: true
+  }), []);
+
+  function createOrtho(name: string, position: Vector3) {
+    const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 3000);
+    camera.name = name;
+    camera.position.copy(position);
+    camera.lookAt(0, 0, 0);
+    cameras.set(name, camera);
+    return camera;
+  }
+
+  const renderOptions: RenderMode[] = [
+    'Renderer',
+    'Depth',
+    'Normals',
+    'UVs',
+    'Wireframe',
+  ];
+
+  const ModeOptions: MultiViewMode[] = [
+    'Single',
+    'Side by Side',
+    'Stacked',
+    'Quad'
+  ];
+
+  useEffect(() => {
+    // Scene
+    scene.name = 'Debug Scene';
+
+    helpersContainer.name = 'helpers';
+    scene.add(helpersContainer);
+
+    helpersContainer.add(grid);
+
+    axisHelper.name = 'axisHelper';
+    helpersContainer.add(axisHelper);
+
+    interactionHelper.name = 'interactionHelper';
+    helpersContainer.add(interactionHelper);
+    interactionHelper.visible = false;
+
+    // Cameras
+    createOrtho('Top', new Vector3(0, 1000, 0));
+    createOrtho('Bottom', new Vector3(0, -1000, 0));
+    createOrtho('Left', new Vector3(-1000, 0, 0));
+    createOrtho('Right', new Vector3(1000, 0, 0));
+    createOrtho('Front', new Vector3(0, 0, 1000));
+    createOrtho('Back', new Vector3(0, 0, -1000));
+    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
+
+    const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
+    debugCamera.name = 'Debug';
+    debugCamera.position.set(500, 500, 500);
+    debugCamera.lookAt(0, 0, 0);
+    cameras.set('Debug', debugCamera);
+
+    tlCam = cameras.get('Debug')!;
+    trCam = cameras.get('Orthographic')!;
+    blCam = cameras.get('Front')!;
+    brCam = cameras.get('Top')!;
+  }, []);
 
   // References
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,6 +123,14 @@ export default function MultiView(props: MultiViewProps) {
   const trWindow = useRef<HTMLDivElement>(null);
   const blWindow = useRef<HTMLDivElement>(null);
   const brWindow = useRef<HTMLDivElement>(null);
+
+  // States
+  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Single');
+  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+  const [modeOpen, setModeOpen] = useState(false);
+  const [renderModeOpen, setRenderModeOpen] = useState(false);
+  const [interactionModeOpen, setInteractionModeOpen] = useState(false);
+  const [, setLastUpdate] = useState(Date.now());
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -480,157 +541,161 @@ export default function MultiView(props: MultiViewProps) {
     <div className='multiview'>
       <canvas ref={canvasRef} />
 
-      <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`} ref={containerRef}>
-        {mode === 'Single' && (
-          <>
-            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-              controls.get(tlCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(tlCam);
-                tlCam = camera;
-                createControls(camera, tlWindow.current!);
-              }
-            }} />
-          </>
-        )}
+      {renderer !== null && (
+        <>
+          <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`} ref={containerRef}>
+            {mode === 'Single' && (
+              <>
+                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
+                  controls.get(tlCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(tlCam);
+                    tlCam = camera;
+                    createControls(camera, tlWindow.current!);
+                  }
+                }} />
+              </>
+            )}
 
-        {(mode === 'Side by Side' || mode === 'Stacked') && (
-          <>
-            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-              controls.get(tlCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(tlCam);
-                tlCam = camera;
-                createControls(camera, tlWindow.current!);
-              }
-            }} />
-            <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
-              controls.get(trCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(trCam);
-                trCam = camera;
-                createControls(camera, trWindow.current!);
-              }
-            }} />
-          </>
-        )}
+            {(mode === 'Side by Side' || mode === 'Stacked') && (
+              <>
+                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
+                  controls.get(tlCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(tlCam);
+                    tlCam = camera;
+                    createControls(camera, tlWindow.current!);
+                  }
+                }} />
+                <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
+                  controls.get(trCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(trCam);
+                    trCam = camera;
+                    createControls(camera, trWindow.current!);
+                  }
+                }} />
+              </>
+            )}
 
-        {mode === 'Quad' && (
-          <>
-            <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-              controls.get(tlCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(tlCam);
-                tlCam = camera;
-                createControls(camera, tlWindow.current!);
-              }
-            }} />
-            <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
-              controls.get(trCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(trCam);
-                trCam = camera;
-                createControls(camera, trWindow.current!);
-              }
-            }} />
-            <CameraWindow camera={blCam} options={cameraOptions} ref={blWindow} onSelect={(value: string) => {
-              controls.get(blCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(blCam);
-                blCam = camera;
-                createControls(camera, blWindow.current!);
-              }
-            }} />
-            <CameraWindow camera={brCam} options={cameraOptions} ref={brWindow} onSelect={(value: string) => {
-              controls.get(brCam.name)?.dispose();
-              const camera = cameras.get(value);
-              if (camera !== undefined) {
-                clearCamera(brCam);
-                brCam = camera;
-                createControls(camera, brWindow.current!);
-              }
-            }} />
-          </>
-        )}
-      </div>
+            {mode === 'Quad' && (
+              <>
+                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
+                  controls.get(tlCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(tlCam);
+                    tlCam = camera;
+                    createControls(camera, tlWindow.current!);
+                  }
+                }} />
+                <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
+                  controls.get(trCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(trCam);
+                    trCam = camera;
+                    createControls(camera, trWindow.current!);
+                  }
+                }} />
+                <CameraWindow camera={blCam} options={cameraOptions} ref={blWindow} onSelect={(value: string) => {
+                  controls.get(blCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(blCam);
+                    blCam = camera;
+                    createControls(camera, blWindow.current!);
+                  }
+                }} />
+                <CameraWindow camera={brCam} options={cameraOptions} ref={brWindow} onSelect={(value: string) => {
+                  controls.get(brCam.name)?.dispose();
+                  const camera = cameras.get(value);
+                  if (camera !== undefined) {
+                    clearCamera(brCam);
+                    brCam = camera;
+                    createControls(camera, brWindow.current!);
+                  }
+                }} />
+              </>
+            )}
+          </div>
 
-      <div className='settings'>
-        {/* Mode */}
-        <Dropdown
-          index={ModeOptions.indexOf(mode)}
-          options={ModeOptions}
-          onSelect={(value: string) => {
-            if (value === mode) return;
-            killControls();
-            setMode(value as MultiViewMode);
-          }}
-          open={modeOpen}
-          onToggle={(value: boolean) => {
-            setModeOpen(value);
-            if (renderModeOpen) setRenderModeOpen(false);
-            if (interactionModeOpen) setInteractionModeOpen(false);
-          }}
-        />
+          <div className='settings'>
+            {/* Mode */}
+            <Dropdown
+              index={ModeOptions.indexOf(mode)}
+              options={ModeOptions}
+              onSelect={(value: string) => {
+                if (value === mode) return;
+                killControls();
+                setMode(value as MultiViewMode);
+              }}
+              open={modeOpen}
+              onToggle={(value: boolean) => {
+                setModeOpen(value);
+                if (renderModeOpen) setRenderModeOpen(false);
+                if (interactionModeOpen) setInteractionModeOpen(false);
+              }}
+            />
 
-        {/* Render Mode */}
-        <Dropdown
-          index={renderOptions.indexOf(currentRenderMode)}
-          options={renderOptions}
-          onSelect={(value: string) => {
-            if (value === currentRenderMode) return;
-            currentRenderMode = value as RenderMode;
-            switch (currentRenderMode) {
-              case 'Depth':
-                scene.overrideMaterial = depthMaterial;
-                break;
-              case 'Normals':
-                scene.overrideMaterial = normalsMaterial;
-                break;
-              default:
-              case 'Renderer':
-                scene.overrideMaterial = null;
-                break;
-              case 'Wireframe':
-                scene.overrideMaterial = wireframeMaterial;
-                break;
-              case 'UVs':
-                scene.overrideMaterial = uvMaterial;
-                break;
-            }
-          }}
-          open={renderModeOpen}
-          onToggle={(value: boolean) => {
-            if (modeOpen) setModeOpen(false);
-            setRenderModeOpen(value);
-            if (interactionModeOpen) setInteractionModeOpen(false);
-          }}
-        />
+            {/* Render Mode */}
+            <Dropdown
+              index={renderOptions.indexOf(currentRenderMode)}
+              options={renderOptions}
+              onSelect={(value: string) => {
+                if (value === currentRenderMode) return;
+                currentRenderMode = value as RenderMode;
+                switch (currentRenderMode) {
+                  case 'Depth':
+                    scene.overrideMaterial = depthMaterial;
+                    break;
+                  case 'Normals':
+                    scene.overrideMaterial = normalsMaterial;
+                    break;
+                  default:
+                  case 'Renderer':
+                    scene.overrideMaterial = null;
+                    break;
+                  case 'Wireframe':
+                    scene.overrideMaterial = wireframeMaterial;
+                    break;
+                  case 'UVs':
+                    scene.overrideMaterial = uvMaterial;
+                    break;
+                }
+              }}
+              open={renderModeOpen}
+              onToggle={(value: boolean) => {
+                if (modeOpen) setModeOpen(false);
+                setRenderModeOpen(value);
+                if (interactionModeOpen) setInteractionModeOpen(false);
+              }}
+            />
 
-        {/* Interaction Mode */}
-        <Dropdown
-          index={0}
-          options={[
-            'Orbit Mode',
-            'Selection Mode',
-          ]}
-          onSelect={(value: string) => {
-            useRaycaster = value === 'Selection Mode';
-            interactionHelper.visible = useRaycaster;
-          }}
-          open={interactionModeOpen}
-          onToggle={(value: boolean) => {
-            if (modeOpen) setModeOpen(false);
-            if (renderModeOpen) setRenderModeOpen(false);
-            setInteractionModeOpen(value);
-          }}
-        />
-      </div>
+            {/* Interaction Mode */}
+            <Dropdown
+              index={0}
+              options={[
+                'Orbit Mode',
+                'Selection Mode',
+              ]}
+              onSelect={(value: string) => {
+                useRaycaster = value === 'Selection Mode';
+                interactionHelper.visible = useRaycaster;
+              }}
+              open={interactionModeOpen}
+              onToggle={(value: boolean) => {
+                if (modeOpen) setModeOpen(false);
+                if (renderModeOpen) setRenderModeOpen(false);
+                setInteractionModeOpen(value);
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

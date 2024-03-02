@@ -1,16 +1,2 @@
-import { Camera, CameraHelper, MeshBasicMaterial, MeshDepthMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Vector3 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import UVMaterial from './UVMaterial';
 export type MultiViewMode = 'Single' | 'Side by Side' | 'Stacked' | 'Quad';
-export declare const ModeOptions: MultiViewMode[];
-export declare const cameras: Map<string, Camera>;
-export declare const controls: Map<string, OrbitControls>;
-export declare const helpers: Map<string, CameraHelper>;
-export declare function createOrtho(name: string, position: Vector3): OrthographicCamera;
-export declare const debugCamera: PerspectiveCamera;
 export type RenderMode = 'Depth' | 'Normals' | 'Renderer' | 'UVs' | 'Wireframe';
-export declare const renderOptions: RenderMode[];
-export declare const depthMaterial: MeshDepthMaterial;
-export declare const normalsMaterial: MeshNormalMaterial;
-export declare const uvMaterial: UVMaterial;
-export declare const wireframeMaterial: MeshBasicMaterial;
