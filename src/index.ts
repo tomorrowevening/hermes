@@ -21,8 +21,6 @@ export { default as DropdownItem } from './editor/components/DropdownItem';
 export { default as Dropdown } from './editor/components/Dropdown';
 export { default as RemoteController } from './core/RemoteController';
 // RemoteThree
-export { default as InfiniteGridHelper } from './editor/multiView/InfiniteGridHelper';
-export { default as UVMaterial } from './editor/multiView/UVMaterial';
 export { default as SidePanel } from './editor/sidePanel/SidePanel';
 export { default as Accordion } from './editor/sidePanel/Accordion';
 export { default as ChildObject } from './editor/sidePanel/ChildObject';
