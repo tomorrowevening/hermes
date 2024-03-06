@@ -1,4 +1,7 @@
 // Core
+import { ToolEvents, debugDispatcher } from '@/editor/global';
+import Application from '../Application';
+import { BroadcastData } from '../types';
 import BaseRemote from './BaseRemote';
 
 /**
@@ -25,5 +28,18 @@ export default class RemoteComponents extends BaseRemote {
         value: list
       }
     });
+  }
+  
+  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    switch (msg.event) {
+      case 'selectComponent':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SELECT_DROPDOWN, value: msg.data });
+        break;
+      case 'draggableListUpdate':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.DRAG_UPDATE, value: msg.data });
+        break;
+    }
   }
 }

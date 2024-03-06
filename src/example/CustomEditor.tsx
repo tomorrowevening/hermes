@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import studio from '@theatre/studio';
 import { Events, app, threeDispatcher } from './constants';
 import Editor from '../editor/Editor';
 import Dropdown from '../editor/components/Dropdown';
 import SidePanel from '../editor/sidePanel/SidePanel';
 import MultiView from '../editor/multiView/MultiView';
 import RemoteThree from '../core/remote/RemoteThree';
-import RemoteController from '../core/RemoteController';
-import RemoteComponents from '../core/remote/RemoteComponents';
-import RemoteTheatre from '../core/remote/RemoteTheatre';
-import RemoteTweakpane from '../core/remote/RemoteTweakpane';
-import { theatreApp, theatreEditor } from '../core/remote/theatreUtils';
-import { theatreEditorApp } from '../editor/theatreUtils';
-import { threeApp, threeEditor } from '../core/remote/threeUtils';
-import { componentsApp } from '../core/remote/componentsUtils';
-import { tweakpaneApp } from '../core/remote/tweakpaneUtils';
 // Scenes
 import BaseScene from './three/BaseScene';
 import Scene1 from './three/Scene1';

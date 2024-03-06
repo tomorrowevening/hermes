@@ -1,0 +1,11 @@
+{
+  "src/index.ts": {
+    "file": "hermes.es.js",
+    "isEntry": true,
+    "src": "src/index.ts"
+  },
+  "style.css": {
+    "file": "style.css",
+    "src": "style.css"
+  }
+}

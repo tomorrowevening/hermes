@@ -2,9 +2,10 @@
 import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 // Core
 import BaseRemote from './BaseRemote';
-import { DataUpdateCallback, VoidCallback, noop } from '../types';
+import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
+import Application from '../Application';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
@@ -13,6 +14,7 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectCBs: Map<string, DataUpdateCallback> = new Map();
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
+  studio: any;
 
   public static rafDriver?: IRafDriver | undefined = undefined;
 
@@ -146,6 +148,118 @@ export default class RemoteTheatre extends BaseRemote {
       this.sheetObjectCBs.delete(id);
       this.sheetObjectUnsubscribe.delete(id);
       unsubscribe();
+    }
+  }
+  
+  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    const theatre = remote as RemoteTheatre;
+    let value: any = undefined;
+    switch (msg.event) {
+      case 'setSheet':
+        value = theatre.sheets.get(msg.data.sheet);
+        if (value !== undefined) {
+          theatre.activeSheet = value as ISheet;
+          this.studio.setSelection([value]);
+        }
+        break;
+      case 'setSheetObject':
+        value = theatre.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
+        if (value !== undefined) {
+          this.studio.setSelection([value]);
+        }
+        break;
+      case 'updateSheetObject':
+        value = theatre.sheets.get(msg.data.sheet); // pause current animation
+        if (value !== undefined) value.sequence.pause();
+        value = theatre.sheetObjectCBs.get(msg.data.sheetObject);
+        if (value !== undefined) value(msg.data.values);
+        break;
+      case 'updateTimeline':
+        value = theatre.sheets.get(msg.data.sheet);
+        if (theatre.activeSheet !== undefined) {
+          theatre.activeSheet.sequence.position = msg.data.position;
+        }
+        break;
+    }
+  }
+
+  override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    if (app.editor) {
+      const theatre = remote as RemoteTheatre;
+      switch (msg.event) {
+        case 'playSheet':
+          theatre.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
+          break;
+        case 'pauseSheet':
+          theatre.sheet(msg.data.sheet)?.sequence.pause();
+          break;
+      }
+    }
+  }
+
+  handleEditorApp(app: Application, theatre: RemoteTheatre) {
+    if (app.editor) {
+      this.studio.ui.restore();
+      this.studio.onSelectionChange((value: any[]) => {
+        if (value.length < 1) return;
+
+        value.forEach((obj: any) => {
+          let id = obj.address.sheetId;
+          let type: EditorEvent = 'setSheet';
+          let data = {};
+          switch (obj.type) {
+            case 'Theatre_Sheet_PublicAPI':
+              type = 'setSheet';
+              data = {
+                sheet: obj.address.sheetId,
+              };
+              theatre.activeSheet = theatre.sheets.get(obj.address.sheetId);
+              break;
+  
+            case 'Theatre_SheetObject_PublicAPI':
+              type = 'setSheetObject';
+              id += `_${obj.address.objectKey}`;
+              data = {
+                id: id,
+                sheet: obj.address.sheetId,
+                key: obj.address.objectKey,
+              };
+              theatre.activeSheet = theatre.sheets.get(obj.address.sheetId);
+              break;
+          }
+          app.send({ event: type, target: 'app', data: data });
+        });
+      });
+  
+      // Timeline
+      let position = -1;
+      const onRafUpdate = () => {
+        RemoteTheatre.rafDriver?.tick(performance.now());
+  
+        if (
+          theatre.activeSheet !== undefined &&
+          position !== theatre.activeSheet.sequence.position
+        ) {
+          position = theatre.activeSheet.sequence.position;
+          const t = theatre.activeSheet as ISheet;
+          app.send({
+            event: 'updateTimeline',
+            target: 'app',
+            data: {
+              position: position,
+              sheet: t.address.sheetId,
+            },
+          });
+        }
+      };
+      const onRaf = () => {
+        onRafUpdate();
+        requestAnimationFrame(onRaf);
+      };
+      onRafUpdate(); // Initial position
+      onRaf();
+    } else {
+      this.studio.ui.hide();
     }
   }
 }

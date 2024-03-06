@@ -2,6 +2,9 @@ import { Camera, Scene } from 'three';
 import BaseRemote from './BaseRemote';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { hierarchyUUID, resetThreeObjects } from '@/editor/utils';
+import Application from '../Application';
+import { BroadcastData } from '../types';
+import { ToolEvents, debugDispatcher } from '@/editor/global';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
@@ -94,5 +97,47 @@ export default class RemoteThree extends BaseRemote {
       target: 'editor',
       data: stripped,
     });
+  }
+  
+  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    switch (msg.event) {
+      case 'getObject':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
+        break;
+      case 'updateObject':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
+        break;
+      case 'createTexture':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
+        break;
+      case 'requestMethod':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
+        break;
+    }
+  }
+  
+  override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    switch (msg.event) {
+      case 'setObject':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
+        break;
+      case 'setScene':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
+        break;
+      case 'addCamera':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
+        break;
+      case 'removeCamera':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        break;
+    }
   }
 }

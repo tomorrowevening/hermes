@@ -6,37 +6,33 @@ import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
 import RemoteTweakpane from '../core/remote/RemoteTweakpane';
-import { theatreApp, theatreEditor } from '../core/remote/theatreUtils';
-import { theatreEditorApp } from '../editor/theatreUtils';
-import { threeApp, threeEditor } from '../core/remote/threeUtils';
-import { componentsApp } from '../core/remote/componentsUtils';
-import { tweakpaneApp } from '../core/remote/tweakpaneUtils';
 
 export const IS_DEV = true;
 
 export const app = new Application('ws://localhost:8080', IS_DEV);
-app.addComponent('theatre', new RemoteTheatre(app));
-app.addComponent('three', new RemoteThree(app));
-if (IS_DEV) {
-  app.addComponent('components', new RemoteComponents(app));
-  app.addComponent('debug', new RemoteTweakpane(app));
+const theatre = new RemoteTheatre(app);
+const three = new RemoteThree(app);
+app.addComponent('theatre', theatre);
+app.addComponent('three', three);
 
-  const theatre = app.components.get('theatre') as RemoteTheatre;
-  const three = app.components.get('three') as RemoteThree;
-  const components = app.components.get('components') as RemoteComponents;
-  const tweakpane = app.components.get('debug') as RemoteTweakpane;
+if (IS_DEV) {
+  theatre.studio = studio;
+  const components = new RemoteComponents(app);
+  const debug = new RemoteTweakpane(app);
+  app.addComponent('components', components);
+  app.addComponent('debug', debug);
   const appHandlers: any[] = [
-    { remote: theatre, callback: theatreApp },
-    { remote: three, callback: threeApp },
-    { remote: components, callback: componentsApp },
-    { remote: tweakpane, callback: tweakpaneApp },
+    { remote: theatre, callback: theatre.handleApp },
+    { remote: three, callback: three.handleApp },
+    { remote: components, callback: components.handleApp },
+    { remote: debug, callback: debug.handleApp },
   ];
   const editorHandlers: any[] = [
-    { remote: theatre, callback: theatreEditor },
-    { remote: three, callback: threeEditor },
+    { remote: theatre, callback: theatre.handleEditor },
+    { remote: three, callback: three.handleEditor },
   ];
   RemoteController(app, appHandlers, editorHandlers);
-  theatreEditorApp(app, theatre, studio);
+  theatre.handleEditorApp(app, theatre);
 }
 
 export const threeDispatcher = new EventDispatcher();
