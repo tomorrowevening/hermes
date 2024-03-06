@@ -5,14 +5,5 @@ interface RemoteCall {
     remote: any;
     callback: RemoteCallback;
 }
-export default class RemoteController {
-    appHandlers: RemoteCall[];
-    editorHandlers: RemoteCall[];
-    private _app;
-    private static _instance;
-    handleAppBroadcast: (msg: BroadcastData) => void;
-    handleEditorBroadcast: (msg: BroadcastData) => void;
-    set app(app: Application);
-    static get instance(): RemoteController;
-}
+export default function RemoteController(app: Application, appHandlers: RemoteCall[], editorHandlers: RemoteCall[]): void;
 export {};

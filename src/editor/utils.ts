@@ -1,4 +1,4 @@
-import { Material, Mesh, Object3D, PositionalAudio, Texture } from 'three';
+import { Material, Mesh, Object3D, Texture } from 'three';
 
 export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);
@@ -93,7 +93,8 @@ export const dispose = (object: Object3D): void => {
   // Dispose children
   while (object.children.length > 0) {
     const child = object.children[0];
-    if (child instanceof PositionalAudio) {
+    if (child.type === 'Audio') {
+      // @ts-ignore
       child.pause();
       if (child.parent) {
         child.parent.remove(child);

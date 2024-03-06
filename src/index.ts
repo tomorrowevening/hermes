@@ -6,7 +6,7 @@ export { debugDispatcher, ToolEvents } from './editor/global';
 export { default as BaseRemote } from './core/remote/BaseRemote';
 export { default as RemoteComponents } from './core/remote/RemoteComponents';
 export * from './core/remote/componentsUtils';
-export * from './core/remote/theatreUtils';
+// export * from './core/remote/theatreUtils';
 export * from './core/remote/threeUtils';
 export * from './core/remote/tweakpaneUtils';
 export * from './editor/theatreUtils';

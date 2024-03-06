@@ -31,29 +31,6 @@ export default function CustomEditor() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-
-      RemoteController.instance.app = app;
-
-      // Theatre
-      const theatre = app.components.get('theatre') as RemoteTheatre;
-      RemoteController.instance.appHandlers.push({ remote: theatre, callback: theatreApp });
-      RemoteController.instance.editorHandlers.push({ remote: theatre, callback: theatreEditor });
-
-      // Three
-      const three = app.components.get('three') as RemoteThree;
-      RemoteController.instance.appHandlers.push({ remote: three, callback: threeApp });
-      RemoteController.instance.editorHandlers.push({ remote: three, callback: threeEditor });
-
-      // Components
-      const components = app.components.get('components') as RemoteComponents;
-      RemoteController.instance.appHandlers.push({ remote: components, callback: componentsApp });
-
-      // Tweakpane
-      const tweakpane = app.components.get('debug') as RemoteTweakpane;
-      RemoteController.instance.appHandlers.push({ remote: tweakpane, callback: tweakpaneApp });
-
-      theatreEditorApp(app, theatre, studio);
-
       setLoaded(true);
     };
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
