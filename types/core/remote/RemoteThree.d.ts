@@ -1,5 +1,7 @@
 import { Camera, Scene } from 'three';
 import BaseRemote from './BaseRemote';
+import Application from '../Application';
+import { BroadcastData } from '../types';
 export default class RemoteThree extends BaseRemote {
     scene?: Scene;
     getObject(uuid: string): void;
@@ -10,4 +12,6 @@ export default class RemoteThree extends BaseRemote {
     setScene(value: Scene): void;
     addCamera(camera: Camera): void;
     removeCamera(camera: Camera): void;
+    handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
+    handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
 }

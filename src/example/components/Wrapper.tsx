@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getProject } from '@theatre/core';
-import { Events, IS_DEV, app, threeDispatcher } from '../constants';
+import { Events, app, threeDispatcher } from '../constants';
 import { json, loadAssets } from '../three/loader';
 import './App.css';
 import App from './App';

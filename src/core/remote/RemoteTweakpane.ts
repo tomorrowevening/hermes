@@ -4,7 +4,8 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { DataUpdateCallback, VoidCallback, noop } from '../types';
+import { BroadcastData, DataUpdateCallback, VoidCallback, noop } from '../types';
+import RemoteTheatre from './RemoteTheatre';
 
 export default class RemoteTweakpane extends BaseRemote {
   bindCBs: Map<string, DataUpdateCallback>;
@@ -163,6 +164,27 @@ export default class RemoteTweakpane extends BaseRemote {
     const total = this.inspectorFolder.children.length - 1;
     for (let i = total; i > -1; --i) {
       this.inspectorFolder.remove(this.inspectorFolder.children[i]);
+    }
+  }
+  
+  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    const debug = remote as RemoteTweakpane;
+    switch (msg.event) {
+      case 'addFolder':
+        debug.addFolder(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'bindObject':
+        debug.bind(msg.data.name, msg.data.params, msg.data.parent);
+        break;
+      case 'updateBind':
+        debug.triggerBind(msg.data.id, msg.data.value);
+        break;
+      case 'addButton':
+        debug.button(msg.data.name, msg.data.callback, msg.data.parent);
+        break;
+      case 'clickButton':
+        debug.triggerButton(msg.data.id);
+        break;
     }
   }
 }

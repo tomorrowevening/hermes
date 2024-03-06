@@ -11,9 +11,8 @@ export default defineConfig({
       fileName: (format) => `hermes.${format}.js`,
       formats: ['cjs', 'es']
     },
+    manifest: true,
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
       external: [
         'react',
         'three',
@@ -23,7 +22,13 @@ export default defineConfig({
         'tweakpane',
         '@tweakpane/plugin-essentials',
         'postprocessing'
-      ]
+      ],
+      output: {
+        globals: {
+          react: 'React',
+          three: 'THREE',
+        }
+      }
     }
   },
   plugins: [glsl(), react()],

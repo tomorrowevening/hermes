@@ -22,7 +22,7 @@
     text-align: left;
   }
 
-  header {
+  .header {
     display: inline-block;
     pointer-events: visible;
     position: relative;
@@ -31,7 +31,7 @@
     z-index: 101;
   }
 
-  footer {
+  .footer {
     position: absolute;
     right: 5px;
     bottom: 0;
