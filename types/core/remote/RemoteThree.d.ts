@@ -1,9 +1,10 @@
-import { Camera, Scene } from 'three';
+import { Camera, Scene, WebGLRenderer } from 'three';
 import BaseRemote from './BaseRemote';
 import Application from '../Application';
 import { BroadcastData } from '../types';
 export default class RemoteThree extends BaseRemote {
     scene?: Scene;
+    renderer?: WebGLRenderer;
     getObject(uuid: string): void;
     setObject(value: any): void;
     requestMethod(uuid: string, key: string, value?: any, subitem?: string): void;

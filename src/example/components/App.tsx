@@ -71,6 +71,7 @@ function App() {
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
+      (app.components.get('three') as RemoteThree).renderer = renderer;
       return () => {
         renderer.dispose();
       };

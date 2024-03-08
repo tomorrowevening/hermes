@@ -226,6 +226,7 @@ export default function MultiView(props: MultiViewProps) {
     instance.shadowMap.enabled = true;
     instance.setPixelRatio(devicePixelRatio);
     instance.setClearColor(0x000000);
+    props.three.renderer = instance;
     setRenderer(instance);
   }, []);
 
