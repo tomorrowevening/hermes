@@ -582,6 +582,7 @@ function Dt(t) {
 }
 class fi extends Ct {
   scene = void 0;
+  renderer = void 0;
   getObject(n) {
     this.app.debugEnabled && this.app.send({
       event: "getObject",
@@ -3549,7 +3550,7 @@ function bi(t) {
       canvas: q.current,
       stencil: !1
     });
-    p.autoClear = !1, p.shadowMap.enabled = !0, p.setPixelRatio(devicePixelRatio), p.setClearColor(0), Ae(p);
+    p.autoClear = !1, p.shadowMap.enabled = !0, p.setPixelRatio(devicePixelRatio), p.setClearColor(0), t.three.renderer = p, Ae(p);
   }, []), _e(() => {
     const p = (R) => {
       xn(Ie), i.remove(Ie);

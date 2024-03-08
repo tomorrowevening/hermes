@@ -1,4 +1,4 @@
-import { Camera, Scene } from 'three';
+import { Camera, Scene, WebGLRenderer } from 'three';
 import BaseRemote from './BaseRemote';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { hierarchyUUID, resetThreeObjects } from '@/editor/utils';
@@ -8,6 +8,7 @@ import { ToolEvents, debugDispatcher } from '@/editor/global';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
+  renderer?: WebGLRenderer = undefined;
 
   getObject(uuid: string) {
     if (!this.app.debugEnabled) return;
