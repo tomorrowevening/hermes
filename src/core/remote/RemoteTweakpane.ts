@@ -5,7 +5,6 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback, noop } from '../types';
-import RemoteTheatre from './RemoteTheatre';
 
 export default class RemoteTweakpane extends BaseRemote {
   bindCBs: Map<string, DataUpdateCallback>;

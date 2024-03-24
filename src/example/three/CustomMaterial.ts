@@ -1,4 +1,4 @@
-import { Color, Matrix3, Matrix4, ShaderMaterial, Texture, Vector3 } from 'three';
+import { Color, Matrix3, Matrix4, ShaderMaterial, Texture, Vector2, Vector3 } from 'three';
 import { textureFromSrc } from '../../editor/sidePanel/utils';
 
 const vertex = `varying vec2 vUv;
@@ -10,6 +10,7 @@ void main() {
 
 const fragment = `uniform float time;
 uniform float opacity;
+uniform vec2 resolution;
 uniform vec3 diffuse;
 uniform vec3 mouse;
 uniform sampler2D map;
@@ -23,6 +24,7 @@ void main() {
   vec3 image = texture2D(map, imageUV).rgb;
   vec3 col = image * diffuse;
   col += (sin(time * 0.1) * 0.5 + 0.5) * 0.2;
+  col = vec3(resolution, 0.0);
   gl_FragColor = vec4(col, opacity);
 }`;
 
@@ -47,6 +49,9 @@ export default class CustomMaterial extends ShaderMaterial {
         },
         map: {
           value: null,
+        },
+        resolution: {
+          value: new Vector2(),
         },
         mouse: {
           value: new Vector3()

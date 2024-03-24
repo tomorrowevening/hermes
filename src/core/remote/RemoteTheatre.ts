@@ -1,11 +1,11 @@
 // Libs
 import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 // Core
+import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
-import Application from '../Application';
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
@@ -14,7 +14,7 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectCBs: Map<string, DataUpdateCallback> = new Map();
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
-  studio: any;
+  studio: any = undefined;
 
   public static rafDriver?: IRafDriver | undefined = undefined;
 
@@ -159,13 +159,13 @@ export default class RemoteTheatre extends BaseRemote {
         value = theatre.sheets.get(msg.data.sheet);
         if (value !== undefined) {
           theatre.activeSheet = value as ISheet;
-          this.studio.setSelection([value]);
+          this.studio?.setSelection([value]);
         }
         break;
       case 'setSheetObject':
         value = theatre.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
         if (value !== undefined) {
-          this.studio.setSelection([value]);
+          this.studio?.setSelection([value]);
         }
         break;
       case 'updateSheetObject':
@@ -199,8 +199,8 @@ export default class RemoteTheatre extends BaseRemote {
 
   handleEditorApp(app: Application, theatre: RemoteTheatre) {
     if (app.editor) {
-      this.studio.ui.restore();
-      this.studio.onSelectionChange((value: any[]) => {
+      this.studio?.ui.restore();
+      this.studio?.onSelectionChange((value: any[]) => {
         if (value.length < 1) return;
 
         value.forEach((obj: any) => {
@@ -259,7 +259,7 @@ export default class RemoteTheatre extends BaseRemote {
       onRafUpdate(); // Initial position
       onRaf();
     } else {
-      this.studio.ui.hide();
+      this.studio?.ui.hide();
     }
   }
 }

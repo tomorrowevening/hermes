@@ -1,10 +1,11 @@
-import { DirectionalLight, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { DirectionalLight, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
 import { IS_DEV, app } from '../constants';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import { hierarchyUUID } from '../../editor/utils';
 import BaseScene from './BaseScene';
 import FBXAnimation from './FBXAnimation';
 import { textures } from './loader';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
+import CustomMaterial from './CustomMaterial';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
@@ -70,6 +71,11 @@ export default class Scene2 extends BaseScene {
     lines.name = 'lines';
     lines.position.x = 100;
     world.add(lines);
+
+    const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomMaterial());
+    testShader.name = 'testShader';
+    testShader.position.z = -100;
+    world.add(testShader);
 
     this.dance = new FBXAnimation('Flair');
     this.dance.name = 'flair';
