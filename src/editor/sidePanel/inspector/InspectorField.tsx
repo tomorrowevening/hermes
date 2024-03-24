@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { noImage } from '@/editor/components/content';
 import { uploadLocalImage } from './utils/InspectMaterial';
 import { capitalize } from '@/editor/utils';
+import InspectVector from './InspectVector';
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option'
+export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option' | 'vector'
 
 export interface InspectorFieldProps {
   title: string
@@ -80,7 +81,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   }, [fieldValue]);
 
   const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
-  const block = textfield || props.type === 'image';
+  const block = textfield || props.type === 'image' || props.type === 'vector';
 
   const onChange = (evt: any) => {
     let value = evt.target.value;
@@ -192,6 +193,10 @@ export default function InspectorField(props: InspectorFieldProps) {
             ))}
           </select>
         </>
+      )}
+
+      {props.type === 'vector' && (
+        <InspectVector value={fieldValue} min={-1} max={1} onChange={onChange} />
       )}
     </div>
   );
