@@ -1,10 +1,10 @@
 import { Camera, Scene, WebGLRenderer } from 'three';
 import BaseRemote from './BaseRemote';
+import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
-import { hierarchyUUID, resetThreeObjects } from '@/editor/utils';
+import { clamp, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
 import Application from '../Application';
 import { BroadcastData } from '../types';
-import { ToolEvents, debugDispatcher } from '@/editor/global';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
@@ -140,5 +140,31 @@ export default class RemoteThree extends BaseRemote {
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
         break;
     }
+  }
+
+  // Renderer
+
+  resize(width: number, height: number) {
+    this.renderer?.setSize(width, height);
+  }
+
+  set dpr(value: number) {
+    this.renderer?.setPixelRatio(clamp(1, 2, value));
+  }
+
+  get dpr(): number {
+    return this.renderer !== undefined ? this.renderer?.getPixelRatio() : 1;
+  }
+
+  get width(): number {
+    return this.renderer !== undefined ? this.renderer?.domElement.width / this.dpr : 0;
+  }
+
+  get height(): number {
+    return this.renderer !== undefined ? this.renderer?.domElement.height / this.dpr : 0;
+  }
+
+  get canvas(): HTMLCanvasElement | null {
+    return this.renderer !== undefined ? this.renderer?.domElement : null;
   }
 }
