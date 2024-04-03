@@ -23,20 +23,27 @@ let useRaycaster = false;
 
 // Cameras
 let sceneSet = false;
-let tlCam: any = undefined;
-let trCam: any = undefined;
-let blCam: any = undefined;
-let brCam: any = undefined;
+let tlCam: any = null;
+let trCam: any = null;
+let blCam: any = null;
+let brCam: any = null;
 
 interface MultiViewProps {
   three: RemoteThree;
-  mode?: MultiViewMode;
   scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
   onSceneUpdate?: (scene: Scene) => void;
 }
 
 export default function MultiView(props: MultiViewProps) {
+  // Get Local Storage
+  const appID = props.three.app.appID;
+  const savedMode = localStorage.getItem(`${appID}_mode`);
+  const tlCamName = localStorage.getItem(`${appID}_tlCam`) !== null ? localStorage.getItem(`${appID}_tlCam`) as string : 'Debug';
+  const trCamName = localStorage.getItem(`${appID}_trCam`) !== null ? localStorage.getItem(`${appID}_trCam`) as string : 'Orthographic';
+  const blCamName = localStorage.getItem(`${appID}_blCam`) !== null ? localStorage.getItem(`${appID}_blCam`) as string : 'Front';
+  const brCamName = localStorage.getItem(`${appID}_brCam`) !== null ? localStorage.getItem(`${appID}_brCam`) as string : 'Top';
+
   // Memo
   const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
   const controls: Map<string, OrbitControls> = useMemo(() => new Map(), []);
@@ -79,43 +86,6 @@ export default function MultiView(props: MultiViewProps) {
     'Quad'
   ];
 
-  useEffect(() => {
-    // Scene
-    scene.name = 'Debug Scene';
-
-    helpersContainer.name = 'helpers';
-    scene.add(helpersContainer);
-
-    helpersContainer.add(grid);
-
-    axisHelper.name = 'axisHelper';
-    helpersContainer.add(axisHelper);
-
-    interactionHelper.name = 'interactionHelper';
-    helpersContainer.add(interactionHelper);
-    interactionHelper.visible = false;
-
-    // Cameras
-    createOrtho('Top', new Vector3(0, 1000, 0));
-    createOrtho('Bottom', new Vector3(0, -1000, 0));
-    createOrtho('Left', new Vector3(-1000, 0, 0));
-    createOrtho('Right', new Vector3(1000, 0, 0));
-    createOrtho('Front', new Vector3(0, 0, 1000));
-    createOrtho('Back', new Vector3(0, 0, -1000));
-    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
-
-    const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
-    debugCamera.name = 'Debug';
-    debugCamera.position.set(500, 500, 500);
-    debugCamera.lookAt(0, 0, 0);
-    cameras.set('Debug', debugCamera);
-
-    tlCam = cameras.get('Debug')!;
-    trCam = cameras.get('Orthographic')!;
-    blCam = cameras.get('Front')!;
-    brCam = cameras.get('Top')!;
-  }, []);
-
   // References
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,12 +95,19 @@ export default function MultiView(props: MultiViewProps) {
   const brWindow = useRef<HTMLDivElement>(null);
 
   // States
-  const [mode, setMode] = useState<MultiViewMode>(props.mode !== undefined ? props.mode : 'Single');
+  const [mode, setMode] = useState<MultiViewMode>(savedMode !== null ? savedMode as MultiViewMode : 'Single');
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [modeOpen, setModeOpen] = useState(false);
   const [renderModeOpen, setRenderModeOpen] = useState(false);
   const [interactionModeOpen, setInteractionModeOpen] = useState(false);
   const [, setLastUpdate] = useState(Date.now());
+
+  // Save Local Storage
+  localStorage.setItem(`${appID}_mode`, mode);
+  localStorage.setItem(`${appID}_tlCam`, tlCamName);
+  localStorage.setItem(`${appID}_trCam`, trCamName);
+  localStorage.setItem(`${appID}_blCam`, blCamName);
+  localStorage.setItem(`${appID}_brCam`, brCamName);
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -228,6 +205,44 @@ export default function MultiView(props: MultiViewProps) {
     instance.setClearColor(0x000000);
     props.three.renderer = instance;
     setRenderer(instance);
+  }, []);
+
+  // Setup Scene
+  useEffect(() => {
+    // Scene
+    scene.name = 'Debug Scene';
+
+    helpersContainer.name = 'helpers';
+    scene.add(helpersContainer);
+
+    helpersContainer.add(grid);
+
+    axisHelper.name = 'axisHelper';
+    helpersContainer.add(axisHelper);
+
+    interactionHelper.name = 'interactionHelper';
+    helpersContainer.add(interactionHelper);
+    interactionHelper.visible = false;
+
+    // Cameras
+    createOrtho('Top', new Vector3(0, 1000, 0));
+    createOrtho('Bottom', new Vector3(0, -1000, 0));
+    createOrtho('Left', new Vector3(-1000, 0, 0));
+    createOrtho('Right', new Vector3(1000, 0, 0));
+    createOrtho('Front', new Vector3(0, 0, 1000));
+    createOrtho('Back', new Vector3(0, 0, -1000));
+    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
+
+    const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
+    debugCamera.name = 'Debug';
+    debugCamera.position.set(500, 500, 500);
+    debugCamera.lookAt(0, 0, 0);
+    cameras.set('Debug', debugCamera);
+
+    tlCam = cameras.get(localStorage.getItem(`${appID}_tlCam`) as string)!;
+    trCam = cameras.get(localStorage.getItem(`${appID}_trCam`) as string)!;
+    blCam = cameras.get(localStorage.getItem(`${appID}_blCam`) as string)!;
+    brCam = cameras.get(localStorage.getItem(`${appID}_brCam`) as string)!;
   }, []);
 
   // Event handling
@@ -553,6 +568,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(tlCam);
                     tlCam = camera;
+                    localStorage.setItem(`${appID}_tlCam`, camera.name);
                     createControls(camera, tlWindow.current!);
                   }
                 }} />
@@ -567,6 +583,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(tlCam);
                     tlCam = camera;
+                    localStorage.setItem(`${appID}_tlCam`, camera.name);
                     createControls(camera, tlWindow.current!);
                   }
                 }} />
@@ -576,6 +593,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(trCam);
                     trCam = camera;
+                    localStorage.setItem(`${appID}_trCam`, camera.name);
                     createControls(camera, trWindow.current!);
                   }
                 }} />
@@ -590,6 +608,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(tlCam);
                     tlCam = camera;
+                    localStorage.setItem(`${appID}_tlCam`, camera.name);
                     createControls(camera, tlWindow.current!);
                   }
                 }} />
@@ -599,6 +618,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(trCam);
                     trCam = camera;
+                    localStorage.setItem(`${appID}_trCam`, camera.name);
                     createControls(camera, trWindow.current!);
                   }
                 }} />
@@ -608,6 +628,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(blCam);
                     blCam = camera;
+                    localStorage.setItem(`${appID}_blCam`, camera.name);
                     createControls(camera, blWindow.current!);
                   }
                 }} />
@@ -617,6 +638,7 @@ export default function MultiView(props: MultiViewProps) {
                   if (camera !== undefined) {
                     clearCamera(brCam);
                     brCam = camera;
+                    localStorage.setItem(`${appID}_brCam`, camera.name);
                     createControls(camera, brWindow.current!);
                   }
                 }} />
