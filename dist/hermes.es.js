@@ -540,7 +540,9 @@ function At(t) {
       distance: t.distance,
       angle: t.angle,
       penumbra: t.penumbra,
-      groundColor: t.groundColor
+      groundColor: t.groundColor,
+      width: t.width,
+      height: t.height
     });
   return n;
 }
