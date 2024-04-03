@@ -6,6 +6,7 @@ export default class Application {
   listen?: BroadcastCallback;
   
   // Protected
+  protected _appID = '';
   protected _debugEnabled: boolean;
   protected _broadcastChannel?: BroadcastChannel | undefined = undefined;
   protected _webSocket?: WebSocket | undefined = undefined;
@@ -14,6 +15,7 @@ export default class Application {
   protected _useBC = false;
 
   constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
+    this._appID = id;
     this._debugEnabled = debugEnabled;
 
     if (debugEnabled) {
@@ -80,6 +82,10 @@ export default class Application {
   };
 
   // Getters / Setters
+
+  get appID(): string {
+    return this._appID;
+  }
 
   get connected(): boolean {
     return this._connected;

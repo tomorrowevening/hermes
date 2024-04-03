@@ -15,4 +15,10 @@ export default class RemoteThree extends BaseRemote {
     removeCamera(camera: Camera): void;
     handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
     handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
+    resize(width: number, height: number): void;
+    set dpr(value: number);
+    get dpr(): number;
+    get width(): number;
+    get height(): number;
+    get canvas(): HTMLCanvasElement | null;
 }

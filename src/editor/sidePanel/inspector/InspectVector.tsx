@@ -75,7 +75,6 @@ export default function InspectVector(props: InspectVectorProps) {
   }
 
   useEffect(() => {
-    console.log(bounds.min, bounds.max, value.x, value.y);
     const x = normalize(bounds.min, bounds.max, value.x);
     const y = normalize(bounds.min, bounds.max, value.y);
     pointRef.current!.style.left = `${x * 100}%`;

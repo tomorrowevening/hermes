@@ -3,6 +3,7 @@ import { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 export default class Application {
     components: Map<string, any>;
     listen?: BroadcastCallback;
+    protected _appID: string;
     protected _debugEnabled: boolean;
     protected _broadcastChannel?: BroadcastChannel | undefined;
     protected _webSocket?: WebSocket | undefined;
@@ -16,6 +17,7 @@ export default class Application {
     private messageHandler;
     private openHandler;
     private closeHandler;
+    get appID(): string;
     get connected(): boolean;
     get debugEnabled(): boolean;
     get mode(): ApplicationMode;
