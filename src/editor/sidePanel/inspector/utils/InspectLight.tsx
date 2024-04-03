@@ -13,6 +13,8 @@ function prettyName(value: string): string {
     case 'angle': return 'Angle';
     case 'penumbra': return 'Penumbra';
     case 'groundColor': return 'Ground Color';
+    case 'width': return 'Width';
+    case 'height': return 'Height';
   }
   return value;
 }

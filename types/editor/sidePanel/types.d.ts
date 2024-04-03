@@ -87,6 +87,8 @@ export interface LightInfo {
     intensity: number;
     decay?: number;
     distance?: number;
+    width?: number;
+    height?: number;
     angle?: number;
     penumbra?: number;
     groundColor?: Color;

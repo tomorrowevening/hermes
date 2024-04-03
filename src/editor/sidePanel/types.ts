@@ -109,6 +109,9 @@ export interface LightInfo {
   // Point
   decay?: number
   distance?: number
+  // Rect
+  width?: number
+  height?: number
   // Spot
   angle?: number
   penumbra?: number
