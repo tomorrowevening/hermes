@@ -214,6 +214,8 @@ export function stripObject(obj: Object3D): RemoteObject {
       angle: obj['angle'],
       penumbra: obj['penumbra'],
       groundColor: obj['groundColor'],
+      width: obj['width'],
+      height: obj['height'],
     };
   }
 

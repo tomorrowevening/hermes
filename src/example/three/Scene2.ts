@@ -1,4 +1,5 @@
-import { LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { LineBasicMaterial, LineSegments, Mesh, MeshMatcapMaterial, MeshPhysicalMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, RectAreaLight, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
 import { IS_DEV, app } from '../constants';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import { hierarchyUUID } from '../../editor/utils';
@@ -23,6 +24,8 @@ export default class Scene2 extends BaseScene {
   }
 
   private createLights() {
+    RectAreaLightUniformsLib.init();
+
     const lights = new Object3D();
     lights.name = 'lights';
     this.add(lights);
@@ -36,6 +39,12 @@ export default class Scene2 extends BaseScene {
     spotlight.position.set(-250, 200, 200);
     spotlight.lookAt(0, 50, 0);
     lights.add(spotlight);
+
+    const rectLight = new RectAreaLight(0xff0000, 1, 300, 100);
+    rectLight.name = 'rectLight';
+    rectLight.position.set(250, 100, 100);
+    rectLight.lookAt(0, 50, 0);
+    lights.add(rectLight);
   }
 
   private createWorld() {
@@ -46,7 +55,7 @@ export default class Scene2 extends BaseScene {
     const gridTexture = textures.get('uv_grid')!;
     gridTexture.repeat.setScalar(10);
     gridTexture.needsUpdate = true;
-    const floorMaterial = new MeshBasicMaterial({
+    const floorMaterial = new MeshPhysicalMaterial({
       map: gridTexture,
     });
     const floor = new Mesh(new SphereGeometry(250, 36), floorMaterial);
