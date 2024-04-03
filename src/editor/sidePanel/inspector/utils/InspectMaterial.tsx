@@ -368,6 +368,103 @@ function updateFieldOptions(obj: any, options: any[]) {
   obj.options = options;
 }
 
+// Inspect Material types
+
+function inspectBool(prop: string, value: boolean, object: RemoteObject, three: RemoteThree): any {
+  return {
+    type: 'boolean',
+    title: prettyName(prop),
+    prop: prop,
+    value: value,
+    needsUpdate: true,
+    onChange: (_: string, value: any) => {
+      three.updateObject(object.uuid, `material.${prop}`, value);
+      three.updateObject(object.uuid, 'material.needsUpdate', true);
+      // Local update
+      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+    },
+  };
+}
+
+function inspecNumber(prop: string, value: number, object: RemoteObject, three: RemoteThree): any {
+  const field = {
+    type: 'number',
+    title: prettyName(prop),
+    prop: prop,
+    value: value,
+    min: undefined,
+    max: undefined,
+    step: 0.01,
+    needsUpdate: true,
+    onChange: (_: string, value: any) => {
+      three.updateObject(object.uuid, `material.${prop}`, value);
+      three.updateObject(object.uuid, 'material.needsUpdate', true);
+      // Local update
+      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+    },
+  };
+
+  switch (prop) {
+    case 'blending':
+      updateFieldOptions(field, blendingOpts);
+      break;
+    case 'blendDst':
+      updateFieldOptions(field, blendDestinationOpts);
+      break;
+    case 'blendEquation':
+      updateFieldOptions(field, blendingEquationOpts);
+      break;
+    case 'blendSrc':
+      updateFieldOptions(field, blendSourceOpts);
+      break;
+    case 'side':
+      updateFieldOptions(field, materialSideOpts);
+      break;
+  }
+
+  if (clampedNames(prop)) {
+    field.value = Number(value);
+    field.type = 'range';
+    // @ts-ignore
+    field.min = 0;
+    // @ts-ignore
+    field.max = 1;
+    field.step = 0.01;
+  }
+
+  return field;
+}
+
+function inspectString(prop: string, value: boolean, object: RemoteObject, three: RemoteThree): any {
+  const field = {
+    type: 'string',
+    title: prettyName(prop),
+    prop: prop,
+    value: value,
+    needsUpdate: true,
+    onChange: (_: string, value: any) => {
+      three.updateObject(object.uuid, `material.${prop}`, value);
+      three.updateObject(object.uuid, 'material.needsUpdate', true);
+      // Local update
+      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+    },
+  };
+
+  const isShader = prop === 'vertexShader' || prop === 'fragmentShader';
+  if (isShader) {
+    field['disabled'] = false;
+    field['latest'] = field.value;
+    field.onChange = (_: string, updatedValue: string) => {
+      field['latest'] = updatedValue;
+    };
+  }
+
+  return field;
+}
+
 export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObject, three: RemoteThree): any[] {
   const items: any[] = [];
   for (const i in material) {
@@ -375,80 +472,12 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 
     const propType = typeof material[i];
     const value = material[i];
-    if (propType === 'boolean' || propType === 'number' || propType === 'string') {
-      const newField = {
-        title: prettyName(i),
-        prop: i,
-        type: propType,
-        value: value,
-        min: undefined,
-        max: undefined,
-        needsUpdate: propType === 'boolean',
-        onChange: (prop: string, value: any) => {
-          three.updateObject(object.uuid, `material.${prop}`, value);
-          if (newField.needsUpdate) three.updateObject(object.uuid, 'material.needsUpdate', true);
-          // Local update
-          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${prop}`, value);
-        },
-      };
-
-      switch (i) {
-        case 'blending':
-          updateFieldOptions(newField, blendingOpts);
-          break;
-        case 'blendDst':
-          updateFieldOptions(newField, blendDestinationOpts);
-          break;
-        case 'blendEquation':
-          updateFieldOptions(newField, blendingEquationOpts);
-          break;
-        case 'blendSrc':
-          updateFieldOptions(newField, blendSourceOpts);
-          break;
-        case 'side':
-          updateFieldOptions(newField, materialSideOpts);
-          break;
-      }
-
-      if (clampedNames(i)) {
-        newField.value = Number(value);
-        // @ts-ignore
-        newField.type = 'range';
-        // @ts-ignore
-        newField.min = 0;
-        // @ts-ignore
-        newField.max = 1;
-        // @ts-ignore
-        newField.step = 0.01;
-      }
-
-      const isShader = propType === 'string' && (i === 'vertexShader' || i === 'fragmentShader');
-      if (isShader) {
-        newField['disabled'] = false;
-        newField['latest'] = newField.value;
-        newField.onChange = (_: string, updatedValue: string) => {
-          newField['latest'] = updatedValue;
-        };
-      }
-      items.push(newField);
-
-      if (isShader) {
-        items.push({
-          title: `${capitalize(i)} - Update`,
-          type: 'button',
-          onChange: () => {
-            three.updateObject(object.uuid, `material.${i}`, newField['latest']);
-            three.updateObject(object.uuid, 'material.needsUpdate', true);
-            // Local update
-            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-            if (child !== undefined) {
-              setItemProps(child, `material.${i}`, newField['latest']);
-              child['material'].needsUpdate = true;
-            }
-          },
-        });
-      }
+    if (propType === 'boolean') {
+      items.push(inspectBool(i, value, object, three));
+    } else if (propType === 'number') {
+      items.push(inspecNumber(i, value, object, three));
+    } else if (propType === 'string') {
+      items.push(inspectString(i, value, object, three));
     } else if (propType === 'object') {
       if (value.isColor) {
         items.push({
@@ -650,6 +679,8 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
                     }
                   );
                 } else {
+                  // TODO: These are usually from overriding default MeshMaterials
+                  // Arrays of Lights, Shadows, Colors, Images and Vectors (light props)
                   console.log('>>> need to add this format:', n, pv);
                 }
               } else {
