@@ -2771,6 +2771,10 @@ function en(t) {
       return "Penumbra";
     case "groundColor":
       return "Ground Color";
+    case "width":
+      return "Width";
+    case "height":
+      return "Height";
   }
   return t;
 }
