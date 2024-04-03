@@ -265,31 +265,31 @@ export default function MultiView(props: MultiViewProps) {
           let helper;
           switch (obj.type) {
             case 'DirectionalLight':
-              helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
+              helper = new DirectionalLightHelper(obj as DirectionalLight);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
               break;
             case 'HemisphereLight':
-              helper = new HemisphereLightHelper(obj as HemisphereLight, 100);
+              helper = new HemisphereLightHelper(obj as HemisphereLight, 250);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
               break;
             case 'RectAreaLight':
-              helper = new RectAreaLightHelper(obj as RectAreaLight, 100);
+              helper = new RectAreaLightHelper(obj as RectAreaLight);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
               break;
             case 'PointLight':
-              helper = new PointLightHelper(obj as PointLight, 100);
+              helper = new PointLightHelper(obj as PointLight);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
               break;
             case 'SpotLight':
-              helper = new SpotLightHelper(obj as SpotLight, 100);
+              helper = new SpotLightHelper(obj as SpotLight);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
