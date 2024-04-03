@@ -1,6 +1,7 @@
 // Libs
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AxesHelper, Camera, CameraHelper, Group, MeshBasicMaterial, MeshDepthMaterial, MeshNormalMaterial, OrthographicCamera, PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three';
+import { AxesHelper, Camera, CameraHelper, DirectionalLight, DirectionalLightHelper, Group, HemisphereLight, HemisphereLightHelper, MeshBasicMaterial, MeshDepthMaterial, MeshNormalMaterial, Object3D, OrthographicCamera, PerspectiveCamera, PointLight, PointLightHelper, Raycaster, RectAreaLight, Scene, SpotLight, SpotLightHelper, Vector2, Vector3, WebGLRenderer } from 'three';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { mapLinear } from 'three/src/math/MathUtils';
 import RemoteThree from '@/core/remote/RemoteThree';
@@ -35,6 +36,8 @@ interface MultiViewProps {
   onSceneUpdate?: (scene: Scene) => void;
 }
 
+type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
+
 export default function MultiView(props: MultiViewProps) {
   // Get Local Storage
   const appID = props.three.app.appID;
@@ -47,7 +50,8 @@ export default function MultiView(props: MultiViewProps) {
   // Memo
   const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
   const controls: Map<string, OrbitControls> = useMemo(() => new Map(), []);
-  const helpers: Map<string, CameraHelper> = useMemo(() => new Map(), []);
+  const cameraHelpers: Map<string, CameraHelper> = useMemo(() => new Map(), []);
+  const lightHelpers: Map<string, LightHelper> = useMemo(() => new Map(), []);
   const scene = useMemo(() => new Scene(), []);
   const helpersContainer = useMemo(() => new Group(), []);
   const grid = useMemo(() => new InfiniteGridHelper(), []);
@@ -115,12 +119,12 @@ export default function MultiView(props: MultiViewProps) {
     if (prevControls !== undefined) prevControls.dispose();
     controls.delete(camera.name);
 
-    const prevHelper = helpers.get(camera.name);
+    const prevHelper = cameraHelpers.get(camera.name);
     if (prevHelper !== undefined) {
       scene.remove(prevHelper);
       prevHelper.dispose();
     }
-    helpers.delete(camera.name);
+    cameraHelpers.delete(camera.name);
 
     // New items
     const control = new OrbitControls(camera, element);
@@ -140,17 +144,17 @@ export default function MultiView(props: MultiViewProps) {
     
     if (camera instanceof PerspectiveCamera) {
       const helper = new CameraHelper(camera);
-      helpers.set(camera.name, helper);
+      cameraHelpers.set(camera.name, helper);
       scene.add(helper);
     }
   };
 
   const clearCamera = (camera: Camera) => {
-    const helper = helpers.get(camera.name);
+    const helper = cameraHelpers.get(camera.name);
     if (helper !== undefined) {
       scene.remove(helper);
       helper.dispose();
-      helpers.delete(camera.name);
+      cameraHelpers.delete(camera.name);
     }
     const control = controls.get(camera.name);
     if (control !== undefined) {
@@ -162,16 +166,16 @@ export default function MultiView(props: MultiViewProps) {
   const killControls = () => {
     controls.forEach((value: OrbitControls, key: string) => {
       value.dispose();
-      const helper = helpers.get(key);
+      const helper = cameraHelpers.get(key);
       if (helper !== undefined) {
         scene.remove(helper);
         helper.dispose();
       }
-      helpers.delete(key);
+      cameraHelpers.delete(key);
       controls.delete(key);
     });
     controls.clear();
-    helpers.clear();
+    cameraHelpers.clear();
   };
 
   const assignControls = () => {
@@ -247,7 +251,56 @@ export default function MultiView(props: MultiViewProps) {
 
   // Event handling
   useEffect(() => {
+    const clearLightHelpers = () => {
+      lightHelpers.forEach((helper: LightHelper) => {
+        helpersContainer.remove(helper);
+        helper.dispose();
+      });
+      lightHelpers.clear();
+    };
+
+    const addLightHelpers = () => {
+      currentScene.traverse((obj: Object3D) => {
+        if (obj.type.search('Light') > -1) {
+          let helper;
+          switch (obj.type) {
+            case 'DirectionalLight':
+              helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
+              helper.name = `${obj.name}Helper`;
+              lightHelpers.set(obj.name, helper);
+              helpersContainer.add(helper);
+              break;
+            case 'HemisphereLight':
+              helper = new HemisphereLightHelper(obj as HemisphereLight, 100);
+              helper.name = `${obj.name}Helper`;
+              lightHelpers.set(obj.name, helper);
+              helpersContainer.add(helper);
+              break;
+            case 'RectAreaLight':
+              helper = new RectAreaLightHelper(obj as RectAreaLight, 100);
+              helper.name = `${obj.name}Helper`;
+              lightHelpers.set(obj.name, helper);
+              helpersContainer.add(helper);
+              break;
+            case 'PointLight':
+              helper = new PointLightHelper(obj as PointLight, 100);
+              helper.name = `${obj.name}Helper`;
+              lightHelpers.set(obj.name, helper);
+              helpersContainer.add(helper);
+              break;
+            case 'SpotLight':
+              helper = new SpotLightHelper(obj as SpotLight, 100);
+              helper.name = `${obj.name}Helper`;
+              lightHelpers.set(obj.name, helper);
+              helpersContainer.add(helper);
+              break;
+          }
+        }
+      });
+    };
+
     const sceneUpdate = (evt: any) => {
+      clearLightHelpers();
       dispose(currentScene);
       scene.remove(currentScene);
 
@@ -259,6 +312,7 @@ export default function MultiView(props: MultiViewProps) {
         props.three.scene = currentScene;
         scene.add(currentScene);
         sceneSet = true;
+        addLightHelpers();
       }
     };
 
@@ -327,7 +381,7 @@ export default function MultiView(props: MultiViewProps) {
         } else if (camera instanceof PerspectiveCamera) {
           camera.aspect = cw / ch;
           camera.updateProjectionMatrix();
-          helpers.get(camera.name)?.update();
+          cameraHelpers.get(camera.name)?.update();
         }
       });
     };
