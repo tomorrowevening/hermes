@@ -3750,19 +3750,19 @@ function Di(t) {
           let O;
           switch (M.type) {
             case "DirectionalLight":
-              O = new ya(M, 100), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
+              O = new ya(M), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
               break;
             case "HemisphereLight":
-              O = new ba(M, 100), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
+              O = new ba(M, 250), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
               break;
             case "RectAreaLight":
-              O = new di(M, 100), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
+              O = new di(M), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
               break;
             case "PointLight":
-              O = new ga(M, 100), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
+              O = new ga(M), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
               break;
             case "SpotLight":
-              O = new va(M, 100), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
+              O = new va(M), O.name = `${M.name}Helper`, g.set(M.name, O), E.add(O);
               break;
           }
         }

@@ -1,4 +1,4 @@
-import { DirectionalLight, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import { LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, MeshMatcapMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
 import { IS_DEV, app } from '../constants';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import { hierarchyUUID } from '../../editor/utils';
@@ -27,19 +27,13 @@ export default class Scene2 extends BaseScene {
     lights.name = 'lights';
     this.add(lights);
 
-    const sun = new DirectionalLight(0xffffff, 0.25);
-    sun.name = 'sun';
-    sun.castShadow = true;
-    sun.position.set(0, 50, 50);
-    lights.add(sun);
-
     const spotlight = new SpotLight(0xffffff, 3);
     spotlight.angle = 5.8;
     spotlight.decay = 0;
     spotlight.distance = 1000;
     spotlight.penumbra = Math.PI;
     spotlight.name = 'spotlight';
-    spotlight.position.set(-50, 200, 200);
+    spotlight.position.set(-250, 200, 200);
     spotlight.lookAt(0, 50, 0);
     lights.add(spotlight);
   }
