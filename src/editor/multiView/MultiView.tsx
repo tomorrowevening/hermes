@@ -215,6 +215,7 @@ export default function MultiView(props: MultiViewProps) {
   useEffect(() => {
     // Scene
     scene.name = 'Debug Scene';
+    scene.uuid = '';
 
     helpersContainer.name = 'helpers';
     scene.add(helpersContainer);

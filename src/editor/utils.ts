@@ -68,7 +68,9 @@ export const hierarchyUUID = (object: Object3D): void => {
     totalThreeObjects++;
   }
   // inherit parent's UUID for hierarchy
-  if (object.parent !== null) uuid = `${object.parent.uuid}.${uuid}`;
+  if (object.parent !== null && object.parent.uuid.length > 0) {
+    uuid = `${object.parent.uuid}.${uuid}`;
+  }
   object.uuid = uuid;
 
   // Iterate children
