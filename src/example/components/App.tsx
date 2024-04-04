@@ -1,7 +1,6 @@
 // Libs
 import React, { useEffect, useRef } from 'react';
 import { types } from '@theatre/core';
-import studio from '@theatre/studio';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
