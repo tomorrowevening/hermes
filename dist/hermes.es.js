@@ -45,7 +45,7 @@ const Ma = () => {
   if (!t)
     return;
   let n = t.name.replace(" ", "");
-  n.length === 0 && (n = `obj_${jt}`, jt++), t.parent !== null && (n = `${t.parent.uuid}.${n}`), t.uuid = n, t.children.forEach((a) => {
+  n.length === 0 && (n = `obj_${jt}`, jt++), t.parent !== null && t.parent.uuid.length > 0 && (n = `${t.parent.uuid}.${n}`), t.uuid = n, t.children.forEach((a) => {
     Pn(a);
   });
 }, wi = (t) => {
@@ -3742,7 +3742,7 @@ function Di(t) {
     });
     p.autoClear = !1, p.shadowMap.enabled = !0, p.setPixelRatio(devicePixelRatio), p.setClearColor(0), t.three.renderer = p, Ce(p);
   }, []), ke(() => {
-    v.name = "Debug Scene", E.name = "helpers", v.add(E), E.add(x), R.name = "axisHelper", E.add(R), P.name = "interactionHelper", E.add(P), P.visible = !1, q("Top", new X(0, 1e3, 0)), q("Bottom", new X(0, -1e3, 0)), q("Left", new X(-1e3, 0, 0)), q("Right", new X(1e3, 0, 0)), q("Front", new X(0, 0, 1e3)), q("Back", new X(0, 0, -1e3)), q("Orthographic", new X(1e3, 1e3, 1e3));
+    v.name = "Debug Scene", v.uuid = "", E.name = "helpers", v.add(E), E.add(x), R.name = "axisHelper", E.add(R), P.name = "interactionHelper", E.add(P), P.visible = !1, q("Top", new X(0, 1e3, 0)), q("Bottom", new X(0, -1e3, 0)), q("Left", new X(-1e3, 0, 0)), q("Right", new X(1e3, 0, 0)), q("Front", new X(0, 0, 1e3)), q("Back", new X(0, 0, -1e3)), q("Orthographic", new X(1e3, 1e3, 1e3));
     const p = new Pt(60, 1, 50, 3e3);
     p.name = "Debug", p.position.set(500, 500, 500), p.lookAt(0, 0, 0), o.set("Debug", p), G = o.get(localStorage.getItem(`${n}_tlCam`)), ce = o.get(localStorage.getItem(`${n}_trCam`)), ze = o.get(localStorage.getItem(`${n}_blCam`)), He = o.get(localStorage.getItem(`${n}_brCam`));
   }, []), ke(() => {
