@@ -7,6 +7,7 @@ import FBXAnimation from './FBXAnimation';
 import { cubeTextures, textures } from './loader';
 import BaseScene from './BaseScene';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
+import RemoteThree from '../../core/remote/RemoteThree';
 
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
@@ -32,6 +33,10 @@ export default class Scene1 extends BaseScene {
     if (!app.editor) this.createPost();
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
+
+    const three = app.components.get('three') as RemoteThree;
+    three.setScene(this);
+    three.addCamera(this.camera);
   }
 
   private createLights() {

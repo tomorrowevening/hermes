@@ -95,8 +95,13 @@ export default function InspectorField(props: InspectorFieldProps) {
     if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
   };
 
+  const style = {};
+  if (props.disabled) {
+    style['opacity'] = 0.8;
+  }
+
   return (
-    <div className={`field ${block ? 'block' : ''}`}>
+    <div className={`field ${block ? 'block' : ''}`} style={style}>
       {props.type !== 'button' && (
         <label key='fieldLabel' ref={labelRef}>{capitalize(props.title)}</label>
       )}
@@ -196,7 +201,7 @@ export default function InspectorField(props: InspectorFieldProps) {
       )}
 
       {props.type === 'vector' && (
-        <InspectVector value={fieldValue} min={-1} max={1} onChange={onChange} />
+        <InspectVector value={fieldValue} min={0} max={1} onChange={onChange} />
       )}
     </div>
   );
