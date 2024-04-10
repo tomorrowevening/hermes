@@ -8,12 +8,20 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }`;
 
-const fragment = `uniform float time;
+const fragment = `
+struct Light {
+  float intensity;
+  vec3 position;
+  vec3 color;
+};
+
+uniform float time;
 uniform float opacity;
 uniform vec2 resolution;
 uniform vec3 diffuse;
 uniform vec3 mouse;
 uniform sampler2D map;
+uniform Light light;
 varying vec2 vUv;
 
 #define MIN_ALPHA 2.0 / 255.0
@@ -24,7 +32,7 @@ void main() {
   vec3 image = texture2D(map, imageUV).rgb;
   vec3 col = image * diffuse;
   col += (sin(time * 0.1) * 0.5 + 0.5) * 0.2;
-  col = vec3(resolution, 0.0);
+  col += vec3(resolution, 0.0);
   gl_FragColor = vec4(col, opacity);
 }`;
 
@@ -62,6 +70,13 @@ export default class CustomMaterial extends ShaderMaterial {
         testM4: {
           value: new Matrix4()
         },
+        light: {
+          value: {
+            position: new Vector2(),
+            intensity: 1,
+            color: new Color(),
+          }
+        }
       },
     });
 

@@ -135,8 +135,6 @@ function App() {
       currentScene = new Scene2(renderer);
     }
     currentScene.resize(window.innerWidth, window.innerHeight);
-    three.setScene(currentScene);
-    three.addCamera(currentScene.camera);
   };
 
   const createScene1 = () => {
