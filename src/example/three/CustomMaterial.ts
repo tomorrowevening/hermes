@@ -28,11 +28,12 @@ varying vec2 vUv;
 
 void main() {
   if (opacity < MIN_ALPHA) discard;
-  vec2 imageUV = vUv * 10.0 + (mouse.xy * mouse.z);
+  vec2 imageUV = vUv * 10.0;
   vec3 image = texture2D(map, imageUV).rgb;
   vec3 col = image * diffuse;
   col += (sin(time * 0.1) * 0.5 + 0.5) * 0.2;
   col += vec3(resolution, 0.0);
+  col += mouse;
   gl_FragColor = vec4(col, opacity);
 }`;
 
@@ -72,9 +73,9 @@ export default class CustomMaterial extends ShaderMaterial {
         },
         light: {
           value: {
-            position: new Vector2(),
+            position: new Vector2(5, 10),
             intensity: 1,
-            color: new Color(),
+            color: new Color(0xff00ff),
           }
         }
       },

@@ -1,11 +1,24 @@
 import { colorToHex } from '@/editor/utils';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { noImage } from '@/editor/components/content';
 import { uploadLocalImage } from './utils/InspectMaterial';
 import { capitalize } from '@/editor/utils';
-import InspectVector from './InspectVector';
+import InspectNumber from './InspectNumber';
+import InspectVector2 from './InspectVector2';
+import InspectGrid3 from './InspectGrid3';
+import InspectGrid4 from './InspectGrid4';
 
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option' | 'vector'
+export type InspectorFieldType = 'string' |
+  'number' |
+  'boolean' |
+  'range' |
+  'color' |
+  'button' |
+  'image' |
+  'option' |
+  'vector2' |
+  'grid3' |
+  'grid4'
 
 export interface InspectorFieldProps {
   title: string
@@ -30,58 +43,7 @@ export default function InspectorField(props: InspectorFieldProps) {
 
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLLabelElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const imgRefRef = useRef<HTMLImageElement>(null);
-
-  // Mouse dragging
-  useEffect(() => {
-    let mouseDown = false;
-    let mouseStart = -1;
-    let valueStart = 0;
-    let value = Number(fieldValue);
-
-    const onMouseDown = (evt: MouseEvent) => {
-      mouseDown = true;
-      valueStart = value;
-      mouseStart = evt.clientX;
-    };
-
-    const onMouseMove = (evt: MouseEvent) => {
-      if (!mouseDown) return;
-      const deltaAmt = props.step !== undefined ? props.step : 1;
-      const delta = (evt.clientX - mouseStart) * deltaAmt;
-      value = Number((valueStart + delta).toFixed(4));
-      if (inputRef.current !== null) inputRef.current.value = value.toString();
-      if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
-    };
-
-    const onMouseUp = () => {
-      mouseDown = false;
-    };
-
-    const onRightClick = () => {
-      mouseDown = false;
-    };
-
-    const useMouse = props.type === 'number';
-    if (useMouse) {
-      labelRef.current?.addEventListener('mousedown', onMouseDown, false);
-      document.addEventListener('mouseup', onMouseUp, false);
-      document.addEventListener('mousemove', onMouseMove, false);
-      document.addEventListener('contextmenu', onRightClick, false);
-    }
-    return () => {
-      if (useMouse) {
-        labelRef.current?.removeEventListener('mousedown', onMouseDown);
-        document.removeEventListener('mouseup', onMouseUp);
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('contextmenu', onRightClick);
-      }
-    };
-  }, [fieldValue]);
-
-  const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
-  const block = textfield || props.type === 'image' || props.type === 'vector';
 
   const onChange = (evt: any) => {
     let value = evt.target.value;
@@ -99,6 +61,9 @@ export default function InspectorField(props: InspectorFieldProps) {
   if (props.disabled) {
     style['opacity'] = 0.8;
   }
+
+  const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
+  const block = textfield || props.type === 'image' || props.type === 'vector2';
 
   return (
     <div className={`field ${block ? 'block' : ''}`} style={style}>
@@ -135,31 +100,31 @@ export default function InspectorField(props: InspectorFieldProps) {
       )}
 
       {props.type === 'number' && (
-        <input
-          ref={inputRef}
-          type='number'
+        <InspectNumber
           value={fieldValue}
+          type={props.type}
+          prop={props.prop !== undefined ? props.prop : props.title}
           min={props.min}
           max={props.max}
           step={props.step}
           disabled={props.disabled}
-          onChange={onChange}
+          labelRef={labelRef}
+          onChange={props.onChange}
         />
       )}
       
       {props.type === 'range' && (
-        <>
-          <input type='text' value={fieldValue.toString()} onChange={onChange} disabled={props.disabled} className='min' />
-          <input
-            disabled={props.disabled}
-            type='range'
-            value={fieldValue}
-            min={props.min}
-            max={props.max}
-            step={props.step}
-            onChange={onChange}
-          />
-        </>
+        <InspectNumber
+          value={fieldValue}
+          type={props.type}
+          prop={props.prop !== undefined ? props.prop : props.title}
+          min={props.min}
+          max={props.max}
+          step={props.step}
+          disabled={props.disabled}
+          labelRef={labelRef}
+          onChange={props.onChange}
+        />
       )}
 
       {props.type === 'color' && (
@@ -200,8 +165,16 @@ export default function InspectorField(props: InspectorFieldProps) {
         </>
       )}
 
-      {props.type === 'vector' && (
-        <InspectVector value={fieldValue} min={0} max={1} onChange={onChange} />
+      {props.type === 'vector2' && (
+        <InspectVector2 value={fieldValue} min={0} max={1} onChange={onChange} />
+      )}
+
+      {props.type === 'grid3' && (
+        <InspectGrid3 value={fieldValue} onChange={onChange} />
+      )}
+
+      {props.type === 'grid4' && (
+        <InspectGrid4 value={fieldValue} onChange={onChange} />
       )}
     </div>
   );

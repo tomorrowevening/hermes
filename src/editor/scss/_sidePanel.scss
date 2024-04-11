@@ -43,6 +43,7 @@ $icon_world: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM
         overflow: hidden;
       }
       &.open {
+        border-top: 1px solid #222;
         grid-template-rows: 1fr;
       }
     }
