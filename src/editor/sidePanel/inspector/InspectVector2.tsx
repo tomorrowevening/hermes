@@ -1,14 +1,14 @@
-import { clamp, mix, normalize, round } from '@/editor/utils';
 import { useEffect, useRef, useState } from 'react';
+import { clamp, mix, normalize, round } from '@/editor/utils';
 
-interface InspectVectorProps {
+interface InspectVector2Props {
   min: number
   max: number
   value: any
   onChange: (evt: any) => void;
 }
 
-export default function InspectVector(props: InspectVectorProps) {
+export default function InspectVector2(props: InspectVector2Props) {
   // Refs
   const xRef = useRef<HTMLInputElement>(null);
   const yRef = useRef<HTMLInputElement>(null);
@@ -82,7 +82,7 @@ export default function InspectVector(props: InspectVectorProps) {
   }, [bounds, value]);
 
   return (
-    <div className='vector'>
+    <div className='vector2'>
       <div className='fields'>
         <div>
           <label>X:</label>

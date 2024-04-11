@@ -517,7 +517,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
     return {
       title: prettyName(prop),
       prop: prop,
-      type: 'vector',
+      type: 'vector2',
       value: value,
       onChange: (_: string, value: any) => {
         three.updateObject(object.uuid, `material.${prop}`, value);
@@ -527,55 +527,30 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       },
     };
   } else if (isVector3(value)) {
-    const subkids: any = [
-      {
-        title: 'X',
-        prop: prop,
-        type: 'number',
-        value: value,
-        step: 0.01,
-        onChange: (_: string, value: any) => {
-          three.updateObject(object.uuid, `material.${prop}.x`, value);
-          // Local update
-          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${prop}.x`, value);
-        },
-      },
-      {
-        title: 'Y',
-        prop: prop,
-        type: 'number',
-        value: value,
-        step: 0.01,
-        onChange: (_: string, value: any) => {
-          three.updateObject(object.uuid, `material.${prop}.y`, value);
-          // Local update
-          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${prop}.y`, value);
-        },
-      },
-      {
-        title: 'Z',
-        prop: prop,
-        type: 'number',
-        value: value,
-        step: 0.01,
-        onChange: (_: string, value: any) => {
-          three.updateObject(object.uuid, `material.${prop}.z`, value);
-          // Local update
-          const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${prop}.z`, value);
-        },
-      }
-    ];
-    subkids.sort((a: any, b: any) => {
-      if (a.title < b.title) return -1;
-      if (a.title > b.title) return 1;
-      return 0;
-    });
     return {
       title: prettyName(prop),
-      items: subkids,
+      prop: prop,
+      type: 'grid3',
+      value: value,
+      onChange: (_: string, value: any) => {
+        three.updateObject(object.uuid, `material.${prop}`, value);
+        // Local update
+        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      },
+    };
+  } else if (isVector4(value)) {
+    return {
+      title: prettyName(prop),
+      prop: prop,
+      type: 'grid4',
+      value: value,
+      onChange: (_: string, value: any) => {
+        three.updateObject(object.uuid, `material.${prop}`, value);
+        // Local update
+        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      },
     };
   } else if (value.src !== undefined) {
     return {
@@ -669,7 +644,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
             subChildren.push({
               title: `${prettyName(index)}`,
               prop: index,
-              type: 'vector',
+              type: 'vector2',
               value: subvalue,
               onChange: (_: string, updatedValue: any) => {
                 three.updateObject(object.uuid, `material.uniforms.${index}.value`, updatedValue);
@@ -679,110 +654,33 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
               },
             });
           } else if (isVector3(subvalue)) {
-            const vector: any[] = [];
-            vector.push({
-              title: 'X',
-              prop: index,
-              type: 'number',
-              value: subvalue.x,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.x`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.x`, updatedValue);
-              },
-            });
-            vector.push({
-              title: 'Y',
-              prop: index,
-              type: 'number',
-              value: subvalue.y,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.y`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.y`, updatedValue);
-              },
-            });
-            vector.push({
-              title: 'Z',
-              prop: index,
-              type: 'number',
-              value: subvalue.z,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.z`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.z`, updatedValue);
-              },
-            });
             subChildren.push({
-              title: prettyName(index),
-              items: vector,
+              title: `${prettyName(index)}`,
+              prop: index,
+              type: 'grid3',
+              value: subvalue,
+              onChange: (_: string, updatedValue: any) => {
+                three.updateObject(object.uuid, `material.uniforms.${index}.value`, updatedValue);
+                // Local update
+                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value`, updatedValue);
+              },
             });
           } else if (isVector4(subvalue)) {
-            const vector: any[] = [];
-            vector.push({
-              title: 'X',
-              prop: index,
-              type: 'number',
-              value: subvalue.x,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.x`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.x`, updatedValue);
-              },
-            });
-            vector.push({
-              title: 'Y',
-              prop: index,
-              type: 'number',
-              value: subvalue.y,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.y`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.y`, updatedValue);
-              },
-            });
-            vector.push({
-              title: 'Z',
-              prop: index,
-              type: 'number',
-              value: subvalue.z,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.z`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.z`, updatedValue);
-              },
-            });
-            vector.push({
-              title: 'W',
-              prop: index,
-              type: 'number',
-              value: subvalue.w,
-              step: 0.01,
-              onChange: (_: string, updatedValue: any) => {
-                three.updateObject(object.uuid, `material.uniforms.${index}.value.w`, updatedValue);
-                // Local update
-                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.w`, updatedValue);
-              },
-            });
             subChildren.push({
-              title: prettyName(index),
-              items: vector,
+              title: `${prettyName(index)}`,
+              prop: index,
+              type: 'grid4',
+              value: subvalue,
+              onChange: (_: string, updatedValue: any) => {
+                three.updateObject(object.uuid, `material.uniforms.${index}.value`, updatedValue);
+                // Local update
+                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value`, updatedValue);
+              },
             });
           } else if (subtype === 'number') {
-            subChildren.push({
+            const numberOpt = {
               title: prettyName(index),
               prop: index,
               type: 'number',
@@ -794,7 +692,13 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
                 const child = three.scene?.getObjectByProperty('uuid', object.uuid);
                 if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value`, updatedValue);
               },
-            });
+            };
+            if (clampedNames(index)) {
+              numberOpt.type = 'range';
+              numberOpt['min'] = 0;
+              numberOpt['max'] = 1;
+            }
+            subChildren.push(numberOpt);
           } else if (subtype === 'string') {
             subChildren.push({
               title: prettyName(index),
@@ -827,24 +731,17 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
               },
             });
           } else if (subvalue.elements !== undefined) {
-            const subitems: any[] = [];
-            for (const a in subvalue.elements) {
-              subitems.push({
-                title: `${a}`,
-                type: 'number',
-                value: subvalue.elements[a],
-                step: 0.01,
-                onChange: (_: string, updatedValue: any) => {
-                  three.updateObject(object.uuid, `material.uniforms.${index}.value.elements[${a}]`, updatedValue);
-                  // Local update
-                  const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                  if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value.elements[${a}]`, updatedValue);
-                },
-              });
-            }
             subChildren.push({
-              title: prettyName(index),
-              items: subitems,
+              title: `${prettyName(index)}`,
+              prop: index,
+              type: subvalue.elements.length > 9 ? 'grid4' : 'grid3',
+              value: subvalue,
+              onChange: (_: string, updatedValue: any) => {
+                three.updateObject(object.uuid, `material.uniforms.${index}.value`, updatedValue);
+                // Local update
+                const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                if (child !== undefined) setItemProps(child, `material.uniforms.${index}.value`, updatedValue);
+              },
             });
           } else {
             const subkids: any[] = [];
@@ -872,7 +769,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
                 subkids.push({
                   title: `${prettyName(subkidName)}`,
                   prop: subkidName,
-                  type: 'vector',
+                  type: 'vector2',
                   value: subkidValue,
                   onChange: (_: string, updatedValue: any) => {
                     three.updateObject(object.uuid, path, updatedValue);
@@ -882,107 +779,30 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
                   },
                 });
               } else if (isVector3(subkidValue)) {
-                const vector: any[] = [];
-                vector.push({
-                  title: 'X',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.x,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.x`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.x`, updatedValue);
-                  },
-                });
-                vector.push({
-                  title: 'Y',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.y,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.y`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.y`, updatedValue);
-                  },
-                });
-                vector.push({
-                  title: 'Z',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.z,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.z`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.z`, updatedValue);
-                  },
-                });
                 subkids.push({
-                  title: prettyName(subkidName),
-                  items: vector,
+                  title: `${prettyName(subkidName)}`,
+                  prop: subkidName,
+                  type: 'vector3',
+                  value: subkidValue,
+                  onChange: (_: string, updatedValue: any) => {
+                    three.updateObject(object.uuid, path, updatedValue);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) setItemProps(child, path, updatedValue);
+                  },
                 });
               } else if (isVector4(subkidValue)) {
-                const vector: any[] = [];
-                vector.push({
-                  title: 'X',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.x,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.x`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.x`, updatedValue);
-                  },
-                });
-                vector.push({
-                  title: 'Y',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.y,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.y`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.y`, updatedValue);
-                  },
-                });
-                vector.push({
-                  title: 'Z',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.z,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.z`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.z`, updatedValue);
-                  },
-                });
-                vector.push({
-                  title: 'W',
-                  prop: subkidName,
-                  type: 'number',
-                  value: subvalue.w,
-                  step: 0.01,
-                  onChange: (_: string, updatedValue: any) => {
-                    three.updateObject(object.uuid, `${path}.w`, updatedValue);
-                    // Local update
-                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-                    if (child !== undefined) setItemProps(child, `${path}.w`, updatedValue);
-                  },
-                });
                 subkids.push({
-                  title: prettyName(subkidName),
-                  items: vector,
+                  title: `${prettyName(subkidName)}`,
+                  prop: subkidName,
+                  type: 'vector4',
+                  value: subkidValue,
+                  onChange: (_: string, updatedValue: any) => {
+                    three.updateObject(object.uuid, path, updatedValue);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) setItemProps(child, path, updatedValue);
+                  },
                 });
               } else if (subkidType === 'number') {
                 subkids.push({
@@ -1029,15 +849,27 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
                   },
                 });
               } else if (subkidValue.elements !== undefined) {
-                //
+                subkids.push({
+                  title: prettyName(subkidName),
+                  prop: subkidName,
+                  type: subkidValue.elements.length > 9 ? 'grid4' : 'grid3',
+                  value: subkidValue,
+                  step: 0.01,
+                  onChange: (_: string, updatedValue: any) => {
+                    three.updateObject(object.uuid, path, updatedValue);
+                    // Local update
+                    const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+                    if (child !== undefined) setItemProps(child, path, updatedValue);
+                  },
+                });
               }
             }
-            subkids.sort((a: any, b: any) => {
-              if (a.title < b.title) return -1;
-              if (a.title > b.title) return 1;
-              return 0;
-            });
             if (subkids.length > 0) {
+              subkids.sort((a: any, b: any) => {
+                if (a.title < b.title) return -1;
+                if (a.title > b.title) return 1;
+                return 0;
+              });
               subChildren.push({
                 title: capitalize(index),
                 items: subkids,

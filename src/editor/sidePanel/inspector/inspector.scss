@@ -125,7 +125,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
       right: 4px;
     }
 
-    .vector {
+    .vector2 {
       position: relative;
       width: 100%;
 
@@ -182,6 +182,32 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
           top: 50%;
           transform: translate(-50%, -50%);
           z-index: 10;
+        }
+      }
+    }
+
+    .grid3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid3, .grid4 {
+      display: grid;
+      margin-top: 4px;
+
+      div {
+        display: flex;
+        overflow: hidden;
+
+        label {
+          line-height: 21px;
+          min-width: inherit;
+        }
+        input {
+          width: 100%;
         }
       }
     }

@@ -2,6 +2,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 import { InspectorFieldType } from './InspectorField';
 
 export interface InspectNumberProps {
+  alt?: string
   value: number
   prop: string
   type: InspectorFieldType
@@ -80,6 +81,7 @@ export default function InspectNumber(props: InspectNumberProps) {
     <>
       {props.type === 'number' && (
         <input
+          alt={props.alt}
           className={props.className}
           ref={inputRef}
           type='number'
