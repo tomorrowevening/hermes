@@ -25,7 +25,7 @@ export default function InspectNumber(props: InspectNumberProps) {
 
   // Handlers
   const onChange = (evt: any) => {
-    const value = evt.target.value;
+    const value = Number(evt.target.value);
     setFieldValue(value);
     if (props.onChange !== undefined) props.onChange(props.prop, value);
   };
@@ -35,11 +35,11 @@ export default function InspectNumber(props: InspectNumberProps) {
     let mouseDown = false;
     let mouseStart = -1;
     let valueStart = 0;
-    let value = fieldValue;
+    let value = Number(fieldValue);
 
     const onMouseDown = (evt: MouseEvent) => {
       mouseDown = true;
-      valueStart = value;
+      valueStart = Number(value);
       mouseStart = evt.clientX;
     };
 
