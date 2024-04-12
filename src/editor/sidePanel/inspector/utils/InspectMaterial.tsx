@@ -42,6 +42,33 @@ export function acceptedMaterialNames(name: string): boolean {
   );
 }
 
+export function imageNames(name: string): string {
+  switch (name) {
+    case 'Alpha Map': return 'alphaMap';
+    case 'Anisotropy Map': return 'anisotropyMap';
+    case 'AO Map': return 'aoMap';
+    case 'Bump Map': return 'bumpMap';
+    case 'Clearcoat Map': return 'clearcoatMap';
+    case 'Clearcoat Normal Map': return 'clearcoatNormalMap';
+    case 'Clearcoat Roughness Map': return 'clearcoatRoughnessMap';
+    case 'Displacement Map': return 'displacementMap';
+    case 'Emissive Map': return 'emissiveMap';
+    case 'Iridescence Map': return 'iridescenceMap';
+    case 'Iridescence Thickness Map': return 'iridescenceThicknessMap';
+    case 'Map': return 'map';
+    case 'Matcap': return 'matcap';
+    case 'Normal Map': return 'normalMap';
+    case 'Roughness Map': return 'roughnessMap';
+    case 'Sheen Color Map': return 'sheenColorMap';
+    case 'Sheen Roughness Map': return 'sheenRoughnessMap';
+    case 'Specular Color Map': return 'specularColorMap';
+    case 'Specular Map Intensity': return 'specularIntensityMap';
+    case 'Thickness Map': return 'thicknessMap';
+    case 'Transmission Map': return 'transmissionMap';
+  }
+  return name;
+}
+
 export function prettyName(name: string): string {
   switch (name) {
     case 'alphaMap': return 'Alpha Map';
@@ -557,13 +584,14 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       title: prettyName(prop),
       type: 'image',
       value: value,
-      onChange: (prop: string, updatedValue: any) => {
-        three.createTexture(object.uuid, `material.${prop}`, updatedValue);
+      onChange: (_: string, updatedValue: any) => {
+        const textName = imageNames(prop);
+        three.createTexture(object.uuid, `material.${textName}`, updatedValue);
         // Local update
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) {
           textureFromSrc(updatedValue).then((texture: Texture) => {
-            setItemProps(child, `material.${prop}`, texture);
+            setItemProps(child, `material.${textName}`, texture);
             setItemProps(child, `material.needsUpdate`, true);
           });
         }
