@@ -8,8 +8,7 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }`;
 
-const fragment = `
-struct Light {
+const fragment = `struct Light {
   float intensity;
   vec3 position;
   vec3 color;

@@ -82,7 +82,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
     img {
       border: 1px dotted #333;
       cursor: pointer;
-      object-fit: cover;
+      object-fit: contain;
       max-width: 100%;
       min-width: 50px;
       min-height: 50px;

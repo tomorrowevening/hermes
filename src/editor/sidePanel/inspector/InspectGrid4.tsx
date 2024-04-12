@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { Matrix4, Vector4 } from 'three';
-// import InspectNumber from './InspectNumber';
+import InspectNumber from './InspectNumber';
 
 interface InspectGrid4Props {
   value: Vector4 | Matrix4
@@ -8,81 +8,53 @@ interface InspectGrid4Props {
 }
 
 export default function InspectGrid4(props: InspectGrid4Props) {
-  // States
-  const [fieldValue, setFieldValue] = useState(props.value);
-
-  // Events
-  const onChangeVector = (evt: any) => {
-    const { alt, value } = evt.target;
-    const updated = {...fieldValue} as Vector4;
-    updated[alt] = Number(value);
-    console.log(alt, updated);
-    setFieldValue(updated);
-    props.onChange({ target: { value: updated } });
-  };
-
-  // const onChangeVector = (prop: string, value: number) => {
-  //   const updated = {...fieldValue} as Vector4;
-  //   updated[prop] = Number(value);
-  //   console.log(prop, value, updated);
-  //   setFieldValue(updated);
-  //   props.onChange({ target: { value: updated } });
-  // };
-
-  const onChangeMatrix = (evt: any) => {
-    const { alt, value } = evt.target;
-    const index = Number(alt);
-    const updated = {...fieldValue} as Matrix4;
-    updated.elements[index] = Number(value);
-    setFieldValue(updated);
-  };
-
+  const isVector = props.value['x'] !== undefined;
   const children: any[] = [];
-  if (props.value['elements'] === undefined) {
-    const vector = fieldValue as Vector4;
+
+  if (isVector) {
+    const vector = useMemo(() => props.value as Vector4, []);
+    const onChange = (prop: string, value: number) => {
+      vector[prop] = value;
+      props.onChange({ target: { value: vector } });
+    };
+
     const params = ['x', 'y', 'z', 'w'];
-    params.forEach((value: string) => {
+    params.forEach((param: string) => {
+      const labelRef = useRef<HTMLLabelElement>(null);
       children.push(
-        <div key={value}>
-          <label>{value.toUpperCase()}</label>
-          <input
-            alt={value}
+        <div key={param}>
+          <label ref={labelRef}>{param.toUpperCase()}</label>
+          <InspectNumber
+            value={vector.x}
             type='number'
-            value={vector[value]}
+            prop={param}
             step={0.01}
-            onChange={onChangeVector}
+            labelRef={labelRef}
+            onChange={onChange}
           />
         </div>
       );
-      // const labelRef = useRef<HTMLLabelElement>(null);
-      // children.push(
-      //   <div key={value}>
-      //     <label ref={labelRef}>{value.toUpperCase()}</label>
-      //     <InspectNumber
-      //       alt={value}
-      //       value={vector[value]}
-      //       prop={value}
-      //       step={0.01}
-      //       labelRef={labelRef}
-      //       type='number'
-      //       onChange={onChangeVector}
-      //     />
-      //   </div>
-      // );
     });
   } else {
-    const matrix = fieldValue as Matrix4;
+    const matrix = useMemo(() => props.value as Matrix4, []);
+    const onChange = (prop: string, value: number) => {
+      const index = Number(prop);
+      matrix.elements[index] = value;
+      props.onChange({ target: { value: matrix } });
+    };
+
     for (let i = 0; i < 16; i++) {
-      const name = (i + 1).toString();
+      const labelRef = useRef<HTMLLabelElement>(null);
       children.push(
-        <div key={name}>
-          <label>{name}</label>
-          <input
-            alt={i.toString()}
-            type='number'
+        <div key={i.toString()}>
+          <label ref={labelRef}>{i + 1}</label>
+          <InspectNumber
             value={matrix.elements[i]}
+            type='number'
+            prop={i.toString()}
             step={0.01}
-            onChange={onChangeMatrix}
+            labelRef={labelRef}
+            onChange={onChange}
           />
         </div>
       );
