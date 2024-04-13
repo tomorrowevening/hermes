@@ -451,6 +451,12 @@ export default function MultiView(props: MultiViewProps) {
       controls.forEach((control: OrbitControls) => {
         control.update();
       });
+      cameraHelpers.forEach((helper: CameraHelper) => {
+        helper.update();
+      });
+      lightHelpers.forEach((helper: LightHelper) => {
+        if (helper['update'] !== undefined) helper['update']();
+      });
 
       if (props.onSceneUpdate !== undefined && sceneSet) props.onSceneUpdate(currentScene);
 
