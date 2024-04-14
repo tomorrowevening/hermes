@@ -1,4 +1,20 @@
-import { LineBasicMaterial, LineSegments, Mesh, MeshMatcapMaterial, MeshPhysicalMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, RectAreaLight, SkinnedMesh, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
+import {
+  LineBasicMaterial,
+  LineSegments,
+  Mesh,
+  MeshMatcapMaterial,
+  MeshPhysicalMaterial,
+  Object3D,
+  PlaneGeometry,
+  Points,
+  PointsMaterial,
+  RectAreaLight,
+  SkinnedMesh,
+  SphereGeometry,
+  SpotLight,
+  WebGLRenderer,
+} from 'three';
+// @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
 import { IS_DEV, app } from '../constants';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';

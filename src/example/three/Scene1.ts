@@ -1,5 +1,28 @@
-import { BackSide, CircleGeometry, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, MeshPhysicalMaterial, Object3D, SphereGeometry, SpotLight, WebGLRenderer } from 'three';
-import { BlendFunction, EffectComposer, EffectPass, FXAAEffect, NoiseEffect, RenderPass, TiltShiftEffect, VignetteEffect } from 'postprocessing';
+import {
+  BackSide,
+  CircleGeometry,
+  DirectionalLight,
+  HemisphereLight,
+  Mesh,
+  MeshBasicMaterial,
+  MeshMatcapMaterial,
+  MeshPhongMaterial,
+  MeshPhysicalMaterial,
+  Object3D,
+  SphereGeometry,
+  SpotLight,
+  WebGLRenderer,
+} from 'three';
+import {
+  BlendFunction,
+  EffectComposer,
+  EffectPass,
+  FXAAEffect,
+  NoiseEffect,
+  RenderPass,
+  TiltShiftEffect,
+  VignetteEffect,
+} from 'postprocessing';
 import CustomMaterial from './CustomMaterial';
 import { hierarchyUUID } from '../../editor/utils';
 import { IS_DEV, app } from '../constants';
