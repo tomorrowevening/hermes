@@ -13,6 +13,7 @@ export default class InfiniteGridMaterial extends ShaderMaterial {
   constructor(props?: InfiniteGridProps) {
     super({
       extensions: {
+        // @ts-ignore
         derivatives: true,
       },
       glslVersion: GLSL3,
