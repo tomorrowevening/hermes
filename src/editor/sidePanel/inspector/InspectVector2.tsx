@@ -19,7 +19,10 @@ export default function InspectVector2(props: InspectVector2Props) {
 
   // States
   const [value, setValue] = useState(props.value);
-  const [bounds, setBounds] = useState({ min: props.min, max: props.max });
+  const [bounds, setBounds] = useState({
+    min: Math.min(props.min, Math.min(props.value.x, props.value.y)),
+    max: Math.max(props.max, Math.max(props.value.x, props.value.y)),
+  });
   const [mouseDown, setMouseDown] = useState(false);
 
   function onMouseDown() {
