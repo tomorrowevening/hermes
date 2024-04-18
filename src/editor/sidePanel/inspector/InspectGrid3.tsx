@@ -1,14 +1,16 @@
 import { useMemo, useRef } from 'react';
-import { Matrix3, Vector3 } from 'three';
+import { Euler, Matrix3, Vector3 } from 'three';
 import InspectNumber from './InspectNumber';
 
 interface InspectGrid3Props {
-  value: Vector3 | Matrix3
+  value: Vector3 | Matrix3 | Euler
   onChange: (evt: any) => void;
 }
 
 export default function InspectGrid3(props: InspectGrid3Props) {
-  const isVector = props.value['x'] !== undefined;
+  const isVector = props.value['isVector3'] !== undefined;
+  const isEuler = props.value['isEuler'] !== undefined;
+  const isMatrix = props.value['elements'] !== undefined;
   const children: any[] = [];
 
   if (isVector) {
@@ -25,7 +27,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
         <div key={param}>
           <label ref={labelRef}>{param.toUpperCase()}</label>
           <InspectNumber
-            value={vector.x}
+            value={vector[param]}
             type='number'
             prop={param}
             step={0.01}
@@ -35,7 +37,31 @@ export default function InspectGrid3(props: InspectGrid3Props) {
         </div>
       );
     });
-  } else {
+  } else if (isEuler) {
+    const euler = useMemo(() => props.value as Euler, []);
+    const onChange = (prop: string, value: number) => {
+      euler[prop] = value;
+      props.onChange({ target: { value: euler } });
+    };
+
+    const params = ['_x', '_y', '_z'];
+    params.forEach((param: string) => {
+      const labelRef = useRef<HTMLLabelElement>(null);
+      children.push(
+        <div key={param}>
+          <label ref={labelRef}>{param.substring(1).toUpperCase()}</label>
+          <InspectNumber
+            value={euler[param]}
+            type='number'
+            prop={param}
+            step={0.01}
+            labelRef={labelRef}
+            onChange={onChange}
+          />
+        </div>
+      );
+    });
+  } else if (isMatrix) {
     const matrix = useMemo(() => props.value as Matrix3, []);
     const onChange = (prop: string, value: number) => {
       const index = Number(prop);
@@ -62,6 +88,6 @@ export default function InspectGrid3(props: InspectGrid3Props) {
   }
 
   return (
-    <div className='grid3'>{children}</div>
+    <div className='grid3' key={Math.random().toString()}>{children}</div>
   );
 }

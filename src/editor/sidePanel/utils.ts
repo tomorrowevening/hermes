@@ -242,25 +242,56 @@ export function getSubItem(child: any, key: string): any {
   return undefined;
 }
 
+function cycleObject(obj: any, value: any) {
+  for (const i in value) {
+    obj[i] = value[i];
+  }
+}
+
 export function setItemProps(child: any, key: string, value: any) {
   const keys = key.split('.');
   const total = keys.length;
-  switch (total) {
-    case 1:
-      child[keys[0]] = value;
-      break;
-    case 2:
-      child[keys[0]][keys[1]] = value;
-      break;
-    case 3:
-      child[keys[0]][keys[1]][keys[2]] = value;
-      break;
-    case 4:
-      child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
-      break;
-    case 5:
-      child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
-      break;
+  const setValue = typeof value !== 'object';
+  if (setValue) {
+    switch (total) {
+      case 1:
+        child[keys[0]] = value;
+        break;
+      case 2:
+        child[keys[0]][keys[1]] = value;
+        break;
+      case 3:
+        child[keys[0]][keys[1]][keys[2]] = value;
+        break;
+      case 4:
+        child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
+        break;
+      case 5:
+        child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
+        break;
+    }
+  } else {
+    let target = undefined;
+    switch (total) {
+      case 1:
+        target = child[keys[0]];
+        break;
+      case 2:
+        target = child[keys[0]][keys[1]];
+        break;
+      case 3:
+        target = child[keys[0]][keys[1]][keys[2]];
+        break;
+      case 4:
+        target = child[keys[0]][keys[1]][keys[2]][keys[3]];
+        break;
+      case 5:
+        target = child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]];
+        break;
+    }
+    if (target !== undefined) {
+      cycleObject(target, value);
+    }
   }
 }
 

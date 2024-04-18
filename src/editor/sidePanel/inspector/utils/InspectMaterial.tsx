@@ -663,6 +663,20 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
       },
     };
+  } else if (value.isEuler) {
+    return {
+      title: propName,
+      prop: propPath,
+      type: 'euler',
+      value: value,
+      disabled: disabled,
+      onChange: (_: string, value: any) => {
+        three.updateObject(object.uuid, `material.${propPath}`, value);
+        // Local update
+        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+      },
+    };
   } else if (value.src !== undefined) {
     return {
       title: propName,
@@ -700,15 +714,21 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
   } else {
     const children: any[] = [];
     const childrenDisabled = prop === 'defines' || prop === 'extensions';
-    for (const i in value) {
-      const subvalue = value[i];
-      if (subvalue.value !== undefined) {
-        const subobj = inspectObject(`${i}.value`, subvalue.value, object, three, propPath, childrenDisabled);
-        if (subobj !== undefined) children.push(subobj);
-      } else {
-        const subobj = inspectObject(i, subvalue, object, three, propPath, childrenDisabled);
-        if (subobj !== undefined) children.push(subobj);
+    try {
+      for (const i in value) {
+        const subvalue = value[i];
+        if (subvalue !== undefined) {
+          if (subvalue.value !== undefined) {
+            const subobj = inspectObject(`${i}.value`, subvalue.value, object, three, propPath, childrenDisabled);
+            if (subobj !== undefined) children.push(subobj);
+          } else {
+            const subobj = inspectObject(i, subvalue, object, three, propPath, childrenDisabled);
+            if (subobj !== undefined) children.push(subobj);
+          }
+        }
       }
+    } catch(_) {
+      console.log('Issue cycling through material object:', prop, value);
     }
     if (children.length > 0) {
       sortChildren(children);
@@ -744,11 +764,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
   }
 
   // Sort items
-  items.sort((a: any, b: any) => {
-    if (a.title < b.title) return -1;
-    if (a.title > b.title) return 1;
-    return 0;
-  });
+  sortChildren(items);
 
   items.push({
     title: 'Update Material',
