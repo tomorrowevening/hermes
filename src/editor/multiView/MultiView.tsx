@@ -144,13 +144,6 @@ export default function MultiView(props: MultiViewProps) {
     if (prevControls !== undefined) prevControls.dispose();
     controls.delete(camera.name);
 
-    const prevHelper = cameraHelpers.get(camera.name);
-    if (prevHelper !== undefined) {
-      scene.remove(prevHelper);
-      prevHelper.dispose();
-    }
-    cameraHelpers.delete(camera.name);
-
     // New items
     const control = new OrbitControls(camera, element);
     control.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
@@ -166,12 +159,6 @@ export default function MultiView(props: MultiViewProps) {
         break;
     }
     controls.set(camera.name, control);
-    
-    if (camera instanceof PerspectiveCamera) {
-      const helper = new CameraHelper(camera);
-      cameraHelpers.set(camera.name, helper);
-      scene.add(helper);
-    }
   };
 
   const clearCamera = (camera: Camera) => {
@@ -291,7 +278,7 @@ export default function MultiView(props: MultiViewProps) {
           let helper;
           switch (obj.type) {
             case 'DirectionalLight':
-              helper = new DirectionalLightHelper(obj as DirectionalLight);
+              helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
@@ -309,7 +296,7 @@ export default function MultiView(props: MultiViewProps) {
               helpersContainer.add(helper);
               break;
             case 'PointLight':
-              helper = new PointLightHelper(obj as PointLight);
+              helper = new PointLightHelper(obj as PointLight, 100);
               helper.name = `${obj.name}Helper`;
               lightHelpers.set(obj.name, helper);
               helpersContainer.add(helper);
@@ -346,10 +333,22 @@ export default function MultiView(props: MultiViewProps) {
       const data = evt.value;
       const child = props.three.scene?.getObjectByProperty('uuid', data.uuid);
       if (child !== undefined) cameras.set(data.name, child as Camera);
+
+      if (child instanceof PerspectiveCamera) {
+        const helper = new CameraHelper(child);
+        cameraHelpers.set(child.name, helper);
+        scene.add(helper);
+      }
+
       setLastUpdate(Date.now());
     };
 
     const removeCamera = (evt: any) => {
+      const helper = cameraHelpers.get(evt.value.name);
+      if (helper !== undefined) {
+        scene.remove(helper);
+        helper.dispose();
+      }
       cameras.delete(evt.value.name);
       setLastUpdate(Date.now());
     };

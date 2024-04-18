@@ -22,7 +22,7 @@ import { hierarchyUUID } from '../../editor/utils';
 import BaseScene from './BaseScene';
 import FBXAnimation from './FBXAnimation';
 import { textures } from './loader';
-import CustomMaterial from './CustomMaterial';
+import PhysicalMaterial from './PhysicalMaterial';
 import RemoteThree from '../../core/remote/RemoteThree';
 
 export default class Scene2 extends BaseScene {
@@ -96,7 +96,7 @@ export default class Scene2 extends BaseScene {
     lines.position.x = 100;
     world.add(lines);
 
-    const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomMaterial());
+    const testShader = new Mesh(new PlaneGeometry(100, 100), new PhysicalMaterial());
     testShader.name = 'testShader';
     testShader.position.z = -100;
     world.add(testShader);

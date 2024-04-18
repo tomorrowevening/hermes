@@ -18,7 +18,8 @@ export type InspectorFieldType = 'string' |
   'option' |
   'vector2' |
   'grid3' |
-  'grid4'
+  'grid4' |
+  'euler'
 
 export interface InspectorFieldProps {
   title: string
@@ -175,6 +176,10 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'grid4' && (
         <InspectGrid4 value={fieldValue} onChange={onChange} />
+      )}
+
+      {props.type === 'euler' && (
+        <InspectGrid3 value={fieldValue} onChange={onChange} />
       )}
     </div>
   );
