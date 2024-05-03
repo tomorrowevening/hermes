@@ -14,6 +14,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
     position: relative;
     
     label {
+      font-weight: bold;
       line-height: normal;
       margin: 0 10px;
       max-width: 180px;
@@ -24,14 +25,15 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
     }
 
     input {
+      background-color: #191919;
       block-size: 11px;
+      color: white;
       flex: 1%;
       margin: 0;
       padding: 4px;
       outline: none;
       &.min {
         height: 11px;
-        flex: none;
         width: 30px;
         margin-right: 1px;
       }
@@ -82,12 +84,9 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
     img {
       border: 1px dotted #333;
       cursor: pointer;
-      object-fit: contain;
-      max-width: 100%;
-      min-width: 50px;
-      min-height: 50px;
-      max-height: 100px;
-      width: 100%;
+      object-fit: cover;
+      width: 270px;
+      height: 100px;
       position: relative;
       left: 50%;
       transform: translateX(-50%);
@@ -112,6 +111,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
         display: block;
         line-height: 21px;
         max-width: 100%;
+        text-align: left;
         width: 100%;
       }
     }
