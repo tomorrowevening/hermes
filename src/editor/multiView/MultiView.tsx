@@ -44,7 +44,7 @@ import { dispose } from '../utils';
 let currentRenderMode: RenderMode = 'Renderer';
 
 // Scene
-let currentScene: any = undefined;
+let currentScene: Scene;
 let useRaycaster = false;
 
 // Cameras
@@ -356,13 +356,20 @@ export default function MultiView(props: MultiViewProps) {
       setLastUpdate(Date.now());
     };
 
+    const onSelectItem = (evt: any) => {
+      const child = currentScene.getObjectByProperty('uuid', evt.value.uuid);
+      if (child) child.add(axisHelper);
+    };
+
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, sceneUpdate);
     debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, addCamera);
     debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
+    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, sceneUpdate);
       debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, addCamera);
       debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
+      debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };
   }, []);
 
