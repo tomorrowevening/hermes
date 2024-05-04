@@ -1,4 +1,5 @@
 import {
+  CircleGeometry,
   LineBasicMaterial,
   LineSegments,
   Mesh,
@@ -24,6 +25,7 @@ import FBXAnimation from './FBXAnimation';
 import { textures } from './loader';
 import PhysicalMaterial from './PhysicalMaterial';
 import RemoteThree from '../../core/remote/RemoteThree';
+import CustomMaterial from './CustomMaterial';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
@@ -31,8 +33,8 @@ export default class Scene2 extends BaseScene {
   constructor(renderer: WebGLRenderer) {
     super(renderer);
     this.name = 'Scene2';
-    this.camera.position.set(0, 0, 125);
-    this.camera.lookAt(0, 0, 0);
+    this.camera.position.set(0, 100, 125);
+    this.camera.lookAt(0, 50, 0);
 
     this.createLights();
     this.createWorld();
@@ -79,26 +81,25 @@ export default class Scene2 extends BaseScene {
     const floorMaterial = new MeshPhysicalMaterial({
       map: gridTexture,
     });
-    const floor = new Mesh(new SphereGeometry(250, 36), floorMaterial);
+    const floor = new Mesh(new CircleGeometry(250, 36), floorMaterial);
     floor.name = 'floor';
     floor.receiveShadow = true;
-    floor.position.y = -75;
-    floor.scale.y = 0.1;
+    floor.rotateX(-Math.PI / 2);
     world.add(floor);
 
     const points = new Points(new SphereGeometry(50), new PointsMaterial({ size: 2 }));
     points.name = 'points';
-    points.position.x = -100;
+    points.position.set(-100, 50, 0);
     world.add(points);
 
     const lines = new LineSegments(new SphereGeometry(50), new LineBasicMaterial());
     lines.name = 'lines';
-    lines.position.x = 100;
+    lines.position.set(100, 50, 0);
     world.add(lines);
 
-    const testShader = new Mesh(new PlaneGeometry(100, 100), new PhysicalMaterial());
+    const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomMaterial());
     testShader.name = 'testShader';
-    testShader.position.z = -100;
+    testShader.position.set(0, 50, -100);
     world.add(testShader);
 
     this.dance = new FBXAnimation('Flair');

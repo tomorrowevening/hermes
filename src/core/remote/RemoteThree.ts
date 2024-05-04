@@ -1,14 +1,24 @@
-import { Camera, Scene, WebGLRenderer } from 'three';
+import { Camera, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import Application from '../Application';
 import BaseRemote from './BaseRemote';
+import { BroadcastData } from '../types';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
-import { clamp, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
-import Application from '../Application';
-import { BroadcastData } from '../types';
+import { clamp, dispose, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
   renderer?: WebGLRenderer = undefined;
+  renderTargets: Map<string, WebGLRenderTarget> = new Map();
+
+  override dispose(): void {
+    this.renderTargets.forEach((value: WebGLRenderTarget) => {
+      value.dispose();
+    });
+    this.renderTargets.clear();
+    if (this.scene) dispose(this.scene);
+    this.renderer?.dispose();
+  }
 
   getObject(uuid: string) {
     if (!this.app.debugEnabled) return;
@@ -144,7 +154,22 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
+  private rendererWidth = 0;
+  private rendererHeight = 0;
+
+  addRT(name: string, params?: RenderTargetOptions) {
+    const rt = new WebGLRenderTarget(32, 32, params);
+    rt.texture.name = name;
+    this.renderTargets.set(name, rt);
+  }
+
   resize(width: number, height: number) {
+    const dpr = this.dpr;
+    this.rendererWidth = width;
+    this.rendererHeight = height;
+    this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
+      renderTarget.setSize(width * dpr, height * dpr);
+    });
     this.renderer?.setSize(width, height);
   }
 
@@ -157,11 +182,11 @@ export default class RemoteThree extends BaseRemote {
   }
 
   get width(): number {
-    return this.renderer !== undefined ? this.renderer?.domElement.width / this.dpr : 0;
+    return this.rendererWidth;
   }
 
   get height(): number {
-    return this.renderer !== undefined ? this.renderer?.domElement.height / this.dpr : 0;
+    return this.rendererHeight;
   }
 
   get canvas(): HTMLCanvasElement | null {

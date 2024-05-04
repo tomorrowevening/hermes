@@ -147,13 +147,13 @@ export default function InspectorField(props: InspectorFieldProps) {
       )}
 
       {props.type === 'image' && (
-        <img ref={imgRefRef} onClick={() => {
+        <img alt={props.title} ref={imgRefRef} onClick={() => {
           uploadLocalImage()
             .then((value: string) => {
               imgRefRef.current!.src = value;
               if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
             });
-        }} src={fieldValue.length > 0 ? fieldValue : noImage} />
+        }} src={fieldValue.src.length > 0 ? fieldValue.src : noImage} />
       )}
 
       {props.type === 'option' && (

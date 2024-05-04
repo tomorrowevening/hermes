@@ -44,7 +44,7 @@ import { dispose } from '../utils';
 let currentRenderMode: RenderMode = 'Renderer';
 
 // Scene
-let currentScene: any = undefined;
+let currentScene: Scene;
 let useRaycaster = false;
 
 // Cameras
@@ -92,7 +92,7 @@ export default function MultiView(props: MultiViewProps) {
   }), []);
 
   function createOrtho(name: string, position: Vector3) {
-    const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 3000);
+    const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 5000);
     camera.name = name;
     camera.position.copy(position);
     camera.lookAt(0, 0, 0);
@@ -143,6 +143,8 @@ export default function MultiView(props: MultiViewProps) {
     const prevControls = controls.get(camera.name);
     if (prevControls !== undefined) prevControls.dispose();
     controls.delete(camera.name);
+
+    if (camera.name === 'UI') return;
 
     // New items
     const control = new OrbitControls(camera, element);
@@ -249,8 +251,9 @@ export default function MultiView(props: MultiViewProps) {
     createOrtho('Front', new Vector3(0, 0, 1000));
     createOrtho('Back', new Vector3(0, 0, -1000));
     createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
+    createOrtho('UI', new Vector3());
 
-    const debugCamera = new PerspectiveCamera(60, 1, 50, 3000);
+    const debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
     debugCamera.name = 'Debug';
     debugCamera.position.set(500, 500, 500);
     debugCamera.lookAt(0, 0, 0);
@@ -353,13 +356,20 @@ export default function MultiView(props: MultiViewProps) {
       setLastUpdate(Date.now());
     };
 
+    const onSelectItem = (evt: any) => {
+      const child = currentScene.getObjectByProperty('uuid', evt.value.uuid);
+      if (child) child.add(axisHelper);
+    };
+
     debugDispatcher.addEventListener(ToolEvents.SET_SCENE, sceneUpdate);
     debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, addCamera);
     debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
+    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, sceneUpdate);
       debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, addCamera);
       debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
+      debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };
   }, []);
 
@@ -402,6 +412,11 @@ export default function MultiView(props: MultiViewProps) {
           camera.right = cw / 2;
           camera.top = ch / 2;
           camera.bottom = ch / -2;
+          if (camera.name === 'UI') {
+            camera.position.x = width / 2;
+            camera.position.y = height / -2;
+            camera.position.z = 100;
+          }
           camera.updateProjectionMatrix();
         } else if (camera instanceof PerspectiveCamera) {
           camera.aspect = cw / ch;
