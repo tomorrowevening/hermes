@@ -740,8 +740,8 @@ class Ni extends Ot {
     }
   }
   // Renderer
-  rendererWidth = 0;
-  rendererHeight = 0;
+  rendererWidth = 300;
+  rendererHeight = 150;
   addRT(n, a) {
     const t = new Hn(32, 32, a);
     t.texture.name = n, this.renderTargets.set(n, t);
