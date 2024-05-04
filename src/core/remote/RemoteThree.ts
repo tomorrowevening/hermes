@@ -154,8 +154,8 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
-  private rendererWidth = 0;
-  private rendererHeight = 0;
+  private rendererWidth = 300;
+  private rendererHeight = 150;
 
   addRT(name: string, params?: RenderTargetOptions) {
     const rt = new WebGLRenderTarget(32, 32, params);
