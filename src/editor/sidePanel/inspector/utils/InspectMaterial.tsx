@@ -520,6 +520,10 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
     field['latest'] = field.value;
     field.onChange = (_: string, updatedValue: string) => {
       field['latest'] = updatedValue;
+      three.updateObject(object.uuid, `material.${prop}`, updatedValue);
+      // Local update
+      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, `material.${prop}`, updatedValue);
     };
   }
 
@@ -771,6 +775,8 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     type: 'button',
     onChange: () => {
       three.updateObject(object.uuid, `material.needsUpdate`, true);
+      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
     },
   });
 
