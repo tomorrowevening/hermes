@@ -29,7 +29,7 @@ export default class RemoteComponents extends BaseRemote {
       }
     });
   }
-  
+
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
       case 'selectComponent':

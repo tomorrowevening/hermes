@@ -1,3 +1,4 @@
+import { KeyboardEvent } from 'react';
 import Accordion from '../Accordion';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
 import { capitalize } from '@/editor/utils';
@@ -35,6 +36,11 @@ export default function InspectorGroup(props: InspectorGroupProps) {
           onChange={(prop: string, value: any) => {
             if (child.onChange !== undefined) {
               child.onChange(prop, value);
+            }
+          }}
+          onKeyDown={(evt: KeyboardEvent) => {
+            if (child.onKeyDown !== undefined) {
+              child.onKeyDown(evt);
             }
           }}
         />

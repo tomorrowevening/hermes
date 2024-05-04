@@ -316,6 +316,7 @@ export default function MultiView(props: MultiViewProps) {
     };
 
     const sceneUpdate = (evt: any) => {
+      helpersContainer.add(axisHelper);
       clearLightHelpers();
       dispose(currentScene);
       scene.remove(currentScene);

@@ -35,6 +35,7 @@ import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
+import { KeyboardEvent } from 'react';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -512,6 +513,9 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
       const child = three.scene?.getObjectByProperty('uuid', object.uuid);
       if (child !== undefined) setItemProps(child, `material.${prop}`, value);
     },
+    onKeyDown: (_: KeyboardEvent) => {
+      //
+    },
   };
 
   const isShader = prop === 'vertexShader' || prop === 'fragmentShader';
@@ -524,6 +528,13 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
       // Local update
       const child = three.scene?.getObjectByProperty('uuid', object.uuid);
       if (child !== undefined) setItemProps(child, `material.${prop}`, updatedValue);
+    };
+    field.onKeyDown = (evt: KeyboardEvent) => {
+      if (evt.key === 'Enter' && (evt.altKey || evt.metaKey)) {
+        three.updateObject(object.uuid, 'material.needsUpdate', true);
+        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+      }
     };
   }
 

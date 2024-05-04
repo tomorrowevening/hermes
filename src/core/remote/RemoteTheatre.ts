@@ -150,7 +150,7 @@ export default class RemoteTheatre extends BaseRemote {
       unsubscribe();
     }
   }
-  
+
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     const theatre = remote as RemoteTheatre;
     let value: any = undefined;
