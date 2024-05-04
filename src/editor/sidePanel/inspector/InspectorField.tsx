@@ -1,5 +1,5 @@
 import { colorToHex } from '@/editor/utils';
-import { useRef, useState } from 'react';
+import { KeyboardEvent, useRef, useState } from 'react';
 import { noImage } from '@/editor/components/content';
 import { uploadLocalImage } from './utils/InspectMaterial';
 import { capitalize } from '@/editor/utils';
@@ -32,6 +32,7 @@ export interface InspectorFieldProps {
   disabled?: boolean
   options?: any[]
   onChange?: (prop: string, value: any) => void
+  onKeyDown?: (evt: KeyboardEvent) => void
 }
 
 export default function InspectorField(props: InspectorFieldProps) {
@@ -87,6 +88,9 @@ export default function InspectorField(props: InspectorFieldProps) {
           rows={10}
           disabled={props.disabled !== undefined ? props.disabled : true}
           onChange={onChange}
+          onKeyDown={(evt: KeyboardEvent) => {
+            if (props.onKeyDown !== undefined) props.onKeyDown(evt);
+          }}
           value={fieldValue}
         />
       )}

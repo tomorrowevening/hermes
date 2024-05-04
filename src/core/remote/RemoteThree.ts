@@ -109,7 +109,7 @@ export default class RemoteThree extends BaseRemote {
       data: stripped,
     });
   }
-  
+
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
       case 'getObject':
@@ -130,7 +130,7 @@ export default class RemoteThree extends BaseRemote {
         break;
     }
   }
-  
+
   override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
       case 'setObject':

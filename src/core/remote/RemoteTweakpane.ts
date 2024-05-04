@@ -165,7 +165,7 @@ export default class RemoteTweakpane extends BaseRemote {
       this.inspectorFolder.remove(this.inspectorFolder.children[i]);
     }
   }
-  
+
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     const debug = remote as RemoteTweakpane;
     switch (msg.event) {
