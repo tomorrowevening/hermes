@@ -59,6 +59,7 @@ interface MultiViewProps {
   scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
   onSceneUpdate?: (scene: Scene) => void;
+  onSceneResize?: (scene: Scene, width: number, height: number) => void;
 }
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
@@ -388,7 +389,11 @@ export default function MultiView(props: MultiViewProps) {
       height = window.innerHeight;
       bw = Math.floor(width / 2);
       bh = Math.floor(height / 2);
-      renderer.setSize(width, height);
+      props.three.resize(width, height);
+
+      if (props.onSceneResize !== undefined && sceneSet) {
+        props.onSceneResize(currentScene, width, height);
+      }
 
       let cw = width;
       let ch = height;
