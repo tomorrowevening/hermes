@@ -195,13 +195,13 @@ class $t extends Ot {
   dispose() {
     this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
   }
-  sheet(n) {
+  sheet(n, a) {
     if (this.project === void 0) {
       console.error("Theatre Project hasn't been created yet.");
       return;
     }
-    let a = this.sheets.get(n);
-    return a !== void 0 || (a = this.project?.sheet(n), this.sheets.set(n, a)), a;
+    let t = this.sheets.get(n);
+    return t !== void 0 || (t = this.project?.sheet(n, a), this.sheets.set(n, t)), t;
   }
   playSheet(n, a) {
     this.sheet(n)?.sequence.play(a), this.app.send({
