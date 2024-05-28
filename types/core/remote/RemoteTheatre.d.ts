@@ -12,7 +12,7 @@ export default class RemoteTheatre extends BaseRemote {
     studio: any;
     static rafDriver?: IRafDriver | undefined;
     dispose(): void;
-    sheet(name: string): ISheet | undefined;
+    sheet(name: string, instanceId?: string | undefined): ISheet | undefined;
     playSheet(name: string, params?: any): void;
     pauseSheet(name: string): void;
     clearSheetObjects(sheetName: string): void;
