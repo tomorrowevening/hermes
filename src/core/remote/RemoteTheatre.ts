@@ -26,7 +26,7 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe = new Map();
   }
 
-  sheet(name: string): ISheet | undefined {
+  sheet(name: string, instanceId?: string | undefined): ISheet | undefined {
     if (this.project === undefined) {
       console.error('Theatre Project hasn\'t been created yet.');
       return undefined;
@@ -35,7 +35,7 @@ export default class RemoteTheatre extends BaseRemote {
     let sheet = this.sheets.get(name);
     if (sheet !== undefined) return sheet;
 
-    sheet = this.project?.sheet(name);
+    sheet = this.project?.sheet(name, instanceId);
     this.sheets.set(name, sheet);
     return sheet;
   }
