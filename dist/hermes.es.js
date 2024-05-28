@@ -200,8 +200,9 @@ class $t extends Ot {
       console.error("Theatre Project hasn't been created yet.");
       return;
     }
-    let t = this.sheets.get(n);
-    return t !== void 0 || (t = this.project?.sheet(n, a), this.sheets.set(n, t)), t;
+    const t = a !== void 0 ? `${n}-${a}` : n;
+    let i = this.sheets.get(t);
+    return i !== void 0 || (i = this.project?.sheet(n, a), this.sheets.set(t, i)), i;
   }
   playSheet(n, a) {
     this.sheet(n)?.sequence.play(a), this.app.send({

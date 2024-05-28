@@ -32,11 +32,13 @@ export default class RemoteTheatre extends BaseRemote {
       return undefined;
     }
 
-    let sheet = this.sheets.get(name);
+    const sheetID = instanceId !== undefined ? `${name}-${instanceId}` : name;
+
+    let sheet = this.sheets.get(sheetID);
     if (sheet !== undefined) return sheet;
 
     sheet = this.project?.sheet(name, instanceId);
-    this.sheets.set(name, sheet);
+    this.sheets.set(sheetID, sheet);
     return sheet;
   }
 
