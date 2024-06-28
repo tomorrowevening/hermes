@@ -26,14 +26,17 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe = new Map();
   }
 
-  sheet(name: string, instanceId?: string | undefined): ISheet | undefined {
+  getSheetInstance(name: string, instanceId?: string): string {
+    return instanceId !== undefined ? `${name}-${instanceId}` : name;
+  }
+
+  sheet(name: string, instanceId?: string): ISheet | undefined {
     if (this.project === undefined) {
       console.error('Theatre Project hasn\'t been created yet.');
       return undefined;
     }
 
-    const sheetID = instanceId !== undefined ? `${name}-${instanceId}` : name;
-
+    const sheetID = this.getSheetInstance(name, instanceId);
     let sheet = this.sheets.get(sheetID);
     if (sheet !== undefined) return sheet;
 
@@ -42,20 +45,21 @@ export default class RemoteTheatre extends BaseRemote {
     return sheet;
   }
 
-  playSheet(name: string, params?: any) {
-    this.sheet(name)?.sequence.play(params);
+  playSheet(name: string, params?: any, instanceId?: string) {
+    this.sheet(name, instanceId)?.sequence.play(params);
 
     this.app.send({
       event: 'playSheet',
       target: 'editor',
       data: {
         sheet: name,
+        instance: instanceId,
         value: params,
       },
     });
   }
 
-  pauseSheet(name: string) {
+  pauseSheet(name: string, instanceId?: string) {
     this.sheet(name)?.sequence.pause();
 
     this.app.send({
@@ -63,6 +67,7 @@ export default class RemoteTheatre extends BaseRemote {
       target: 'editor',
       data: {
         sheet: name,
+        instance: instanceId,
       },
     });
   }
@@ -79,15 +84,17 @@ export default class RemoteTheatre extends BaseRemote {
     key: string,
     props: any,
     onUpdate?: DataUpdateCallback,
+    instanceId?: string,
   ): ISheetObject | undefined {
     if (this.project === undefined) {
       console.error('Theatre Project hasn\'t been created yet.');
       return undefined;
     }
-    const sheet = this.sheet(sheetName);
+    const sheet = this.sheet(sheetName, instanceId);
     if (sheet === undefined) return undefined;
 
-    const objName = `${sheetName}_${key}`;
+    const sheetID = this.getSheetInstance(sheetName, instanceId);
+    const objName = `${sheetID}_${key}`;
     let obj = this.sheetObjects.get(objName);
     if (obj !== undefined) {
       obj = sheet.object(key, {...props, ...obj.value}, {reconfigure: true});
@@ -190,10 +197,10 @@ export default class RemoteTheatre extends BaseRemote {
       const theatre = remote as RemoteTheatre;
       switch (msg.event) {
         case 'playSheet':
-          theatre.sheet(msg.data.sheet)?.sequence.play(msg.data.value);
+          theatre.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
           break;
         case 'pauseSheet':
-          theatre.sheet(msg.data.sheet)?.sequence.pause();
+          theatre.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
           break;
       }
     }
