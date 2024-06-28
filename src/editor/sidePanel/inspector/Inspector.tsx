@@ -85,17 +85,6 @@ export default function Inspector(props: CoreComponentProps) {
                 value={currentObject.uuid}
                 disabled={true}
               />
-              <InspectorField
-                type='boolean'
-                title='Visible'
-                prop='visible'
-                value={currentObject.visible}
-                onChange={(key: string, value: any) => {
-                  props.three.updateObject(currentObject.uuid, key, value);
-                  const child = props.three.scene?.getObjectByProperty('uuid', currentObject.uuid);
-                  if (child !== undefined) setItemProps(child, key, value);
-                }}
-              />
             </>
 
             {/* Data */}
