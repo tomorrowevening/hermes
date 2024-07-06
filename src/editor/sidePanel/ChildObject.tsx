@@ -13,8 +13,8 @@ export default function ChildObject(props: ChildObjectProps) {
   const hasChildren = props.child !== undefined && props.child.children.length > 0;
   const children: Array<any> = [];
   if (props.child !== undefined && props.child.children.length > 0) {
-    props.child.children.map((child: Object3D) => {
-      children.push(<ChildObject child={child} key={Math.random()} three={props.three} />);
+    props.child.children.map((child: Object3D, index: number) => {
+      children.push(<ChildObject child={child} key={index} three={props.three} />);
     });
   }
 

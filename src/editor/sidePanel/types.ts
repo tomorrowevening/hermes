@@ -8,6 +8,7 @@ export interface CoreComponentProps {
 
 export interface ChildObjectProps extends CoreComponentProps {
   child?: Object3D
+  scene?: Object3D
   three: RemoteThree
 }
 

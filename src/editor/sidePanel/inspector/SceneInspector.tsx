@@ -24,11 +24,11 @@ export default function SceneInspector(props: SceneInspectorProps) {
     }
 
     const onAddScene = (evt: any) => {
-      console.log('add scene to inspector:', evt.value);
+      console.log('SceneInspector::add scene to inspector:', evt.value);
     };
 
     const onRemoveScene = (evt: any) => {
-      console.log('remove scene to inspector:', evt.value);
+      console.log('SceneInspector::remove scene to inspector:', evt.value);
     };
 
     const onGetObject = (evt: any) => {
