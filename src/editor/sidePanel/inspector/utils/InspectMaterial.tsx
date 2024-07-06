@@ -440,9 +440,11 @@ function inspectBool(prop: string, value: boolean, object: RemoteObject, three: 
     value: value,
     needsUpdate: true,
     onChange: (_: string, value: any) => {
+      // App
       three.updateObject(object.uuid, `material.${prop}`, value);
       three.updateObject(object.uuid, 'material.needsUpdate', true);
-      // Local update
+
+      // Editor
       const child = three.scene?.getObjectByProperty('uuid', object.uuid);
       if (child !== undefined) setItemProps(child, `material.${prop}`, value);
     },
@@ -460,9 +462,11 @@ function inspecNumber(prop: string, value: number, object: RemoteObject, three: 
     step: 0.01,
     needsUpdate: true,
     onChange: (_: string, value: any) => {
+      // App
       three.updateObject(object.uuid, `material.${prop}`, value);
       three.updateObject(object.uuid, 'material.needsUpdate', true);
-      // Local update
+
+      // Editor
       const child = three.scene?.getObjectByProperty('uuid', object.uuid);
       if (child !== undefined) setItemProps(child, `material.${prop}`, value);
     },
@@ -507,9 +511,11 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
     value: value,
     needsUpdate: true,
     onChange: (_: string, value: any) => {
+      // App
       three.updateObject(object.uuid, `material.${prop}`, value);
       three.updateObject(object.uuid, 'material.needsUpdate', true);
-      // Local update
+
+      // Editor
       const child = three.scene?.getObjectByProperty('uuid', object.uuid);
       if (child !== undefined) setItemProps(child, `material.${prop}`, value);
     },
@@ -574,8 +580,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, updatedValue: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
-        // Local update
+
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
       },
@@ -589,8 +597,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       step: 0.01,
       disabled: disabled,
       onChange: (_: string, updatedValue: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
-        // Local update
+
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
       },
@@ -610,8 +620,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       disabled: disabled,
       onChange: (_: string, updatedValue: any) => {
         const newValue = new Color(updatedValue);
+
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, newValue);
-        // Local update
+
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, newValue);
       },
@@ -644,8 +657,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, value: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, value);
-        // Local update
+
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
       },
@@ -658,8 +673,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, value: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, value);
-        // Local update
+        
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
       },
@@ -672,8 +689,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, value: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, value);
-        // Local update
+        
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
       },
@@ -686,8 +705,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, value: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, value);
-        // Local update
+        
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
       },
@@ -701,8 +722,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       onChange: (_: string, updatedValue: any) => {
         const imgName = imageNames(prop);
         const textName = subprop.length > 0 ? `${subprop}.${imgName}` : imgName;
+
+        // App
         three.createTexture(object.uuid, `material.${textName}`, updatedValue);
-        // Local update
+        
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) {
           textureFromSrc(updatedValue).then((texture: Texture) => {
@@ -720,8 +744,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
       value: value,
       disabled: disabled,
       onChange: (_: string, updatedValue: any) => {
+        // App
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
-        // Local update
+        
+        // Editor
         const child = three.scene?.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
       },
@@ -785,9 +811,14 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
     title: 'Update Material',
     type: 'button',
     onChange: () => {
+      // App
       three.updateObject(object.uuid, `material.needsUpdate`, true);
-      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-      if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+
+      // Editor
+      if (object.uuid.search(three.scene!.uuid) > -1) {
+        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+      }
     },
   });
 

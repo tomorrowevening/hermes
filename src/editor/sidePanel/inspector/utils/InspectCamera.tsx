@@ -33,9 +33,11 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         step: 0.01,
         value: object.perspectiveCameraInfo[i],
         onChange: (prop: string, value: any) => {
+          // App
           three.updateObject(object.uuid, prop, value);
           three.requestMethod(object.uuid, 'updateProjectionMatrix');
 
+          // Editor
           const child = three.scene?.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
             setItemProps(child, prop, value);
@@ -53,9 +55,11 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         step: 0.01,
         value: object.perspectiveCameraInfo![i],
         onChange: (prop: string, value: any) => {
+          // App
           three.updateObject(object.uuid, prop, value);
           three.requestMethod(object.uuid, 'updateProjectionMatrix');
 
+          // Editor
           const child = three.scene?.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
             setItemProps(child, prop, value);

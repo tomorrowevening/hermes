@@ -116,6 +116,7 @@ function App() {
     return () => {
       if (currentScene !== undefined) {
         three.removeCamera(currentScene.camera);
+        three.removeScene(currentScene);
         dispose(currentScene);
       }
       window.removeEventListener('resize', onResize);
@@ -219,14 +220,16 @@ function App() {
         }}>Click</button>
       </div>
 
-      <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        left: '20px',
-      }}>
-        <button onClick={createScene1}>Scene 1</button>
-        <button onClick={createScene2}>Scene 2</button>
-      </div>
+      {app.isApp && (
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '20px',
+        }}>
+          <button onClick={createScene1}>Scene 1</button>
+          <button onClick={createScene2}>Scene 2</button>
+        </div>
+      )}
 
       {IS_DEV && <SceneInspector three={three} />}
     </>

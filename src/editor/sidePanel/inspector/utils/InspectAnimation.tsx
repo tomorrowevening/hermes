@@ -3,11 +3,11 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
 
-export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) {
+export default function InspectAnimation(object: RemoteObject, three: RemoteThree) {
   const items: any[] = [];
   const animations: any[] = [];
   let maxDuration = 0;
-  obj.animations.forEach((clipInfo: AnimationClipInfo) => {
+  object.animations.forEach((clipInfo: AnimationClipInfo) => {
     // Add animation
     maxDuration = Math.max(maxDuration, clipInfo.duration);
     if (clipInfo.duration > 0) {
@@ -44,7 +44,7 @@ export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) 
     items: animations
   });
 
-  const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
+  const child = three.scene?.getObjectByProperty('uuid', object.uuid);
   let hasMixer = false;
   if (child !== undefined) {
     const mixer = child['mixer'] as AnimationMixer;
@@ -60,34 +60,16 @@ export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) 
           max: 2,
           onChange: (_: string, value: any) => {
             mixer.timeScale = value;
-            three.updateObject(obj.uuid, 'mixer.timeScale', value);
+            three.updateObject(object.uuid, 'mixer.timeScale', value);
           },
         },
       ];
-      // animations.forEach((animation: any, index: number) => {
-      //   if (obj.animations[index].duration > 0) {
-      //     mixerItems.push({
-      //       title: `Play: ${animation.title}`,
-      //       type: 'button',
-      //       onChange: () => {
-      //         // Stop Previous
-      //         mixer.stopAllAction();
-      //         three.requestMethod(obj.uuid, 'stopAllAction', undefined, 'mixer');
-
-      //         //
-      //         const clip = child.animations[index] as AnimationClip;
-      //         const action = mixer.clipAction(clip);
-      //         action.play();
-      //       }
-      //     });
-      //   }
-      // });
       mixerItems.push({
         title: 'Stop All',
         type: 'button',
         onChange: () => {
           mixer.stopAllAction();
-          three.requestMethod(obj.uuid, 'stopAllAction', undefined, 'mixer');
+          three.requestMethod(object.uuid, 'stopAllAction', undefined, 'mixer');
         }
       });
       items.push({
@@ -96,6 +78,7 @@ export default function InspectAnimation(obj: RemoteObject, three: RemoteThree) 
       });
     }
   }
+
   return (
     <InspectorGroup title='Animation' items={items} />
   );

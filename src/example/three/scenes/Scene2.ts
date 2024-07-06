@@ -41,6 +41,7 @@ export default class Scene2 extends BaseScene {
     if (IS_DEV) hierarchyUUID(this);
 
     const three = app.components.get('three') as RemoteThree;
+    three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
   }

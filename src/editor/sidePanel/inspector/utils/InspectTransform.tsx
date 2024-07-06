@@ -18,7 +18,11 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
 
   const updateTransform = (prop: string, value: any) => {
     const realValue = prop === 'rotation' ? { x: value._x, y: value._y, z: value._z } : value;
+
+    // App
     three.updateObject(obj.uuid, prop, realValue);
+
+    // Editor
     const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
     if (child !== undefined) setItemProps(child, prop, realValue);
   };

@@ -19,11 +19,11 @@ function prettyName(value: string): string {
   return value;
 }
 
-export function InspectLight(obj: RemoteObject, three: RemoteThree) {
+export function InspectLight(object: RemoteObject, three: RemoteThree) {
   const items: any[] = [];
-  if (obj.lightInfo !== undefined) {
-    for (const i in obj.lightInfo) {
-      const value = obj.lightInfo[i];
+  if (object.lightInfo !== undefined) {
+    for (const i in object.lightInfo) {
+      const value = object.lightInfo[i];
       if (value === undefined) continue;
 
       if (value.isColor !== undefined) {
@@ -34,8 +34,11 @@ export function InspectLight(obj: RemoteObject, three: RemoteThree) {
           value: value,
           onChange: (prop: string, value: any) => {
             const color = new Color(value);
-            three.updateObject(obj.uuid, prop, color);
-            const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
+            // App
+            three.updateObject(object.uuid, prop, color);
+
+            // Editor
+            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
             if (child !== undefined) setItemProps(child, prop, color);
           }
         });
@@ -47,8 +50,11 @@ export function InspectLight(obj: RemoteObject, three: RemoteThree) {
           value: value,
 					step: typeof value === 'number' ? 0.01 : undefined,
           onChange: (prop: string, value: any) => {
-						three.updateObject(obj.uuid, prop, value);
-            const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
+            // App
+						three.updateObject(object.uuid, prop, value);
+
+            // Editor
+            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
             if (child !== undefined) setItemProps(child, prop, value);
           }
         });

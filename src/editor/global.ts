@@ -8,6 +8,8 @@ export const ToolEvents = {
   SELECT_DROPDOWN: 'ToolEvents::selectDropdown',
   DRAG_UPDATE: 'ToolEvents::dragUpdate',
   // SceneHierarchy
+  ADD_SCENE: 'ToolEvents::addScene',
+  REMOVE_SCENE: 'ToolEvents::removeScene',
   SET_SCENE: 'ToolEvents::setScene',
   GET_OBJECT: 'ToolEvents::getObject',
   SET_OBJECT: 'ToolEvents::setObject',
