@@ -17,14 +17,14 @@ import {
 } from 'three';
 // @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
-import { IS_DEV, app } from '../constants';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
-import { hierarchyUUID } from '../../editor/utils';
+import { IS_DEV, app } from '../../constants';
+import RemoteTheatre from '../../../core/remote/RemoteTheatre';
+import { hierarchyUUID } from '../../../editor/utils';
 import BaseScene from './BaseScene';
-import FBXAnimation from './FBXAnimation';
-import { textures } from './loader';
-import RemoteThree from '../../core/remote/RemoteThree';
-import CustomMaterial from './CustomMaterial';
+import FBXAnimation from '../FBXAnimation';
+import { textures } from '../loader';
+import RemoteThree from '../../../core/remote/RemoteThree';
+import CustomMaterial from '../CustomMaterial';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;

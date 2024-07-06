@@ -23,14 +23,14 @@ import {
   TiltShiftEffect,
   VignetteEffect,
 } from 'postprocessing';
-import CustomMaterial from './CustomMaterial';
-import { hierarchyUUID } from '../../editor/utils';
-import { IS_DEV, app } from '../constants';
-import FBXAnimation from './FBXAnimation';
-import { cubeTextures, textures } from './loader';
+import CustomMaterial from '../CustomMaterial';
+import { hierarchyUUID } from '../../../editor/utils';
+import { IS_DEV, app } from '../../constants';
+import FBXAnimation from '../FBXAnimation';
+import { cubeTextures, textures } from '../loader';
 import BaseScene from './BaseScene';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
-import RemoteThree from '../../core/remote/RemoteThree';
+import RemoteTheatre from '../../../core/remote/RemoteTheatre';
+import RemoteThree from '../../../core/remote/RemoteThree';
 
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;

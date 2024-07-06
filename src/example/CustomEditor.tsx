@@ -6,9 +6,9 @@ import SidePanel from '../editor/sidePanel/SidePanel';
 import MultiView from '../editor/multiView/MultiView';
 import RemoteThree from '../core/remote/RemoteThree';
 // Scenes
-import BaseScene from './three/BaseScene';
-import Scene1 from './three/Scene1';
-import Scene2 from './three/Scene2';
+import BaseScene from './three/scenes/BaseScene';
+import Scene1 from './three/scenes/Scene1';
+import Scene2 from './three/scenes/Scene2';
 
 // Referenced Scenes
 const scenes: Map<string, any> = new Map();

@@ -1,4 +1,5 @@
 import { AnimationMixer, Object3D } from 'three';
+// @ts-ignore
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 import { models } from './loader';
 

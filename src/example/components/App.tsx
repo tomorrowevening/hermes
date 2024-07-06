@@ -6,9 +6,9 @@ import Stats from 'stats-gl';
 // Models
 import { app, IS_DEV } from '../constants';
 // Components
-import BaseScene from '../three/BaseScene';
-import Scene1 from '../three/Scene1';
-import Scene2 from '../three/Scene2';
+import BaseScene from '../three/scenes/BaseScene';
+import Scene1 from '../three/scenes/Scene1';
+import Scene2 from '../three/scenes/Scene2';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
@@ -70,7 +70,7 @@ function App() {
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
-      (app.components.get('three') as RemoteThree).renderer = renderer;
+      three.renderer = renderer;
       return () => {
         renderer.dispose();
       };
@@ -123,6 +123,8 @@ function App() {
       raf = -1;
     };
   }, []);
+
+  // Load the scenes
 
   const createScene = () => {
     if (currentScene !== undefined) {
