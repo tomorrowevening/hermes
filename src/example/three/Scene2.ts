@@ -23,7 +23,6 @@ import { hierarchyUUID } from '../../editor/utils';
 import BaseScene from './BaseScene';
 import FBXAnimation from './FBXAnimation';
 import { textures } from './loader';
-import PhysicalMaterial from './PhysicalMaterial';
 import RemoteThree from '../../core/remote/RemoteThree';
 import CustomMaterial from './CustomMaterial';
 
