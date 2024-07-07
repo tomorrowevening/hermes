@@ -38,8 +38,11 @@ export function InspectLight(object: RemoteObject, three: RemoteThree) {
             three.updateObject(object.uuid, prop, color);
 
             // Editor
-            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-            if (child !== undefined) setItemProps(child, prop, color);
+            const scene = three.getScene(object.uuid);
+            if (scene !== null) {
+              const child = scene.getObjectByProperty('uuid', object.uuid);
+              if (child !== undefined) setItemProps(child, prop, color);
+            }
           }
         });
       } else {
@@ -54,8 +57,11 @@ export function InspectLight(object: RemoteObject, three: RemoteThree) {
 						three.updateObject(object.uuid, prop, value);
 
             // Editor
-            const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-            if (child !== undefined) setItemProps(child, prop, value);
+            const scene = three.getScene(object.uuid);
+            if (scene !== null) {
+              const child = scene.getObjectByProperty('uuid', object.uuid);
+              if (child !== undefined) setItemProps(child, prop, value);
+            }
           }
         });
       }

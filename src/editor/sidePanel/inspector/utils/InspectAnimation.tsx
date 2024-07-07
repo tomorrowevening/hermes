@@ -44,38 +44,41 @@ export default function InspectAnimation(object: RemoteObject, three: RemoteThre
     items: animations
   });
 
-  const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-  let hasMixer = false;
-  if (child !== undefined) {
-    const mixer = child['mixer'] as AnimationMixer;
-    hasMixer = mixer !== undefined;
-    if (hasMixer) {
-      const mixerItems: any[] = [
-        {
-          title: 'Time Scale',
-          type: 'range',
-          value: mixer.timeScale,
-          step: 0.01,
-          min: -1,
-          max: 2,
-          onChange: (_: string, value: any) => {
-            mixer.timeScale = value;
-            three.updateObject(object.uuid, 'mixer.timeScale', value);
+  const scene = three.getScene(object.uuid);
+  if (scene !== null) {
+    const child = scene.getObjectByProperty('uuid', object.uuid);
+    let hasMixer = false;
+    if (child !== undefined) {
+      const mixer = child['mixer'] as AnimationMixer;
+      hasMixer = mixer !== undefined;
+      if (hasMixer) {
+        const mixerItems: any[] = [
+          {
+            title: 'Time Scale',
+            type: 'range',
+            value: mixer.timeScale,
+            step: 0.01,
+            min: -1,
+            max: 2,
+            onChange: (_: string, value: any) => {
+              mixer.timeScale = value;
+              three.updateObject(object.uuid, 'mixer.timeScale', value);
+            },
           },
-        },
-      ];
-      mixerItems.push({
-        title: 'Stop All',
-        type: 'button',
-        onChange: () => {
-          mixer.stopAllAction();
-          three.requestMethod(object.uuid, 'stopAllAction', undefined, 'mixer');
-        }
-      });
-      items.push({
-        title: 'Mixer',
-        items: mixerItems
-      });
+        ];
+        mixerItems.push({
+          title: 'Stop All',
+          type: 'button',
+          onChange: () => {
+            mixer.stopAllAction();
+            three.requestMethod(object.uuid, 'stopAllAction', undefined, 'mixer');
+          }
+        });
+        items.push({
+          title: 'Mixer',
+          items: mixerItems
+        });
+      }
     }
   }
 

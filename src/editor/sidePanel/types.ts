@@ -7,13 +7,13 @@ export interface CoreComponentProps {
 }
 
 export interface ChildObjectProps extends CoreComponentProps {
-  child?: Object3D
-  scene?: Object3D
+  child?: RemoteObject
+  scene?: RemoteObject
   three: RemoteThree
 }
 
 export interface SidePanelState {
-  scene?: Object3D
+  scene?: RemoteObject
   three: RemoteThree
 }
 
@@ -131,4 +131,5 @@ export interface RemoteObject {
   perspectiveCameraInfo?: PerspectiveCameraInfo
   orthographicCameraInfo?: OrthographicCameraInfo
   lightInfo?: LightInfo
+  children: RemoteObject[]
 }

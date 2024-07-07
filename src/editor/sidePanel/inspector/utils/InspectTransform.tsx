@@ -4,13 +4,13 @@ import { RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps } from '../../utils';
 
-export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
+export function InspectTransform(object: RemoteObject, three: RemoteThree) {
   const matrix = new Matrix4();
-  matrix.elements = obj.matrix;
+  matrix.elements = object.matrix;
   const position = new Vector3();
   const rotation = new Euler();
   const scale = new Vector3();
-  if (obj.uuid.length > 0) {
+  if (object.uuid.length > 0) {
     position.setFromMatrixPosition(matrix);
     rotation.setFromRotationMatrix(matrix);
     scale.setFromMatrixScale(matrix);
@@ -20,11 +20,14 @@ export function InspectTransform(obj: RemoteObject, three: RemoteThree) {
     const realValue = prop === 'rotation' ? { x: value._x, y: value._y, z: value._z } : value;
 
     // App
-    three.updateObject(obj.uuid, prop, realValue);
+    three.updateObject(object.uuid, prop, realValue);
 
     // Editor
-    const child = three.scene?.getObjectByProperty('uuid', obj.uuid);
-    if (child !== undefined) setItemProps(child, prop, realValue);
+    const scene = three.getScene(object.uuid);
+    if (scene !== null) {
+      const child = scene.getObjectByProperty('uuid', object.uuid);
+      if (child !== undefined) setItemProps(child, prop, realValue);
+    }
   };
 
   return (

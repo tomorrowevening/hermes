@@ -7,16 +7,15 @@ import '../scss/_sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
-import { SidePanelState } from './types';
+import { RemoteObject, SidePanelState } from './types';
 
 export default function SidePanel(props: SidePanelState) {
-  const [scenes] = useState<any[]>([]);
+  const [scenes] = useState<RemoteObject[]>([]);
   const [lastUpdate, setLastUpdate] = useState(0);
 
   const onAddScene = (evt: any) => {
-    console.log('SidePanel::Add scene:', evt.value);
-    // scenes.push(evt.value);
-    // setLastUpdate(Date.now());
+    scenes.push(evt.value);
+    setLastUpdate(Date.now());
   };
 
   const onRemoveScene = (evt: any) => {

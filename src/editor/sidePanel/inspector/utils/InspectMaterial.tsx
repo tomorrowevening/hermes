@@ -445,8 +445,11 @@ function inspectBool(prop: string, value: boolean, object: RemoteObject, three: 
       three.updateObject(object.uuid, 'material.needsUpdate', true);
 
       // Editor
-      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      const scene = three.getScene(object.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      }
     },
   };
 }
@@ -467,8 +470,11 @@ function inspecNumber(prop: string, value: number, object: RemoteObject, three: 
       three.updateObject(object.uuid, 'material.needsUpdate', true);
 
       // Editor
-      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      const scene = three.getScene(object.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      }
     },
   };
 
@@ -516,8 +522,11 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
       three.updateObject(object.uuid, 'material.needsUpdate', true);
 
       // Editor
-      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-      if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      const scene = three.getScene(object.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+      }
     },
     onKeyDown: (_: KeyboardEvent) => {
       //
@@ -530,16 +539,28 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
     field['latest'] = field.value;
     field.onChange = (_: string, updatedValue: string) => {
       field['latest'] = updatedValue;
+
+      // App
       three.updateObject(object.uuid, `material.${prop}`, updatedValue);
-      // Local update
-      const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-      if (child !== undefined) setItemProps(child, `material.${prop}`, updatedValue);
+      
+      // Editor
+      const scene = three.getScene(object.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', object.uuid);
+        if (child !== undefined) setItemProps(child, `material.${prop}`, updatedValue);
+      }
     };
     field.onKeyDown = (evt: KeyboardEvent) => {
       if (evt.key === 'Enter' && (evt.altKey || evt.metaKey)) {
+        // App
         three.updateObject(object.uuid, 'material.needsUpdate', true);
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+
+        // Editor
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+        }
       }
     };
   }
@@ -584,8 +605,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
 
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        }
       },
     };
   } else if (valueType === 'number') {
@@ -601,8 +625,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
 
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        }
       },
     };
     if (clampedNames(propName)) {
@@ -625,8 +652,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, newValue);
 
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, newValue);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, newValue);
+        }
       },
     };
   } else if (Array.isArray(value)) {
@@ -661,8 +691,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, value);
 
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        }
       },
     };
   } else if (isVector3(value)) {
@@ -677,8 +710,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, value);
         
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        }
       },
     };
   } else if (isVector4(value)) {
@@ -693,8 +729,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, value);
         
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        }
       },
     };
   } else if (value.isEuler) {
@@ -709,8 +748,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, value);
         
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+        }
       },
     };
   } else if (value.src !== undefined) {
@@ -727,12 +769,15 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.createTexture(object.uuid, `material.${textName}`, updatedValue);
         
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) {
-          textureFromSrc(updatedValue).then((texture: Texture) => {
-            setItemProps(child, `material.${textName}`, texture);
-            setItemProps(child, `material.needsUpdate`, true);
-          });
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) {
+            textureFromSrc(updatedValue).then((texture: Texture) => {
+              setItemProps(child, `material.${textName}`, texture);
+              setItemProps(child, `material.needsUpdate`, true);
+            });
+          }
         }
       },
     };
@@ -748,8 +793,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         three.updateObject(object.uuid, `material.${propPath}`, updatedValue);
         
         // Editor
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        const scene = three.getScene(object.uuid);
+        if (scene !== null) {
+          const child = scene.getObjectByProperty('uuid', object.uuid);
+          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+        }
       },
     };
   } else {
@@ -815,8 +863,9 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       three.updateObject(object.uuid, `material.needsUpdate`, true);
 
       // Editor
-      if (object.uuid.search(three.scene!.uuid) > -1) {
-        const child = three.scene?.getObjectByProperty('uuid', object.uuid);
+      const scene = three.getScene(object.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', object.uuid);
         if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
       }
     },
