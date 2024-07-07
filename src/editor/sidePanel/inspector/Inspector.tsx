@@ -24,6 +24,7 @@ const defaultObject: RemoteObject = {
   perspectiveCameraInfo: undefined,
   orthographicCameraInfo: undefined,
   lightInfo: undefined,
+  children: [],
 };
 let currentObject = {...defaultObject};
 

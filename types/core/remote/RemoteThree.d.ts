@@ -4,6 +4,7 @@ import BaseRemote from './BaseRemote';
 import { BroadcastData } from '../types';
 export default class RemoteThree extends BaseRemote {
     scene?: Scene;
+    scenes: Map<string, Scene>;
     renderer?: WebGLRenderer;
     renderTargets: Map<string, WebGLRenderTarget>;
     dispose(): void;
@@ -12,6 +13,10 @@ export default class RemoteThree extends BaseRemote {
     requestMethod(uuid: string, key: string, value?: any, subitem?: string): void;
     updateObject(uuid: string, key: string, value: any): void;
     createTexture(uuid: string, key: string, value: any): void;
+    addScene(value: Scene): void;
+    removeScene(value: Scene): void;
+    removeAllScenes(): void;
+    getScene(uuid: string): Scene | null;
     setScene(value: Scene): void;
     addCamera(camera: Camera): void;
     removeCamera(camera: Camera): void;

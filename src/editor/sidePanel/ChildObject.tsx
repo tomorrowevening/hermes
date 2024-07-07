@@ -1,6 +1,5 @@
 // Libs
 import { useEffect, useRef, useState } from 'react';
-import { Object3D } from 'three';
 // Models
 import { ChildObjectProps, RemoteObject } from './types';
 // Utils

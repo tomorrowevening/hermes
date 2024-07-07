@@ -1,15 +1,16 @@
 import RemoteThree from '@/core/remote/RemoteThree';
-import { Color, Object3D } from 'three';
+import { Color } from 'three';
 export interface CoreComponentProps {
     class?: string;
     three: RemoteThree;
 }
 export interface ChildObjectProps extends CoreComponentProps {
-    child?: Object3D;
+    child?: RemoteObject;
+    scene?: RemoteObject;
     three: RemoteThree;
 }
 export interface SidePanelState {
-    scene?: Object3D;
+    scene?: RemoteObject;
     three: RemoteThree;
 }
 export interface MinimumObject {
@@ -104,4 +105,5 @@ export interface RemoteObject {
     perspectiveCameraInfo?: PerspectiveCameraInfo;
     orthographicCameraInfo?: OrthographicCameraInfo;
     lightInfo?: LightInfo;
+    children: RemoteObject[];
 }
