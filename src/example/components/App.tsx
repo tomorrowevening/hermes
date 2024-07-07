@@ -129,7 +129,7 @@ function App() {
   const createScene = () => {
     if (currentScene !== undefined) {
       if (currentScene.camera !== undefined) three.removeCamera(currentScene.camera);
-      three.removeScene(currentScene);
+      three.removeAllScenes();
       dispose(currentScene);
     }
     if (sceneName === 'scene1') {

@@ -112,6 +112,10 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  removeAllScenes() {
+    this.scenes.forEach((scene: Scene) => this.removeScene(scene));
+  }
+
   getScene(uuid: string): Scene | null {
     let scene: Scene | null = null;
     this.scenes.forEach((value: Scene) => {
