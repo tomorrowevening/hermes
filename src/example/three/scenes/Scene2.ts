@@ -3,6 +3,7 @@ import {
   LineBasicMaterial,
   LineSegments,
   Mesh,
+  MeshBasicMaterial,
   MeshMatcapMaterial,
   MeshPhysicalMaterial,
   Object3D,
@@ -17,18 +18,19 @@ import {
 } from 'three';
 // @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
-import { IS_DEV, app } from '../constants';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
-import { hierarchyUUID } from '../../editor/utils';
+import { IS_DEV, app } from '../../constants';
+import RemoteTheatre from '../../../core/remote/RemoteTheatre';
+import { hierarchyUUID } from '../../../editor/utils';
 import BaseScene from './BaseScene';
-import FBXAnimation from './FBXAnimation';
-import { textures } from './loader';
-import PhysicalMaterial from './PhysicalMaterial';
-import RemoteThree from '../../core/remote/RemoteThree';
-import CustomMaterial from './CustomMaterial';
+import FBXAnimation from '../FBXAnimation';
+import { textures } from '../loader';
+import RemoteThree from '../../../core/remote/RemoteThree';
+import CustomMaterial from '../CustomMaterial';
+import RTTScene from './RTTScene';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
+  rttScene!: RTTScene;
 
   constructor(renderer: WebGLRenderer) {
     super(renderer);
@@ -42,8 +44,10 @@ export default class Scene2 extends BaseScene {
     if (IS_DEV) hierarchyUUID(this);
 
     const three = app.components.get('three') as RemoteThree;
+    three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
+    if (three.renderer) this.renderer = three.renderer;
   }
 
   private createLights() {
@@ -96,6 +100,17 @@ export default class Scene2 extends BaseScene {
     lines.name = 'lines';
     lines.position.set(100, 50, 0);
     world.add(lines);
+
+    this.rttScene = new RTTScene();
+    const three = app.components.get('three') as RemoteThree;
+    three.addScene(this.rttScene);
+
+    const rttMat = new MeshBasicMaterial();
+    rttMat.map = this.rttScene.renderTarget.texture;
+    const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
+    rttExample.name = 'rttExample';
+    rttExample.position.set(-120, 50, -100);
+    world.add(rttExample);
 
     const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomMaterial());
     testShader.name = 'testShader';
@@ -167,5 +182,6 @@ export default class Scene2 extends BaseScene {
   override update(): void {
     const delta = this.clock.getDelta();
     this.dance.update(delta);
+    if (this.renderer) this.rttScene.draw(this.clock.getElapsedTime(), this.renderer);
   }
 }

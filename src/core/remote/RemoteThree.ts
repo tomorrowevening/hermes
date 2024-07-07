@@ -8,15 +8,21 @@ import { clamp, dispose, hierarchyUUID, resetThreeObjects } from '@/editor/utils
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
+  scenes: Map<string, Scene> = new Map();
   renderer?: WebGLRenderer = undefined;
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
 
   override dispose(): void {
+    this.scenes.forEach((scene: Scene) => {
+      dispose(scene);
+    });
+    this.scenes.clear();
+    if (this.scene) dispose(this.scene);
+
     this.renderTargets.forEach((value: WebGLRenderTarget) => {
       value.dispose();
     });
     this.renderTargets.clear();
-    if (this.scene) dispose(this.scene);
     this.renderer?.dispose();
   }
 
@@ -75,14 +81,59 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  addScene(value: Scene) {
+    if (value === undefined) return;
+    this.scenes.set(value.name, value);
+
+    if (!this.app.debugEnabled) return;
+    resetThreeObjects();
+    hierarchyUUID(value);
+    const stripped = stripScene(value);
+    this.app.send({
+      event: 'addScene',
+      target: 'editor',
+      data: stripped,
+    });
+  }
+
+  removeScene(value: Scene) {
+    if (value === undefined) return;
+    const name = value.name;
+    const scene = this.scenes.get(name);
+    this.scenes.delete(value.name);
+    dispose(scene!);
+
+    if (!this.app.debugEnabled) return;
+    const stripped = stripScene(value);
+    this.app.send({
+      event: 'removeScene',
+      target: 'editor',
+      data: stripped,
+    });
+  }
+
+  removeAllScenes() {
+    this.scenes.forEach((scene: Scene) => this.removeScene(scene));
+  }
+
+  getScene(uuid: string): Scene | null {
+    let scene: Scene | null = null;
+    this.scenes.forEach((value: Scene) => {
+      if (uuid.search(value.uuid) > -1) {
+        scene = value;
+      }
+    });
+    return scene;
+  }
+
   setScene(value: Scene) {
     if (value === undefined) return;
     this.scene = value;
 
     if (!this.app.debugEnabled) return;
     resetThreeObjects();
-    hierarchyUUID(this.scene);
-    const stripped = stripScene(this.scene);
+    hierarchyUUID(value);
+    const stripped = stripScene(value);
     this.app.send({
       event: 'setScene',
       target: 'editor',
@@ -109,6 +160,7 @@ export default class RemoteThree extends BaseRemote {
       data: stripped,
     });
   }
+  
 
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
@@ -136,6 +188,14 @@ export default class RemoteThree extends BaseRemote {
       case 'setObject':
         // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
+        break;
+      case 'addScene':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
+        break;
+      case 'removeScene':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
         break;
       case 'setScene':
         // @ts-ignore

@@ -1,7 +1,7 @@
 import { AnimationClip, CubeTexture, Line, Material, Mesh, Object3D, Points, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 
-export function determineIcon(obj: Object3D): string {
+export function determineIcon(obj: RemoteObject): string {
   if (obj.name === 'cameras') {
     return 'camera';
   } else if (obj.name === 'interactive') {
@@ -137,6 +137,7 @@ export function stripObject(obj: Object3D): RemoteObject {
     perspectiveCameraInfo: undefined,
     orthographicCameraInfo: undefined,
     lightInfo: undefined,
+    children: [],
   };
 
   // Animations
@@ -243,9 +244,7 @@ export function getSubItem(child: any, key: string): any {
 }
 
 function cycleObject(obj: any, value: any) {
-  for (const i in value) {
-    obj[i] = value[i];
-  }
+  for (const i in value) obj[i] = value[i];
 }
 
 export function setItemProps(child: any, key: string, value: any) {
@@ -289,7 +288,7 @@ export function setItemProps(child: any, key: string, value: any) {
         target = child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]];
         break;
     }
-    if (target !== undefined) {
+    if (target !== undefined && target !== null) {
       cycleObject(target, value);
     }
   }

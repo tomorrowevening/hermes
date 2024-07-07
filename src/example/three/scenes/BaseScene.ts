@@ -1,6 +1,6 @@
 import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { app } from '../constants';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
+import { app } from '../../constants';
+import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 
 export default class BaseScene extends Scene {
   camera: PerspectiveCamera;
@@ -39,6 +39,7 @@ export default class BaseScene extends Scene {
   }
 
   draw() {
+    this.renderer.clear();
     this.renderer.render(this, this.camera);
   }
 }

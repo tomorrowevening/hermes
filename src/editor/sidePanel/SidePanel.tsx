@@ -7,31 +7,51 @@ import '../scss/_sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
-import { SidePanelState } from './types';
+import { RemoteObject, SidePanelState } from './types';
 
 export default function SidePanel(props: SidePanelState) {
-  const [scene, setScene] = useState(props.scene);
+  const [scenes] = useState<RemoteObject[]>([]);
+  const [lastUpdate, setLastUpdate] = useState(0);
+
+  const onAddScene = (evt: any) => {
+    scenes.push(evt.value);
+    setLastUpdate(Date.now());
+  };
+
+  const onRemoveScene = (evt: any) => {
+    const scene = evt.value;
+    for (let i = 0; i < scenes.length; i++) {
+      if (scene.uuid === scenes[i].uuid) {
+        scenes.splice(i, 1);
+        setLastUpdate(Date.now());
+        return;
+      }
+    }
+  };
 
   useEffect(() => {
-    const onSetScene = (evt: any) => {
-      setScene(evt.value);
-    };
-    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, onSetScene);
+    debugDispatcher.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
+    debugDispatcher.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     return () => {
-      debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, onSetScene);
+      debugDispatcher.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
+      debugDispatcher.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     };
   }, []);
 
-  const hasScene = scene !== null;
-  const HierarchyName = 'Hierarchy - ' + (hasScene ? `${scene?.name}` : 'No Scene');
+  // Components
+  const components: any[] = [];
+  scenes.forEach((scene: any, index: number) => {
+    components.push(
+      <Accordion label={`Scene: ${scene.name}`} open={true} key={`scene_${index}`}>
+        <ContainerObject child={scene} scene={scene} three={props.three} />
+      </Accordion>
+    );
+  });
+
   return (
-    <div id='SidePanel' key='SidePanel'>
-      <Accordion label={HierarchyName} open={true}>
-      <>
-        {hasScene && <ContainerObject child={scene!} three={props.three} />}
-      </>
-    </Accordion>
-    <Inspector three={props.three} />
-  </div>
+    <div id='SidePanel' key={`SidePanel ${lastUpdate}`}>
+      {components}
+      <Inspector three={props.three} />
+    </div>
   );
 }
