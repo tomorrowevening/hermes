@@ -100,7 +100,6 @@ function App() {
       RemoteTheatre.rafDriver?.tick(performance.now());
       currentScene?.update();
       stats.begin();
-      renderer.clear();
       currentScene?.draw();
       stats.end();
       stats.update();
@@ -130,6 +129,7 @@ function App() {
   const createScene = () => {
     if (currentScene !== undefined) {
       if (currentScene.camera !== undefined) three.removeCamera(currentScene.camera);
+      three.removeScene(currentScene);
       dispose(currentScene);
     }
     if (sceneName === 'scene1') {

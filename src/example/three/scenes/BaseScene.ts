@@ -39,6 +39,7 @@ export default class BaseScene extends Scene {
   }
 
   draw() {
+    this.renderer.clear();
     this.renderer.render(this, this.camera);
   }
 }
