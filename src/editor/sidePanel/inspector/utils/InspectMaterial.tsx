@@ -10,6 +10,7 @@ import {
   DstAlphaFactor,
   DstColorFactor,
   FrontSide,
+  Material,
   MaxEquation,
   MinEquation,
   MultiplyBlending,
@@ -774,8 +775,27 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
           const child = scene.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
             textureFromSrc(updatedValue).then((texture: Texture) => {
-              setItemProps(child, `material.${textName}`, texture);
-              setItemProps(child, `material.needsUpdate`, true);
+              const material = child['material'] as Material;
+              const keys = textName.split('.');
+              const total = keys.length;
+              switch (total) {
+                case 1:
+                  material[keys[0]] = texture;
+                  break;
+                case 2:
+                  material[keys[0]][keys[1]] = texture;
+                  break;
+                case 3:
+                  material[keys[0]][keys[1]][keys[2]] = texture;
+                  break;
+                case 4:
+                  material[keys[0]][keys[1]][keys[2]][keys[3]] = texture;
+                  break;
+                case 5:
+                  material[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = texture;
+                  break;
+              }
+              material.needsUpdate = true;
             });
           }
         }
