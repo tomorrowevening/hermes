@@ -1,7 +1,7 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { useEffect } from 'react';
-import { Scene, Texture } from 'three';
+import { Material, Scene, Texture } from 'three';
 import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
@@ -41,10 +41,32 @@ export default function SceneInspector(props: SceneInspectorProps) {
   
     const onCreateTexture = (evt: any) => {
       const data = evt.value;
-      textureFromSrc(data.value).then((texture: Texture) => {
-        setChildProps(data.uuid, data.key, texture);
-        setChildProps(data.uuid, `material.needsUpdate`, true);
-      });
+      const scene = getScene(data.uuid);
+      const child = scene?.getObjectByProperty('uuid', data.uuid);
+      if (child !== undefined) {
+        textureFromSrc(data.value).then((texture: Texture) => {
+          const keys = data.key.split('.');
+          const total = keys.length;
+          switch (total) {
+            case 1:
+              child[keys[0]] = texture;
+              break;
+            case 2:
+              child[keys[0]][keys[1]] = texture;
+              break;
+            case 3:
+              child[keys[0]][keys[1]][keys[2]] = texture;
+              break;
+            case 4:
+              child[keys[0]][keys[1]][keys[2]][keys[3]] = texture;
+              break;
+            case 5:
+              child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = texture;
+              break;
+          }
+          child['material']['needsUpdate'] = true;
+        });
+      }
     };
   
     const onRequestMethod = (evt: any) => {
