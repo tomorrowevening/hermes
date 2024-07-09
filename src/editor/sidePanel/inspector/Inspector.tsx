@@ -10,7 +10,6 @@ import { InspectCamera } from './utils/InspectCamera';
 import { InspectMaterial } from './utils/InspectMaterial';
 import { InspectTransform } from './utils/InspectTransform';
 import { InspectLight } from './utils/InspectLight';
-import { setItemProps } from '../utils';
 import InspectAnimation from './utils/InspectAnimation';
 
 const defaultObject: RemoteObject = {

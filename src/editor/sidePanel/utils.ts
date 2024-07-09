@@ -44,9 +44,17 @@ function cleanUniforms(obj: any) {
     const value = obj[i].value;
     newObj[i] = { value: value };
     if (value === null) {
-      newObj[i].value = { src: '' };
+      newObj[i].value = {
+        src: '',
+        offset: [0, 0],
+        repeat: [1, 1],
+      };
     } else if (value.isTexture) {
-      newObj[i].value = { src: value.image.src };
+      newObj[i].value = {
+        src: value.image.src,
+        offset: [value.offset.x, value.offset.y],
+        repeat: [value.repeat.x, value.repeat.y],
+      };
     }
   }
   return newObj;
@@ -84,21 +92,33 @@ function stripMaterialData(material: Material): RemoteMaterial {
           materialData[i] = value;
           if (value.isTexture) {
             if (value instanceof Texture) {
-              // materialData[i] = { src: convertImageToBase64(value.image) };
               const textureSource = value.source.toJSON();
               // @ts-ignore
-              materialData[i] = { src: textureSource.url };
+              const textureURL = textureSource.url;
+              materialData[i] = {
+                src: textureURL,
+                offset: [value.offset.x, value.offset.y],
+                repeat: [value.repeat.x, value.repeat.y],
+              };
             } else if (value instanceof CubeTexture) {
               console.log('env map');
               console.log(value.source.data);
               console.log(value.source.toJSON());
-              materialData[i] = { src: '' };
+              materialData[i] = {
+                src: '',
+                offset: [value.offset.x, value.offset.y],
+                repeat: [value.repeat.x, value.repeat.y],
+              };
             }
           } else if (i === 'uniforms') {
             materialData[i] = cleanUniforms(materialData[i]);
           }
         } else {
-          materialData[i] = { src: '' };
+          materialData[i] = {
+            src: '',
+            offset: [0, 0],
+            repeat: [1, 1],
+          };
         }
         break;
     }

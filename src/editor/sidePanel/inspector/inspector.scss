@@ -16,7 +16,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
     label {
       font-weight: bold;
       line-height: normal;
-      margin: 0 10px;
+      padding: 0 10px;
       max-width: 180px;
       user-select: none;
       width: fit-content;
@@ -85,11 +85,8 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
       border: 1px dotted #333;
       cursor: pointer;
       object-fit: cover;
-      width: 270px;
-      height: 100px;
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
+      width: 99px;
+      height: 99px;
     }
 
     button {
@@ -108,7 +105,8 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
 
     &.block {
       label {
-        display: block;
+        background: rgba(0, 0, 0, 0.2);
+        display: inline;
         line-height: 21px;
         max-width: 100%;
         text-align: left;
@@ -141,6 +139,7 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
           margin: 3px 0;
         }
         label {
+          background: none;
           display: inline-block;
           width: 20px;
         }
@@ -208,6 +207,32 @@ $vector_bg: url('data:image/gif;base64,R0lGODlhYwBjAIAAABoaGgAAACH/C1hNUCBEYXRhW
         }
         input {
           width: 100%;
+        }
+      }
+    }
+
+    .imageField {
+      display: block;
+      position: relative;
+      img {
+        display: inline-block;
+      }
+      .fields {
+        display: inline-block;
+        position: absolute;
+        top: 5px;
+        width: 170px;
+        div {
+          display: inline-block;
+          width: 100%;
+          label {
+            background: none;
+            display: block;
+            padding: 0 5px;
+          }
+          input {
+            width: calc(50% - 10px);
+          }
         }
       }
     }

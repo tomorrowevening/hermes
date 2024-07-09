@@ -24,6 +24,7 @@ import {
   OneMinusSrcAlphaFactor,
   OneMinusSrcColorFactor,
   ReverseSubtractEquation,
+  Source,
   SrcAlphaFactor,
   SrcAlphaSaturateFactor,
   SrcColorFactor,
@@ -774,7 +775,10 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
-            textureFromSrc(updatedValue).then((texture: Texture) => {
+            textureFromSrc(updatedValue.src).then((texture: Texture) => {
+              texture.offset.set(updatedValue.offset[0], updatedValue.offset[1]);
+              texture.repeat.set(updatedValue.repeat[0], updatedValue.repeat[1]);
+
               const material = child['material'] as Material;
               const keys = textName.split('.');
               const total = keys.length;
