@@ -9,13 +9,11 @@ import RemoteThree from '../core/remote/RemoteThree';
 import BaseScene from './three/scenes/BaseScene';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
-import RTTScene from './three/scenes/RTTScene';
 
 // Referenced Scenes
 const scenes: Map<string, any> = new Map();
 scenes.set('Scene1', Scene1);
 scenes.set('Scene2', Scene2);
-scenes.set('RTTScene', RTTScene);
 
 export default function CustomEditor() {
   const [loaded, setLoaded] = useState(false);
