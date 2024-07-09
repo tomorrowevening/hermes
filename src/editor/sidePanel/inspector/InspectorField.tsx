@@ -1,12 +1,11 @@
 import { colorToHex } from '@/editor/utils';
 import { KeyboardEvent, useRef, useState } from 'react';
-import { noImage } from '@/editor/components/content';
-import { uploadLocalImage } from './utils/InspectMaterial';
 import { capitalize } from '@/editor/utils';
 import InspectNumber from './InspectNumber';
 import InspectVector2 from './InspectVector2';
 import InspectGrid3 from './InspectGrid3';
 import InspectGrid4 from './InspectGrid4';
+import InspectImage from './InspectImage';
 
 export type InspectorFieldType = 'string' |
   'number' |
@@ -45,7 +44,6 @@ export default function InspectorField(props: InspectorFieldProps) {
 
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLLabelElement>(null);
-  const imgRefRef = useRef<HTMLImageElement>(null);
 
   const onChange = (evt: any) => {
     let value = evt.target.value;
@@ -151,13 +149,7 @@ export default function InspectorField(props: InspectorFieldProps) {
       )}
 
       {props.type === 'image' && (
-        <img alt={props.title} ref={imgRefRef} onClick={() => {
-          uploadLocalImage()
-            .then((value: string) => {
-              imgRefRef.current!.src = value;
-              if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
-            });
-        }} src={fieldValue.src.length > 0 ? fieldValue.src : noImage} />
+        <InspectImage title={props.title} prop={props.prop} value={props.value} onChange={props.onChange} />
       )}
 
       {props.type === 'option' && (

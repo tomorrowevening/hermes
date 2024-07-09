@@ -1,7 +1,7 @@
+import { useEffect } from 'react';
+import { Scene, Texture } from 'three';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
-import { useEffect } from 'react';
-import { Material, Scene, Texture } from 'three';
 import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
@@ -44,7 +44,10 @@ export default function SceneInspector(props: SceneInspectorProps) {
       const scene = getScene(data.uuid);
       const child = scene?.getObjectByProperty('uuid', data.uuid);
       if (child !== undefined) {
-        textureFromSrc(data.value).then((texture: Texture) => {
+        textureFromSrc(data.value.src).then((texture: Texture) => {
+          texture.offset.set(data.value.offset[0], data.value.offset[1]);
+          texture.repeat.set(data.value.repeat[0], data.value.repeat[1]);
+
           const keys = data.key.split('.');
           const total = keys.length;
           switch (total) {
