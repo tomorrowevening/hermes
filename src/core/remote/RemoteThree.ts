@@ -98,10 +98,7 @@ export default class RemoteThree extends BaseRemote {
 
   removeScene(value: Scene) {
     if (value === undefined) return;
-    const name = value.name;
-    const scene = this.scenes.get(name);
     this.scenes.delete(value.name);
-    dispose(scene!);
 
     if (!this.app.debugEnabled) return;
     const stripped = stripScene(value);
@@ -160,7 +157,6 @@ export default class RemoteThree extends BaseRemote {
       data: stripped,
     });
   }
-  
 
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
