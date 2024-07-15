@@ -61,7 +61,7 @@ export const resetThreeObjects = () => {
 export const hierarchyUUID = (object: Object3D): void => {
   if (!object) return;
 
-  let uuid = object.name.replace(' ', '');
+  let uuid = object.name.replaceAll(' ', '').replaceAll('/', '.');
   // fallback in case there's no name
   if (uuid.length === 0) {
     uuid = `obj_${totalThreeObjects}`;
