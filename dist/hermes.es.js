@@ -1,7 +1,7 @@
-import { EventDispatcher as pn, Texture as gn, CubeTexture as Yn, RepeatWrapping as qt, WebGLRenderTarget as Hn, Color as $t, FrontSide as Vn, BackSide as vn, DoubleSide as bn, NoBlending as qn, NormalBlending as Kn, AdditiveBlending as Xn, SubtractiveBlending as Zn, MultiplyBlending as Jn, CustomBlending as Qn, AddEquation as ea, SubtractEquation as ta, ReverseSubtractEquation as na, MinEquation as aa, MaxEquation as ia, ZeroFactor as yn, OneFactor as En, SrcColorFactor as xn, OneMinusSrcColorFactor as Sn, SrcAlphaFactor as Cn, OneMinusSrcAlphaFactor as wn, DstAlphaFactor as Mn, OneMinusDstAlphaFactor as On, DstColorFactor as Tn, OneMinusDstColorFactor as Rn, SrcAlphaSaturateFactor as ra, ConstantColorFactor as _n, OneMinusConstantColorFactor as kn, ConstantAlphaFactor as Dn, OneMinusConstantAlphaFactor as Pn, Matrix4 as sa, Vector3 as J, Euler as oa, Line as ca, BufferGeometry as Kt, Float32BufferAttribute as Xt, LineBasicMaterial as la, Mesh as An, MeshBasicMaterial as jn, Ray as ua, Plane as da, MathUtils as ha, MOUSE as nt, TOUCH as at, Quaternion as Zt, Spherical as Jt, Vector2 as me, ShaderMaterial as In, GLSL3 as fa, PlaneGeometry as ma, Scene as pa, Group as ga, AxesHelper as Qt, MeshDepthMaterial as va, MeshNormalMaterial as ba, WebGLRenderer as ya, PerspectiveCamera as At, Raycaster as Ea, OrthographicCamera as en, CameraHelper as xa, SpotLightHelper as Sa, PointLightHelper as Ca, HemisphereLightHelper as wa, DirectionalLightHelper as Ma } from "three";
+import { EventDispatcher as pn, Texture as gn, CubeTexture as Hn, RepeatWrapping as qt, WebGLRenderTarget as Yn, Color as $t, FrontSide as Vn, BackSide as vn, DoubleSide as bn, NoBlending as qn, NormalBlending as Kn, AdditiveBlending as Xn, SubtractiveBlending as Zn, MultiplyBlending as Jn, CustomBlending as Qn, AddEquation as ea, SubtractEquation as ta, ReverseSubtractEquation as na, MinEquation as aa, MaxEquation as ia, ZeroFactor as yn, OneFactor as En, SrcColorFactor as xn, OneMinusSrcColorFactor as Sn, SrcAlphaFactor as Cn, OneMinusSrcAlphaFactor as wn, DstAlphaFactor as Mn, OneMinusDstAlphaFactor as On, DstColorFactor as Tn, OneMinusDstColorFactor as Rn, SrcAlphaSaturateFactor as ra, ConstantColorFactor as _n, OneMinusConstantColorFactor as kn, ConstantAlphaFactor as Dn, OneMinusConstantAlphaFactor as Pn, Matrix4 as sa, Vector3 as J, Euler as oa, Line as ca, BufferGeometry as Kt, Float32BufferAttribute as Xt, LineBasicMaterial as la, Mesh as An, MeshBasicMaterial as jn, Ray as ua, Plane as da, MathUtils as ha, MOUSE as nt, TOUCH as at, Quaternion as Zt, Spherical as Jt, Vector2 as me, ShaderMaterial as In, GLSL3 as fa, PlaneGeometry as ma, Scene as pa, Group as ga, AxesHelper as Qt, MeshDepthMaterial as va, MeshNormalMaterial as ba, WebGLRenderer as ya, PerspectiveCamera as At, Raycaster as Ea, OrthographicCamera as en, CameraHelper as xa, SpotLightHelper as Sa, PointLightHelper as Ca, HemisphereLightHelper as wa, DirectionalLightHelper as Ma } from "three";
 import { Pane as Oa } from "tweakpane";
 import * as Ta from "@tweakpane/plugin-essentials";
-import Nn, { useState as Y, useRef as H, useEffect as Re, useMemo as se, forwardRef as Ra } from "react";
+import Nn, { useState as H, useRef as Y, useEffect as Re, useMemo as se, forwardRef as Ra } from "react";
 import { Reorder as Ln } from "framer-motion";
 const zt = () => {
 }, Di = () => {
@@ -44,7 +44,7 @@ const rn = () => {
 }, Bt = (e) => {
   if (!e)
     return;
-  let n = e.name.replace(" ", "");
+  let n = e.name.replaceAll(" ", "").replaceAll("/", ".");
   n.length === 0 && (n = `obj_${Lt}`, Lt++), e.parent !== null && e.parent.uuid.length > 0 && (n = `${e.parent.uuid}.${n}`), e.uuid = n, e.children.forEach((a) => {
     Bt(a);
   });
@@ -476,7 +476,7 @@ function it(e) {
                 repeat: [i.repeat.x, i.repeat.y]
               };
             } else
-              i instanceof Yn && (console.log("env map"), console.log(i.source.data), console.log(i.source.toJSON()), n[a] = {
+              i instanceof Hn && (console.log("env map"), console.log(i.source.data), console.log(i.source.toJSON()), n[a] = {
                 src: "",
                 offset: [i.offset.x, i.offset.y],
                 repeat: [i.repeat.x, i.repeat.y]
@@ -811,7 +811,7 @@ class Li extends Rt {
   rendererWidth = 300;
   rendererHeight = 150;
   addRT(n, a) {
-    const t = new Hn(32, 32, a);
+    const t = new Yn(32, 32, a);
     t.texture.name = n, this.renderTargets.set(n, t);
   }
   resize(n, a) {
@@ -1146,18 +1146,18 @@ function Fa() {
         O < 0 && I("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
       }
     }
-    var Ye = R.ReactCurrentDispatcher, He;
+    var He = R.ReactCurrentDispatcher, Ye;
     function ue(s, g, y) {
       {
-        if (He === void 0)
+        if (Ye === void 0)
           try {
             throw Error();
           } catch ($) {
             var w = $.stack.trim().match(/\n( *(at )?)/);
-            He = w && w[1] || "";
+            Ye = w && w[1] || "";
           }
         return `
-` + He + s;
+` + Ye + s;
       }
     }
     var v = !1, b;
@@ -1178,7 +1178,7 @@ function Fa() {
       var $ = Error.prepareStackTrace;
       Error.prepareStackTrace = void 0;
       var W;
-      W = Ye.current, Ye.current = null, re();
+      W = He.current, He.current = null, re();
       try {
         if (g) {
           var L = function() {
@@ -1231,7 +1231,7 @@ function Fa() {
             }
         }
       } finally {
-        v = !1, Ye.current = W, Me(), Error.prepareStackTrace = $;
+        v = !1, He.current = W, Me(), Error.prepareStackTrace = $;
       }
       var tt = s ? s.displayName || s.name : "", Vt = tt ? ue(tt) : "";
       return typeof s == "function" && b.set(s, Vt), Vt;
@@ -1374,7 +1374,7 @@ function Fa() {
         });
       }
     }
-    var Yt = function(s, g, y, w, $, W, L) {
+    var Ht = function(s, g, y, w, $, W, L) {
       var j = {
         // This tag allows us to uniquely identify this as a React Element
         $$typeof: n,
@@ -1418,7 +1418,7 @@ function Fa() {
           var ae = typeof s == "function" ? s.displayName || s.name || "Unknown" : s;
           j && gt(L, ae), he && $e(L, ae);
         }
-        return Yt(s, j, he, $, w, Ue.current, L);
+        return Ht(s, j, he, $, w, Ue.current, L);
       }
     }
     var E = R.ReactCurrentOwner, k = R.ReactDebugCurrentFrame;
@@ -1446,7 +1446,7 @@ Check the render method of \`` + s + "`.";
         return "";
       }
     }
-    function Ht(s) {
+    function Yt(s) {
       {
         if (s !== void 0) {
           var g = s.fileName.replace(/^.*[\\\/]/, ""), y = s.lineNumber;
@@ -1545,7 +1545,7 @@ Check the top-level render call using <` + y + ">.");
         if (!L) {
           var j = "";
           (s === void 0 || typeof s == "object" && s !== null && Object.keys(s).length === 0) && (j += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
-          var he = Ht($);
+          var he = Yt($);
           he ? j += he : j += de();
           var Q;
           s === null ? Q = "null" : Ne(s) ? Q = "array" : s !== void 0 && s.$$typeof === n ? (Q = "<" + (U(s.type) || "Unknown") + " />", j = " Did you accidentally export a JSX literal instead of a component?") : Q = typeof s, I("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", Q, j);
@@ -1606,7 +1606,7 @@ function za(e) {
   ] }) }, e.title);
 }
 function Ga(e) {
-  const [n, a] = Y(!1), [t, i] = Y(e.options), o = (u) => {
+  const [n, a] = H(!1), [t, i] = H(e.options), o = (u) => {
     e.onDragComplete(u), i(u);
   }, d = (u) => {
     const f = [...t];
@@ -1622,9 +1622,9 @@ function Ga(e) {
   ] });
 }
 function Wa(e) {
-  const [n, a] = Y(!1), t = [];
+  const [n, a] = H(!1), t = [];
   e.options.map((o, d) => {
-    e.onSelect !== void 0 && (o.onSelect = e.onSelect), t.push(/* @__PURE__ */ l.jsx(Ya, { option: o }, d));
+    e.onSelect !== void 0 && (o.onSelect = e.onSelect), t.push(/* @__PURE__ */ l.jsx(Ha, { option: o }, d));
   });
   let i = "dropdown";
   return e.subdropdown && (i += " subdropdown"), /* @__PURE__ */ l.jsxs(
@@ -1646,8 +1646,8 @@ function Wa(e) {
     }
   );
 }
-function Ya(e) {
-  const { option: n } = e, [a, t] = Y("");
+function Ha(e) {
+  const { option: n } = e, [a, t] = H("");
   let i;
   switch (n.type) {
     case "draggable":
@@ -1712,7 +1712,7 @@ function Fi(e, n, a) {
   };
 }
 function Wt(e) {
-  const [n, a] = Y(e.open !== void 0 ? e.open : !0), t = !n || e.children === void 0;
+  const [n, a] = H(e.open !== void 0 ? e.open : !0), t = !n || e.children === void 0;
   return /* @__PURE__ */ l.jsxs("div", { className: `accordion ${t ? "hide" : ""}`, children: [
     /* @__PURE__ */ l.jsxs(
       "button",
@@ -1739,7 +1739,7 @@ function Wt(e) {
   ] });
 }
 function Un(e) {
-  const n = H(null), [a, t] = Y(!1), i = e.child !== void 0 && e.child.children.length > 0, o = [];
+  const n = Y(null), [a, t] = H(!1), i = e.child !== void 0 && e.child.children.length > 0, o = [];
   return e.child !== void 0 && e.child.children.length > 0 && e.child.children.map((d, r) => {
     o.push(/* @__PURE__ */ l.jsx(Un, { child: d, three: e.three }, r));
   }), Re(() => {
@@ -1799,14 +1799,14 @@ function Un(e) {
     /* @__PURE__ */ l.jsx("div", { className: a ? "open" : "", children: /* @__PURE__ */ l.jsx("div", { className: "container", children: o }) })
   ] }, Math.random()) });
 }
-function Ha(e) {
+function Ya(e) {
   const n = [];
   return e.child?.children.map((a, t) => {
     n.push(/* @__PURE__ */ l.jsx(Un, { child: a, scene: e.scene, three: e.three }, t));
   }), /* @__PURE__ */ l.jsx("div", { className: `scene ${e.class !== void 0 ? e.class : ""}`, children: n });
 }
 function Va(e) {
-  const [n, a] = Y(e.defaultValue);
+  const [n, a] = H(e.defaultValue);
   return Re(() => {
     let t = !1, i = -1, o = 0, d = e.defaultValue;
     const r = (p) => {
@@ -1831,7 +1831,7 @@ function Va(e) {
   }, []), n;
 }
 function Xe(e) {
-  const n = H(null), a = H(null), t = Va({
+  const n = Y(null), a = Y(null), t = Va({
     label: e.labelRef,
     input: n,
     sliderRef: a,
@@ -1894,10 +1894,10 @@ function Xe(e) {
   ] });
 }
 function qa(e) {
-  const n = H(null), a = H(null), t = H(null), i = H(null), o = H(null), d = H(null), [r, h] = Y(e.value), [u, f] = Y({
+  const n = Y(null), a = Y(null), t = Y(null), i = Y(null), o = Y(null), d = Y(null), [r, h] = H(e.value), [u, f] = H({
     min: Math.min(e.min, Math.min(e.value.x, e.value.y)),
     max: Math.max(e.max, Math.max(e.value.x, e.value.y))
-  }), [m, p] = Y(!1);
+  }), [m, p] = H(!1);
   function S() {
     m || (window.addEventListener("mousemove", F), window.addEventListener("mouseup", A), window.addEventListener("mouseup", A), p(!0));
   }
@@ -1996,7 +1996,7 @@ function cn(e) {
       o[h] = u, e.onChange({ target: { value: o } });
     };
     ["x", "y", "z"].forEach((h) => {
-      const u = H(null);
+      const u = Y(null);
       i.push(
         /* @__PURE__ */ l.jsxs("div", { children: [
           /* @__PURE__ */ l.jsx("label", { ref: u, children: h.toUpperCase() }),
@@ -2019,7 +2019,7 @@ function cn(e) {
       o[h] = u, e.onChange({ target: { value: o } });
     };
     ["_x", "_y", "_z"].forEach((h) => {
-      const u = H(null);
+      const u = Y(null);
       i.push(
         /* @__PURE__ */ l.jsxs("div", { children: [
           /* @__PURE__ */ l.jsx("label", { ref: u, children: h.substring(1).toUpperCase() }),
@@ -2043,7 +2043,7 @@ function cn(e) {
       o.elements[u] = h, e.onChange({ target: { value: o } });
     };
     for (let r = 0; r < 9; r++) {
-      const h = H(null);
+      const h = Y(null);
       i.push(
         /* @__PURE__ */ l.jsxs("div", { children: [
           /* @__PURE__ */ l.jsx("label", { ref: h, children: r + 1 }),
@@ -2071,7 +2071,7 @@ function Ka(e) {
       t[d] = r, e.onChange({ target: { value: t } });
     };
     ["x", "y", "z", "w"].forEach((d) => {
-      const r = H(null);
+      const r = Y(null);
       a.push(
         /* @__PURE__ */ l.jsxs("div", { children: [
           /* @__PURE__ */ l.jsx("label", { ref: r, children: d.toUpperCase() }),
@@ -2095,7 +2095,7 @@ function Ka(e) {
       t.elements[r] = d, e.onChange({ target: { value: t } });
     };
     for (let o = 0; o < 16; o++) {
-      const d = H(null);
+      const d = Y(null);
       a.push(
         /* @__PURE__ */ l.jsxs("div", { children: [
           /* @__PURE__ */ l.jsx("label", { ref: d, children: o + 1 }),
@@ -2948,7 +2948,7 @@ function di(e, n) {
 }
 const hi = "data:image/gif;base64,R0lGODlhDgFkAIAAAP///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDIgNzkuZGJhM2RhM2I1LCAyMDIzLzEyLzE1LTEwOjQyOjM3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjUuNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyMDk3M0NEODAxQjQxMUVGODVGNENDMkUyMUExNDk1NSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyMDk3M0NEOTAxQjQxMUVGODVGNENDMkUyMUExNDk1NSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkE4ODc3Qzg5MDFCMzExRUY4NUY0Q0MyRTIxQTE0OTU1IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkE4ODc3QzhBMDFCMzExRUY4NUY0Q0MyRTIxQTE0OTU1Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAAA4BZAAAAv+Mj6nL7Q+jnLTai7PevPsPhuJIluaJpurKtu4Lx/JM1/aN5/rO9/4PDAqHxKLxiEwql8ym8wmNSqfUqvWKzWq33K73Cw6Lx+Sy+YxOq9fstvsNj8vn9Lr9js/r9/y+/w8YKDhIWGh4iJiouMjY6PgIGSk5SVlpeYmZqTkJAGDQ+dnpuekmGgAKejpKuiZqmprKqoZKGyrbOlqrejub6xvLGyw8TFzcprurGuvqybxq7ETbrItsCz0l7Zpc+6p9/cS967w9/S2FTF0u/mzehK4Oqz3eTl9vf4+fr7/P3+//DzCgwIEECxo8iDChwoUMGzp8CDGixIkUK1q8iDGjxo0XHDt6/AgypMiRJEuaPIkypcqVLFt+KwAAOw==";
 function fi(e) {
-  const n = H(null), a = H(null), t = H(null), i = H(null), o = H(null), [d] = Y(e.value), [r, h] = Y(e.value.offset[0]), [u, f] = Y(e.value.offset[1]), [m, p] = Y(e.value.repeat[0]), [S, A] = Y(e.value.repeat[1]);
+  const n = Y(null), a = Y(null), t = Y(null), i = Y(null), o = Y(null), [d] = H(e.value), [r, h] = H(e.value.offset[0]), [u, f] = H(e.value.offset[1]), [m, p] = H(e.value.repeat[0]), [S, A] = H(e.value.repeat[1]);
   function F(R, I, T, Z, te) {
     if (e.onChange !== void 0) {
       const pe = e.prop !== void 0 ? e.prop : e.title;
@@ -3035,7 +3035,7 @@ function fi(e) {
 function wt(e) {
   let n = e.value;
   n !== void 0 && n.isColor !== void 0 && (n = Da(e.value));
-  const [a, t] = Y(n), i = H(null), o = (u) => {
+  const [a, t] = H(n), i = Y(null), o = (u) => {
     let f = u.target.value;
     e.type === "boolean" ? f = u.target.checked : e.type === "option" && (f = e.options[f].value), t(f), e.onChange !== void 0 && e.onChange(e.prop !== void 0 ? e.prop : e.title, f);
   }, d = {};
@@ -3392,7 +3392,7 @@ const zn = {
 };
 let fe = { ...zn };
 function bi(e) {
-  const [n, a] = Y(-1);
+  const [n, a] = H(-1);
   Re(() => {
     function d(h) {
       fe = { ...h.value }, a(Date.now());
@@ -3448,7 +3448,7 @@ function bi(e) {
   ] }) }, n) }, "Inspector");
 }
 function Ui(e) {
-  const [n] = Y([]), [a, t] = Y(0), i = (r) => {
+  const [n] = H([]), [a, t] = H(0), i = (r) => {
     n.push(r.value), t(Date.now());
   }, o = (r) => {
     const h = r.value;
@@ -3464,7 +3464,7 @@ function Ui(e) {
   const d = [];
   return n.forEach((r, h) => {
     d.push(
-      /* @__PURE__ */ l.jsx(Wt, { label: `Scene: ${r.name}`, open: !0, children: /* @__PURE__ */ l.jsx(Ha, { child: r, scene: r, three: e.three }) }, `scene_${h}`)
+      /* @__PURE__ */ l.jsx(Wt, { label: `Scene: ${r.name}`, open: !0, children: /* @__PURE__ */ l.jsx(Ya, { child: r, scene: r, three: e.three }) }, `scene_${h}`)
     );
   }), /* @__PURE__ */ l.jsxs("div", { id: "SidePanel", children: [
     d,
@@ -3480,11 +3480,11 @@ function $i(e) {
       }), h;
     }
     const a = (r) => {
-      const h = r.value, f = n(h)?.getObjectByProperty("uuid", h);
-      f !== void 0 && e.three.setObject(f);
+      const h = r.value, u = n(h), f = u?.getObjectByProperty("uuid", h);
+      f !== void 0 ? e.three.setObject(f) : console.log(`Hermes - can't find object: ${h}`, u);
     }, t = (r, h, u) => {
-      const m = n(r)?.getObjectByProperty("uuid", r);
-      m !== void 0 && ee(m, h, u);
+      const f = n(r), m = f?.getObjectByProperty("uuid", r);
+      m !== void 0 ? ee(m, h, u) : console.log(`Hermes - can't set object: ${r}`, f);
     }, i = (r) => {
       const h = r.value, { key: u, value: f, uuid: m } = h;
       t(m, u, f);
@@ -3692,10 +3692,10 @@ class xi extends pn {
     function Me(c) {
       I.set(c.clientX, c.clientY), T.subVectors(I, R), T.y > 0 ? De(ke(T.y)) : T.y < 0 && je(ke(T.y)), R.copy(I), t.update();
     }
-    function Ye(c) {
+    function He(c) {
       F.set(c.clientX, c.clientY), V.subVectors(F, A).multiplyScalar(t.panSpeed), we(V.x, V.y), A.copy(F), t.update();
     }
-    function He(c) {
+    function Ye(c) {
       Pe(c.clientX, c.clientY), c.deltaY < 0 ? je(ke(c.deltaY)) : c.deltaY > 0 && De(ke(c.deltaY)), t.update();
     }
     function ue(c) {
@@ -3854,12 +3854,12 @@ class xi extends pn {
         case i.PAN:
           if (t.enablePan === !1)
             return;
-          Ye(c);
+          He(c);
           break;
       }
     }
     function ft(c) {
-      t.enabled === !1 || t.enableZoom === !1 || o !== i.NONE || (c.preventDefault(), t.dispatchEvent(It), He(mt(c)), t.dispatchEvent(fn));
+      t.enabled === !1 || t.enableZoom === !1 || o !== i.NONE || (c.preventDefault(), t.dispatchEvent(It), Ye(mt(c)), t.dispatchEvent(fn));
     }
     function mt(c) {
       const E = c.deltaMode, k = {
@@ -3986,7 +3986,7 @@ function rt(e, n, a, t, i) {
   return t + (e - n) * (i - t) / (a - n);
 }
 const Mt = (e) => {
-  const [n, a] = Y(e.options[e.index]), t = () => {
+  const [n, a] = H(e.options[e.index]), t = () => {
     e.onToggle(!e.open);
   }, i = (o) => {
     o !== n && (e.onSelect(o), a(o)), e.onToggle(!1);
@@ -3996,7 +3996,7 @@ const Mt = (e) => {
     e.open && /* @__PURE__ */ l.jsx("ul", { className: "dropdown-menu", children: e.options.map((o) => /* @__PURE__ */ l.jsx("li", { onClick: () => i(o), children: o }, o)) })
   ] });
 }, qe = Ra(function(n, a) {
-  const [t, i] = Y(!1), o = n.options.indexOf(n.camera.name);
+  const [t, i] = H(!1), o = n.options.indexOf(n.camera.name);
   return /* @__PURE__ */ l.jsxs("div", { className: "CameraWindow", children: [
     /* @__PURE__ */ l.jsx("div", { ref: a, className: "clickable", onClick: () => {
       t && i(!1);
@@ -4211,7 +4211,7 @@ function zi(e) {
     "Side by Side",
     "Stacked",
     "Quad"
-  ], q = H(null), ge = H(null), ce = H(null), _e = H(null), ke = H(null), be = H(null), [U, ye] = Y(a !== null ? a : "Single"), [O, we] = Y(null), [De, je] = Y(!1), [Pe, Ae] = Y(!1), [Ie, Be] = Y(!1), [, Fe] = Y(Date.now());
+  ], q = Y(null), ge = Y(null), ce = Y(null), _e = Y(null), ke = Y(null), be = Y(null), [U, ye] = H(a !== null ? a : "Single"), [O, we] = H(null), [De, je] = H(!1), [Pe, Ae] = H(!1), [Ie, Be] = H(!1), [, Fe] = H(Date.now());
   localStorage.setItem(`${n}_mode`, U), localStorage.setItem(`${n}_tlCam`, t), localStorage.setItem(`${n}_trCam`, i), localStorage.setItem(`${n}_blCam`, o), localStorage.setItem(`${n}_brCam`, d);
   const re = (v, b) => {
     const M = h.get(v.name);
@@ -4234,13 +4234,13 @@ function zi(e) {
     b !== void 0 && (m.remove(b), b.dispose(), u.delete(v.name));
     const M = h.get(v.name);
     M !== void 0 && (M.dispose(), h.delete(v.name));
-  }, Ye = () => {
+  }, He = () => {
     h.forEach((v, b) => {
       v.dispose();
       const M = u.get(b);
       M !== void 0 && (m.remove(M), M.dispose()), u.delete(b), h.delete(b);
     }), h.clear(), u.clear();
-  }, He = () => {
+  }, Ye = () => {
     switch (U) {
       case "Single":
         re(X, ce.current);
@@ -4370,7 +4370,7 @@ function zi(e) {
       }
       ve = requestAnimationFrame(ne);
     };
-    return He(), window.addEventListener("resize", le), le(), ne(), () => {
+    return Ye(), window.addEventListener("resize", le), le(), ne(), () => {
       window.removeEventListener("resize", le), cancelAnimationFrame(ve), ve = -1;
     };
   }, [U, O]), Re(() => {
@@ -4485,7 +4485,7 @@ function zi(e) {
             index: pe.indexOf(U),
             options: pe,
             onSelect: (v) => {
-              v !== U && (Ye(), ye(v));
+              v !== U && (He(), ye(v));
             },
             open: De,
             onToggle: (v) => {
@@ -4558,11 +4558,11 @@ export {
   ji as Application,
   Rt as BaseRemote,
   Un as ChildObject,
-  Ha as ContainerObject,
+  Ya as ContainerObject,
   Ga as Draggable,
   za as DraggableItem,
   Wa as Dropdown,
-  Ya as DropdownItem,
+  Ha as DropdownItem,
   Gi as Editor,
   bi as Inspector,
   zi as MultiView,
