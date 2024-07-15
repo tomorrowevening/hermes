@@ -22,7 +22,11 @@ export default function SceneInspector(props: SceneInspectorProps) {
       const uuid = evt.value;
       const scene = getScene(uuid);
       const child = scene?.getObjectByProperty('uuid', uuid);
-      if (child !== undefined) props.three.setObject(child);
+      if (child !== undefined) {
+        props.three.setObject(child);
+      } else {
+        console.log(`Hermes - can't find object: ${uuid}`, scene);
+      }
     };
   
     const setChildProps = (uuid: string, key: string, value: any) => {
@@ -30,6 +34,8 @@ export default function SceneInspector(props: SceneInspectorProps) {
       const child = scene?.getObjectByProperty('uuid', uuid);
       if (child !== undefined) {
         setItemProps(child, key, value);
+      } else {
+        console.log(`Hermes - can't set object: ${uuid}`, scene);
       }
     };
   
