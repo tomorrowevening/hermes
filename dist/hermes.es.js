@@ -45,9 +45,18 @@ const rn = () => {
   if (!e)
     return;
   let n = e.name.replaceAll(" ", "").replaceAll("/", ".");
-  n.length === 0 && (n = `obj_${Lt}`, Lt++), e.parent !== null && e.parent.uuid.length > 0 && (n = `${e.parent.uuid}.${n}`), e.uuid = n, e.children.forEach((a) => {
-    Bt(a);
-  });
+  if (n.length === 0 && (n = `obj_${Lt}`, Lt++), e.parent !== null && e.parent.uuid.length > 0 && (n = `${e.parent.uuid}.${n}`), e.uuid = n, e.isMesh !== void 0) {
+    const a = e;
+    if (Array.isArray(a.material))
+      a.material.forEach((t, i) => {
+        t.uuid = `${n}.material.${i}`;
+      });
+    else {
+      const t = a.material;
+      t.uuid = `${n}.material`;
+    }
+  }
+  e.children.forEach((a) => Bt(a));
 }, Ai = (e) => {
   e?.dispose();
 }, Pa = (e) => {
