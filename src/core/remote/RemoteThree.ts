@@ -115,10 +115,8 @@ export default class RemoteThree extends BaseRemote {
 
   getScene(uuid: string): Scene | null {
     let scene: Scene | null = null;
-    this.scenes.forEach((value: Scene) => {
-      if (uuid.search(value.uuid) > -1) {
-        scene = value;
-      }
+    this.scenes.forEach((value: Scene, key: string) => {
+      if (uuid.search(key) > -1) scene = value;
     });
     return scene;
   }

@@ -74,7 +74,11 @@ export default function ChildObject(props: ChildObjectProps) {
                       visibleRef.current!.style.opacity = value ? '1' : '0.25';
                       props.three.updateObject(props.child.uuid, key, value);
                       setItemProps(child, key, value);
+                    } else {
+                      console.log(`Hermes - Couldn't find object: ${props.child.uuid}`, scene);
                     }
+                  } else {
+                    console.log(`Hermes - Couldn't find object in scene: ${props.child.uuid}, ${props.child.name}`);
                   }
                 }
               }}

@@ -268,6 +268,11 @@ function cycleObject(obj: any, value: any) {
 }
 
 export function setItemProps(child: any, key: string, value: any) {
+  if (child === undefined) {
+    console.log(`Hermes - Can't set props: ${key}`, value);
+    return;
+  }
+
   const keys = key.split('.');
   const total = keys.length;
   const setValue = typeof value !== 'object';
