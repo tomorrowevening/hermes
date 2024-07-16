@@ -450,7 +450,7 @@ function inspectBool(prop: string, value: boolean, object: RemoteObject, three: 
       const scene = three.getScene(object.uuid);
       if (scene !== null) {
         const child = scene.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+        setItemProps(child, `material.${prop}`, value);
       }
     },
   };
@@ -475,7 +475,7 @@ function inspecNumber(prop: string, value: number, object: RemoteObject, three: 
       const scene = three.getScene(object.uuid);
       if (scene !== null) {
         const child = scene.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+        setItemProps(child, `material.${prop}`, value);
       }
     },
   };
@@ -527,7 +527,7 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
       const scene = three.getScene(object.uuid);
       if (scene !== null) {
         const child = scene.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${prop}`, value);
+        setItemProps(child, `material.${prop}`, value);
       }
     },
     onKeyDown: (_: KeyboardEvent) => {
@@ -549,7 +549,7 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
       const scene = three.getScene(object.uuid);
       if (scene !== null) {
         const child = scene.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.${prop}`, updatedValue);
+        setItemProps(child, `material.${prop}`, updatedValue);
       }
     };
     field.onKeyDown = (evt: KeyboardEvent) => {
@@ -561,7 +561,7 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+          setItemProps(child, `material.needsUpdate`, true);
         }
       }
     };
@@ -610,7 +610,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+          setItemProps(child, `material.${propPath}`, updatedValue);
         }
       },
     };
@@ -630,7 +630,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+          setItemProps(child, `material.${propPath}`, updatedValue);
         }
       },
     };
@@ -657,7 +657,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, newValue);
+          setItemProps(child, `material.${propPath}`, newValue);
         }
       },
     };
@@ -696,7 +696,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+          setItemProps(child, `material.${propPath}`, value);
         }
       },
     };
@@ -715,7 +715,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+          setItemProps(child, `material.${propPath}`, value);
         }
       },
     };
@@ -734,7 +734,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+          setItemProps(child, `material.${propPath}`, value);
         }
       },
     };
@@ -753,7 +753,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, value);
+          setItemProps(child, `material.${propPath}`, value);
         }
       },
     };
@@ -820,7 +820,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         const scene = three.getScene(object.uuid);
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
-          if (child !== undefined) setItemProps(child, `material.${propPath}`, updatedValue);
+          setItemProps(child, `material.${propPath}`, updatedValue);
         }
       },
     };
@@ -890,7 +890,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       const scene = three.getScene(object.uuid);
       if (scene !== null) {
         const child = scene.getObjectByProperty('uuid', object.uuid);
-        if (child !== undefined) setItemProps(child, `material.needsUpdate`, true);
+        setItemProps(child, `material.needsUpdate`, true);
       }
     },
   });

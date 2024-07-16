@@ -41,7 +41,7 @@ export function InspectLight(object: RemoteObject, three: RemoteThree) {
             const scene = three.getScene(object.uuid);
             if (scene !== null) {
               const child = scene.getObjectByProperty('uuid', object.uuid);
-              if (child !== undefined) setItemProps(child, prop, color);
+              setItemProps(child, prop, color);
             }
           }
         });
@@ -60,7 +60,7 @@ export function InspectLight(object: RemoteObject, three: RemoteThree) {
             const scene = three.getScene(object.uuid);
             if (scene !== null) {
               const child = scene.getObjectByProperty('uuid', object.uuid);
-              if (child !== undefined) setItemProps(child, prop, value);
+              setItemProps(child, prop, value);
             }
           }
         });
