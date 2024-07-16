@@ -1,4 +1,4 @@
-import { Material, Mesh, Object3D, Texture } from 'three';
+import { InstancedMesh, Material, Mesh, Object3D, SkinnedMesh, Texture } from 'three';
 
 export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);
@@ -73,10 +73,21 @@ export const hierarchyUUID = (object: Object3D): void => {
   }
   object.uuid = uuid;
 
+  // Update material UUIDs
+  if (object['isMesh'] !== undefined) {
+    const mesh = object as Mesh;
+    if (Array.isArray(mesh.material)) {
+      mesh.material.forEach((material: Material, index: number) => {
+        material.uuid = `${uuid}.material.${index}`;
+      });
+    } else {
+      const material = mesh.material as Material;
+      material.uuid = `${uuid}.material`;
+    }
+  }
+
   // Iterate children
-  object.children.forEach((child: Object3D) => {
-    hierarchyUUID(child);
-  });
+  object.children.forEach((child: Object3D) => hierarchyUUID(child));
 };
 
 // Dispose
