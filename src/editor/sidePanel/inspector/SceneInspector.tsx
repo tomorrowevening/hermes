@@ -50,31 +50,37 @@ export default function SceneInspector(props: SceneInspectorProps) {
       const scene = getScene(data.uuid);
       const child = scene?.getObjectByProperty('uuid', data.uuid);
       if (child !== undefined) {
-        textureFromSrc(data.value.src).then((texture: Texture) => {
-          texture.offset.set(data.value.offset[0], data.value.offset[1]);
-          texture.repeat.set(data.value.repeat[0], data.value.repeat[1]);
-
+        const onComplete = (value: Texture | null) => {
           const keys = data.key.split('.');
           const total = keys.length;
           switch (total) {
             case 1:
-              child[keys[0]] = texture;
+              child[keys[0]] = value;
               break;
             case 2:
-              child[keys[0]][keys[1]] = texture;
+              child[keys[0]][keys[1]] = value;
               break;
             case 3:
-              child[keys[0]][keys[1]][keys[2]] = texture;
+              child[keys[0]][keys[1]][keys[2]] = value;
               break;
             case 4:
-              child[keys[0]][keys[1]][keys[2]][keys[3]] = texture;
+              child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
               break;
             case 5:
-              child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = texture;
+              child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
               break;
           }
           child['material']['needsUpdate'] = true;
-        });
+        };
+        if (data.value.src.length > 0) {
+          textureFromSrc(data.value.src).then((texture: Texture) => {
+            texture.offset.set(data.value.offset[0], data.value.offset[1]);
+            texture.repeat.set(data.value.repeat[0], data.value.repeat[1]);
+            onComplete(texture);
+          });
+        } else {
+          onComplete(null);
+        }
       }
     };
   
