@@ -91,7 +91,7 @@ export default class Scene2 extends BaseScene {
     floor.rotateX(-Math.PI / 2);
     world.add(floor);
 
-    const points = new Points(new SphereGeometry(50), new PointsMaterial({ size: 2 }));
+    const points = new Points(new SphereGeometry(50), new PointsMaterial({ size: 0.5 }));
     points.name = 'points';
     points.position.set(-100, 50, 0);
     world.add(points);
