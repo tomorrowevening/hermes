@@ -1,6 +1,9 @@
 import { Color, DirectionalLight, Mesh, MeshPhongMaterial, PerspectiveCamera, Scene, TorusKnotGeometry, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
 import { IS_DEV } from '../../constants';
 import { hierarchyUUID } from '../../../editor/utils';
+import { cubeTextures } from '../loader';
+
+const zero3 = new Vector3();
 
 export default class RTTScene extends Scene {
   renderTarget: WebGLRenderTarget;
@@ -11,9 +14,12 @@ export default class RTTScene extends Scene {
     super();
     this.name = 'RTTScene';
 
+    const envMap = cubeTextures.get('environment')!;
+    this.background = envMap;
+
     this.camera = new PerspectiveCamera(60, 1, 10, 2000);
     this.camera.position.set(0, 0, 100);
-    this.camera.lookAt(new Vector3());
+    this.camera.lookAt(zero3);
 
     const light = new DirectionalLight(new Color(0xff99ff), 1);
     light.name = 'sun';
@@ -29,8 +35,12 @@ export default class RTTScene extends Scene {
   }
 
   draw(time: number, renderer: WebGLRenderer) {
-    // Update
-    this.mesh.position.x = Math.sin(time * 0.5) * 50;
+    const radius = 100;
+    const angle = time * 0.05 * Math.PI * 2;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    this.camera.position.set(x, 0, z);
+    this.camera.lookAt(zero3);
 
     // Draw
     renderer.setRenderTarget(this.renderTarget);

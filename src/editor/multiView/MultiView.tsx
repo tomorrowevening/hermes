@@ -32,7 +32,7 @@ import { mapLinear } from 'three/src/math/MathUtils';
 import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
-import { MultiViewMode, RenderMode } from './MultiViewData';
+import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
 // Models
 import { ToolEvents, debugDispatcher } from '../global';
 // Components
@@ -45,7 +45,6 @@ let currentRenderMode: RenderMode = 'Renderer';
 
 // Scene
 let currentScene: Scene;
-let useRaycaster = false;
 
 // Cameras
 let sceneSet = false;
@@ -129,8 +128,9 @@ export default function MultiView(props: MultiViewProps) {
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [modeOpen, setModeOpen] = useState(false);
   const [renderModeOpen, setRenderModeOpen] = useState(false);
+  const [interactionMode, setInteractionMode] = useState<InteractionMode>('Orbit');
   const [interactionModeOpen, setInteractionModeOpen] = useState(false);
-  const [, setLastUpdate] = useState(Date.now());
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
 
   // Save Local Storage
   localStorage.setItem(`${appID}_mode`, mode);
@@ -580,7 +580,7 @@ export default function MultiView(props: MultiViewProps) {
       };
 
       const onMouseMove = (event: MouseEvent) => {
-        if (!useRaycaster) return;
+        if (interactionMode === 'Orbit') return;
         const size = new Vector2();
         renderer!.getSize(size);
 
@@ -629,7 +629,7 @@ export default function MultiView(props: MultiViewProps) {
       };
 
       const onClick = (event: MouseEvent) => {
-        if (!useRaycaster) return;
+        if (interactionMode === 'Orbit') return;
 
         const size = new Vector2();
         renderer!.getSize(size);
@@ -640,6 +640,9 @@ export default function MultiView(props: MultiViewProps) {
         const intersects = raycaster.intersectObjects(currentScene.children);
         if (intersects.length > 0) {
           props.three.getObject(intersects[0].object.uuid);
+          interactionHelper.visible = false;
+          setInteractionMode('Orbit');
+          setLastUpdate(Date.now());
         }
       };
 
@@ -651,7 +654,7 @@ export default function MultiView(props: MultiViewProps) {
         element.removeEventListener('click', onClick);
       };
     }
-  }, [mode, renderer]);
+  }, [mode, renderer, interactionMode]);
 
   // Camera names
   const cameraOptions: string[] = [];
@@ -752,7 +755,7 @@ export default function MultiView(props: MultiViewProps) {
             )}
           </div>
 
-          <div className='settings'>
+          <div className='settings' key={lastUpdate}>
             {/* Mode */}
             <Dropdown
               index={ModeOptions.indexOf(mode)}
@@ -806,14 +809,14 @@ export default function MultiView(props: MultiViewProps) {
 
             {/* Interaction Mode */}
             <Dropdown
-              index={0}
+              index={interactionMode === 'Orbit' ? 0 : 1}
               options={[
                 'Orbit Mode',
                 'Selection Mode',
               ]}
               onSelect={(value: string) => {
-                useRaycaster = value === 'Selection Mode';
-                interactionHelper.visible = useRaycaster;
+                interactionHelper.visible = value === 'Selection Mode';
+                setInteractionMode(interactionHelper.visible ? 'Selection' : 'Orbit');
               }}
               open={interactionModeOpen}
               onToggle={(value: boolean) => {
