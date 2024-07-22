@@ -775,32 +775,38 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         if (scene !== null) {
           const child = scene.getObjectByProperty('uuid', object.uuid);
           if (child !== undefined) {
-            textureFromSrc(updatedValue.src).then((texture: Texture) => {
-              texture.offset.set(updatedValue.offset[0], updatedValue.offset[1]);
-              texture.repeat.set(updatedValue.repeat[0], updatedValue.repeat[1]);
-
+            const onComplete = (value: Texture | null) => {
               const material = child['material'] as Material;
               const keys = textName.split('.');
               const total = keys.length;
               switch (total) {
                 case 1:
-                  material[keys[0]] = texture;
+                  material[keys[0]] = value;
                   break;
                 case 2:
-                  material[keys[0]][keys[1]] = texture;
+                  material[keys[0]][keys[1]] = value;
                   break;
                 case 3:
-                  material[keys[0]][keys[1]][keys[2]] = texture;
+                  material[keys[0]][keys[1]][keys[2]] = value;
                   break;
                 case 4:
-                  material[keys[0]][keys[1]][keys[2]][keys[3]] = texture;
+                  material[keys[0]][keys[1]][keys[2]][keys[3]] = value;
                   break;
                 case 5:
-                  material[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = texture;
+                  material[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
                   break;
               }
               material.needsUpdate = true;
-            });
+            };
+            if (updatedValue.src.length > 0) {
+              textureFromSrc(updatedValue.src).then((texture: Texture) => {
+                texture.offset.set(updatedValue.offset[0], updatedValue.offset[1]);
+                texture.repeat.set(updatedValue.repeat[0], updatedValue.repeat[1]);
+                onComplete(texture);
+              });
+            } else {
+              onComplete(null);
+            }
           }
         }
       },

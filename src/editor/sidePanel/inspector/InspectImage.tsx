@@ -102,6 +102,10 @@ export default function InspectImage(props: InspectImageProps) {
             onChange={changeInput}
           />
         </div>
+        <button onClick={() => {
+          onChange('', offsetX, offsetY, repeatX, repeatY);
+          imgRefRef.current!.src = noImage;
+        }}>Clear</button>
       </div>
     </div>
   );
