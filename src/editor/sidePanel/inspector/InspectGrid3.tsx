@@ -3,7 +3,8 @@ import { Euler, Matrix3, Vector3 } from 'three';
 import InspectNumber from './InspectNumber';
 
 interface InspectGrid3Props {
-  value: Vector3 | Matrix3 | Euler
+  value: Vector3 | Matrix3 | Euler;
+  step?: number;
   onChange: (evt: any) => void;
 }
 
@@ -11,6 +12,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
   const isVector = props.value['isVector3'] !== undefined;
   const isEuler = props.value['isEuler'] !== undefined;
   const isMatrix = props.value['elements'] !== undefined;
+  const step = props.step !== undefined ? props.step : 0.01;
   const children: any[] = [];
 
   if (isVector) {
@@ -30,7 +32,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
             value={vector[param]}
             type='number'
             prop={param}
-            step={0.01}
+            step={step}
             labelRef={labelRef}
             onChange={onChange}
           />
@@ -54,7 +56,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
             value={euler[param]}
             type='number'
             prop={param}
-            step={0.01}
+            step={step}
             labelRef={labelRef}
             onChange={onChange}
           />
@@ -78,7 +80,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
             value={matrix.elements[i]}
             type='number'
             prop={i.toString()}
-            step={0.01}
+            step={step}
             labelRef={labelRef}
             onChange={onChange}
           />

@@ -163,19 +163,19 @@ export default function InspectorField(props: InspectorFieldProps) {
       )}
 
       {props.type === 'vector2' && (
-        <InspectVector2 value={fieldValue} min={0} max={1} onChange={onChange} />
+        <InspectVector2 step={props.step} value={fieldValue} min={0} max={1} onChange={onChange} />
       )}
 
       {props.type === 'grid3' && (
-        <InspectGrid3 value={fieldValue} onChange={onChange} />
+        <InspectGrid3 step={props.step} value={fieldValue} onChange={onChange} />
       )}
 
       {props.type === 'grid4' && (
-        <InspectGrid4 value={fieldValue} onChange={onChange} />
+        <InspectGrid4 step={props.step} value={fieldValue} onChange={onChange} />
       )}
 
       {props.type === 'euler' && (
-        <InspectGrid3 value={fieldValue} onChange={onChange} />
+        <InspectGrid3 step={props.step} value={fieldValue} onChange={onChange} />
       )}
     </div>
   );

@@ -3,12 +3,14 @@ import { Matrix4, Vector4 } from 'three';
 import InspectNumber from './InspectNumber';
 
 interface InspectGrid4Props {
-  value: Vector4 | Matrix4
+  value: Vector4 | Matrix4;
+  step?: number;
   onChange: (evt: any) => void;
 }
 
 export default function InspectGrid4(props: InspectGrid4Props) {
   const isVector = props.value['x'] !== undefined;
+  const step = props.step !== undefined ? props.step : 0.01;
   const children: any[] = [];
 
   if (isVector) {
@@ -28,7 +30,7 @@ export default function InspectGrid4(props: InspectGrid4Props) {
             value={vector.x}
             type='number'
             prop={param}
-            step={0.01}
+            step={step}
             labelRef={labelRef}
             onChange={onChange}
           />
@@ -52,7 +54,7 @@ export default function InspectGrid4(props: InspectGrid4Props) {
             value={matrix.elements[i]}
             type='number'
             prop={i.toString()}
-            step={0.01}
+            step={step}
             labelRef={labelRef}
             onChange={onChange}
           />

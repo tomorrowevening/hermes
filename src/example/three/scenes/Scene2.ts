@@ -50,6 +50,12 @@ export default class Scene2 extends BaseScene {
     if (three.renderer) this.renderer = three.renderer;
   }
 
+  override dispose(): void {
+    const three = app.components.get('three') as RemoteThree;
+    three.removeScene(this.rttScene);
+    super.dispose();
+  }
+
   private createLights() {
     RectAreaLightUniformsLib.init();
 

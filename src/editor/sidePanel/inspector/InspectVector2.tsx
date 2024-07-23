@@ -5,6 +5,7 @@ interface InspectVector2Props {
   min: number
   max: number
   value: any
+  step?: number
   onChange: (evt: any) => void;
 }
 
@@ -84,6 +85,8 @@ export default function InspectVector2(props: InspectVector2Props) {
     pointRef.current!.style.top = `${y * 100}%`;
   }, [bounds, value]);
 
+  const step = props.step !== undefined ? props.step : 0.01;
+
   return (
     <div className='vector2'>
       <div className='fields'>
@@ -95,7 +98,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             value={value.x}
             min={bounds.min}
             max={bounds.max}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
         </div>
@@ -107,7 +110,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             value={value.y}
             min={bounds.min}
             max={bounds.max}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
         </div>
@@ -117,7 +120,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             ref={minRef}
             type='number'
             value={bounds.min}
-            step={0.01}
+            step={step}
             onChange={changeMin}
           />
         </div>
@@ -127,7 +130,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             ref={maxRef}
             type='number'
             value={bounds.max}
-            step={0.01}
+            step={step}
             onChange={changeMax}
           />
         </div>
