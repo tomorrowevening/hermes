@@ -38,6 +38,7 @@ export function InspectTransform(object: RemoteObject, three: RemoteThree) {
           title: 'Position',
           prop: 'position',
           type: 'grid3',
+          step: 0.1,
           value: position,
           onChange: updateTransform,
         },

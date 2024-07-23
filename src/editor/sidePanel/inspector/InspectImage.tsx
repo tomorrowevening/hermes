@@ -3,13 +3,15 @@ import { uploadLocalImage } from './utils/InspectMaterial';
 import { noImage } from '@/editor/components/content';
 
 type InspectImageProps = {
-  title: string
-  prop?: string
-  value?: any
-  onChange?: (prop: string, value: any) => void
+  title: string;
+  prop?: string;
+  value?: any;
+  step?: number;
+  onChange?: (prop: string, value: any) => void;
 }
 
 export default function InspectImage(props: InspectImageProps) {
+  const step = props.step !== undefined ? props.step : 0.01;
   // References
   const imgRefRef = useRef<HTMLImageElement>(null);
   const offXRef = useRef<HTMLInputElement>(null);
@@ -74,14 +76,14 @@ export default function InspectImage(props: InspectImageProps) {
             ref={offXRef}
             type='number'
             value={offsetX}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
           <input
             ref={offYRef}
             type='number'
             value={offsetY}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
         </div>
@@ -91,14 +93,14 @@ export default function InspectImage(props: InspectImageProps) {
             ref={repeatXRef}
             type='number'
             value={repeatX}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
           <input
             ref={repeatYRef}
             type='number'
             value={repeatY}
-            step={0.01}
+            step={step}
             onChange={changeInput}
           />
         </div>
