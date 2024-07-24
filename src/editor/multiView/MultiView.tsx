@@ -9,6 +9,7 @@ import {
   Group,
   HemisphereLight,
   HemisphereLightHelper,
+  Material,
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
@@ -41,8 +42,6 @@ import UVMaterial from './UVMaterial';
 // Utils
 import { dispose } from '../utils';
 
-let currentRenderMode: RenderMode = 'Renderer';
-
 // Scene
 let currentScene: Scene;
 
@@ -52,6 +51,10 @@ let tlCam: any = null;
 let trCam: any = null;
 let blCam: any = null;
 let brCam: any = null;
+let tlRender: RenderMode = 'Renderer';
+let trRender: RenderMode = 'Renderer';
+let blRender: RenderMode = 'Renderer';
+let brRender: RenderMode = 'Renderer';
 
 interface MultiViewProps {
   three: RemoteThree;
@@ -67,10 +70,16 @@ export default function MultiView(props: MultiViewProps) {
   // Get Local Storage
   const appID = props.three.app.appID;
   const savedMode = localStorage.getItem(`${appID}_mode`);
+  // Cameras
   const tlCamName = localStorage.getItem(`${appID}_tlCam`) !== null ? localStorage.getItem(`${appID}_tlCam`) as string : 'Debug';
   const trCamName = localStorage.getItem(`${appID}_trCam`) !== null ? localStorage.getItem(`${appID}_trCam`) as string : 'Orthographic';
   const blCamName = localStorage.getItem(`${appID}_blCam`) !== null ? localStorage.getItem(`${appID}_blCam`) as string : 'Front';
   const brCamName = localStorage.getItem(`${appID}_brCam`) !== null ? localStorage.getItem(`${appID}_brCam`) as string : 'Top';
+  // Render modes
+  const tlRenderMode = localStorage.getItem(`${appID}_tlRender`) !== null ? localStorage.getItem(`${appID}_tlRender`) as string : 'Renderer';
+  const trRenderMode = localStorage.getItem(`${appID}_trRender`) !== null ? localStorage.getItem(`${appID}_trRender`) as string : 'Renderer';
+  const blRenderMode = localStorage.getItem(`${appID}_blRender`) !== null ? localStorage.getItem(`${appID}_blRender`) as string : 'Renderer';
+  const brRenderMode = localStorage.getItem(`${appID}_brRender`) !== null ? localStorage.getItem(`${appID}_brRender`) as string : 'Renderer';
 
   // Memo
   const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
@@ -99,14 +108,6 @@ export default function MultiView(props: MultiViewProps) {
     cameras.set(name, camera);
     return camera;
   }
-
-  const renderOptions: RenderMode[] = [
-    'Renderer',
-    'Depth',
-    'Normals',
-    'UVs',
-    'Wireframe',
-  ];
 
   const ModeOptions: MultiViewMode[] = [
     'Single',
@@ -138,6 +139,10 @@ export default function MultiView(props: MultiViewProps) {
   localStorage.setItem(`${appID}_trCam`, trCamName);
   localStorage.setItem(`${appID}_blCam`, blCamName);
   localStorage.setItem(`${appID}_brCam`, brCamName);
+  localStorage.setItem(`${appID}_tlRender`, tlRenderMode);
+  localStorage.setItem(`${appID}_trRender`, trRenderMode);
+  localStorage.setItem(`${appID}_blRender`, blRenderMode);
+  localStorage.setItem(`${appID}_brRender`, brRenderMode);
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -432,18 +437,40 @@ export default function MultiView(props: MultiViewProps) {
       });
     };
 
+    function getSceneOverride(mode: RenderMode): Material | null {
+      switch (mode) {
+        case 'Depth':
+          return depthMaterial;
+        case 'Normals':
+          return normalsMaterial;
+        case 'Renderer':
+          return null;
+        case 'UVs':
+          return uvMaterial;
+        case 'Wireframe':
+          return wireframeMaterial;
+      }
+      return null;
+    }
+
     const drawSingle = () => {
+      const material = getSceneOverride(tlRender);
+      scene.overrideMaterial = material;
       renderer.setViewport(0, 0, width, height);
       renderer.setScissor(0, 0, width, height);
       renderer.render(scene, tlCam);
     };
 
     const drawDouble = () => {
+      const materialA = getSceneOverride(tlRender);
+      const materialB = getSceneOverride(trRender);
+      scene.overrideMaterial = materialA;
       if (mode === 'Side by Side') {
         renderer.setViewport(0, 0, bw, height);
         renderer.setScissor(0, 0, bw, height);
         renderer.render(scene, tlCam);
 
+        scene.overrideMaterial = materialB;
         renderer.setViewport(bw, 0, bw, height);
         renderer.setScissor(bw, 0, bw, height);
         renderer.render(scene, trCam);
@@ -453,6 +480,7 @@ export default function MultiView(props: MultiViewProps) {
         renderer.setScissor(0, y, width, bh);
         renderer.render(scene, tlCam);
 
+        scene.overrideMaterial = materialB;
         renderer.setViewport(0, 0, width, bh);
         renderer.setScissor(0, 0, width, bh);
         renderer.render(scene, trCam);
@@ -460,18 +488,24 @@ export default function MultiView(props: MultiViewProps) {
     };
 
     const drawQuad = () => {
+      const materialA = getSceneOverride(tlRender);
+      const materialB = getSceneOverride(trRender);
+      const materialC = getSceneOverride(blRender);
+      const materialD = getSceneOverride(brRender);
       let x = 0;
       let y = 0;
       y = height - bh;
 
       // TL
       x = 0;
+      scene.overrideMaterial = materialA;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
       renderer.render(scene, tlCam);
 
       // TR
       x = bw;
+      scene.overrideMaterial = materialB;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
       renderer.render(scene, trCam);
@@ -480,12 +514,14 @@ export default function MultiView(props: MultiViewProps) {
 
       // BL
       x = 0;
+      scene.overrideMaterial = materialC;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
       renderer.render(scene, blCam);
 
       // BR
       x = bw;
+      scene.overrideMaterial = materialD;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
       renderer.render(scene, brCam);
@@ -671,86 +707,149 @@ export default function MultiView(props: MultiViewProps) {
           <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`} ref={containerRef}>
             {mode === 'Single' && (
               <>
-                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-                  controls.get(tlCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(tlCam);
-                    tlCam = camera;
-                    localStorage.setItem(`${appID}_tlCam`, camera.name);
-                    createControls(camera, tlWindow.current!);
-                  }
-                }} />
+                <CameraWindow
+                  camera={tlCam}
+                  options={cameraOptions}
+                  ref={tlWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(tlCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(tlCam);
+                      tlCam = camera;
+                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      createControls(camera, tlWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    tlRender = value;
+                    localStorage.setItem(`${appID}_tlRender`, value);
+                  }}
+                />
               </>
             )}
 
             {(mode === 'Side by Side' || mode === 'Stacked') && (
               <>
-                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-                  controls.get(tlCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(tlCam);
-                    tlCam = camera;
-                    localStorage.setItem(`${appID}_tlCam`, camera.name);
-                    createControls(camera, tlWindow.current!);
-                  }
-                }} />
-                <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
-                  controls.get(trCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(trCam);
-                    trCam = camera;
-                    localStorage.setItem(`${appID}_trCam`, camera.name);
-                    createControls(camera, trWindow.current!);
-                  }
-                }} />
+                <CameraWindow
+                  camera={tlCam}
+                  options={cameraOptions}
+                  ref={tlWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(tlCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(tlCam);
+                      tlCam = camera;
+                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      createControls(camera, tlWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    tlRender = value;
+                    localStorage.setItem(`${appID}_tlRender`, value);
+                  }}
+                />
+                <CameraWindow
+                  camera={trCam}
+                  options={cameraOptions}
+                  ref={trWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(trCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(trCam);
+                      trCam = camera;
+                      localStorage.setItem(`${appID}_trCam`, camera.name);
+                      createControls(camera, trWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    trRender = value;
+                    localStorage.setItem(`${appID}_trRender`, value);
+                  }}
+                />
               </>
             )}
 
             {mode === 'Quad' && (
               <>
-                <CameraWindow camera={tlCam} options={cameraOptions} ref={tlWindow} onSelect={(value: string) => {
-                  controls.get(tlCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(tlCam);
-                    tlCam = camera;
-                    localStorage.setItem(`${appID}_tlCam`, camera.name);
-                    createControls(camera, tlWindow.current!);
-                  }
-                }} />
-                <CameraWindow camera={trCam} options={cameraOptions} ref={trWindow} onSelect={(value: string) => {
-                  controls.get(trCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(trCam);
-                    trCam = camera;
-                    localStorage.setItem(`${appID}_trCam`, camera.name);
-                    createControls(camera, trWindow.current!);
-                  }
-                }} />
-                <CameraWindow camera={blCam} options={cameraOptions} ref={blWindow} onSelect={(value: string) => {
-                  controls.get(blCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(blCam);
-                    blCam = camera;
-                    localStorage.setItem(`${appID}_blCam`, camera.name);
-                    createControls(camera, blWindow.current!);
-                  }
-                }} />
-                <CameraWindow camera={brCam} options={cameraOptions} ref={brWindow} onSelect={(value: string) => {
-                  controls.get(brCam.name)?.dispose();
-                  const camera = cameras.get(value);
-                  if (camera !== undefined) {
-                    clearCamera(brCam);
-                    brCam = camera;
-                    localStorage.setItem(`${appID}_brCam`, camera.name);
-                    createControls(camera, brWindow.current!);
-                  }
-                }} />
+                <CameraWindow
+                  camera={tlCam}
+                  options={cameraOptions}
+                  ref={tlWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(tlCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(tlCam);
+                      tlCam = camera;
+                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      createControls(camera, tlWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    tlRender = value;
+                    localStorage.setItem(`${appID}_tlRender`, value);
+                  }}
+                />
+                <CameraWindow
+                  camera={trCam}
+                  options={cameraOptions}
+                  ref={trWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(trCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(trCam);
+                      trCam = camera;
+                      localStorage.setItem(`${appID}_trCam`, camera.name);
+                      createControls(camera, trWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    trRender = value;
+                    localStorage.setItem(`${appID}_trRender`, value);
+                  }}
+                />
+                <CameraWindow
+                  camera={blCam}
+                  options={cameraOptions}
+                  ref={blWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(blCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(blCam);
+                      blCam = camera;
+                      localStorage.setItem(`${appID}_blCam`, camera.name);
+                      createControls(camera, blWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    blRender = value;
+                    localStorage.setItem(`${appID}_blRender`, value);
+                  }}
+                />
+                <CameraWindow
+                  camera={brCam}
+                  options={cameraOptions}
+                  ref={brWindow}
+                  onSelectCamera={(value: string) => {
+                    controls.get(brCam.name)?.dispose();
+                    const camera = cameras.get(value);
+                    if (camera !== undefined) {
+                      clearCamera(brCam);
+                      brCam = camera;
+                      localStorage.setItem(`${appID}_brCam`, camera.name);
+                      createControls(camera, brWindow.current!);
+                    }
+                  }}
+                  onSelectRenderMode={(value: RenderMode) => {
+                    brRender = value;
+                    localStorage.setItem(`${appID}_brRender`, value);
+                  }}
+                />
               </>
             )}
           </div>
@@ -769,40 +868,6 @@ export default function MultiView(props: MultiViewProps) {
               onToggle={(value: boolean) => {
                 setModeOpen(value);
                 if (renderModeOpen) setRenderModeOpen(false);
-                if (interactionModeOpen) setInteractionModeOpen(false);
-              }}
-            />
-
-            {/* Render Mode */}
-            <Dropdown
-              index={renderOptions.indexOf(currentRenderMode)}
-              options={renderOptions}
-              onSelect={(value: string) => {
-                if (value === currentRenderMode) return;
-                currentRenderMode = value as RenderMode;
-                switch (currentRenderMode) {
-                  case 'Depth':
-                    scene.overrideMaterial = depthMaterial;
-                    break;
-                  case 'Normals':
-                    scene.overrideMaterial = normalsMaterial;
-                    break;
-                  default:
-                  case 'Renderer':
-                    scene.overrideMaterial = null;
-                    break;
-                  case 'Wireframe':
-                    scene.overrideMaterial = wireframeMaterial;
-                    break;
-                  case 'UVs':
-                    scene.overrideMaterial = uvMaterial;
-                    break;
-                }
-              }}
-              open={renderModeOpen}
-              onToggle={(value: boolean) => {
-                if (modeOpen) setModeOpen(false);
-                setRenderModeOpen(value);
                 if (interactionModeOpen) setInteractionModeOpen(false);
               }}
             />
