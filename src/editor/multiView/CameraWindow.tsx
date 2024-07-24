@@ -51,20 +51,21 @@ interface CameraWindowProps {
   options: string[];
 }
 
-const renderOptions: RenderMode[] = [
-  'Renderer',
-  'Depth',
-  'Normals',
-  'UVs',
-  'Wireframe',
-];
-
 const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, ref: ForwardedRef<HTMLDivElement>) {
+  const renderOptions: RenderMode[] = [
+    'Renderer',
+    'Depth',
+    'Normals',
+    'UVs',
+    'Wireframe',
+  ];
+
+  // States
   const [currentRenderMode, setCurrentRenderMode] = useState<RenderMode>('Renderer');
   const [modeOpen, setModeOpen] = useState(false);
   const [renderModeOpen, setRenderModeOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const index = props.options.indexOf(props.camera.name);
+
   return (
     <div className='CameraWindow'>
       <div ref={ref} className='clickable' onClick={() => {
@@ -79,35 +80,15 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
           const newRenderMode = value as RenderMode;
           props.onSelectRenderMode(newRenderMode);
           setCurrentRenderMode(newRenderMode);
-          // currentRenderMode = value as RenderMode;
-          // switch (currentRenderMode) {
-          //   case 'Depth':
-          //     scene.overrideMaterial = depthMaterial;
-          //     break;
-          //   case 'Normals':
-          //     scene.overrideMaterial = normalsMaterial;
-          //     break;
-          //   default:
-          //   case 'Renderer':
-          //     scene.overrideMaterial = null;
-          //     break;
-          //   case 'Wireframe':
-          //     scene.overrideMaterial = wireframeMaterial;
-          //     break;
-          //   case 'UVs':
-          //     scene.overrideMaterial = uvMaterial;
-          //     break;
-          // }
         }}
         onToggle={(value: boolean) => {
           if (modeOpen) setModeOpen(false);
           setRenderModeOpen(value);
-          // if (interactionModeOpen) setInteractionModeOpen(false);
         }}
         up={true}
       />
       <Dropdown
-        index={index}
+        index={props.options.indexOf(props.camera.name)}
         open={open}
         options={props.options}
         onSelect={props.onSelectCamera}

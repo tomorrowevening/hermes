@@ -67,19 +67,7 @@ interface MultiViewProps {
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
 export default function MultiView(props: MultiViewProps) {
-  // Get Local Storage
   const appID = props.three.app.appID;
-  const savedMode = localStorage.getItem(`${appID}_mode`);
-  // Cameras
-  const tlCamName = localStorage.getItem(`${appID}_tlCam`) !== null ? localStorage.getItem(`${appID}_tlCam`) as string : 'Debug';
-  const trCamName = localStorage.getItem(`${appID}_trCam`) !== null ? localStorage.getItem(`${appID}_trCam`) as string : 'Orthographic';
-  const blCamName = localStorage.getItem(`${appID}_blCam`) !== null ? localStorage.getItem(`${appID}_blCam`) as string : 'Front';
-  const brCamName = localStorage.getItem(`${appID}_brCam`) !== null ? localStorage.getItem(`${appID}_brCam`) as string : 'Top';
-  // Render modes
-  const tlRenderMode = localStorage.getItem(`${appID}_tlRender`) !== null ? localStorage.getItem(`${appID}_tlRender`) as string : 'Renderer';
-  const trRenderMode = localStorage.getItem(`${appID}_trRender`) !== null ? localStorage.getItem(`${appID}_trRender`) as string : 'Renderer';
-  const blRenderMode = localStorage.getItem(`${appID}_blRender`) !== null ? localStorage.getItem(`${appID}_blRender`) as string : 'Renderer';
-  const brRenderMode = localStorage.getItem(`${appID}_brRender`) !== null ? localStorage.getItem(`${appID}_brRender`) as string : 'Renderer';
 
   // Memo
   const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
@@ -124,6 +112,10 @@ export default function MultiView(props: MultiViewProps) {
   const blWindow = useRef<HTMLDivElement>(null);
   const brWindow = useRef<HTMLDivElement>(null);
 
+  // Get Local Storage
+  const ls = localStorage;
+  const savedMode = ls.getItem(`${appID}_mode`);
+
   // States
   const [mode, setMode] = useState<MultiViewMode>(savedMode !== null ? savedMode as MultiViewMode : 'Single');
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
@@ -134,15 +126,15 @@ export default function MultiView(props: MultiViewProps) {
   const [lastUpdate, setLastUpdate] = useState(Date.now());
 
   // Save Local Storage
-  localStorage.setItem(`${appID}_mode`, mode);
-  localStorage.setItem(`${appID}_tlCam`, tlCamName);
-  localStorage.setItem(`${appID}_trCam`, trCamName);
-  localStorage.setItem(`${appID}_blCam`, blCamName);
-  localStorage.setItem(`${appID}_brCam`, brCamName);
-  localStorage.setItem(`${appID}_tlRender`, tlRenderMode);
-  localStorage.setItem(`${appID}_trRender`, trRenderMode);
-  localStorage.setItem(`${appID}_blRender`, blRenderMode);
-  localStorage.setItem(`${appID}_brRender`, brRenderMode);
+  ls.setItem(`${appID}_mode`, mode);
+  ls.setItem(`${appID}_tlCam`, ls.getItem(`${appID}_tlCam`) !== null ? ls.getItem(`${appID}_tlCam`) as string : 'Debug');
+  ls.setItem(`${appID}_trCam`, ls.getItem(`${appID}_trCam`) !== null ? ls.getItem(`${appID}_trCam`) as string : 'Orthographic');
+  ls.setItem(`${appID}_blCam`, ls.getItem(`${appID}_blCam`) !== null ? ls.getItem(`${appID}_blCam`) as string : 'Front');
+  ls.setItem(`${appID}_brCam`, ls.getItem(`${appID}_brCam`) !== null ? ls.getItem(`${appID}_brCam`) as string : 'Top');
+  ls.setItem(`${appID}_tlRender`, ls.getItem(`${appID}_tlRender`) !== null ? ls.getItem(`${appID}_tlRender`) as string : 'Renderer');
+  ls.setItem(`${appID}_trRender`, ls.getItem(`${appID}_trRender`) !== null ? ls.getItem(`${appID}_trRender`) as string : 'Renderer');
+  ls.setItem(`${appID}_blRender`, ls.getItem(`${appID}_blRender`) !== null ? ls.getItem(`${appID}_blRender`) as string : 'Renderer');
+  ls.setItem(`${appID}_brRender`, ls.getItem(`${appID}_brRender`) !== null ? ls.getItem(`${appID}_brRender`) as string : 'Renderer');
 
   const createControls = (camera: Camera, element: HTMLDivElement) => {
     // Previous items
@@ -265,10 +257,10 @@ export default function MultiView(props: MultiViewProps) {
     debugCamera.lookAt(0, 0, 0);
     cameras.set('Debug', debugCamera);
 
-    tlCam = cameras.get(localStorage.getItem(`${appID}_tlCam`) as string)!;
-    trCam = cameras.get(localStorage.getItem(`${appID}_trCam`) as string)!;
-    blCam = cameras.get(localStorage.getItem(`${appID}_blCam`) as string)!;
-    brCam = cameras.get(localStorage.getItem(`${appID}_brCam`) as string)!;
+    tlCam = cameras.get(ls.getItem(`${appID}_tlCam`) as string)!;
+    trCam = cameras.get(ls.getItem(`${appID}_trCam`) as string)!;
+    blCam = cameras.get(ls.getItem(`${appID}_blCam`) as string)!;
+    brCam = cameras.get(ls.getItem(`${appID}_brCam`) as string)!;
   }, []);
 
   // Event handling
@@ -717,13 +709,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(tlCam);
                       tlCam = camera;
-                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      ls.setItem(`${appID}_tlCam`, camera.name);
                       createControls(camera, tlWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     tlRender = value;
-                    localStorage.setItem(`${appID}_tlRender`, value);
+                    ls.setItem(`${appID}_tlRender`, value);
                   }}
                 />
               </>
@@ -741,13 +733,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(tlCam);
                       tlCam = camera;
-                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      ls.setItem(`${appID}_tlCam`, camera.name);
                       createControls(camera, tlWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     tlRender = value;
-                    localStorage.setItem(`${appID}_tlRender`, value);
+                    ls.setItem(`${appID}_tlRender`, value);
                   }}
                 />
                 <CameraWindow
@@ -760,13 +752,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(trCam);
                       trCam = camera;
-                      localStorage.setItem(`${appID}_trCam`, camera.name);
+                      ls.setItem(`${appID}_trCam`, camera.name);
                       createControls(camera, trWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     trRender = value;
-                    localStorage.setItem(`${appID}_trRender`, value);
+                    ls.setItem(`${appID}_trRender`, value);
                   }}
                 />
               </>
@@ -784,13 +776,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(tlCam);
                       tlCam = camera;
-                      localStorage.setItem(`${appID}_tlCam`, camera.name);
+                      ls.setItem(`${appID}_tlCam`, camera.name);
                       createControls(camera, tlWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     tlRender = value;
-                    localStorage.setItem(`${appID}_tlRender`, value);
+                    ls.setItem(`${appID}_tlRender`, value);
                   }}
                 />
                 <CameraWindow
@@ -803,13 +795,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(trCam);
                       trCam = camera;
-                      localStorage.setItem(`${appID}_trCam`, camera.name);
+                      ls.setItem(`${appID}_trCam`, camera.name);
                       createControls(camera, trWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     trRender = value;
-                    localStorage.setItem(`${appID}_trRender`, value);
+                    ls.setItem(`${appID}_trRender`, value);
                   }}
                 />
                 <CameraWindow
@@ -822,13 +814,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(blCam);
                       blCam = camera;
-                      localStorage.setItem(`${appID}_blCam`, camera.name);
+                      ls.setItem(`${appID}_blCam`, camera.name);
                       createControls(camera, blWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     blRender = value;
-                    localStorage.setItem(`${appID}_blRender`, value);
+                    ls.setItem(`${appID}_blRender`, value);
                   }}
                 />
                 <CameraWindow
@@ -841,13 +833,13 @@ export default function MultiView(props: MultiViewProps) {
                     if (camera !== undefined) {
                       clearCamera(brCam);
                       brCam = camera;
-                      localStorage.setItem(`${appID}_brCam`, camera.name);
+                      ls.setItem(`${appID}_brCam`, camera.name);
                       createControls(camera, brWindow.current!);
                     }
                   }}
                   onSelectRenderMode={(value: RenderMode) => {
                     brRender = value;
-                    localStorage.setItem(`${appID}_brRender`, value);
+                    ls.setItem(`${appID}_brRender`, value);
                   }}
                 />
               </>
