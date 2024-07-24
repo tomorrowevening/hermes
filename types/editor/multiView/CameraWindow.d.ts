@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import { Camera } from 'three';
+import { RenderMode } from './MultiViewData';
 interface DropdownProps {
     index: number;
     open: boolean;
@@ -11,7 +12,8 @@ interface DropdownProps {
 export declare const Dropdown: (props: DropdownProps) => import("react/jsx-runtime").JSX.Element;
 interface CameraWindowProps {
     camera: Camera;
-    onSelect: (value: string) => void;
+    onSelectCamera: (value: string) => void;
+    onSelectRenderMode: (value: RenderMode) => void;
     options: string[];
 }
 declare const CameraWindow: import("react").ForwardRefExoticComponent<CameraWindowProps & import("react").RefAttributes<HTMLDivElement>>;
