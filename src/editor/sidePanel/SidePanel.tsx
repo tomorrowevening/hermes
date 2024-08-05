@@ -37,30 +37,20 @@ export default function SidePanel(props: SidePanelState) {
     }
   };
 
-  const onAddGroup = (evt: any) => {
-    console.log('add group', evt);
-  };
-
-  const onRemoveGroup = (evt: any) => {
-    console.log('remove group', evt);
-  };
-
   useEffect(() => {
     debugDispatcher.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
     debugDispatcher.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
-    debugDispatcher.addEventListener(ToolEvents.ADD_GROUP, onAddGroup);
-    debugDispatcher.addEventListener(ToolEvents.REMOVE_GROUP, onRemoveGroup);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
       debugDispatcher.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
-      debugDispatcher.removeEventListener(ToolEvents.ADD_GROUP, onAddGroup);
-      debugDispatcher.removeEventListener(ToolEvents.REMOVE_GROUP, onRemoveGroup);
     };
   }, []);
 
   return (
-    <div id='SidePanel' key={`SidePanel ${lastUpdate}`}>
-      {sceneComponents}
+    <div id='SidePanel'>
+      <div key={lastUpdate}>
+        {sceneComponents}
+      </div>
       <Inspector three={props.three} />
     </div>
   );
