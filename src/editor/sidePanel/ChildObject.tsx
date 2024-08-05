@@ -18,15 +18,16 @@ export default function ChildObject(props: ChildObjectProps) {
   }
 
   useEffect(() => {
-    const uuid = props.child!.uuid;
-    const scene = props.three.getScene(uuid);
-    if (scene !== null) {
-      const child = scene.getObjectByProperty('uuid', uuid);
-      if (child !== undefined) {
-        visibleRef.current!.style.opacity = child.visible ? '1' : '0.25';
+    if (props.child) {
+      const scene = props.three.getScene(props.child.uuid);
+      if (scene !== null) {
+        const child = scene.getObjectByProperty('uuid', props.child.uuid);
+        if (child !== undefined) {
+          visibleRef.current!.style.opacity = child.visible ? '1' : '0.25';
+        }
       }
     }
-  }, []);
+  }, [open]);
 
   return (
     <>
