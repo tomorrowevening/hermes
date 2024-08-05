@@ -7,10 +7,12 @@ type AccordionProps = {
   children?: JSX.Element | JSX.Element[]
   open?: boolean
   onToggle?: (value: boolean) => void
+  canRefresh?: boolean
 }
 
 export default function Accordion(props: AccordionProps) {
   const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
   const hide = !open || props.children === undefined;
 
   return (
@@ -30,8 +32,9 @@ export default function Accordion(props: AccordionProps) {
         </p>
         <p className='label'>{capitalize(props.label)}</p>
       </button>
+      {props.canRefresh ? <button className='refresh' onClick={() => setLastUpdated(Date.now())}></button> : null}
       {props.button}
-      <div className={open ? 'open' : ''}>
+      <div className={open ? 'open' : ''} key={lastUpdated}>
         <div>
           {props.children}
         </div>

@@ -2,12 +2,12 @@
 import { useEffect, useState } from 'react';
 // Models
 import { debugDispatcher, ToolEvents } from '../global';
+import { RemoteObject, SidePanelState } from './types';
 // Components
 import '../scss/_sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import Inspector from './inspector/Inspector';
-import { RemoteObject, SidePanelState } from './types';
 
 export default function SidePanel(props: SidePanelState) {
   const [scenes] = useState<RemoteObject[]>([]);
@@ -39,10 +39,10 @@ export default function SidePanel(props: SidePanelState) {
   }, []);
 
   // Components
-  const components: any[] = [];
+  const sceneComponents: any[] = [];
   scenes.forEach((scene: any, index: number) => {
-    components.push(
-      <Accordion label={`Scene: ${scene.name}`} open={true} key={`scene_${index}`}>
+    sceneComponents.push(
+      <Accordion label={`Scene: ${scene.name}`} open={true} key={`scene_${index}`} canRefresh={true}>
         <ContainerObject child={scene} scene={scene} three={props.three} />
       </Accordion>
     );
@@ -50,7 +50,7 @@ export default function SidePanel(props: SidePanelState) {
 
   return (
     <div id='SidePanel' key={`SidePanel ${lastUpdate}`}>
-      {components}
+      {sceneComponents}
       <Inspector three={props.three} />
     </div>
   );
