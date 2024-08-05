@@ -27,7 +27,7 @@ export default function ChildObject(props: ChildObjectProps) {
         }
       }
     }
-  }, []);
+  }, [open]);
 
   return (
     <>
