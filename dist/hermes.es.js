@@ -1725,7 +1725,7 @@ function $i(e, n, a) {
   };
 }
 function Wt(e) {
-  const [n, a] = U(e.open !== void 0 ? e.open : !0), [t, i] = U(Date.now()), o = !n || e.children === void 0;
+  const [n, a] = U(e.open !== void 0 ? e.open : !0), [t, i] = U(Math.random()), o = !n || e.children === void 0;
   return /* @__PURE__ */ u.jsxs("div", { className: `accordion ${o ? "hide" : ""}`, children: [
     /* @__PURE__ */ u.jsxs(
       "button",
@@ -1747,7 +1747,7 @@ function Wt(e) {
         ]
       }
     ),
-    e.canRefresh ? /* @__PURE__ */ u.jsx("button", { className: "refresh", onClick: () => i(Date.now()) }) : null,
+    e.canRefresh ? /* @__PURE__ */ u.jsx("button", { className: "refresh", onClick: () => i(Math.random()) }) : null,
     e.button,
     /* @__PURE__ */ u.jsx("div", { className: n ? "open" : "", children: /* @__PURE__ */ u.jsx("div", { children: e.children }) }, t)
   ] });
