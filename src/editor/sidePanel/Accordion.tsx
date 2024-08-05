@@ -12,7 +12,7 @@ type AccordionProps = {
 
 export default function Accordion(props: AccordionProps) {
   const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
-  const [lastUpdated, setLastUpdated] = useState(Date.now());
+  const [lastUpdated, setLastUpdated] = useState(Math.random());
   const hide = !open || props.children === undefined;
 
   return (
@@ -32,7 +32,7 @@ export default function Accordion(props: AccordionProps) {
         </p>
         <p className='label'>{capitalize(props.label)}</p>
       </button>
-      {props.canRefresh ? <button className='refresh' onClick={() => setLastUpdated(Date.now())}></button> : null}
+      {props.canRefresh ? <button className='refresh' onClick={() => setLastUpdated(Math.random())}></button> : null}
       {props.button}
       <div className={open ? 'open' : ''} key={lastUpdated}>
         <div>
