@@ -3479,7 +3479,7 @@ function zi(e) {
   const [n] = U([]), [a] = U([]), [t, i] = U(0), o = (s) => {
     const h = s.value;
     n.push(h), a.push(
-      /* @__PURE__ */ u.jsx(Wt, { label: `Scene: ${h.name}`, open: !0, canRefresh: !0, children: /* @__PURE__ */ u.jsx(Ka, { child: h, scene: h, three: e.three }) }, Date.now())
+      /* @__PURE__ */ u.jsx(Wt, { label: `Scene: ${h.name}`, open: !0, canRefresh: !0, children: /* @__PURE__ */ u.jsx(Ka, { child: h, scene: h, three: e.three }) }, Math.random())
     ), i(Date.now());
   }, l = (s) => {
     const h = s.value;

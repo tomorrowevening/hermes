@@ -18,7 +18,7 @@ export default function SidePanel(props: SidePanelState) {
     const scene = evt.value;
     scenes.push(scene);
     sceneComponents.push(
-      <Accordion label={`Scene: ${scene.name}`} open={true} key={Date.now()} canRefresh={true}>
+      <Accordion label={`Scene: ${scene.name}`} open={true} key={Math.random()} canRefresh={true}>
         <ContainerObject child={scene} scene={scene} three={props.three} />
       </Accordion>
     );
