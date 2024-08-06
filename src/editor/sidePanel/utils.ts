@@ -49,7 +49,7 @@ function cleanUniforms(obj: any) {
         offset: [0, 0],
         repeat: [1, 1],
       };
-    } else if (value.isTexture) {
+    } else if (value !== undefined && value.isTexture) {
       newObj[i].value = {
         src: value.image.src,
         offset: [value.offset.x, value.offset.y],

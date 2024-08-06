@@ -442,7 +442,7 @@ function La(e) {
       src: "",
       offset: [0, 0],
       repeat: [1, 1]
-    } : t.isTexture && (n[a].value = {
+    } : t !== void 0 && t.isTexture && (n[a].value = {
       src: t.image.src,
       offset: [t.offset.x, t.offset.y],
       repeat: [t.repeat.x, t.repeat.y]

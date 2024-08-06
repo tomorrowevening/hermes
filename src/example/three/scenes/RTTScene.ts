@@ -1,4 +1,4 @@
-import { Color, DirectionalLight, Mesh, MeshPhongMaterial, PerspectiveCamera, Scene, TorusKnotGeometry, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Color, DirectionalLight, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene, TorusKnotGeometry, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
 import { IS_DEV } from '../../constants';
 import { hierarchyUUID } from '../../../editor/utils';
 import { cubeTextures } from '../loader';
@@ -21,15 +21,15 @@ export default class RTTScene extends Scene {
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(zero3);
 
-    const light = new DirectionalLight(new Color(0xff99ff), 1);
+    const light = new DirectionalLight(new Color(0xffffff), 0.125);
     light.name = 'sun';
     this.add(light);
 
-    this.mesh = new Mesh(new TorusKnotGeometry(10, 3, 100, 6), new MeshPhongMaterial());
+    this.mesh = new Mesh(new TorusKnotGeometry(10, 3, 100, 6), new MeshPhysicalMaterial({ envMap: envMap, envMapIntensity: 10 }));
     this.mesh.name = 'normalMesh';
     this.add(this.mesh);
 
-    this.renderTarget = new WebGLRenderTarget(512, 512, { depthBuffer: false });
+    this.renderTarget = new WebGLRenderTarget(512, 512);
 
     if (IS_DEV) hierarchyUUID(this);
   }
