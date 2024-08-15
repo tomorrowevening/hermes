@@ -4,7 +4,7 @@ import BaseRemote from './BaseRemote';
 import { BroadcastData } from '../types';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
-import { clamp, dispose, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
+import { clamp, dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
 
 export default class RemoteThree extends BaseRemote {
   scene?: Scene = undefined;
@@ -28,6 +28,7 @@ export default class RemoteThree extends BaseRemote {
 
   getObject(uuid: string) {
     if (!this.app.debugEnabled) return;
+    if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     this.app.send({
       event: 'getObject',
       target: 'app',
@@ -36,6 +37,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   setObject(value: any) {
+    if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     const stripped = stripObject(value);
     this.app.send({
       event: 'setObject',
@@ -126,6 +128,7 @@ export default class RemoteThree extends BaseRemote {
     this.scene = value;
 
     if (!this.app.debugEnabled) return;
+    if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     resetThreeObjects();
     hierarchyUUID(value);
     const stripped = stripScene(value);

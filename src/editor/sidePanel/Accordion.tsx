@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { capitalize } from '@/editor/utils';
+import { debugDispatcher, ToolEvents } from '../global';
 
 type AccordionProps = {
   label: string
+  scene?: any
   button?: JSX.Element
   children?: JSX.Element | JSX.Element[]
   open?: boolean
@@ -14,6 +16,15 @@ export default function Accordion(props: AccordionProps) {
   const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
   const [lastUpdated, setLastUpdated] = useState(Math.random());
   const hide = !open || props.children === undefined;
+
+  const onRefresh = () => {
+    setLastUpdated(Math.random());
+  };
+
+  const onRemove = () => {
+    // @ts-ignore
+    debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
+  };
 
   return (
     <div className={`accordion ${hide ? 'hide' : ''}`}>
@@ -32,7 +43,12 @@ export default function Accordion(props: AccordionProps) {
         </p>
         <p className='label'>{capitalize(props.label)}</p>
       </button>
-      {props.canRefresh ? <button className='refresh' onClick={() => setLastUpdated(Math.random())}></button> : null}
+      {props.canRefresh ? (
+        <>
+          <button className='refresh' onClick={onRefresh}></button>
+          <button className='remove' onClick={onRemove}></button>
+        </>
+      ) : null}
       {props.button}
       <div className={open ? 'open' : ''} key={lastUpdated}>
         <div>

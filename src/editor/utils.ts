@@ -1,4 +1,4 @@
-import { InstancedMesh, Material, Mesh, Object3D, SkinnedMesh, Texture } from 'three';
+import { BufferGeometry, Float32BufferAttribute, LinearSRGBColorSpace, Material, Mesh, MeshBasicMaterial, Object3D, OrthographicCamera, Scene, Texture, WebGLRenderer } from 'three';
 
 export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);
@@ -137,3 +137,90 @@ export const dispose = (object: Object3D): void => {
   // @ts-ignore
   if (object.dispose !== undefined) object.dispose();
 };
+
+export class ExportTexture {
+  static renderer: WebGLRenderer;
+  private static canvas: HTMLCanvasElement;
+  private static context: CanvasRenderingContext2D | null = null;
+  private static scene: Scene | null = null;
+  private static camera: OrthographicCamera | null = null;
+  private static material: MeshBasicMaterial | null = null;
+  private static inited = false;
+  private static width = 100;
+  private static height = 100;
+
+  private static init() {
+    if (this.inited) return;
+
+    this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+
+    this.context = this.canvas.getContext('2d');
+
+    this.inited = true;
+  }
+
+  static renderToBlob(texture: Texture): string {
+    this.init();
+
+    // Textures
+    const repeat = texture.repeat.clone();
+    const offset = texture.offset.clone();
+    texture.repeat.set(1, 1);
+    texture.offset.set(0, 0);
+
+    // Draw
+    if (this.context !== null) {
+      this.context.clearRect(0, 0, this.width, this.height);
+
+      const image = texture.image;
+      if (image !== undefined && image !== null && image.width > 0) {
+        // @ts-ignore
+        this.canvas.title = texture.sourceFile;
+        const scale = this.canvas.width / image.width;
+        const canvas2 = this.renderToCanvas(texture);
+        this.context.drawImage( canvas2, 0, 0, image.width * scale, image.height * scale );
+      }
+    }
+
+    // Reset
+    texture.repeat.copy(repeat);
+    texture.offset.copy(offset);
+
+    return this.canvas.toDataURL('image/png');
+  }
+
+  private static renderToCanvas(texture: Texture): HTMLCanvasElement {
+    if (this.material === null) {
+      this.camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 100);
+      this.scene = new Scene();
+
+      this.material = new MeshBasicMaterial();
+
+      const triangle = new BufferGeometry();
+      triangle.setAttribute('position', new Float32BufferAttribute([-0.5, -0.5, 0, 1.5, -0.5, 0, -0.5, 1.5, 0], 3));
+      triangle.setAttribute('normal', new Float32BufferAttribute([0, 0, 1, 0, 0, 1], 3));
+      triangle.setAttribute('uv', new Float32BufferAttribute([0, 0, 2, 0, 0, 2], 2));
+      
+      const mesh = new Mesh(triangle, this.material);
+      this.scene.add(mesh);
+    }
+
+    if (texture.isRenderTargetTexture) {
+      this.material.map = texture;
+      this.renderer.render(this.scene!, this.camera!);
+    } else {
+      const beforeRender = this.renderer.outputColorSpace;
+      const beforeTex = texture.colorSpace;
+      this.renderer.outputColorSpace = LinearSRGBColorSpace;
+      texture.colorSpace = LinearSRGBColorSpace;
+      this.material.map = texture;
+      this.renderer.render(this.scene!, this.camera!);
+      this.renderer.outputColorSpace = beforeRender;
+      texture.colorSpace = beforeTex;
+    }
+
+    return this.renderer.domElement;
+  }
+}
