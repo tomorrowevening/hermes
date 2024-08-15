@@ -1,6 +1,7 @@
 /// <reference types="react" />
 type AccordionProps = {
     label: string;
+    scene?: any;
     button?: JSX.Element;
     children?: JSX.Element | JSX.Element[];
     open?: boolean;
