@@ -1,5 +1,6 @@
 import { AnimationClip, CubeTexture, Line, Material, Mesh, Object3D, Points, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
+import { ExportTexture } from '../utils';
 
 export function determineIcon(obj: RemoteObject): string {
   if (obj.name === 'cameras') {
@@ -91,25 +92,11 @@ function stripMaterialData(material: Material): RemoteMaterial {
         if (value !== null) {
           materialData[i] = value;
           if (value.isTexture) {
-            if (value instanceof Texture) {
-              const textureSource = value.source.toJSON();
-              // @ts-ignore
-              const textureURL = textureSource.url;
-              materialData[i] = {
-                src: textureURL,
-                offset: [value.offset.x, value.offset.y],
-                repeat: [value.repeat.x, value.repeat.y],
-              };
-            } else if (value instanceof CubeTexture) {
-              console.log('env map');
-              console.log(value.source.data);
-              console.log(value.source.toJSON());
-              materialData[i] = {
-                src: '',
-                offset: [value.offset.x, value.offset.y],
-                repeat: [value.repeat.x, value.repeat.y],
-              };
-            }
+            materialData[i] = {
+              src: ExportTexture.renderToBlob(value),
+              offset: [value.offset.x, value.offset.y],
+              repeat: [value.repeat.x, value.repeat.y],
+            };
           } else if (i === 'uniforms') {
             materialData[i] = cleanUniforms(materialData[i]);
           }
