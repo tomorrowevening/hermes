@@ -98,6 +98,19 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  refreshScene(value: string) {
+    if (!this.app.debugEnabled) return;
+    const scene = this.scenes.get(value);
+    if (scene !== undefined) {
+      const stripped = stripScene(scene);
+      this.app.send({
+        event: 'refreshScene',
+        target: 'app',
+        data: stripped,
+      });
+    }
+  }
+
   removeScene(value: Scene) {
     if (value === undefined) return;
     this.scenes.delete(value.name);
@@ -177,6 +190,13 @@ export default class RemoteThree extends BaseRemote {
         // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
         break;
+      case 'refreshScene':
+        app.send({
+          event: 'refreshScene',
+          target: 'editor',
+          data: stripScene((remote as RemoteThree).scenes.get(msg.data.name)!),
+        });
+        break;
     }
   }
 
@@ -189,6 +209,10 @@ export default class RemoteThree extends BaseRemote {
       case 'addScene':
         // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
+        break;
+      case 'refreshScene':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
         break;
       case 'removeScene':
         // @ts-ignore

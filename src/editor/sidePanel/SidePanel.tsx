@@ -18,11 +18,44 @@ export default function SidePanel(props: SidePanelState) {
     const scene = evt.value;
     scenes.push(scene);
     sceneComponents.push(
-      <Accordion label={`Scene: ${scene.name}`} scene={scene} open={true} key={Math.random()} canRefresh={true}>
+      <Accordion
+        label={`Scene: ${scene.name}`}
+        scene={scene}
+        open={true}
+        key={Math.random()}
+        onRefresh={() => {
+          props.three.refreshScene(scene.name);
+        }}
+      >
         <ContainerObject child={scene} scene={scene} three={props.three} />
       </Accordion>
     );
     setLastUpdate(Date.now());
+  };
+
+  const onRefreshScene = (evt: any) => {
+    console.log('refreshed!', evt);
+    const scene = evt.value;
+    for (let i = 0; i < scenes.length; i++) {
+      if (scene.uuid === scenes[i].uuid) {
+        scenes[i] = scene;
+        sceneComponents[i] = (
+          <Accordion
+            label={`Scene: ${scene.name}`}
+            scene={scene}
+            open={true}
+            key={Math.random()}
+            onRefresh={() => {
+              props.three.refreshScene(scene.name);
+            }}
+          >
+            <ContainerObject child={scene} scene={scene} three={props.three} />
+          </Accordion>
+        );
+        setLastUpdate(Date.now());
+        return;
+      }
+    }
   };
 
   const onRemoveScene = (evt: any) => {
@@ -39,9 +72,11 @@ export default function SidePanel(props: SidePanelState) {
 
   useEffect(() => {
     debugDispatcher.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
+    debugDispatcher.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
     debugDispatcher.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     return () => {
       debugDispatcher.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
+      debugDispatcher.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
       debugDispatcher.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     };
   }, []);
