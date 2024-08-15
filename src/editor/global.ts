@@ -9,6 +9,7 @@ export const ToolEvents = {
   DRAG_UPDATE: 'ToolEvents::dragUpdate',
   // SceneHierarchy
   ADD_SCENE: 'ToolEvents::addScene',
+  REFRESH_SCENE: 'ToolEvents::refreshScene',
   REMOVE_SCENE: 'ToolEvents::removeScene',
   SET_SCENE: 'ToolEvents::setScene',
   GET_OBJECT: 'ToolEvents::getObject',

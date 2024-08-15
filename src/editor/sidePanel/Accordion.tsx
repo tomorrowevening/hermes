@@ -9,17 +9,12 @@ type AccordionProps = {
   children?: JSX.Element | JSX.Element[]
   open?: boolean
   onToggle?: (value: boolean) => void
-  canRefresh?: boolean
+  onRefresh?: () => void
 }
 
 export default function Accordion(props: AccordionProps) {
   const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
-  const [lastUpdated, setLastUpdated] = useState(Math.random());
   const hide = !open || props.children === undefined;
-
-  const onRefresh = () => {
-    setLastUpdated(Math.random());
-  };
 
   const onRemove = () => {
     // @ts-ignore
@@ -43,14 +38,14 @@ export default function Accordion(props: AccordionProps) {
         </p>
         <p className='label'>{capitalize(props.label)}</p>
       </button>
-      {props.canRefresh ? (
+      {props.onRefresh ? (
         <>
-          <button className='refresh' onClick={onRefresh}></button>
+          <button className='refresh' onClick={props.onRefresh}></button>
           <button className='remove' onClick={onRemove}></button>
         </>
       ) : null}
       {props.button}
-      <div className={open ? 'open' : ''} key={lastUpdated}>
+      <div className={open ? 'open' : ''} key={Math.random()}>
         <div>
           {props.children}
         </div>
