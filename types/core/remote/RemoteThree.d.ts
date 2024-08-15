@@ -14,6 +14,7 @@ export default class RemoteThree extends BaseRemote {
     updateObject(uuid: string, key: string, value: any): void;
     createTexture(uuid: string, key: string, value: any): void;
     addScene(value: Scene): void;
+    refreshScene(value: string): void;
     removeScene(value: Scene): void;
     removeAllScenes(): void;
     getScene(uuid: string): Scene | null;

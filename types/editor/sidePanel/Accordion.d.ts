@@ -6,7 +6,7 @@ type AccordionProps = {
     children?: JSX.Element | JSX.Element[];
     open?: boolean;
     onToggle?: (value: boolean) => void;
-    canRefresh?: boolean;
+    onRefresh?: () => void;
 };
 export default function Accordion(props: AccordionProps): import("react/jsx-runtime").JSX.Element;
 export {};

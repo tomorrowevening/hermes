@@ -5,6 +5,7 @@ export declare const ToolEvents: {
     SELECT_DROPDOWN: string;
     DRAG_UPDATE: string;
     ADD_SCENE: string;
+    REFRESH_SCENE: string;
     REMOVE_SCENE: string;
     SET_SCENE: string;
     GET_OBJECT: string;
