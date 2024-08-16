@@ -34,7 +34,6 @@ export default function SidePanel(props: SidePanelState) {
   };
 
   const onRefreshScene = (evt: any) => {
-    console.log('refreshed!', evt);
     const scene = evt.value;
     for (let i = 0; i < scenes.length; i++) {
       if (scene.uuid === scenes[i].uuid) {
