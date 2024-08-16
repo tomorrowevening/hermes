@@ -257,10 +257,16 @@ export default function MultiView(props: MultiViewProps) {
     debugCamera.lookAt(0, 0, 0);
     cameras.set('Debug', debugCamera);
 
-    tlCam = cameras.get(ls.getItem(`${appID}_tlCam`) as string)!;
-    trCam = cameras.get(ls.getItem(`${appID}_trCam`) as string)!;
-    blCam = cameras.get(ls.getItem(`${appID}_blCam`) as string)!;
-    brCam = cameras.get(ls.getItem(`${appID}_brCam`) as string)!;
+    tlCam = cameras.get(ls.getItem(`${appID}_tlCam`) as string);
+    trCam = cameras.get(ls.getItem(`${appID}_trCam`) as string);
+    blCam = cameras.get(ls.getItem(`${appID}_blCam`) as string);
+    brCam = cameras.get(ls.getItem(`${appID}_brCam`) as string);
+
+    // In case a scene-specific camera was used and isn't available, defer to default cameras
+    if (tlCam === undefined) tlCam = cameras.get('Debug');
+    if (trCam === undefined) trCam = cameras.get('Orthographic');
+    if (blCam === undefined) blCam = cameras.get('Front');
+    if (brCam === undefined) brCam = cameras.get('Top');
   }, []);
 
   // Event handling
