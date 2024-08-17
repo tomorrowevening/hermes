@@ -2248,6 +2248,8 @@ function ni(e) {
       return "displacementMap";
     case "Emissive Map":
       return "emissiveMap";
+    case "Gradient Map":
+      return "gradientMap";
     case "Iridescence Map":
       return "iridescenceMap";
     case "Iridescence Thickness Map":
@@ -2279,6 +2281,8 @@ function At(e) {
   switch (e) {
     case "alphaMap":
       return "Alpha Map";
+    case "anisotropy":
+      return "Anisotropy";
     case "anisotropyMap":
       return "Anisotropy Map";
     case "anisotropyRotation":
@@ -2289,6 +2293,8 @@ function At(e) {
       return "AO Map Intensity";
     case "attenuationColor":
       return "Attenuation Color";
+    case "attenuationDistance":
+      return "Attenuation Distance";
     case "blendAlpha":
       return "Blend Alpha";
     case "blendColor":
@@ -2311,6 +2317,8 @@ function At(e) {
       return "Bump Map";
     case "bumpScale":
       return "Bump Scale";
+    case "clearcoat":
+      return "Clearcoat";
     case "clearcoatMap":
       return "Clearcoat Map";
     case "clearcoatNormalMap":
@@ -2329,6 +2337,8 @@ function At(e) {
       return "Depth Test";
     case "depthWrite":
       return "Depth Write";
+    case "dispersion":
+      return "Dispersion";
     case "displacementBias":
       return "Displacement Bias";
     case "displacementMap":
@@ -2347,6 +2357,8 @@ function At(e) {
       return "Environment Map";
     case "envMapIntensity":
       return "Environment Map Intensity";
+    case "envMapRotation":
+      return "Environment Map Rotation";
     case "extensions":
       return "Extensions";
     case "flatShading":
@@ -2359,6 +2371,8 @@ function At(e) {
       return "Gradient Map";
     case "ior":
       return "IOR";
+    case "iridescence":
+      return "Iridescence";
     case "iridescenceIOR":
       return "Iridescence IOR";
     case "iridescenceMap":
@@ -2397,6 +2411,8 @@ function At(e) {
       return "Roughness";
     case "roughnessMap":
       return "Roughness Map";
+    case "sheen":
+      return "Sheen";
     case "sheenColor":
       return "Sheen Color";
     case "sheenColorMap":
