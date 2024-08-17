@@ -43,7 +43,6 @@ export function acceptedMaterialNames(name: string): boolean {
   return !(
     name === 'alphaHash' ||
     name === 'alphaToCoverage' ||
-    name === 'attenuationDistance' ||
     name === 'blendAlpha' ||
     name === 'blendColor' ||
     name === 'blendDstAlpha' ||

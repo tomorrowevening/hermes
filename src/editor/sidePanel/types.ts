@@ -65,6 +65,13 @@ export interface RemoteMaterial {
   defines: any
   extensions: any
   uniforms: any
+  anisotropy: number
+  attenuationDistance: number
+  clearcoat: number
+  dispersion: number
+  iridescence: number
+  sheen: number
+  gradientMap: any
   // Colors
   color?: Color
   attenuationColor?: Color
