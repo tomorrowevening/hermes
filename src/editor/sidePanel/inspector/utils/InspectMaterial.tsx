@@ -87,6 +87,7 @@ export function imageNames(name: string): string {
     case 'Clearcoat Roughness Map': return 'clearcoatRoughnessMap';
     case 'Displacement Map': return 'displacementMap';
     case 'Emissive Map': return 'emissiveMap';
+    case 'Gradient Map': return 'gradientMap';
     case 'Iridescence Map': return 'iridescenceMap';
     case 'Iridescence Thickness Map': return 'iridescenceThicknessMap';
     case 'Map': return 'map';
@@ -106,11 +107,13 @@ export function imageNames(name: string): string {
 export function prettyName(name: string): string {
   switch (name) {
     case 'alphaMap': return 'Alpha Map';
+    case 'anisotropy': return 'Anisotropy';
     case 'anisotropyMap': return 'Anisotropy Map';
     case 'anisotropyRotation': return 'Anisotropy Rotation';
     case 'aoMap': return 'AO Map';
     case 'aoMapIntensity': return 'AO Map Intensity';
     case 'attenuationColor': return 'Attenuation Color';
+    case 'attenuationDistance': return 'Attenuation Distance';
     case 'blendAlpha': return 'Blend Alpha';
     case 'blendColor': return 'Blend Color';
     case 'blendDst': return 'Blend Dst';
@@ -122,6 +125,7 @@ export function prettyName(name: string): string {
     case 'blendSrcAlpha': return 'Blend Src Alpha';
     case 'bumpMap': return 'Bump Map';
     case 'bumpScale': return 'Bump Scale';
+    case 'clearcoat': return 'Clearcoat';
     case 'clearcoatMap': return 'Clearcoat Map';
     case 'clearcoatNormalMap': return 'Clearcoat Normal Map';
     case 'clearcoatNormalScale': return 'Clearcoat Normal Scale';
@@ -131,6 +135,7 @@ export function prettyName(name: string): string {
     case 'defines': return 'Defines';
     case 'depthTest': return 'Depth Test';
     case 'depthWrite': return 'Depth Write';
+    case 'dispersion': return 'Dispersion';
     case 'displacementBias': return 'Displacement Bias';
     case 'displacementMap': return 'Displacement Map';
     case 'displacementScale': return 'Displacement Scale';
@@ -140,12 +145,14 @@ export function prettyName(name: string): string {
     case 'emissiveIntensity': return 'Emissive Intensity';
     case 'envMap': return 'Environment Map';
     case 'envMapIntensity': return 'Environment Map Intensity';
+    case 'envMapRotation': return 'Environment Map Rotation';
     case 'extensions': return 'Extensions';
     case 'flatShading': return 'Flat Shading';
     case 'fragmentShader': return 'Fragment Shader';
     case 'fog': return 'Fog';
     case 'gradientMap': return 'Gradient Map';
     case 'ior': return 'IOR';
+    case 'iridescence': return 'Iridescence';
     case 'iridescenceIOR': return 'Iridescence IOR';
     case 'iridescenceMap': return 'Iridescence Map';
     case 'iridescenceThicknessMap': return 'Iridescence Thickness Map';
@@ -165,6 +172,7 @@ export function prettyName(name: string): string {
     case 'refractionRatio': return 'Refraction Ratio';
     case 'roughness': return 'Roughness';
     case 'roughnessMap': return 'Roughness Map';
+    case 'sheen': return 'Sheen';
     case 'sheenColor': return 'Sheen Color';
     case 'sheenColorMap': return 'Sheen Color Map';
     case 'sheenRoughness': return 'Sheen Roughness';
