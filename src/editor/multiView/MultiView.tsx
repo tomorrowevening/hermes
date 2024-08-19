@@ -855,6 +855,7 @@ export default function MultiView(props: MultiViewProps) {
           <div className='settings' key={lastUpdate}>
             {/* Mode */}
             <Dropdown
+              title='View'
               index={ModeOptions.indexOf(mode)}
               options={ModeOptions}
               onSelect={(value: string) => {
@@ -872,6 +873,7 @@ export default function MultiView(props: MultiViewProps) {
 
             {/* Interaction Mode */}
             <Dropdown
+              title='Interact'
               index={interactionMode === 'Orbit' ? 0 : 1}
               options={[
                 'Orbit Mode',

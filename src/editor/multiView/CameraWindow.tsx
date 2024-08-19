@@ -5,6 +5,7 @@ import { RenderMode } from './MultiViewData';
 interface DropdownProps {
   index: number;
   open: boolean;
+  title: string;
   onToggle: (value: boolean) => void;
   onSelect: (value: string) => void;
   options: string[];
@@ -29,7 +30,7 @@ export const Dropdown = (props: DropdownProps) => {
   return (
     <div className={`dropdown ${props.up === true ? 'up' : ''}`}>
       <div className='dropdown-toggle' onClick={handleToggle}>
-        {selectedOption}
+        {`${props.title}: ${selectedOption}`}
       </div>
       {props.open && (
         <ul className='dropdown-menu'>
@@ -71,32 +72,36 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
       <div ref={ref} className='clickable' onClick={() => {
         if (open) setOpen(false);
       }} />
-      <Dropdown
-        index={renderOptions.indexOf(currentRenderMode)}
-        open={renderModeOpen}
-        options={renderOptions}
-        onSelect={(value: string) => {
-          if (value === currentRenderMode) return;
-          const newRenderMode = value as RenderMode;
-          props.onSelectRenderMode(newRenderMode);
-          setCurrentRenderMode(newRenderMode);
-        }}
-        onToggle={(value: boolean) => {
-          if (modeOpen) setModeOpen(false);
-          setRenderModeOpen(value);
-        }}
-        up={true}
-      />
-      <Dropdown
-        index={props.options.indexOf(props.camera.name)}
-        open={open}
-        options={props.options}
-        onSelect={props.onSelectCamera}
-        onToggle={(value: boolean) => {
-          setOpen(value);
-        }}
-        up={true}
-      />
+      <div className='options'>
+        <Dropdown
+          title='Camera'
+          index={props.options.indexOf(props.camera.name)}
+          open={open}
+          options={props.options}
+          onSelect={props.onSelectCamera}
+          onToggle={(value: boolean) => {
+            setOpen(value);
+          }}
+          up={true}
+        />
+        <Dropdown
+          title='Mode'
+          index={renderOptions.indexOf(currentRenderMode)}
+          open={renderModeOpen}
+          options={renderOptions}
+          onSelect={(value: string) => {
+            if (value === currentRenderMode) return;
+            const newRenderMode = value as RenderMode;
+            props.onSelectRenderMode(newRenderMode);
+            setCurrentRenderMode(newRenderMode);
+          }}
+          onToggle={(value: boolean) => {
+            if (modeOpen) setModeOpen(false);
+            setRenderModeOpen(value);
+          }}
+          up={true}
+        />
+      </div>
     </div>
   );
 });
