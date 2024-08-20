@@ -20,4 +20,7 @@ export const ToolEvents = {
   // MultiView
   ADD_CAMERA: 'ToolEvents::addCamera',
   REMOVE_CAMERA: 'ToolEvents::removeCamera',
+  // Custom
+  ADD_GROUP: 'ToolEvents::addGroup',
+  REMOVE_GROUP: 'ToolEvents::removeGroup',
 };
