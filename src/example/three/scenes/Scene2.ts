@@ -1,5 +1,6 @@
 import {
   CircleGeometry,
+  Color,
   LineBasicMaterial,
   LineSegments,
   Mesh,
@@ -28,9 +29,12 @@ import RemoteThree from '../../../core/remote/RemoteThree';
 import CustomMaterial from '../CustomMaterial';
 import RTTScene from './RTTScene';
 
+const customGroupName = 'Custom Group';
+
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
   rttScene!: RTTScene;
+  speed = 1;
 
   constructor(renderer: WebGLRenderer) {
     super(renderer);
@@ -52,6 +56,7 @@ export default class Scene2 extends BaseScene {
 
   override dispose(): void {
     const three = app.components.get('three') as RemoteThree;
+    three.removeGroup(customGroupName);
     three.removeScene(this.rttScene);
     super.dispose();
   }
@@ -132,6 +137,43 @@ export default class Scene2 extends BaseScene {
       }
     });
     world.add(this.dance);
+
+    // Custom Groups
+    three.addGroup({
+      title: customGroupName,
+      items: [
+        {
+          title: 'Speed',
+          prop: 'speed',
+          value: 1,
+          min: 0,
+          max: 2,
+          step: 0.01,
+          type: 'range',
+        },
+        {
+          title: 'Name',
+          prop: 'name',
+          value: 'Hello World!',
+          type: 'string',
+        },
+        {
+          title: 'Color',
+          prop: 'color',
+          value: new Color(0xff0000),
+          // value: 0xff0000,
+          type: 'color',
+        },
+      ],
+      onUpdate: (prop: string, value: any) => {
+        console.log(prop, value);
+        switch (prop) {
+          case 'speed':
+            this.speed = value;
+            break;
+        }
+      }
+    });
   }
 
   private createAnimation() {
@@ -187,7 +229,7 @@ export default class Scene2 extends BaseScene {
 
   override update(): void {
     const delta = this.clock.getDelta();
-    this.dance.update(delta);
+    this.dance.update(delta * this.speed);
     if (this.renderer) this.rttScene.draw(this.clock.getElapsedTime(), this.renderer);
   }
 }
