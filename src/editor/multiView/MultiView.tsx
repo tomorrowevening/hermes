@@ -12,6 +12,7 @@ import {
   HemisphereLightHelper,
   Material,
   Matrix4,
+  Mesh,
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
@@ -24,6 +25,7 @@ import {
   Raycaster,
   RectAreaLight,
   Scene,
+  SkinnedMesh,
   Sphere,
   Spherical,
   SpotLight,
@@ -729,18 +731,26 @@ export default function MultiView(props: MultiViewProps) {
         if (selectedItem === undefined) return;
         clearInterval(timer);
 
+        if (cameraControls) {
+          cameraControls.smoothTime = 0.1;
+        }
+
         const fps = 1 / 60;
         const start = Date.now();
+        let lastUpdate = start;
         selectedItem.getWorldPosition(control.target0);
         timer = setInterval(() => {
           if (cameraControls) {
-            const elapsed = (Date.now() - start) / 1000;
-            cameraControls.update(fps);
+            const now = Date.now();
+            const delta = (now - lastUpdate) / 1000;
+            const elapsed = (now - start) / 1000;
+            lastUpdate = now;
+            cameraControls.update(delta);
 
             if (control) {
-              const speed = 0.067;
+              const speed = 0.15;
               control.target.lerp(control.target0, speed);
-              // control.object.position.lerp(control.position0, speed);
+              control.object.position.lerp(control.position0, speed);
               // @ts-ignore
               control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
               // @ts-ignore
@@ -749,10 +759,8 @@ export default function MultiView(props: MultiViewProps) {
               control.update();
             }
 
-            maintainRotation();
-
             // Complete?
-            if (elapsed >= 2) {
+            if (elapsed >= 0.5) {
               clearInterval(timer);
               timer = -1;
               clearControls();
@@ -760,31 +768,6 @@ export default function MultiView(props: MultiViewProps) {
             }
           }
         }, fps * 1000);
-      };
-
-      const maintainRotation = () => {
-        const PI2 = Math.PI * 2;
-        const PIH = Math.PI / 2;
-        switch (currentCamera.name) {
-          case 'Front':
-            currentCamera.rotation.set(-PI2, 0, 0);
-            break;
-          case 'Back':
-            currentCamera.rotation.set(-Math.PI, PIH, Math.PI);
-            break;
-          case 'Top':
-            currentCamera.rotation.set(-PIH, 0, 0);
-            break;
-          case 'Bottom':
-            currentCamera.rotation.set(PIH, 0, 0);
-            break;
-          case 'Right':
-            currentCamera.rotation.set(-PI2, PIH, 0);
-            break;
-          case 'Left':
-            currentCamera.rotation.set(-PI2, -PIH, 0);
-            break;
-        }
       };
 
       const clearControls = () => {
@@ -803,39 +786,42 @@ export default function MultiView(props: MultiViewProps) {
             const currentControls = controls.get(currentCamera.name)!;
             if (evt.key === '0') {
               clearControls();
+
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.fitToSphere(selectedItem, true);
-  
+              if (selectedItem instanceof Mesh || selectedItem instanceof SkinnedMesh) {
+                selectedItem.geometry.computeBoundingBox();
+                cameraControls.fitToBox(selectedItem.geometry.boundingBox, true);
+              } else {
+                cameraControls.fitToSphere(selectedItem, true);
+              }
               updateCameraControls(currentControls);
             } else if (evt.key === '1') {
               clearControls();
   
               // Rotate to Front
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, Math.PI * 0.5, true);
-  
+              cameraControls.rotateTo(0, Math.PI * 0.5, false);
               updateCameraControls(currentControls);
             } else if (evt.key === '2') {
               clearControls();
   
               // Rotate to Top
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, 0, true);
+              cameraControls.rotateTo(0, 0, false);
+              updateCameraControls(currentControls);
             } else if (evt.key === '3') {
               clearControls();
   
               // Rotate to Right
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, true);
-  
+              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, false);
               updateCameraControls(currentControls);
             } else if (evt.key === '4') {
               clearControls();
   
               // Rotate to Back
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI, Math.PI / 2, true);
-  
+              cameraControls.rotateTo(Math.PI, Math.PI / 2, false);
               updateCameraControls(currentControls);
             }
           }
