@@ -21,12 +21,14 @@ $padding: 2px;
     background-color: #222;
     display: inline-block;
     font-size: 10px;
-    padding: $padding;
     text-align: center;
-    width: 100px;
 
     .dropdown-toggle {
       cursor: pointer;
+      padding: $padding 10px;
+      &:hover {
+        background-color: #333;
+      }
     }
   
     .dropdown-menu {
@@ -41,6 +43,7 @@ $padding: 2px;
   
       li {
         background-color: #222;
+        border-bottom: 1px solid #191919;
         cursor: pointer;
         padding: $padding;
         transition: 0.2s linear background-color;
@@ -63,22 +66,6 @@ $padding: 2px;
       grid-template-columns: repeat(1, 1fr);
     }
 
-    .dropdown {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-
-      &.up {
-        bottom: 0;
-        top: initial;
-        .dropdown-menu {
-          top: initial;
-          bottom: 100%;
-        }
-      }
-    }
-
     .CameraWindow {
       border: 1px dotted #333;
       border-top: none;
@@ -92,14 +79,27 @@ $padding: 2px;
         height: 100%;
       }
 
-      .dropdown {
+      .options {
+        position: absolute;
         top: initial;
         bottom: 0;
-        &:nth-child(2) {
-          transform: translateX(calc(-50% - 50px));
-        }
-        &:nth-child(3) {
-          transform: translateX(calc(-50% + 50px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+
+        .dropdown {
+          position: relative;
+          top: 0;
+          transition: background-color 0.25s linear;
+          &.up {
+            background-color: #333;
+            bottom: 0;
+            top: initial;
+            .dropdown-menu {
+              top: initial;
+              bottom: 100%;
+            }
+          }
         }
       }
     }

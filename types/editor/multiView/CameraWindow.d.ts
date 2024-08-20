@@ -4,6 +4,7 @@ import { RenderMode } from './MultiViewData';
 interface DropdownProps {
     index: number;
     open: boolean;
+    title: string;
     onToggle: (value: boolean) => void;
     onSelect: (value: string) => void;
     options: string[];

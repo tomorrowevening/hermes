@@ -1,4 +1,23 @@
-import { BufferGeometry, Float32BufferAttribute, LinearSRGBColorSpace, Material, Mesh, MeshBasicMaterial, Object3D, OrthographicCamera, Scene, Texture, WebGLRenderer } from 'three';
+import {
+  Box3,
+  BufferAttribute,
+  BufferGeometry,
+  Camera,
+  Float32BufferAttribute,
+  LinearSRGBColorSpace,
+  Material,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Scene,
+  Sphere,
+  Texture,
+  Vector3,
+  WebGLRenderer
+} from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);

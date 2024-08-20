@@ -24,7 +24,6 @@ import {
   OneMinusSrcAlphaFactor,
   OneMinusSrcColorFactor,
   ReverseSubtractEquation,
-  Source,
   SrcAlphaFactor,
   SrcAlphaSaturateFactor,
   SrcColorFactor,
@@ -41,29 +40,17 @@ import { KeyboardEvent } from 'react';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
-    name === 'alphaHash' ||
-    name === 'alphaToCoverage' ||
-    name === 'blendAlpha' ||
-    name === 'blendColor' ||
-    name === 'blendDstAlpha' ||
-    name === 'colorWrite' ||
-    name === 'combine' ||
     name === 'defaultAttributeValues' ||
-    name === 'depthFunc' ||
     name === 'forceSinglePass' ||
-    name === 'glslVersion' ||
     name === 'linecap' ||
     name === 'linejoin' ||
     name === 'linewidth' ||
     name === 'normalMapType' ||
     name === 'precision' ||
-    name === 'premultipliedAlpha' ||
     name === 'shadowSide' ||
-    name === 'toneMapped' ||
     name === 'uniformsGroups' ||
     name === 'uniformsNeedUpdate' ||
     name === 'userData' ||
-    name === 'vertexColors' ||
     name === 'version' ||
     name === 'wireframeLinecap' ||
     name === 'wireframeLinejoin' ||
@@ -105,7 +92,9 @@ export function imageNames(name: string): string {
 
 export function prettyName(name: string): string {
   switch (name) {
+    case 'alphaHash': return 'Alpha Hash';
     case 'alphaMap': return 'Alpha Map';
+    case 'alphaToCoverage': return 'Alpha To Coverage';
     case 'anisotropy': return 'Anisotropy';
     case 'anisotropyMap': return 'Anisotropy Map';
     case 'anisotropyRotation': return 'Anisotropy Rotation';
@@ -131,7 +120,9 @@ export function prettyName(name: string): string {
     case 'clearcoatRoughness': return 'Clearcoat Roughness';
     case 'clearcoatRoughnessMap': return 'Clearcoat Roughness Map';
     case 'color': return 'Color';
+    case 'colorWrite': return 'Color Write';
     case 'defines': return 'Defines';
+    case 'depthFunc': return 'Depth Func';
     case 'depthTest': return 'Depth Test';
     case 'depthWrite': return 'Depth Write';
     case 'dispersion': return 'Dispersion';
@@ -166,6 +157,7 @@ export function prettyName(name: string): string {
     case 'name': return 'Name';
     case 'normalMap': return 'Normal Map';
     case 'normalScale': return 'Normal Scale';
+    case 'premultipliedAlpha': return 'Premultiplied Alpha';
     case 'opacity': return 'Opacity';
     case 'reflectivity': return 'Reflectivity';
     case 'refractionRatio': return 'Refraction Ratio';
@@ -187,12 +179,14 @@ export function prettyName(name: string): string {
     case 'specularIntensityMap': return 'Specular Map Intensity';
     case 'thickness': return 'Thickness';
     case 'thicknessMap': return 'Thickness Map';
+    case 'toneMapped': return 'Tone Mapped';
     case 'transmission': return 'Transmission';
     case 'transmissionMap': return 'Transmission Map';
     case 'transparent': return 'Transparent';
     case 'type': return 'Type';
     case 'uuid': return 'UUID';
     case 'uniforms': return 'Uniforms';
+    case 'vertexColors': return 'Vertex Colors';
     case 'vertexShader': return 'Vertex Shader';
     case 'visible': return 'Visible';
     case 'wireframe': return 'Wireframe';
