@@ -24,4 +24,12 @@ export default class FBXAnimation extends Object3D {
   update(delta: number) {
     this.mixer.update(delta);
   }
+
+  get timeScale(): number {
+    return this.mixer.timeScale;
+  }
+
+  set timeScale(value: number) {
+    this.mixer.timeScale = value;
+  }
 }

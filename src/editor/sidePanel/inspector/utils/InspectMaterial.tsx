@@ -140,6 +140,7 @@ export function prettyName(name: string): string {
     case 'flatShading': return 'Flat Shading';
     case 'fragmentShader': return 'Fragment Shader';
     case 'fog': return 'Fog';
+    case 'glslVersion': return 'GLSL Version';
     case 'gradientMap': return 'Gradient Map';
     case 'ior': return 'IOR';
     case 'iridescence': return 'Iridescence';

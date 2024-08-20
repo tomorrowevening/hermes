@@ -1,9 +1,32 @@
 // Interfaces
 
+import { InspectorFieldType } from '@/editor/sidePanel/inspector/InspectorField';
+
 export interface BroadcastData {
   target: ApplicationMode
   event: EditorEvent
   data?: any
+}
+
+export interface GroupItemData {
+  title: string
+  type: InspectorFieldType
+  value: any
+  prop: string
+  min?: number
+  max?: number
+  step?: number
+}
+
+export interface GroupData {
+  title: string
+  items: GroupItemData[];
+  onUpdate: (prop: string, value: any) => void;
+}
+
+export interface GroupCallback {
+  title: string
+  onUpdate: (prop: string, value: any) => void;
 }
 
 // Types
@@ -44,6 +67,10 @@ export type EditorEvent =
 // Components
   | 'selectComponent'
   | 'draggableListUpdate'
+// Groups
+  | 'addGroup'
+  | 'removeGroup'
+  | 'updateGroup'
 
 export type VoidFunc = () => void
 

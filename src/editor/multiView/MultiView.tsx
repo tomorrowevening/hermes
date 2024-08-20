@@ -5,6 +5,7 @@ import {
   Box3,
   Camera,
   CameraHelper,
+  Clock,
   DirectionalLight,
   DirectionalLightHelper,
   Group,
@@ -37,7 +38,7 @@ import {
 } from 'three';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { mapLinear } from 'three/src/math/MathUtils';
+import { degToRad, mapLinear } from 'three/src/math/MathUtils';
 import CameraControls from 'camera-controls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
@@ -601,7 +602,7 @@ export default function MultiView(props: MultiViewProps) {
       let currentWindow = tlWindow;
       let selectedItem: Object3D | undefined = undefined;
       let cameraControls: CameraControls | undefined = undefined;
-      let timer = -1;
+      let raf = -1;
 
       const updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
         switch (mode) {
@@ -727,47 +728,44 @@ export default function MultiView(props: MultiViewProps) {
         }
       };
 
-      const updateCameraControls = (control: OrbitControls) => {
+      const updateCameraControls = (control: OrbitControls, reposition = false) => {
         if (selectedItem === undefined) return;
-        clearInterval(timer);
+        cancelAnimationFrame(raf);
+        raf = -1;
 
-        if (cameraControls) {
-          cameraControls.smoothTime = 0.1;
-        }
+        if (cameraControls) cameraControls.smoothTime = 0.1;
 
-        const fps = 1 / 60;
-        const start = Date.now();
-        let lastUpdate = start;
+        const speed = 0.15;
+        const clock = new Clock();
+        clock.start();
         selectedItem.getWorldPosition(control.target0);
-        timer = setInterval(() => {
-          if (cameraControls) {
-            const now = Date.now();
-            const delta = (now - lastUpdate) / 1000;
-            const elapsed = (now - start) / 1000;
-            lastUpdate = now;
-            cameraControls.update(delta);
 
-            if (control) {
-              const speed = 0.15;
-              control.target.lerp(control.target0, speed);
-              control.object.position.lerp(control.position0, speed);
-              // @ts-ignore
-              control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
-              // @ts-ignore
-              control.object.updateProjectionMatrix();
-              control.dispatchEvent( { type: 'change' } );
-              control.update();
-            }
+        const onUpdate = () => {
+          // Update
+          const delta = clock.getDelta();
+          if (cameraControls) cameraControls.update(delta);
 
-            // Complete?
-            if (elapsed >= 0.5) {
-              clearInterval(timer);
-              timer = -1;
-              clearControls();
-              cameraControls = undefined;
-            }
+          if (reposition) {
+            control.target.lerp(control.target0, speed);
+            control.object.position.lerp(control.position0, speed);
+            // @ts-ignore
+            control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
+            // @ts-ignore
+            control.object.updateProjectionMatrix();
+            control.dispatchEvent( { type: 'change' } );
           }
-        }, fps * 1000);
+
+          // Complete?
+          const complete = clock.getElapsedTime() >= 0.5;
+          if (complete) {
+            cancelAnimationFrame(raf);
+            raf = -1;
+            clearControls();
+          } else {
+            raf = requestAnimationFrame(onUpdate);
+          }
+        };
+        onUpdate();
       };
 
       const clearControls = () => {
@@ -794,34 +792,45 @@ export default function MultiView(props: MultiViewProps) {
               } else {
                 cameraControls.fitToSphere(selectedItem, true);
               }
-              updateCameraControls(currentControls);
+              updateCameraControls(currentControls, true);
             } else if (evt.key === '1') {
               clearControls();
   
               // Rotate to Front
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, Math.PI * 0.5, false);
+              cameraControls.rotateTo(0, Math.PI * 0.5, true);
+              cameraControls.moveTo(selectedItem.position.x, selectedItem.position.y, 0, true);
               updateCameraControls(currentControls);
             } else if (evt.key === '2') {
               clearControls();
   
               // Rotate to Top
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, 0, false);
+              cameraControls.rotateTo(0, 0, true);
+              cameraControls.moveTo(selectedItem.position.x, 0, selectedItem.position.z, true);
               updateCameraControls(currentControls);
             } else if (evt.key === '3') {
               clearControls();
   
               // Rotate to Right
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, false);
+              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, true);
+              cameraControls.moveTo(0, selectedItem.position.y, selectedItem.position.z, true);
               updateCameraControls(currentControls);
             } else if (evt.key === '4') {
               clearControls();
   
               // Rotate to Back
               cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI, Math.PI / 2, false);
+              cameraControls.rotateTo(Math.PI, Math.PI / 2, true);
+              cameraControls.moveTo(selectedItem.position.x, selectedItem.position.y, 0, true);
+              updateCameraControls(currentControls);
+            } else if (evt.key === '5') {
+              clearControls();
+  
+              // Rotate to Ortho
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.rotateTo(degToRad(45), degToRad(45), true);
               updateCameraControls(currentControls);
             }
           }

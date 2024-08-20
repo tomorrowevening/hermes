@@ -1,18 +1,23 @@
 import { Camera, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { BroadcastData } from '../types';
+import { BroadcastData, GroupData } from '../types';
 export default class RemoteThree extends BaseRemote {
     scene?: Scene;
     scenes: Map<string, Scene>;
     renderer?: WebGLRenderer;
     renderTargets: Map<string, WebGLRenderTarget>;
+    private groups;
     dispose(): void;
     getObject(uuid: string): void;
     setObject(value: any): void;
     requestMethod(uuid: string, key: string, value?: any, subitem?: string): void;
     updateObject(uuid: string, key: string, value: any): void;
     createTexture(uuid: string, key: string, value: any): void;
+    addGroup(data: GroupData): void;
+    removeGroup(name: string): void;
+    updateGroup(group: string, prop: string, value: any): void;
+    removeAllGroups(): void;
     addScene(value: Scene): void;
     refreshScene(value: string): void;
     removeScene(value: Scene): void;

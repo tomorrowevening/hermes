@@ -7,6 +7,7 @@ import { RemoteObject, SidePanelState } from './types';
 import '../scss/_sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
+import CustomAccordion from './CustomAccordion';
 import Inspector from './inspector/Inspector';
 
 export default function SidePanel(props: SidePanelState) {
@@ -82,10 +83,11 @@ export default function SidePanel(props: SidePanelState) {
 
   return (
     <div id='SidePanel'>
-      <div key={lastUpdate}>
+      <div className='scenes' key={lastUpdate}>
         {sceneComponents}
       </div>
       <Inspector three={props.three} />
+      <CustomAccordion three={props.three} />
     </div>
   );
 }

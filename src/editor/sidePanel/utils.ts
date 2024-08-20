@@ -101,11 +101,15 @@ function stripMaterialData(material: Material): RemoteMaterial {
             materialData[i] = cleanUniforms(materialData[i]);
           }
         } else {
-          materialData[i] = {
-            src: '',
-            offset: [0, 0],
-            repeat: [1, 1],
-          };
+          if (i === 'glslVersion') {
+            materialData[i] = '';
+          } else {
+            materialData[i] = {
+              src: '',
+              offset: [0, 0],
+              repeat: [1, 1],
+            };
+          }
         }
         break;
     }

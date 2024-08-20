@@ -1,7 +1,7 @@
 import { Camera, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
-import { BroadcastData } from '../types';
+import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { clamp, dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
@@ -11,6 +11,7 @@ export default class RemoteThree extends BaseRemote {
   scenes: Map<string, Scene> = new Map();
   renderer?: WebGLRenderer = undefined;
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
+  private groups = new Map<string, GroupCallback>();
 
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
@@ -83,6 +84,56 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  // Groups
+
+  addGroup(data: GroupData) {
+    if (this.groups.get(data.title) !== undefined) return;
+
+    this.groups.set(data.title, {
+      title: data.title,
+      onUpdate: data.onUpdate,
+    });
+    this.app.send({
+      event: 'addGroup',
+      target: 'editor',
+      data: JSON.stringify(data),
+    });
+  }
+
+  removeGroup(name: string) {
+    if (this.groups.get(name) === undefined) return;
+
+    this.groups.delete(name);
+    this.app.send({
+      event: 'removeGroup',
+      target: 'editor',
+      data: name,
+    });
+  }
+
+  updateGroup(group: string, prop: string, value: any) {
+    this.app.send({
+      event: 'updateGroup',
+      target: 'app',
+      data: JSON.stringify({ group, prop, value }),
+    });
+  }
+
+  removeAllGroups() {
+    this.groups.forEach((value: GroupCallback) => {
+      const name = value.title;
+      this.groups.delete(name);
+      this.app.send({
+        event: 'removeGroup',
+        target: 'editor',
+        data: name,
+      });
+    });
+    this.groups.clear();
+  }
+
+  // Scenes
+
   addScene(value: Scene) {
     if (value === undefined) return;
     this.scenes.set(value.name, value);
@@ -152,6 +203,8 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
+  // Cameras
+
   addCamera(camera: Camera) {
     if (!this.app.debugEnabled) return;
     const stripped = stripObject(camera);
@@ -173,6 +226,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+    const three = remote as RemoteThree;
     switch (msg.event) {
       case 'getObject':
         // @ts-ignore
@@ -194,9 +248,15 @@ export default class RemoteThree extends BaseRemote {
         app.send({
           event: 'refreshScene',
           target: 'editor',
-          data: stripScene((remote as RemoteThree).scenes.get(msg.data.name)!),
+          data: stripScene(three.scenes.get(msg.data.name)!),
         });
         break;
+    }
+
+    if (msg.event === 'updateGroup') {
+      const groupData = JSON.parse(msg.data);
+      const group = three.groups.get(groupData.group);
+      group?.onUpdate(groupData.prop, groupData.value);
     }
   }
 
@@ -229,6 +289,14 @@ export default class RemoteThree extends BaseRemote {
       case 'removeCamera':
         // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        break;
+      case 'addGroup':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
+        break;
+      case 'removeGroup':
+        // @ts-ignore
+        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
         break;
     }
   }

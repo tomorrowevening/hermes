@@ -15,4 +15,6 @@ export declare const ToolEvents: {
     REQUEST_METHOD: string;
     ADD_CAMERA: string;
     REMOVE_CAMERA: string;
+    ADD_GROUP: string;
+    REMOVE_GROUP: string;
 };
