@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AxesHelper,
+  Box3,
   Camera,
   CameraHelper,
   DirectionalLight,
@@ -10,6 +11,7 @@ import {
   HemisphereLight,
   HemisphereLightHelper,
   Material,
+  Matrix4,
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
@@ -18,18 +20,23 @@ import {
   PerspectiveCamera,
   PointLight,
   PointLightHelper,
+  Quaternion,
   Raycaster,
   RectAreaLight,
   Scene,
+  Sphere,
+  Spherical,
   SpotLight,
   SpotLightHelper,
   Vector2,
   Vector3,
+  Vector4,
   WebGLRenderer,
 } from 'three';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { mapLinear } from 'three/src/math/MathUtils';
+import CameraControls from 'camera-controls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
@@ -40,7 +47,7 @@ import { ToolEvents, debugDispatcher } from '../global';
 import './MultiView.scss';
 import UVMaterial from './UVMaterial';
 // Utils
-import { dispose } from '../utils';
+import { dispose, mix } from '../utils';
 
 // Scene
 let currentScene: Scene;
@@ -415,6 +422,7 @@ export default function MultiView(props: MultiViewProps) {
           break;
       }
 
+      const aspect = cw / ch;
       cameras.forEach((camera) => {
         if (camera instanceof OrthographicCamera) {
           camera.left = cw / -2;
@@ -428,7 +436,7 @@ export default function MultiView(props: MultiViewProps) {
           }
           camera.updateProjectionMatrix();
         } else if (camera instanceof PerspectiveCamera) {
-          camera.aspect = cw / ch;
+          camera.aspect = aspect;
           camera.updateProjectionMatrix();
           cameraHelpers.get(camera.name)?.update();
         }
@@ -573,48 +581,83 @@ export default function MultiView(props: MultiViewProps) {
   // Raycaster
   useEffect(() => {
     if (renderer !== null) {
+      const THREE = {
+        Vector2,
+        Vector3,
+        Vector4,
+        Quaternion,
+        Matrix4,
+        Spherical,
+        Box3,
+        Sphere,
+        Raycaster,
+      };
+      CameraControls.install({ THREE });
       const raycaster = new Raycaster();
       const pointer = new Vector2();
+      let currentCamera = tlCam;
+      let currentWindow = tlWindow;
+      let selectedItem: Object3D | undefined = undefined;
+      let cameraControls: CameraControls | undefined = undefined;
+      let timer = -1;
 
       const updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
         switch (mode) {
           case 'Quad':
             if (mouseX < hw) {
               if (mouseY < hh) {
+                currentCamera = tlCam;
                 raycaster.setFromCamera(pointer, tlCam);
               } else {
+                currentCamera = blCam;
                 raycaster.setFromCamera(pointer, blCam);
               }
             } else {
               if (mouseY < hh) {
+                currentCamera = trCam;
                 raycaster.setFromCamera(pointer, trCam);
               } else {
+                currentCamera = brCam;
                 raycaster.setFromCamera(pointer, brCam);
               }
             }
             break;
           case 'Side by Side':
             if (mouseX < hw) {
+              currentCamera = tlCam;
               raycaster.setFromCamera(pointer, tlCam);
             } else {
+              currentCamera = trCam;
               raycaster.setFromCamera(pointer, trCam);
             }
             break;
           case 'Single':
+            currentCamera = tlCam;
             raycaster.setFromCamera(pointer, tlCam);
             break;
           case 'Stacked':
             if (mouseY < hh) {
+              currentCamera = tlCam;
               raycaster.setFromCamera(pointer, tlCam);
             } else {
+              currentCamera = trCam;
               raycaster.setFromCamera(pointer, trCam);
             }
             break;
         }
+
+        if (currentCamera === tlCam) {
+          currentWindow = tlWindow;
+        } else if (currentCamera === trCam) {
+          currentWindow = trWindow;
+        } else if (currentCamera === blCam) {
+          currentWindow = blWindow;
+        } else if (currentCamera === brCam) {
+          currentWindow = brWindow;
+        }
       };
 
       const onMouseMove = (event: MouseEvent) => {
-        if (interactionMode === 'Orbit') return;
         const size = new Vector2();
         renderer!.getSize(size);
 
@@ -658,6 +701,8 @@ export default function MultiView(props: MultiViewProps) {
         }
 
         updateCamera(mouseX, mouseY, hw, hh);
+
+        if (interactionMode === 'Orbit') return;
         const intersects = raycaster.intersectObjects(currentScene.children);
         if (intersects.length > 0) interactionHelper.position.copy(intersects[0].point);
       };
@@ -680,12 +725,137 @@ export default function MultiView(props: MultiViewProps) {
         }
       };
 
+      const updateCameraControls = (control: OrbitControls) => {
+        if (selectedItem === undefined) return;
+        clearInterval(timer);
+
+        const fps = 1 / 60;
+        const start = Date.now();
+        selectedItem.getWorldPosition(control.target0);
+        timer = setInterval(() => {
+          if (cameraControls) {
+            const elapsed = (Date.now() - start) / 1000;
+            cameraControls.update(fps);
+
+            if (control) {
+              const speed = 0.067;
+              control.target.lerp(control.target0, speed);
+              // control.object.position.lerp(control.position0, speed);
+              // @ts-ignore
+              control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
+              // @ts-ignore
+              control.object.updateProjectionMatrix();
+              control.dispatchEvent( { type: 'change' } );
+              control.update();
+            }
+
+            maintainRotation();
+
+            // Complete?
+            if (elapsed >= 2) {
+              clearInterval(timer);
+              timer = -1;
+              clearControls();
+              cameraControls = undefined;
+            }
+          }
+        }, fps * 1000);
+      };
+
+      const maintainRotation = () => {
+        const PI2 = Math.PI * 2;
+        const PIH = Math.PI / 2;
+        switch (currentCamera.name) {
+          case 'Front':
+            currentCamera.rotation.set(-PI2, 0, 0);
+            break;
+          case 'Back':
+            currentCamera.rotation.set(-Math.PI, PIH, Math.PI);
+            break;
+          case 'Top':
+            currentCamera.rotation.set(-PIH, 0, 0);
+            break;
+          case 'Bottom':
+            currentCamera.rotation.set(PIH, 0, 0);
+            break;
+          case 'Right':
+            currentCamera.rotation.set(-PI2, PIH, 0);
+            break;
+          case 'Left':
+            currentCamera.rotation.set(-PI2, -PIH, 0);
+            break;
+        }
+      };
+
+      const clearControls = () => {
+        if (cameraControls !== undefined) {
+          cameraControls.disconnect();
+          cameraControls.dispose();
+          cameraControls = undefined;
+        }
+      };
+
+      const onKey = (evt: KeyboardEvent) => {
+        if (selectedItem !== undefined) {
+          if (evt.ctrlKey) {
+            if (currentCamera.name === 'UI') return;
+
+            const currentControls = controls.get(currentCamera.name)!;
+            if (evt.key === '0') {
+              clearControls();
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.fitToSphere(selectedItem, true);
+  
+              updateCameraControls(currentControls);
+            } else if (evt.key === '1') {
+              clearControls();
+  
+              // Rotate to Front
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.rotateTo(0, Math.PI * 0.5, true);
+  
+              updateCameraControls(currentControls);
+            } else if (evt.key === '2') {
+              clearControls();
+  
+              // Rotate to Top
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.rotateTo(0, 0, true);
+            } else if (evt.key === '3') {
+              clearControls();
+  
+              // Rotate to Right
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, true);
+  
+              updateCameraControls(currentControls);
+            } else if (evt.key === '4') {
+              clearControls();
+  
+              // Rotate to Back
+              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
+              cameraControls.rotateTo(Math.PI, Math.PI / 2, true);
+  
+              updateCameraControls(currentControls);
+            }
+          }
+        }
+      };
+
+      const onSelectItem = (evt: any) => {
+        selectedItem = currentScene.getObjectByProperty('uuid', evt.value.uuid);
+      };
+
       const element = containerRef.current!;
       element.addEventListener('mousemove', onMouseMove, false);
       element.addEventListener('click', onClick, false);
+      window.addEventListener('keydown', onKey, false);
+      debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
       return () => {
         element.removeEventListener('mousemove', onMouseMove);
         element.removeEventListener('click', onClick);
+        window.removeEventListener('keydown', onKey);
+        debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
       };
     }
   }, [mode, renderer, interactionMode]);

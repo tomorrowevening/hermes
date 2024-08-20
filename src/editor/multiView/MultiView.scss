@@ -21,11 +21,11 @@ $padding: 2px;
     background-color: #222;
     display: inline-block;
     font-size: 10px;
-    padding: $padding 10px;
     text-align: center;
 
     .dropdown-toggle {
       cursor: pointer;
+      padding: $padding 10px;
       &:hover {
         background-color: #333;
       }
@@ -85,6 +85,7 @@ $padding: 2px;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
+        width: max-content;
 
         .dropdown {
           position: relative;
