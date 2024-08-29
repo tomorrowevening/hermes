@@ -17,7 +17,8 @@ $font: Arial;
     
     label {
       font-family: $font;
-      line-height: normal;
+      line-height: $barHeight;
+      height: $barHeight;
       padding: 0 5px;
       max-width: 180px;
       user-select: none;
@@ -53,7 +54,7 @@ $font: Arial;
 
     input[type='color'] {
       block-size: revert;
-      height: calc($barHeight + 10px);
+      height: $barHeight;
       padding-block: revert;
       padding: 0;
       margin: 0;
@@ -61,6 +62,7 @@ $font: Arial;
 
     input[type='number'], input[type='range'] {
       appearance: none;
+      height: $barHeight;
     }
 
     input[type='range']::-webkit-slider-runnable-track {
@@ -81,7 +83,7 @@ $font: Arial;
     textarea {
       background-color: #191919;
       color: white;
-      font-size: 10px;
+      font-size: 12px;
       line-height: 12px;
     }
 
@@ -122,6 +124,7 @@ $font: Arial;
       background-color: #222;
       border: 1px solid #333;
       color: white;
+      font-family: $font;
       font-size: 12px;
       padding: 1px 5px;
       position: absolute;
@@ -207,7 +210,7 @@ $font: Arial;
         overflow: hidden;
 
         label {
-          line-height: 30px;
+          line-height: $barHeight;
           min-width: inherit;
         }
         input {
