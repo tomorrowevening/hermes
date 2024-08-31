@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AxesHelper,
   Box3,
+  BufferGeometry,
   Camera,
   CameraHelper,
   Clock,
@@ -397,6 +398,10 @@ export default function MultiView(props: MultiViewProps) {
     let bh = Math.floor(height / 2);
     let raf = -1;
 
+    const fpoGeom = new BufferGeometry();
+    const fpoMaterial = new MeshBasicMaterial();
+    const fpoGroup = new Group();
+
     const onResize = () => {
       width = window.innerWidth - 300;
       height = window.innerHeight;
@@ -467,6 +472,7 @@ export default function MultiView(props: MultiViewProps) {
       scene.overrideMaterial = material;
       renderer.setViewport(0, 0, width, height);
       renderer.setScissor(0, 0, width, height);
+      currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
       renderer.render(scene, tlCam);
     };
 
@@ -477,21 +483,25 @@ export default function MultiView(props: MultiViewProps) {
       if (mode === 'Side by Side') {
         renderer.setViewport(0, 0, bw, height);
         renderer.setScissor(0, 0, bw, height);
+        currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
         renderer.render(scene, tlCam);
 
         scene.overrideMaterial = materialB;
         renderer.setViewport(bw, 0, bw, height);
         renderer.setScissor(bw, 0, bw, height);
+        currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
         renderer.render(scene, trCam);
       } else {
         const y = height - bh;
         renderer.setViewport(0, y, width, bh);
         renderer.setScissor(0, y, width, bh);
+        currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
         renderer.render(scene, tlCam);
 
         scene.overrideMaterial = materialB;
         renderer.setViewport(0, 0, width, bh);
         renderer.setScissor(0, 0, width, bh);
+        currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
         renderer.render(scene, trCam);
       }
     };
@@ -510,6 +520,7 @@ export default function MultiView(props: MultiViewProps) {
       scene.overrideMaterial = materialA;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
+      currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
       renderer.render(scene, tlCam);
 
       // TR
@@ -517,6 +528,7 @@ export default function MultiView(props: MultiViewProps) {
       scene.overrideMaterial = materialB;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
+      currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
       renderer.render(scene, trCam);
 
       y = 0;
@@ -526,6 +538,7 @@ export default function MultiView(props: MultiViewProps) {
       scene.overrideMaterial = materialC;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
+      currentScene?.onBeforeRender(renderer, currentScene, blCam, fpoGeom, fpoMaterial, fpoGroup);
       renderer.render(scene, blCam);
 
       // BR
@@ -533,6 +546,7 @@ export default function MultiView(props: MultiViewProps) {
       scene.overrideMaterial = materialD;
       renderer.setViewport(x, y, bw, bh);
       renderer.setScissor(x, y, bw, bh);
+      currentScene?.onBeforeRender(renderer, currentScene, brCam, fpoGeom, fpoMaterial, fpoGroup);
       renderer.render(scene, brCam);
     };
 
