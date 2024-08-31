@@ -25,3 +25,4 @@ export { default as Inspector } from './editor/sidePanel/inspector/Inspector';
 export { default as SceneInspector } from './editor/sidePanel/inspector/SceneInspector';
 export { default as MultiView } from './editor/multiView/MultiView';
 export { default as Editor } from './editor/Editor';
+export { default as ThreeEditor } from './editor/ThreeEditor';
