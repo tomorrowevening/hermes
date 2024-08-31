@@ -17,6 +17,7 @@ $font: Arial;
     
     label {
       font-family: $font;
+      font-weight: bold;
       line-height: $barHeight;
       height: $barHeight;
       padding: 0 5px;
@@ -49,12 +50,25 @@ $font: Arial;
     }
 
     input[type='checkbox'] {
+      appearance: none;
+      background-color: #191919;
+      border: 4px solid #191919;
+      display: inline-block;
       flex: none;
+      min-height: 16px;
+      width: 16px;
+      height: 16px;
+      transition: background-color 0.25s linear;
+      &:checked {
+        background-color: #CCC;
+      }
     }
 
     input[type='color'] {
+      appearance: none;
+      border: none;
       block-size: revert;
-      height: $barHeight;
+      height: calc($barHeight + 8px);
       padding-block: revert;
       padding: 0;
       margin: 0;
@@ -210,7 +224,7 @@ $font: Arial;
         overflow: hidden;
 
         label {
-          line-height: $barHeight;
+          line-height: calc($barHeight + 10px);
           min-width: inherit;
         }
         input {
