@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Events, app, threeDispatcher } from './constants';
-import Editor from '../editor/Editor';
-import Dropdown from '../editor/components/Dropdown';
-import SidePanel from '../editor/sidePanel/SidePanel';
-import MultiView from '../editor/multiView/MultiView';
 import RemoteThree from '../core/remote/RemoteThree';
-// Scenes
+// Models
+import { Events, app, threeDispatcher } from './constants';
+// Views
+import ThreeEditor from '../editor/ThreeEditor';
 import BaseScene from './three/scenes/BaseScene';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
@@ -32,20 +30,15 @@ export default function CustomEditor() {
   return (
     <>
       {loaded && app.editor && (
-        <Editor>
-          <>
-            <MultiView
-              three={three}
-              scenes={scenes}
-              onSceneUpdate={(scene: any) => {
-                // Custom callback for animation updates
-                const baseScene = scene as BaseScene;
-                baseScene.update();
-              }}
-            />
-            <SidePanel three={three} />
-          </>
-        </Editor>
+        <ThreeEditor
+          three={three}
+          scenes={scenes}
+          onSceneUpdate={(scene: any) => {
+            // Custom callback for animation updates
+            const baseScene = scene as BaseScene;
+            baseScene.update();
+          }}
+        />
       )}
     </>
   );
