@@ -125,7 +125,6 @@ $font: Arial;
 
     &.block {
       label {
-        background: rgba(0, 0, 0, 0.2);
         display: inline;
         line-height: 21px;
         max-width: 100%;
@@ -176,7 +175,9 @@ $font: Arial;
         display: inline-block;
         width: 99px;
         height: 99px;
-        position: relative;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
         .x {
           background-color: #333;
           height: 0.5px;
@@ -235,6 +236,7 @@ $font: Arial;
 
     .imageField {
       display: block;
+      height: 120px;
       position: relative;
       img {
         display: inline-block;
