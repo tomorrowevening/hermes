@@ -210,8 +210,7 @@ export function clampedNames(name: string): boolean {
     lower === 'reflectivity' ||
     lower === 'refractionratio' ||
     lower === 'roughness' ||
-    lower === 'sheenroughness' ||
-    lower === 'thickness'
+    lower === 'sheenroughness'
   );
 }
 
