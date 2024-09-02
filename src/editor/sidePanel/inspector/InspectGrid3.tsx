@@ -9,7 +9,7 @@ interface InspectGrid3Props {
 }
 
 export default function InspectGrid3(props: InspectGrid3Props) {
-  const isVector = props.value['isVector3'] !== undefined;
+  const isVector = props.value['x'] !== undefined && props.value['y'] !== undefined && props.value['z'] !== undefined;
   const isEuler = props.value['isEuler'] !== undefined;
   const isMatrix = props.value['elements'] !== undefined;
   const step = props.step !== undefined ? props.step : 0.01;
