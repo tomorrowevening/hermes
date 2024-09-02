@@ -24,7 +24,7 @@ import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 import { hierarchyUUID } from '../../../editor/utils';
 import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
-import { textures } from '../loader';
+import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
 import CustomMaterial from '../CustomMaterial';
 import RTTScene from './RTTScene';
@@ -86,6 +86,9 @@ export default class Scene2 extends BaseScene {
   }
 
   private createWorld() {
+    const envMap = cubeTextures.get('environment')!.clone();
+    this.background = envMap;
+    
     const world = new Object3D();
     world.name = 'world';
     this.add(world);
@@ -95,6 +98,7 @@ export default class Scene2 extends BaseScene {
     gridTexture.needsUpdate = true;
     const floorMaterial = new MeshPhysicalMaterial({
       map: gridTexture,
+      envMap: envMap,
     });
     const floor = new Mesh(new CircleGeometry(250, 36), floorMaterial);
     floor.name = 'floor';

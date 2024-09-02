@@ -14,7 +14,7 @@ export default class RTTScene extends Scene {
     super();
     this.name = 'RTTScene';
 
-    const envMap = cubeTextures.get('environment')!;
+    const envMap = cubeTextures.get('environment')!.clone();
     this.background = envMap;
 
     this.camera = new PerspectiveCamera(60, 1, 10, 2000);

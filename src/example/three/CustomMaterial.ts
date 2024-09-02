@@ -1,4 +1,4 @@
-import { Color, Matrix3, Matrix4, ShaderMaterial, Texture, Vector2, Vector3 } from 'three';
+import { Color, Euler, Matrix3, Matrix4, ShaderMaterial, Texture, Vector2, Vector3, Vector4 } from 'three';
 import { textureFromSrc } from '../../editor/sidePanel/utils';
 
 const vertex = `varying vec2 vUv;
@@ -65,6 +65,12 @@ export default class CustomMaterial extends ShaderMaterial {
         },
         mouse: {
           value: new Vector3()
+        },
+        v4: {
+          value: new Vector4()
+        },
+        euler: {
+          value: new Euler()
         },
         testM3: {
           value: new Matrix3()
