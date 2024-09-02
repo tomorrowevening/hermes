@@ -115,6 +115,21 @@ function stripMaterialData(material: Material): RemoteMaterial {
     }
   }
 
+  // @ts-ignore
+  if (material.anisotropy !== undefined) materialData.anisotropy = material.anisotropy;
+  // @ts-ignore
+  if (material.clearcoat !== undefined) materialData.clearcoat = material.clearcoat;
+  // @ts-ignore
+  if (material.iridescence !== undefined) materialData.iridescence = material.iridescence;
+  // @ts-ignore
+  if (material.dispersion !== undefined) materialData.dispersion = material.dispersion;
+  // @ts-ignore
+  if (material.sheen !== undefined) materialData.sheen = material.sheen;
+  // @ts-ignore
+  if (material.transmission !== undefined) materialData.transmission = material.transmission;
+  // @ts-ignore
+  if (material.transmission !== undefined) materialData.transmission = material.transmission;
+
   return materialData as RemoteMaterial;
 }
 
