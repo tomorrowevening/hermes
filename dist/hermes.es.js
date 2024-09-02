@@ -2126,7 +2126,7 @@ function Ks(i) {
   ] });
 }
 function qi(i) {
-  const e = i.value.isVector3 !== void 0, n = i.value.isEuler !== void 0, t = i.value.elements !== void 0, s = i.step !== void 0 ? i.step : 0.01, a = [];
+  const e = i.value.x !== void 0 && i.value.y !== void 0 && i.value.z !== void 0, n = i.value.isEuler !== void 0, t = i.value.elements !== void 0, s = i.step !== void 0 ? i.step : 0.01, a = [];
   if (e) {
     const o = Ce(() => i.value, []), r = (c, m) => {
       o[c] = m, i.onChange({ target: { value: o } });
@@ -2509,7 +2509,7 @@ function ui(i) {
 }
 function Hn(i) {
   const e = i.toLowerCase();
-  return e.search("intensity") > -1 || e === "anisotropyrotation" || e === "blendalpha" || e === "bumpscale" || e === "clearcoatroughness" || e === "displacementbias" || e === "displacementscale" || e === "metalness" || e === "opacity" || e === "reflectivity" || e === "refractionratio" || e === "roughness" || e === "sheenroughness" || e === "thickness";
+  return e.search("intensity") > -1 || e === "anisotropyrotation" || e === "blendalpha" || e === "bumpscale" || e === "clearcoatroughness" || e === "displacementbias" || e === "displacementscale" || e === "metalness" || e === "opacity" || e === "reflectivity" || e === "refractionratio" || e === "roughness" || e === "sheenroughness";
 }
 function Qs() {
   const i = document.createElement("input");
