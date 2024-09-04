@@ -307,63 +307,63 @@ const blendingEquationOpts: any[] = [
 const blendSourceOpts: any[] = [
   {
     title: 'Zero',
-    valye: ZeroFactor,
+    value: ZeroFactor,
   },
   {
     title: 'One',
-    valye: OneFactor,
+    value: OneFactor,
   },
   {
     title: 'Src Color',
-    valye: SrcColorFactor,
+    value: SrcColorFactor,
   },
   {
     title: 'One Minus Src Color',
-    valye: OneMinusSrcColorFactor,
+    value: OneMinusSrcColorFactor,
   },
   {
     title: 'Src Alpha',
-    valye: SrcAlphaFactor,
+    value: SrcAlphaFactor,
   },
   {
     title: 'One Minus Src Alpha',
-    valye: OneMinusSrcAlphaFactor,
+    value: OneMinusSrcAlphaFactor,
   },
   {
     title: 'Dst Alpha',
-    valye: DstAlphaFactor,
+    value: DstAlphaFactor,
   },
   {
     title: 'One Minus Dst Alpha',
-    valye: OneMinusDstAlphaFactor,
+    value: OneMinusDstAlphaFactor,
   },
   {
     title: 'Dst Color',
-    valye: DstColorFactor,
+    value: DstColorFactor,
   },
   {
     title: 'One Minus Dst Color',
-    valye: OneMinusDstColorFactor,
+    value: OneMinusDstColorFactor,
   },
   {
     title: 'Src Alpha Saturate',
-    valye: SrcAlphaSaturateFactor,
+    value: SrcAlphaSaturateFactor,
   },
   {
     title: 'Constant Color',
-    valye: ConstantColorFactor,
+    value: ConstantColorFactor,
   },
   {
     title: 'One Minus Constant Color',
-    valye: OneMinusConstantColorFactor,
+    value: OneMinusConstantColorFactor,
   },
   {
     title: 'Constant Alpha',
-    valye: ConstantAlphaFactor,
+    value: ConstantAlphaFactor,
   },
   {
     title: 'One Minus Constant Alpha',
-    valye: OneMinusConstantAlphaFactor,
+    value: OneMinusConstantAlphaFactor,
   },
 ];
 
@@ -371,59 +371,59 @@ const blendSourceOpts: any[] = [
 const blendDestinationOpts: any[] = [
   {
     title: 'Zero',
-    valye: ZeroFactor,
+    value: ZeroFactor,
   },
   {
     title: 'One',
-    valye: OneFactor,
+    value: OneFactor,
   },
   {
     title: 'Src Color',
-    valye: SrcColorFactor,
+    value: SrcColorFactor,
   },
   {
     title: 'One Minus Src Color',
-    valye: OneMinusSrcColorFactor,
+    value: OneMinusSrcColorFactor,
   },
   {
     title: 'Src Alpha',
-    valye: SrcAlphaFactor,
+    value: SrcAlphaFactor,
   },
   {
     title: 'One Minus Src Alpha',
-    valye: OneMinusSrcAlphaFactor,
+    value: OneMinusSrcAlphaFactor,
   },
   {
     title: 'Dst Alpha',
-    valye: DstAlphaFactor,
+    value: DstAlphaFactor,
   },
   {
     title: 'One Minus Dst Alpha',
-    valye: OneMinusDstAlphaFactor,
+    value: OneMinusDstAlphaFactor,
   },
   {
     title: 'Dst Color',
-    valye: DstColorFactor,
+    value: DstColorFactor,
   },
   {
     title: 'One Minus Dst Color',
-    valye: OneMinusDstColorFactor,
+    value: OneMinusDstColorFactor,
   },
   {
     title: 'Constant Color',
-    valye: ConstantColorFactor,
+    value: ConstantColorFactor,
   },
   {
     title: 'One Minus Constant Color',
-    valye: OneMinusConstantColorFactor,
+    value: OneMinusConstantColorFactor,
   },
   {
     title: 'Constant Alpha',
-    valye: ConstantAlphaFactor,
+    value: ConstantAlphaFactor,
   },
   {
     title: 'One Minus Constant Alpha',
-    valye: OneMinusConstantAlphaFactor,
+    value: OneMinusConstantAlphaFactor,
   },
 ];
 
