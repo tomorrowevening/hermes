@@ -53,8 +53,22 @@ export default function InspectorField(props: InspectorFieldProps) {
     if (props.type === 'boolean') {
       value = evt.target.checked;
     } else if (props.type === 'option') {
-      // @ts-ignore
-      value = props.options[value].value;
+      if (typeof props.value === 'number') {
+        value = Number(value);
+      } else if (typeof props.value === 'boolean') {
+        value = Boolean(value);
+      } else if (typeof props.value === 'object') {
+        value = JSON.parse(value);
+      }
+      if (props.options !== undefined) {
+        const total = props.options.length;
+        for (let i = 0; i < total; i++) {
+          const option = props.options[i];
+          if (option.value === value) {
+            break;
+          }
+        }
+      }
     }
     setFieldValue(value);
     if (props.onChange !== undefined) props.onChange(props.prop !== undefined ? props.prop : props.title, value);
