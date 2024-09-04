@@ -5,13 +5,15 @@ export interface BroadcastData {
     data?: any;
 }
 export interface GroupItemData {
-    title: string;
     type: InspectorFieldType;
-    value: any;
     prop: string;
+    title?: string;
+    value?: any;
     min?: number;
     max?: number;
     step?: number;
+    disabled?: boolean;
+    options?: any[];
 }
 export interface GroupData {
     title: string;

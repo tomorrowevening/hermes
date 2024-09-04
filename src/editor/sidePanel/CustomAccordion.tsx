@@ -24,13 +24,15 @@ export default function CustomAccordion(props: CustomAccordionProps) {
 
       data.items.forEach((item: GroupItemData) => {
         items.push({
-          title: item.title,
           type: item.type,
-          value: item.value,
           prop: item.prop,
+          title: item.title !== undefined ? item.title : item.prop,
+          value: item.value,
           min: item.min,
           max: item.max,
           step: item.step,
+          options: item.options,
+          disabled: item.disabled,
           onChange: (prop: string, value: any) => {
             props.three.updateGroup(data.title, prop, value);
           },
