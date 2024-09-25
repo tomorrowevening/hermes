@@ -9,7 +9,6 @@ Open the [Application](https://hermes-lovat.vercel.app/) and [editor](https://he
 - Customizable Navigation Dropdowns + Draggable components for Triggers/Event Dispatching
 - [TheatreJS](https://www.theatrejs.com/)
 - [ThreeJS](https://threejs.org/)
-- [Tweakpane](https://tweakpane.github.io/docs/)
 - Custom ThreeJS Scene + Object Inspector
 
 ### Assets

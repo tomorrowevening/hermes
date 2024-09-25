@@ -14,13 +14,10 @@ import { dispose } from '../../editor/utils';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
-import RemoteTweakpane from '../../core/remote/RemoteTweakpane';
 
 let renderer: WebGLRenderer;
 let currentScene: BaseScene;
 let sceneName = '';
-
-const useTweakpane = false;
 
 app.editor = IS_DEV && document.location.hash.search('editor') > -1;
 
@@ -30,7 +27,6 @@ function App() {
 
   const theatre = app.components.get('theatre') as RemoteTheatre;
   const three = app.components.get('three') as RemoteThree;
-  const debug = app.components.get('debug') as RemoteTweakpane;
 
   // Theatre
   useEffect(() => {
@@ -157,32 +153,6 @@ function App() {
     useEffect(() => {
       const container = elementRef.current!;
       container.style.visibility = app.editor ? 'hidden' : 'inherit';
-
-      // Tweakpane Example
-      if (useTweakpane) {
-        const testFolder = debug.addFolder('Test Folder');
-
-        debug.button('Test Button', () => {
-          console.log('Test button works!');
-        }, testFolder);
-
-        const test = { opacity: 1, rotation: 0 };
-        debug.bind(test, 'opacity', {
-          min: 0,
-          max: 1,
-          onChange: (value: number) => {
-            container.style.opacity = value.toFixed(2);
-          }
-        }, testFolder);
-
-        debug.bind(test, 'rotation', {
-          min: 0,
-          max: 360,
-          onChange: (value: number) => {
-            container.style.transform = `rotate(${value}deg)`;
-          }
-        }, testFolder);
-      }
 
       // Components Example
       const onCustom = (evt: any) => {

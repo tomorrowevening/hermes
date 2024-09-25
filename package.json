@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.96",
+  "version": "0.0.97",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -16,8 +16,7 @@
     "Editor",
     "Remote",
     "TheatreJS",
-    "ThreeJS",
-    "Tweakpane"
+    "ThreeJS"
   ],
   "files": [
     "dist/hermes.es.js",
@@ -54,7 +53,6 @@
   "devDependencies": {
     "@theatre/core": "0.7.0",
     "@theatre/studio": "0.7.0",
-    "@tweakpane/plugin-essentials": "^0.2.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.164.0",
@@ -74,7 +72,6 @@
     "sass": "^1.66.1",
     "stats-gl": "2.0.1",
     "three": "^0.164.1",
-    "tweakpane": "^4.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-glsl": "^1.2.1",

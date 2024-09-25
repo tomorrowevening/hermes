@@ -8,7 +8,6 @@ export { default as RemoteComponents } from './core/remote/RemoteComponents';
 export * from './editor/theatreUtils';
 export { default as RemoteTheatre } from './core/remote/RemoteTheatre';
 export { default as RemoteThree } from './core/remote/RemoteThree';
-export { default as RemoteTweakpane } from './core/remote/RemoteTweakpane';
 // Components
 export { default as NavButton } from './editor/components/NavButton';
 export { default as DraggableItem } from './editor/components/DraggableItem';

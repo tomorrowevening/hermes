@@ -56,6 +56,13 @@ export function InspectTransform(object: RemoteObject, three: RemoteThree) {
           value: scale,
           onChange: updateTransform,
         },
+        {
+          title: 'Visible',
+          prop: 'visible',
+          type: 'boolean',
+          value: object.visible,
+          onChange: updateTransform,
+        },
       ]}
     />
   );
