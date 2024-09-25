@@ -57,7 +57,9 @@ export default class RemoteTheatre extends BaseRemote {
         },
       });
 
-      this.sheet(name, instanceId)?.sequence.play(params).then((complete: boolean) => resolve(complete));
+      const rafParams = {...params};
+      rafParams.rafDriver = RemoteTheatre.rafDriver;
+      this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
     });
   }
 
