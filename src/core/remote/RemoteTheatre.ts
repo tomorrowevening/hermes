@@ -45,17 +45,19 @@ export default class RemoteTheatre extends BaseRemote {
     return sheet;
   }
 
-  playSheet(name: string, params?: any, instanceId?: string) {
-    this.sheet(name, instanceId)?.sequence.play(params);
+  playSheet(name: string, params?: any, instanceId?: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.app.send({
+        event: 'playSheet',
+        target: 'editor',
+        data: {
+          sheet: name,
+          instance: instanceId,
+          value: params,
+        },
+      });
 
-    this.app.send({
-      event: 'playSheet',
-      target: 'editor',
-      data: {
-        sheet: name,
-        instance: instanceId,
-        value: params,
-      },
+      this.sheet(name, instanceId)?.sequence.play(params).then((complete: boolean) => resolve(complete));
     });
   }
 
