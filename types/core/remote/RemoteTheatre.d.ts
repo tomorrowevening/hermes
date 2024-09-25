@@ -14,7 +14,7 @@ export default class RemoteTheatre extends BaseRemote {
     dispose(): void;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
-    playSheet(name: string, params?: any, instanceId?: string): void;
+    playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;
     pauseSheet(name: string, instanceId?: string): void;
     clearSheetObjects(sheetName: string): void;
     sheetObject(sheetName: string, key: string, props: any, onUpdate?: DataUpdateCallback, instanceId?: string): ISheetObject | undefined;

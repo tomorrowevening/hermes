@@ -5,7 +5,6 @@ import RemoteController from '../core/RemoteController';
 import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
-import RemoteTweakpane from '../core/remote/RemoteTweakpane';
 
 export const IS_DEV = true;
 
@@ -18,14 +17,11 @@ app.addComponent('three', three);
 if (IS_DEV) {
   theatre.studio = studio;
   const components = new RemoteComponents(app);
-  const debug = new RemoteTweakpane(app);
   app.addComponent('components', components);
-  app.addComponent('debug', debug);
   const appHandlers: any[] = [
     { remote: theatre, callback: theatre.handleApp },
     { remote: three, callback: three.handleApp },
     { remote: components, callback: components.handleApp },
-    { remote: debug, callback: debug.handleApp },
   ];
   const editorHandlers: any[] = [
     { remote: theatre, callback: theatre.handleEditor },
