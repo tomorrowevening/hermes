@@ -8,7 +8,14 @@ import RemoteThree from '../core/remote/RemoteThree';
 
 export const IS_DEV = true;
 
+export const threeDispatcher = new EventDispatcher();
+export const Events = {
+  LOAD_COMPLETE: 'Events::loadComplete'
+};
+
 export const app = new Application('ws://localhost:8080', IS_DEV);
+app.editor = IS_DEV && document.location.hash.search('editor') > -1;
+
 const theatre = new RemoteTheatre(app);
 const three = new RemoteThree(app);
 app.addComponent('theatre', theatre);
@@ -28,10 +35,11 @@ if (IS_DEV) {
     { remote: three, callback: three.handleEditor },
   ];
   RemoteController(app, appHandlers, editorHandlers);
-  theatre.handleEditorApp(app, theatre);
-}
 
-export const threeDispatcher = new EventDispatcher();
-export const Events = {
-  LOAD_COMPLETE: 'Events::loadComplete'
-};
+  const onLoad = () => {
+    threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
+    theatre.handleEditorApp(app, theatre);
+  };
+
+  threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
+}

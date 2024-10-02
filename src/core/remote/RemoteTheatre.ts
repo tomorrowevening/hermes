@@ -46,25 +46,25 @@ export default class RemoteTheatre extends BaseRemote {
   }
 
   playSheet(name: string, params?: any, instanceId?: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.app.send({
-        event: 'playSheet',
-        target: 'editor',
-        data: {
-          sheet: name,
-          instance: instanceId,
-          value: params,
-        },
-      });
+    this.app.send({
+      event: 'playSheet',
+      target: 'editor',
+      data: {
+        sheet: name,
+        instance: instanceId,
+        value: params,
+      },
+    });
 
-      const rafParams = {...params};
+    return new Promise((resolve) => {
+      const rafParams = params !== undefined ? {...params} : {};
       rafParams.rafDriver = RemoteTheatre.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
     });
   }
 
   pauseSheet(name: string, instanceId?: string) {
-    this.sheet(name)?.sequence.pause();
+    this.sheet(name, instanceId)?.sequence.pause();
 
     this.app.send({
       event: 'pauseSheet',
@@ -247,8 +247,6 @@ export default class RemoteTheatre extends BaseRemote {
       // Timeline
       let position = -1;
       const onRafUpdate = () => {
-        RemoteTheatre.rafDriver?.tick(performance.now());
-  
         if (
           theatre.activeSheet !== undefined &&
           position !== theatre.activeSheet.sequence.position
