@@ -40,8 +40,6 @@ export function theatreEditorApp(app: Application, theatre: RemoteTheatre, studi
     // Timeline
     let position = -1;
     const onRafUpdate = () => {
-      RemoteTheatre.rafDriver?.tick(performance.now());
-
       if (
         theatre.activeSheet !== undefined &&
         position !== theatre.activeSheet.sequence.position
