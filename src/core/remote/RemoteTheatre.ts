@@ -58,7 +58,7 @@ export default class RemoteTheatre extends BaseRemote {
       });
 
       const rafParams = {...params};
-      rafParams.rafDriver = RemoteTheatre.rafDriver;
+      if (RemoteTheatre.rafDriver !== undefined) rafParams.rafDriver = RemoteTheatre.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
     });
   }
@@ -247,8 +247,6 @@ export default class RemoteTheatre extends BaseRemote {
       // Timeline
       let position = -1;
       const onRafUpdate = () => {
-        RemoteTheatre.rafDriver?.tick(performance.now());
-  
         if (
           theatre.activeSheet !== undefined &&
           position !== theatre.activeSheet.sequence.position
