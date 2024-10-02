@@ -148,10 +148,75 @@
           }
         }
       }
+    },
+    "Scene2": {
+      "staticOverrides": {
+        "byObject": {}
+      },
+      "sequence": {
+        "subUnitsPerUnit": 30,
+        "length": 2,
+        "type": "PositionalSequence",
+        "tracksByObject": {
+          "Dancer": {
+            "trackData": {
+              "RJBuhDhdE7": {
+                "type": "BasicKeyframedTrack",
+                "__debugName": "Dancer:[\"position\",\"y\"]",
+                "keyframes": [
+                  {
+                    "id": "YXHiDzn7We",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 0
+                  },
+                  {
+                    "id": "B6J_E-UbfN",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 50
+                  },
+                  {
+                    "id": "BJouSMqE99",
+                    "position": 2,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "type": "bezier",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "trackIdByPropPath": {
+              "[\"position\",\"y\"]": "RJBuhDhdE7"
+            }
+          }
+        }
+      }
     }
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "6qvoi1xDufJ3mDcJ",
     "qZZT0D8q5aaicaVF",
     "0_X3SHD4kxF4l9IB"
   ]
