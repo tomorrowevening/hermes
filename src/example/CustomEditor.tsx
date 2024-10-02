@@ -23,7 +23,9 @@ export default function CustomEditor() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-      customizeTheatreElements();
+      setTimeout(() => {
+        customizeTheatreElements();
+      }, 100);
       setLoaded(true);
     };
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
