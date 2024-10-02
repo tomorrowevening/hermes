@@ -8,6 +8,8 @@ import BaseScene from './three/scenes/BaseScene';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
 import RTTScene from './three/scenes/RTTScene';
+// Utils
+import { customizeTheatreElements } from '../editor/theatreUtils';
 
 // Referenced Scenes
 const scenes: Map<string, any> = new Map();
@@ -21,6 +23,7 @@ export default function CustomEditor() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
+      customizeTheatreElements();
       setLoaded(true);
     };
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);

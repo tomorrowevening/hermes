@@ -19,8 +19,6 @@ let renderer: WebGLRenderer;
 let currentScene: BaseScene;
 let sceneName = '';
 
-app.editor = IS_DEV && document.location.hash.search('editor') > -1;
-
 function App() {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,6 +47,7 @@ function App() {
         container.style.top = `${values.y}px`;
       },
     );
+    theatre.playSheet('App', { iterationCount: Infinity });
     return () => {
       if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
       app.dispose();

@@ -1,7 +1,9 @@
 import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Texture, TextureLoader } from 'three';
 // @ts-ignore
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { Events, threeDispatcher } from '../constants';
+import { app, Events, threeDispatcher } from '../constants';
+import { getProject } from '@theatre/core';
+import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export const cubeTextures: Map<string, CubeTexture> = new Map();
 export const json: Map<string, any> = new Map();
@@ -99,9 +101,14 @@ export function loadAssets(): Promise<void> {
 
     Promise.all(assets.map(load => load()))
       .then(() => {
-        // @ts-ignore
-        threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
-        resolve();
+        const theatre = app.components.get('theatre') as RemoteTheatre;
+        const state = json.get('animation');
+        theatre.project = getProject('RemoteApp', { state });
+        theatre.project.ready.then(() => {
+          // @ts-ignore
+          threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
+          resolve();
+        });
       })
       .catch(() => {
         reject();
