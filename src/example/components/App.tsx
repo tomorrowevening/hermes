@@ -47,7 +47,7 @@ function App() {
         container.style.top = `${values.y}px`;
       },
     );
-    theatre.playSheet('App', { iterationCount: Infinity });
+    if (app.isApp) theatre.playSheet('App', { iterationCount: Infinity });
     return () => {
       if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
       app.dispose();
