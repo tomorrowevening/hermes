@@ -8,10 +8,15 @@ import RemoteThree from '../core/remote/RemoteThree';
 
 export const IS_DEV = true;
 
-export const threeDispatcher = new EventDispatcher();
-export const Events = {
-  LOAD_COMPLETE: 'Events::loadComplete'
-};
+export enum Events {
+  LOAD_COMPLETE = 'Events::loadComplete'
+}
+
+type WebGLEvent = {
+  [key in Events]: { value?: unknown }
+}
+
+export const threeDispatcher = new EventDispatcher<WebGLEvent>();
 
 export const app = new Application('ws://localhost:8080', IS_DEV);
 app.editor = IS_DEV && document.location.hash.search('editor') > -1;

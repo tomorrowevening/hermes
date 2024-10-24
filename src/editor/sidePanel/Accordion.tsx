@@ -17,7 +17,6 @@ export default function Accordion(props: AccordionProps) {
   const hide = !open || props.children === undefined;
 
   const onRemove = () => {
-    // @ts-ignore
     debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
   };
 
