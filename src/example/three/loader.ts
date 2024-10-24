@@ -105,7 +105,6 @@ export function loadAssets(): Promise<void> {
         const state = json.get('animation');
         theatre.project = getProject('RemoteApp', { state });
         theatre.project.ready.then(() => {
-          // @ts-ignore
           threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
           resolve();
         });

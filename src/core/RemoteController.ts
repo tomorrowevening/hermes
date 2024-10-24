@@ -17,7 +17,6 @@ export default function RemoteController(app: Application, appHandlers: RemoteCa
 
     switch (msg.event) {
       case 'custom':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }
@@ -30,7 +29,6 @@ export default function RemoteController(app: Application, appHandlers: RemoteCa
 
     switch (msg.event) {
       case 'custom':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }

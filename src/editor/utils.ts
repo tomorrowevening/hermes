@@ -1,8 +1,6 @@
 import {
-  Box3,
-  BufferAttribute,
+  Audio,
   BufferGeometry,
-  Camera,
   Float32BufferAttribute,
   LinearSRGBColorSpace,
   Material,
@@ -10,14 +8,10 @@ import {
   MeshBasicMaterial,
   Object3D,
   OrthographicCamera,
-  PerspectiveCamera,
   Scene,
-  Sphere,
   Texture,
-  Vector3,
   WebGLRenderer
 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);
@@ -134,8 +128,7 @@ export const dispose = (object: Object3D): void => {
   while (object.children.length > 0) {
     const child = object.children[0];
     if (child.type === 'Audio') {
-      // @ts-ignore
-      child.pause();
+      (child as Audio).pause();
       if (child.parent) {
         child.parent.remove(child);
       }
