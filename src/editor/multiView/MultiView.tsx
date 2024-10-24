@@ -52,6 +52,7 @@ import './MultiView.scss';
 import UVMaterial from './UVMaterial';
 // Utils
 import { dispose, mix } from '../utils';
+import Transform from '../tools/Transform';
 
 // Scene
 let currentScene: Scene;
@@ -231,6 +232,7 @@ export default function MultiView(props: MultiViewProps) {
     instance.setPixelRatio(devicePixelRatio);
     instance.setClearColor(0x000000);
     props.three.renderer = instance;
+    Transform.instance.three = props.three;
     setRenderer(instance);
   }, []);
 
