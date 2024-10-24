@@ -28,8 +28,6 @@ export default class RemoteThree extends BaseRemote {
     removeCamera(camera: Camera): void;
     handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
     handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
-    private rendererWidth;
-    private rendererHeight;
     addRT(name: string, params?: RenderTargetOptions): void;
     resize(width: number, height: number): void;
     set dpr(value: number);

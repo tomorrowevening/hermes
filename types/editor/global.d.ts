@@ -1,20 +1,25 @@
 import { EventDispatcher } from 'three';
-export declare const debugDispatcher: EventDispatcher<{}>;
-export declare const ToolEvents: {
-    CUSTOM: string;
-    SELECT_DROPDOWN: string;
-    DRAG_UPDATE: string;
-    ADD_SCENE: string;
-    REFRESH_SCENE: string;
-    REMOVE_SCENE: string;
-    SET_SCENE: string;
-    GET_OBJECT: string;
-    SET_OBJECT: string;
-    UPDATE_OBJECT: string;
-    CREATE_TEXTURE: string;
-    REQUEST_METHOD: string;
-    ADD_CAMERA: string;
-    REMOVE_CAMERA: string;
-    ADD_GROUP: string;
-    REMOVE_GROUP: string;
+export declare enum ToolEvents {
+    CUSTOM = "ToolEvents::custom",
+    SELECT_DROPDOWN = "ToolEvents::selectDropdown",
+    DRAG_UPDATE = "ToolEvents::dragUpdate",
+    ADD_SCENE = "ToolEvents::addScene",
+    REFRESH_SCENE = "ToolEvents::refreshScene",
+    REMOVE_SCENE = "ToolEvents::removeScene",
+    SET_SCENE = "ToolEvents::setScene",
+    GET_OBJECT = "ToolEvents::getObject",
+    SET_OBJECT = "ToolEvents::setObject",
+    UPDATE_OBJECT = "ToolEvents::updateObject",
+    CREATE_TEXTURE = "ToolEvents::createTexture",
+    REQUEST_METHOD = "ToolEvents::requestMethod",
+    ADD_CAMERA = "ToolEvents::addCamera",
+    REMOVE_CAMERA = "ToolEvents::removeCamera",
+    ADD_GROUP = "ToolEvents::addGroup",
+    REMOVE_GROUP = "ToolEvents::removeGroup"
+}
+export type ToolEvent = {
+    [key in ToolEvents]: {
+        value?: unknown;
+    };
 };
+export declare const debugDispatcher: EventDispatcher<ToolEvent>;
