@@ -469,11 +469,6 @@
   dependencies:
     "@theatre/dataverse" "0.7.0"
 
-"@tweakpane/plugin-essentials@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@tweakpane/plugin-essentials/-/plugin-essentials-0.2.0.tgz#c1f34a6614dc371810c42b8bf083c2ec0236400f"
-  integrity sha512-/kO90nfm0y0CYJPUvoNrjXhjNoqr+RaoySIdJmy++pb5vrSHi/DXdxG/sPszUPZggDY9M31RTacnxXi6Dv7r8Q==
-
 "@tweenjs/tween.js@~23.1.1":
   version "23.1.1"
   resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-23.1.1.tgz#0ae28ed9c635805557f78c2626464018d5f1b5e2"
@@ -2312,11 +2307,6 @@ tslib@^2.4.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
-
-tweakpane@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-4.0.0.tgz#19df9155298a492ff58805181a7f9572fb78f98e"
-  integrity sha512-U1kbExuRj921my8EX7VHq+ajYoIIzlE7+4P94CtHkBBLw0ggq8ktyY6cUCHb/lOKrTUS7N0OKY1HawBcX4vecA==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
