@@ -229,19 +229,15 @@ export default class RemoteThree extends BaseRemote {
     const three = remote as RemoteThree;
     switch (msg.event) {
       case 'getObject':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
         break;
       case 'updateObject':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
         break;
       case 'createTexture':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
         break;
       case 'requestMethod':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
         break;
       case 'refreshScene':
@@ -263,48 +259,36 @@ export default class RemoteThree extends BaseRemote {
   override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
       case 'setObject':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
         break;
       case 'addScene':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
         break;
       case 'refreshScene':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
         break;
       case 'removeScene':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
         break;
       case 'setScene':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
         break;
       case 'addCamera':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
         break;
       case 'removeCamera':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
         break;
       case 'addGroup':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
         break;
       case 'removeGroup':
-        // @ts-ignore
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
         break;
     }
   }
 
   // Renderer
-
-  private rendererWidth = 300;
-  private rendererHeight = 150;
 
   addRT(name: string, params?: RenderTargetOptions) {
     const rt = new WebGLRenderTarget(32, 32, params);
@@ -314,8 +298,6 @@ export default class RemoteThree extends BaseRemote {
 
   resize(width: number, height: number) {
     const dpr = this.dpr;
-    this.rendererWidth = width;
-    this.rendererHeight = height;
     this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
       renderTarget.setSize(width * dpr, height * dpr);
     });
@@ -331,11 +313,11 @@ export default class RemoteThree extends BaseRemote {
   }
 
   get width(): number {
-    return this.rendererWidth;
+    return this.renderer !== undefined ? this.renderer.domElement.width / this.dpr : 0;
   }
 
   get height(): number {
-    return this.rendererHeight;
+    return this.renderer !== undefined ? this.renderer.domElement.height / this.dpr : 0;
   }
 
   get canvas(): HTMLCanvasElement | null {
