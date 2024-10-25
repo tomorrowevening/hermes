@@ -4,6 +4,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 // Remote
 import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
+import { dispose } from '../utils';
 
 export default class Transform extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart';
@@ -35,6 +36,7 @@ export default class Transform extends EventDispatcher {
       const element = document.querySelector('.clickable') as HTMLDivElement;
       controls = new TransformControls(this.activeCamera, element);
       controls.getHelper().name = name;
+      controls.setSpace('local');
       this.controls.set(name, controls);
       this.visibility.set(name, controls.getHelper().visible);
 
@@ -137,10 +139,10 @@ export default class Transform extends EventDispatcher {
   remove(name: string): boolean {
     const controls = this.get(name);
     if (controls === undefined) return false;
+
     controls.detach();
-    controls.dispose();
-    const helper = controls.getHelper();
-    helper.parent?.remove(helper);
+    controls.disconnect();
+    dispose(controls.getHelper());
     this.controls.delete(name);
     return true;
   }

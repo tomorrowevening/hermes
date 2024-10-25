@@ -90,7 +90,7 @@ export default function Inspector(props: CoreComponentProps) {
             {/* Data */}
             <>
               {/* Transform */}
-              {InspectTransform(currentObject, props.three)}
+              <InspectTransform object={currentObject} three={props.three} />
               {/* Animations */}
               {hasAnimation ? InspectAnimation(currentObject, props.three) : null}
               {/* Cameras */}

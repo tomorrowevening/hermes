@@ -53,6 +53,8 @@ import UVMaterial from './UVMaterial';
 import Transform from '../tools/Transform';
 // Utils
 import { dispose, mix } from '../utils';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
@@ -96,6 +98,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private grid = new InfiniteGridHelper();
   private axisHelper = new AxesHelper(500);
   private interactionHelper = new AxesHelper(100);
+  private currentTransform?: TransformControls;
 
   // Override Materials
   private depthMaterial = new MeshDepthMaterial();
@@ -125,11 +128,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private brRender: RenderMode = 'Renderer';
 
   // Interactions
+  selectedItem: Object3D | undefined = undefined;
   private debugCamera!: PerspectiveCamera;
   private raycaster = new Raycaster();
   private pointer = new Vector2();
-  private currentWindow: any;
-  private selectedItem: Object3D | undefined = undefined;
   private cameraControls: CameraControls | undefined = undefined;
 
   // References
@@ -139,6 +141,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private trWindow!: RefObject<HTMLDivElement>;
   private blWindow!: RefObject<HTMLDivElement>;
   private brWindow!: RefObject<HTMLDivElement>;
+  private currentWindow: any; // RefObject to one of the "windows"
 
   constructor(props: MultiViewProps) {
     super(props);
@@ -797,12 +800,49 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           this.cameraControls.rotateTo(degToRad(45), degToRad(45), true);
           this.updateCameraControls(currentControls);
         }
+      } else {
+        if (this.currentTransform !== undefined) {
+          switch (evt.key) {
+            case 'r':
+              this.currentTransform.setMode('rotate');
+              break;
+            case 's':
+              this.currentTransform.setMode('scale');
+              break;
+            case 't':
+              this.currentTransform.setMode('translate');
+              break;
+          }
+        }
       }
     }
   };
 
   private onSetSelectedItem = (evt: any) => {
     this.selectedItem = this.currentScene!.getObjectByProperty('uuid', evt.value.uuid);
+    if (this.selectedItem === undefined) return;
+
+    if (this.currentTransform !== undefined) {
+      this.currentTransform.removeEventListener('objectChange', this.onUpdateTransform);
+      Transform.instance.remove(this.currentTransform.getHelper().name);
+    }
+
+    this.currentTransform = Transform.instance.add(evt.value.name);
+    this.currentTransform.attach(this.selectedItem);
+    this.scene.add(this.currentTransform.getHelper());
+    this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
+  };
+
+  private onUpdateTransform = () => {
+    if (this.selectedItem === undefined) return;
+    this.props.three.updateObject(this.selectedItem.uuid, 'position', this.selectedItem.position);
+    this.props.three.updateObject(this.selectedItem.uuid, 'rotation', {
+      x: this.selectedItem.rotation.x,
+      y: this.selectedItem.rotation.y,
+      z: this.selectedItem.rotation.z,
+    });
+    this.props.three.updateObject(this.selectedItem.uuid, 'scale', this.selectedItem.scale);
+    InspectTransform.instance.update();
   };
 
   // Utils
