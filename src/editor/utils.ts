@@ -17,6 +17,12 @@ export function capitalize(value: string): string {
   return value.substring(0, 1).toUpperCase() + value.substring(1);
 }
 
+export function copyToClipboard(data: any): string {
+  const content = JSON.stringify(data);
+  navigator.clipboard.writeText(content);
+  return content;
+}
+
 export function clamp(min: number, max: number, value: number) {
   return Math.min(max, Math.max(min, value));
 }

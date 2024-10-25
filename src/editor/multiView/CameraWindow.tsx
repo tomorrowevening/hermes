@@ -72,18 +72,21 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
       <div ref={ref} className='clickable' onClick={() => {
         if (open) setOpen(false);
       }} />
+
       <div className='options'>
-        <Dropdown
-          title='Camera'
-          index={props.options.indexOf(props.camera.name)}
-          open={open}
-          options={props.options}
-          onSelect={props.onSelectCamera}
-          onToggle={(value: boolean) => {
-            setOpen(value);
-          }}
-          up={true}
-        />
+        {props.camera !== null && (
+          <Dropdown
+            title='Camera'
+            index={props.options.indexOf(props.camera.name)}
+            open={open}
+            options={props.options}
+            onSelect={props.onSelectCamera}
+            onToggle={(value: boolean) => {
+              setOpen(value);
+            }}
+            up={true}
+          />
+        )}
         <Dropdown
           title='Mode'
           index={renderOptions.indexOf(currentRenderMode)}

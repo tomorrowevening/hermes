@@ -1,9 +1,8 @@
 // Libs
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Component, ReactNode, RefObject, createRef } from 'react';
 import {
   AxesHelper,
   Box3,
-  BufferGeometry,
   Camera,
   CameraHelper,
   Clock,
@@ -50,24 +49,16 @@ import { ToolEvents, debugDispatcher } from '../global';
 // Components
 import './MultiView.scss';
 import UVMaterial from './UVMaterial';
+// Tools
+import Transform from '../tools/Transform';
 // Utils
 import { dispose, mix } from '../utils';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 
-// Scene
-let currentScene: Scene;
+type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
-// Cameras
-let sceneSet = false;
-let tlCam: any = null;
-let trCam: any = null;
-let blCam: any = null;
-let brCam: any = null;
-let tlRender: RenderMode = 'Renderer';
-let trRender: RenderMode = 'Renderer';
-let blRender: RenderMode = 'Renderer';
-let brRender: RenderMode = 'Renderer';
-
-interface MultiViewProps {
+type MultiViewProps = {
   three: RemoteThree;
   scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
@@ -75,83 +66,842 @@ interface MultiViewProps {
   onSceneResize?: (scene: Scene, width: number, height: number) => void;
 }
 
-type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
+type MultiViewState = {
+  mode: MultiViewMode;
+  modeOpen: boolean;
+  renderModeOpen: boolean;
+  interactionMode: InteractionMode;
+  interactionModeOpen: boolean;
+  lastUpdate: number;
+}
 
-export default function MultiView(props: MultiViewProps) {
-  const appID = props.three.app.appID;
+const ModeOptions: MultiViewMode[] = [
+  'Single',
+  'Side by Side',
+  'Stacked',
+  'Quad'
+];
 
-  // Memo
-  const cameras: Map<string, Camera> = useMemo(() => new Map(), []);
-  const controls: Map<string, OrbitControls> = useMemo(() => new Map(), []);
-  const cameraHelpers: Map<string, CameraHelper> = useMemo(() => new Map(), []);
-  const lightHelpers: Map<string, LightHelper> = useMemo(() => new Map(), []);
-  const scene = useMemo(() => new Scene(), []);
-  const helpersContainer = useMemo(() => new Group(), []);
-  const grid = useMemo(() => new InfiniteGridHelper(), []);
-  const axisHelper = useMemo(() => new AxesHelper(500), []);
-  const interactionHelper = useMemo(() => new AxesHelper(100), []);
-  const depthMaterial = useMemo(() => new MeshDepthMaterial(), []);
-  const normalsMaterial = useMemo(() => new MeshNormalMaterial(), []);
-  const uvMaterial = useMemo(() => new UVMaterial(), []);
-  const wireframeMaterial = useMemo(() => new MeshBasicMaterial({
+export default class MultiView extends Component<MultiViewProps, MultiViewState> {
+  static instance: MultiView | null = null;
+
+  scene = new Scene();
+  renderer?: WebGLRenderer | null;
+  currentScene?: Scene;
+  cameras: Map<string, Camera> = new Map();
+  controls: Map<string, OrbitControls> = new Map();
+  currentCamera!: PerspectiveCamera | OrthographicCamera;
+
+  private cameraHelpers: Map<string, CameraHelper> = new Map();
+  private lightHelpers: Map<string, LightHelper> = new Map();
+  private helpersContainer = new Group();
+  private grid = new InfiniteGridHelper();
+  private axisHelper = new AxesHelper(500);
+  private interactionHelper = new AxesHelper(100);
+  private currentTransform?: TransformControls;
+
+  // Override Materials
+  private depthMaterial = new MeshDepthMaterial();
+  private normalsMaterial = new MeshNormalMaterial();
+  private uvMaterial =  new UVMaterial();
+  private wireframeMaterial =  new MeshBasicMaterial({
     opacity: 0.33,
     transparent: true,
     wireframe: true
-  }), []);
+  });
 
-  function createOrtho(name: string, position: Vector3) {
-    const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 5000);
-    camera.name = name;
-    camera.position.copy(position);
-    camera.lookAt(0, 0, 0);
-    cameras.set(name, camera);
-    return camera;
-  }
+  // Playback
+  private playing = false;
+  private rafID = -1;
+  private width = 0;
+  private height = 0;
 
-  const ModeOptions: MultiViewMode[] = [
-    'Single',
-    'Side by Side',
-    'Stacked',
-    'Quad'
-  ];
+  // Windows
+  private sceneSet = false;
+  private tlCam: any = null;
+  private trCam: any = null;
+  private blCam: any = null;
+  private brCam: any = null;
+  private tlRender: RenderMode = 'Renderer';
+  private trRender: RenderMode = 'Renderer';
+  private blRender: RenderMode = 'Renderer';
+  private brRender: RenderMode = 'Renderer';
+
+  // Interactions
+  selectedItem: Object3D | undefined = undefined;
+  private debugCamera!: PerspectiveCamera;
+  private raycaster = new Raycaster();
+  private pointer = new Vector2();
+  private cameraControls: CameraControls | undefined = undefined;
 
   // References
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tlWindow = useRef<HTMLDivElement>(null);
-  const trWindow = useRef<HTMLDivElement>(null);
-  const blWindow = useRef<HTMLDivElement>(null);
-  const brWindow = useRef<HTMLDivElement>(null);
+  private canvasRef!: RefObject<HTMLCanvasElement>;
+  private containerRef!: RefObject<HTMLDivElement>;
+  private tlWindow!: RefObject<HTMLDivElement>;
+  private trWindow!: RefObject<HTMLDivElement>;
+  private blWindow!: RefObject<HTMLDivElement>;
+  private brWindow!: RefObject<HTMLDivElement>;
+  private currentWindow: any; // RefObject to one of the "windows"
 
-  // Get Local Storage
-  const ls = localStorage;
-  const savedMode = ls.getItem(`${appID}_mode`);
+  constructor(props: MultiViewProps) {
+    super(props);
 
-  // States
-  const [mode, setMode] = useState<MultiViewMode>(savedMode !== null ? savedMode as MultiViewMode : 'Single');
-  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
-  const [modeOpen, setModeOpen] = useState(false);
-  const [renderModeOpen, setRenderModeOpen] = useState(false);
-  const [interactionMode, setInteractionMode] = useState<InteractionMode>('Orbit');
-  const [interactionModeOpen, setInteractionModeOpen] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState(Date.now());
+    // Refs
+    this.canvasRef = createRef<HTMLCanvasElement>();
+    this.containerRef = createRef<HTMLDivElement>();
+    this.tlWindow = createRef<HTMLDivElement>();
+    this.trWindow = createRef<HTMLDivElement>();
+    this.blWindow = createRef<HTMLDivElement>();
+    this.brWindow = createRef<HTMLDivElement>();
 
-  // Save Local Storage
-  ls.setItem(`${appID}_mode`, mode);
-  ls.setItem(`${appID}_tlCam`, ls.getItem(`${appID}_tlCam`) !== null ? ls.getItem(`${appID}_tlCam`) as string : 'Debug');
-  ls.setItem(`${appID}_trCam`, ls.getItem(`${appID}_trCam`) !== null ? ls.getItem(`${appID}_trCam`) as string : 'Orthographic');
-  ls.setItem(`${appID}_blCam`, ls.getItem(`${appID}_blCam`) !== null ? ls.getItem(`${appID}_blCam`) as string : 'Front');
-  ls.setItem(`${appID}_brCam`, ls.getItem(`${appID}_brCam`) !== null ? ls.getItem(`${appID}_brCam`) as string : 'Top');
-  ls.setItem(`${appID}_tlRender`, ls.getItem(`${appID}_tlRender`) !== null ? ls.getItem(`${appID}_tlRender`) as string : 'Renderer');
-  ls.setItem(`${appID}_trRender`, ls.getItem(`${appID}_trRender`) !== null ? ls.getItem(`${appID}_trRender`) as string : 'Renderer');
-  ls.setItem(`${appID}_blRender`, ls.getItem(`${appID}_blRender`) !== null ? ls.getItem(`${appID}_blRender`) as string : 'Renderer');
-  ls.setItem(`${appID}_brRender`, ls.getItem(`${appID}_brRender`) !== null ? ls.getItem(`${appID}_brRender`) as string : 'Renderer');
+    // States
+    const appID = props.three.app.appID;
+    const ls = localStorage;
+    const savedMode = ls.getItem(`${appID}_mode`);
 
-  const createControls = (camera: Camera, element: HTMLDivElement) => {
+    this.state = {
+      mode: savedMode !== null ? savedMode as MultiViewMode : 'Single',
+      modeOpen: false,
+      renderModeOpen: false,
+      interactionMode: 'Orbit',
+      interactionModeOpen: false,
+      lastUpdate: Date.now(),
+    };
+
+    // Save Local Storage
+    ls.setItem(`${appID}_mode`, this.state.mode);
+    ls.setItem(`${appID}_tlCam`, ls.getItem(`${appID}_tlCam`) !== null ? ls.getItem(`${appID}_tlCam`) as string : 'Debug');
+    ls.setItem(`${appID}_trCam`, ls.getItem(`${appID}_trCam`) !== null ? ls.getItem(`${appID}_trCam`) as string : 'Orthographic');
+    ls.setItem(`${appID}_blCam`, ls.getItem(`${appID}_blCam`) !== null ? ls.getItem(`${appID}_blCam`) as string : 'Front');
+    ls.setItem(`${appID}_brCam`, ls.getItem(`${appID}_brCam`) !== null ? ls.getItem(`${appID}_brCam`) as string : 'Top');
+    ls.setItem(`${appID}_tlRender`, ls.getItem(`${appID}_tlRender`) !== null ? ls.getItem(`${appID}_tlRender`) as string : 'Renderer');
+    ls.setItem(`${appID}_trRender`, ls.getItem(`${appID}_trRender`) !== null ? ls.getItem(`${appID}_trRender`) as string : 'Renderer');
+    ls.setItem(`${appID}_blRender`, ls.getItem(`${appID}_blRender`) !== null ? ls.getItem(`${appID}_blRender`) as string : 'Renderer');
+    ls.setItem(`${appID}_brRender`, ls.getItem(`${appID}_brRender`) !== null ? ls.getItem(`${appID}_brRender`) as string : 'Renderer');
+
+    const THREE = {
+      Vector2,
+      Vector3,
+      Vector4,
+      Quaternion,
+      Matrix4,
+      Spherical,
+      Box3,
+      Sphere,
+      Raycaster,
+    };
+    CameraControls.install({ THREE });
+    this.setupScene();
+
+    // Static-access
+    MultiView.instance = this;
+  }
+
+  componentDidMount(): void {
+    this.setupRenderer();
+    this.enable();
+    this.assignControls();
+    this.resize();
+    this.play();
+
+    Transform.instance.three = this.props.three;
+    Transform.instance.activeCamera = this.debugCamera;
+  }
+
+  componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void {
+    if (prevState.mode !== this.state.mode) {
+      this.assignControls();
+      this.resize();
+    }
+  }
+
+  componentWillUnmount(): void {
+    this.disable();
+  }
+
+  render(): ReactNode {
+    const cameraOptions: string[] = [];
+    this.cameras.forEach((_: Camera, key: string) => {
+      cameraOptions.push(key);
+    });
+
+    return (
+      <div className='multiview'>
+        <canvas ref={this.canvasRef} />
+
+        <div className={`cameras ${this.state.mode === 'Single' || this.state.mode === 'Stacked' ? 'single' : ''}`} ref={this.containerRef}>
+          {this.state.mode === 'Single' && (
+            <>
+              <CameraWindow
+                camera={this.tlCam}
+                options={cameraOptions}
+                ref={this.tlWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.tlCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.tlCam);
+                    this.tlCam = camera;
+                    localStorage.setItem(`${this.appID}_tlCam`, camera.name);
+                    this.createControls(camera, this.tlWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.tlRender = value;
+                  localStorage.setItem(`${this.appID}_tlRender`, value);
+                }}
+              />
+            </>
+          )}
+
+          {(this.state.mode === 'Side by Side' || this.state.mode === 'Stacked') && (
+            <>
+              <CameraWindow
+                camera={this.tlCam}
+                options={cameraOptions}
+                ref={this.tlWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.tlCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.tlCam);
+                    this.tlCam = camera;
+                    localStorage.setItem(`${this.appID}_tlCam`, camera.name);
+                    this.createControls(camera, this.tlWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.tlRender = value;
+                  localStorage.setItem(`${this.appID}_tlRender`, value);
+                }}
+              />
+              <CameraWindow
+                camera={this.trCam}
+                options={cameraOptions}
+                ref={this.trWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.trCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.trCam);
+                    this.trCam = camera;
+                    localStorage.setItem(`${this.appID}_trCam`, camera.name);
+                    this.createControls(camera, this.trWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.trRender = value;
+                  localStorage.setItem(`${this.appID}_trRender`, value);
+                }}
+              />
+            </>
+          )}
+
+          {this.state.mode === 'Quad' && (
+            <>
+              <CameraWindow
+                camera={this.tlCam}
+                options={cameraOptions}
+                ref={this.tlWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.tlCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.tlCam);
+                    this.tlCam = camera;
+                    localStorage.setItem(`${this.appID}_tlCam`, camera.name);
+                    this.createControls(camera, this.tlWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.tlRender = value;
+                  localStorage.setItem(`${this.appID}_tlRender`, value);
+                }}
+              />
+              <CameraWindow
+                camera={this.trCam}
+                options={cameraOptions}
+                ref={this.trWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.trCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.trCam);
+                    this.trCam = camera;
+                    localStorage.setItem(`${this.appID}_trCam`, camera.name);
+                    this.createControls(camera, this.trWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.trRender = value;
+                  localStorage.setItem(`${this.appID}_trRender`, value);
+                }}
+              />
+              <CameraWindow
+                camera={this.blCam}
+                options={cameraOptions}
+                ref={this.blWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.blCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.blCam);
+                    this.blCam = camera;
+                    localStorage.setItem(`${this.appID}_blCam`, camera.name);
+                    this.createControls(camera, this.blWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.blRender = value;
+                  localStorage.setItem(`${this.appID}_blRender`, value);
+                }}
+              />
+              <CameraWindow
+                camera={this.brCam}
+                options={cameraOptions}
+                ref={this.brWindow}
+                onSelectCamera={(value: string) => {
+                  this.controls.get(this.brCam.name)?.dispose();
+                  const camera = this.cameras.get(value);
+                  if (camera !== undefined) {
+                    this.clearCamera(this.brCam);
+                    this.brCam = camera;
+                    localStorage.setItem(`${this.appID}_brCam`, camera.name);
+                    this.createControls(camera, this.brWindow.current!);
+                  }
+                }}
+                onSelectRenderMode={(value: RenderMode) => {
+                  this.brRender = value;
+                  localStorage.setItem(`${this.appID}_brRender`, value);
+                }}
+              />
+            </>
+          )}
+        </div>
+
+        <div className='settings' key={this.state.lastUpdate}>
+          {/* Mode */}
+          <Dropdown
+            title='View'
+            index={ModeOptions.indexOf(this.state.mode)}
+            options={ModeOptions}
+            onSelect={(value: string) => {
+              if (value === this.state.mode) return;
+              this.killControls();
+              this.setState({ mode: value as MultiViewMode });
+            }}
+            open={this.state.modeOpen}
+            onToggle={(value: boolean) => {
+              this.setState({
+                modeOpen: value,
+                renderModeOpen: false,
+                interactionModeOpen: false,
+              });
+            }}
+          />
+
+          {/* Interaction Mode */}
+          <Dropdown
+            title='Interact'
+            index={this.state.interactionMode === 'Orbit' ? 0 : 1}
+            options={[
+              'Orbit Mode',
+              'Selection Mode',
+            ]}
+            onSelect={(value: string) => {
+              this.interactionHelper.visible = value === 'Selection Mode';
+              this.setState({ interactionMode: this.interactionHelper.visible ? 'Selection' : 'Orbit' });
+            }}
+            open={this.state.interactionModeOpen}
+            onToggle={(value: boolean) => {
+              this.setState({
+                modeOpen: false,
+                renderModeOpen: false,
+                interactionModeOpen: value,
+              });
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Setup
+
+  private setupRenderer() {
+    this.renderer = new WebGLRenderer({
+      canvas: this.canvasRef.current!,
+      stencil: false
+    });
+    this.renderer.autoClear = false;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.setPixelRatio(devicePixelRatio);
+    this.renderer.setClearColor(0x000000);
+    this.props.three.renderer = this.renderer;
+  }
+
+  private setupScene() {
+    this.scene.name = 'Debug Scene';
+    this.scene.uuid = '';
+
+    this.helpersContainer.name = 'helpers';
+    this.scene.add(this.helpersContainer);
+
+    this.helpersContainer.add(this.grid);
+
+    this.axisHelper.name = 'axisHelper';
+    this.helpersContainer.add(this.axisHelper);
+
+    this.interactionHelper.name = 'interactionHelper';
+    this.helpersContainer.add(this.interactionHelper);
+    this.interactionHelper.visible = false;
+
+    // Create default cameras
+
+    const createOrtho = (name: string, position: Vector3) => {
+      const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 5000);
+      camera.name = name;
+      camera.position.copy(position);
+      camera.lookAt(0, 0, 0);
+      this.cameras.set(name, camera);
+      return camera;
+    };
+
+    createOrtho('Top', new Vector3(0, 1000, 0));
+    createOrtho('Bottom', new Vector3(0, -1000, 0));
+    createOrtho('Left', new Vector3(-1000, 0, 0));
+    createOrtho('Right', new Vector3(1000, 0, 0));
+    createOrtho('Front', new Vector3(0, 0, 1000));
+    createOrtho('Back', new Vector3(0, 0, -1000));
+    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
+    createOrtho('UI', new Vector3());
+
+    this.debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
+    this.debugCamera.name = 'Debug';
+    this.debugCamera.position.set(500, 500, 500);
+    this.debugCamera.lookAt(0, 0, 0);
+    this.cameras.set('Debug', this.debugCamera);
+
+    // Assign cameras
+    this.currentCamera = this.debugCamera;
+
+    const ls = localStorage;
+    const appID = this.props.three.app.appID;
+    this.tlCam = this.cameras.get(ls.getItem(`${appID}_tlCam`) as string);
+    this.trCam = this.cameras.get(ls.getItem(`${appID}_trCam`) as string);
+    this.blCam = this.cameras.get(ls.getItem(`${appID}_blCam`) as string);
+    this.brCam = this.cameras.get(ls.getItem(`${appID}_brCam`) as string);
+
+    // In case a scene-specific camera was used and isn't available, defer to default cameras
+    if (this.tlCam === undefined) this.tlCam = this.cameras.get('Debug');
+    if (this.trCam === undefined) this.trCam = this.cameras.get('Orthographic');
+    if (this.blCam === undefined) this.blCam = this.cameras.get('Front');
+    if (this.brCam === undefined) this.brCam = this.cameras.get('Top');
+  }
+
+  // Public
+
+  play() {
+    this.playing = true;
+    this.onUpdate();
+  }
+
+  pause() {
+    this.playing = false;
+    cancelAnimationFrame(this.rafID);
+    this.rafID = -1;
+  }
+
+  toggleOrbitControls(value: boolean) {
+    this.controls.forEach((orbit: OrbitControls) => {
+      orbit.enabled = !value;
+    });
+  }
+
+  // Playback
+
+  private update() {
+    // Updates
+    this.controls.forEach((control: OrbitControls) => {
+      control.update();
+    });
+    this.cameraHelpers.forEach((helper: CameraHelper) => {
+      helper.update();
+    });
+    this.lightHelpers.forEach((helper: LightHelper) => {
+      if (helper['update'] !== undefined) helper['update']();
+    });
+
+    if (this.props.onSceneUpdate !== undefined && this.sceneSet) this.props.onSceneUpdate(this.currentScene!);
+  }
+
+  private draw() {
+    this.renderer?.clear();
+    // console.log(this.state.mode);
+    switch (this.state.mode) {
+      case 'Single':
+        this.drawSingle();
+        break;
+      case 'Side by Side':
+      case 'Stacked':
+        this.drawDouble();
+        break;
+      case 'Quad':
+        this.drawQuad();
+        break;
+    }
+  }
+
+  private onUpdate = () => {
+    if (!this.playing) return;
+    this.update();
+    this.draw();
+    this.rafID = requestAnimationFrame(this.onUpdate);
+  };
+
+  // Events
+
+  private enable() {
+    const element = this.containerRef.current!;
+    element.addEventListener('mousemove', this.onMouseMove);
+    element.addEventListener('click', this.onClick);
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('resize', this.resize);
+    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+  }
+
+  private disable() {
+    const element = this.containerRef.current!;
+    element.removeEventListener('mousemove', this.onMouseMove);
+    element.removeEventListener('click', this.onClick);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('resize', this.resize);
+    debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+  }
+
+  private resize = () => {
+    this.width = window.innerWidth - 300;
+    this.height = window.innerHeight;
+    const bw = Math.floor(this.width / 2);
+    const bh = Math.floor(this.height / 2);
+    this.props.three.resize(this.width, this.height);
+
+    if (this.props.onSceneResize !== undefined && this.sceneSet && this.currentScene !== undefined) {
+      this.props.onSceneResize(this.currentScene, this.width, this.height);
+    }
+
+    let cw = this.width;
+    let ch = this.height;
+    switch (this.state.mode) {
+      case 'Side by Side':
+        cw = bw;
+        ch = this.height;
+        break;
+      case 'Stacked':
+        cw = this.width;
+        ch = bh;
+        break;
+      case 'Quad':
+        cw = bw;
+        ch = bh;
+        break;
+    }
+
+    const aspect = cw / ch;
+    this.cameras.forEach((camera) => {
+      if (camera instanceof OrthographicCamera) {
+        camera.left = cw / -2;
+        camera.right = cw / 2;
+        camera.top = ch / 2;
+        camera.bottom = ch / -2;
+        if (camera.name === 'UI') {
+          camera.position.x = this.width / 2;
+          camera.position.y = this.height / -2;
+          camera.position.z = 100;
+        }
+        camera.updateProjectionMatrix();
+      } else if (camera instanceof PerspectiveCamera) {
+        camera.aspect = aspect;
+        camera.updateProjectionMatrix();
+        this.cameraHelpers.get(camera.name)?.update();
+      }
+    });
+  };
+
+  private sceneUpdate = (evt: any) => {
+    this.helpersContainer.add(this.axisHelper);
+    this.clearLightHelpers();
+    this.scene.remove(this.currentScene!);
+    dispose(this.currentScene!);
+
+    const sceneClass = this.props.scenes.get(evt.value.name);
+    if (sceneClass !== undefined) {
+      const sceneInstance = new sceneClass();
+      if (this.props.onSceneSet !== undefined) this.props.onSceneSet(sceneInstance);
+      this.currentScene = sceneInstance;
+      this.props.three.scene = this.currentScene;
+      this.scene.add(this.currentScene!);
+      this.sceneSet = true;
+      this.addLightHelpers();
+    }
+  };
+
+  private addCamera = (evt: any) => {
+    const data = evt.value;
+    const child = this.props.three.scene?.getObjectByProperty('uuid', data.uuid);
+    if (child !== undefined) this.cameras.set(data.name, child as Camera);
+
+    if (child instanceof PerspectiveCamera) {
+      const helper = new CameraHelper(child);
+      this.cameraHelpers.set(child.name, helper);
+      this.scene.add(helper);
+    }
+
+    this.setState({ lastUpdate: Date.now() });
+  };
+
+  private removeCamera = (evt: any) => {
+    const helper = this.cameraHelpers.get(evt.value.name);
+    if (helper !== undefined) {
+      this.scene.remove(helper);
+      helper.dispose();
+    }
+    this.cameras.delete(evt.value.name);
+    this.setState({ lastUpdate: Date.now() });
+  };
+
+  private onMouseMove = (event: MouseEvent) => {
+    const size = new Vector2();
+    this.renderer!.getSize(size);
+
+    const mouseX = Math.min(event.clientX, size.x);
+    const mouseY = Math.min(event.clientY, size.y);
+    this.pointer.x = mapLinear(mouseX, 0, size.x, -1, 1);
+    this.pointer.y = mapLinear(mouseY, 0, size.y, 1, -1);
+
+    const hw = size.x / 2;
+    const hh = size.y / 2;
+
+    const sideBySide = () => {
+      if (mouseX < hw) {
+        this.pointer.x = mapLinear(mouseX, 0, hw, -1, 1);
+      } else {
+        this.pointer.x = mapLinear(mouseX, hw, size.x, -1, 1);
+      }
+    };
+
+    const stacked = () => {
+      if (mouseY < hh) {
+        this.pointer.y = mapLinear(mouseY, 0, hh, 1, -1);
+      } else {
+        this.pointer.y = mapLinear(mouseY, hh, size.y, 1, -1);
+      }
+    };
+
+    // mapLinear
+    switch (this.state.mode) {
+      case 'Quad':
+        sideBySide();
+        stacked();
+        break;
+      case 'Side by Side':
+        sideBySide();
+        break;
+      case 'Stacked':
+        stacked();
+        stacked();
+        break;
+    }
+
+    this.updateCamera(mouseX, mouseY, hw, hh);
+
+    if (this.state.interactionMode === 'Orbit') return;
+    const intersects = this.raycaster.intersectObjects(this.currentScene!.children);
+    if (intersects.length > 0) this.interactionHelper.position.copy(intersects[0].point);
+  };
+
+  private onClick = (event: MouseEvent) => {
+    if (this.state.interactionMode === 'Orbit') return;
+
+    const size = new Vector2();
+    this.renderer!.getSize(size);
+    if (event.clientX >= size.x) return;
+
+    this.onMouseMove(event);
+
+    const intersects = this.raycaster.intersectObjects(this.currentScene!.children);
+    if (intersects.length > 0) {
+      this.props.three.getObject(intersects[0].object.uuid);
+      this.interactionHelper.visible = false;
+      this.setState({ interactionMode: 'Orbit', lastUpdate: Date.now() });
+    }
+  };
+
+  private onKey = (evt: KeyboardEvent) => {
+    if (this.selectedItem !== undefined) {
+      if (evt.ctrlKey) {
+        if (this.currentCamera.name === 'UI') return;
+
+        const currentControls = this.controls.get(this.currentCamera.name)!;
+        if (evt.key === '0') {
+          this.clearControls();
+
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          if (this.selectedItem instanceof Mesh || this.selectedItem instanceof SkinnedMesh) {
+            this.selectedItem.geometry.computeBoundingBox();
+            this.cameraControls.fitToBox(this.selectedItem.geometry.boundingBox, true);
+          } else {
+            this.cameraControls.fitToSphere(this.selectedItem, true);
+          }
+          this.updateCameraControls(currentControls, true);
+        } else if (evt.key === '1') {
+          this.clearControls();
+
+          // Rotate to Front
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          this.cameraControls.rotateTo(0, Math.PI * 0.5, true);
+          this.cameraControls.moveTo(this.selectedItem.position.x, this.selectedItem.position.y, 0, true);
+          this.updateCameraControls(currentControls);
+        } else if (evt.key === '2') {
+          this.clearControls();
+
+          // Rotate to Top
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          this.cameraControls.rotateTo(0, 0, true);
+          this.cameraControls.moveTo(this.selectedItem.position.x, 0, this.selectedItem.position.z, true);
+          this.updateCameraControls(currentControls);
+        } else if (evt.key === '3') {
+          this.clearControls();
+
+          // Rotate to Right
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          this.cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, true);
+          this.cameraControls.moveTo(0, this.selectedItem.position.y, this.selectedItem.position.z, true);
+          this.updateCameraControls(currentControls);
+        } else if (evt.key === '4') {
+          this.clearControls();
+
+          // Rotate to Back
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          this.cameraControls.rotateTo(Math.PI, Math.PI / 2, true);
+          this.cameraControls.moveTo(this.selectedItem.position.x, this.selectedItem.position.y, 0, true);
+          this.updateCameraControls(currentControls);
+        } else if (evt.key === '5') {
+          this.clearControls();
+
+          // Rotate to Ortho
+          this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
+          this.cameraControls.rotateTo(degToRad(45), degToRad(45), true);
+          this.updateCameraControls(currentControls);
+        }
+      } else {
+        if (this.currentTransform !== undefined) {
+          switch (evt.key) {
+            case 'r':
+              this.currentTransform.setMode('rotate');
+              break;
+            case 's':
+              this.currentTransform.setMode('scale');
+              break;
+            case 't':
+              this.currentTransform.setMode('translate');
+              break;
+          }
+        }
+      }
+    }
+  };
+
+  private onSetSelectedItem = (evt: any) => {
+    this.selectedItem = this.currentScene!.getObjectByProperty('uuid', evt.value.uuid);
+    if (this.selectedItem === undefined) return;
+
+    if (this.currentTransform !== undefined) {
+      this.currentTransform.removeEventListener('objectChange', this.onUpdateTransform);
+      Transform.instance.remove(this.currentTransform.getHelper().name);
+    }
+
+    this.currentTransform = Transform.instance.add(evt.value.name);
+    this.currentTransform.attach(this.selectedItem);
+    this.scene.add(this.currentTransform.getHelper());
+    this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
+  };
+
+  private onUpdateTransform = () => {
+    if (this.selectedItem === undefined) return;
+    this.props.three.updateObject(this.selectedItem.uuid, 'position', this.selectedItem.position);
+    this.props.three.updateObject(this.selectedItem.uuid, 'rotation', {
+      x: this.selectedItem.rotation.x,
+      y: this.selectedItem.rotation.y,
+      z: this.selectedItem.rotation.z,
+    });
+    this.props.three.updateObject(this.selectedItem.uuid, 'scale', this.selectedItem.scale);
+    InspectTransform.instance.update();
+  };
+
+  // Utils
+
+  private clearLightHelpers = () => {
+    this.lightHelpers.forEach((helper: LightHelper) => {
+      this.helpersContainer.remove(helper);
+      helper.dispose();
+    });
+    this.lightHelpers.clear();
+  };
+
+  private addLightHelpers = () => {
+    if (this.currentScene === undefined) return;
+
+    this.currentScene.traverse((obj: Object3D) => {
+      if (obj.type.search('Light') > -1) {
+        let helper;
+        switch (obj.type) {
+          case 'DirectionalLight':
+            helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
+            helper.name = `${obj.name}Helper`;
+            this.lightHelpers.set(obj.name, helper);
+            this.helpersContainer.add(helper);
+            break;
+          case 'HemisphereLight':
+            helper = new HemisphereLightHelper(obj as HemisphereLight, 250);
+            helper.name = `${obj.name}Helper`;
+            this.lightHelpers.set(obj.name, helper);
+            this.helpersContainer.add(helper);
+            break;
+          case 'RectAreaLight':
+            helper = new RectAreaLightHelper(obj as RectAreaLight);
+            helper.name = `${obj.name}Helper`;
+            this.lightHelpers.set(obj.name, helper);
+            this.helpersContainer.add(helper);
+            break;
+          case 'PointLight':
+            helper = new PointLightHelper(obj as PointLight, 100);
+            helper.name = `${obj.name}Helper`;
+            this.lightHelpers.set(obj.name, helper);
+            this.helpersContainer.add(helper);
+            break;
+          case 'SpotLight':
+            helper = new SpotLightHelper(obj as SpotLight);
+            helper.name = `${obj.name}Helper`;
+            this.lightHelpers.set(obj.name, helper);
+            this.helpersContainer.add(helper);
+            break;
+        }
+      }
+    });
+  };
+
+  private createControls(camera: Camera, element: HTMLDivElement) {
     // Previous items
-    const prevControls = controls.get(camera.name);
+    const prevControls = this.controls.get(camera.name);
     if (prevControls !== undefined) prevControls.dispose();
-    controls.delete(camera.name);
+    this.controls.delete(camera.name);
 
     if (camera.name === 'UI') return;
 
@@ -169,909 +919,271 @@ export default function MultiView(props: MultiViewProps) {
         control.enableRotate = false;
         break;
     }
-    controls.set(camera.name, control);
-  };
+    this.controls.set(camera.name, control);
+  }
 
-  const clearCamera = (camera: Camera) => {
-    const helper = cameraHelpers.get(camera.name);
+  private clearCamera(camera: Camera) {
+    const helper = this.cameraHelpers.get(camera.name);
     if (helper !== undefined) {
-      scene.remove(helper);
+      this.scene.remove(helper);
       helper.dispose();
-      cameraHelpers.delete(camera.name);
+      this.cameraHelpers.delete(camera.name);
     }
-    const control = controls.get(camera.name);
+    const control = this.controls.get(camera.name);
     if (control !== undefined) {
       control.dispose();
-      controls.delete(camera.name);
+      this.controls.delete(camera.name);
     }
-  };
+  }
 
-  const killControls = () => {
-    controls.forEach((value: OrbitControls, key: string) => {
+  private killControls() {
+    this.controls.forEach((value: OrbitControls, key: string) => {
       value.dispose();
-      const helper = cameraHelpers.get(key);
+      const helper = this.cameraHelpers.get(key);
       if (helper !== undefined) {
-        scene.remove(helper);
+        this.scene.remove(helper);
         helper.dispose();
       }
-      cameraHelpers.delete(key);
-      controls.delete(key);
+      this.cameraHelpers.delete(key);
+      this.controls.delete(key);
     });
-    controls.clear();
-    cameraHelpers.clear();
-  };
+    this.controls.clear();
+    this.cameraHelpers.clear();
+  }
 
-  const assignControls = () => {
-    switch (mode) {
+  private assignControls() {
+    switch (this.state.mode) {
       case 'Single':
-        createControls(tlCam, tlWindow.current!);
+        this.createControls(this.tlCam, this.tlWindow.current!);
         break;
       case 'Side by Side':
       case 'Stacked':
-        createControls(tlCam, tlWindow.current!);
-        createControls(trCam, trWindow.current!);
+        this.createControls(this.tlCam, this.tlWindow.current!);
+        this.createControls(this.trCam, this.trWindow.current!);
         break;
       case 'Quad':
-        createControls(tlCam, tlWindow.current!);
-        createControls(trCam, trWindow.current!);
-        createControls(blCam, blWindow.current!);
-        createControls(brCam, brWindow.current!);
+        this.createControls(this.tlCam, this.tlWindow.current!);
+        this.createControls(this.trCam, this.trWindow.current!);
+        this.createControls(this.blCam, this.blWindow.current!);
+        this.createControls(this.brCam, this.brWindow.current!);
         break;
+    }
+  }
+
+  private updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
+    switch (this.state.mode) {
+      case 'Quad':
+        if (mouseX < hw) {
+          if (mouseY < hh) {
+            this.currentCamera = this.tlCam;
+            this.raycaster.setFromCamera(this.pointer, this.tlCam);
+          } else {
+            this.currentCamera = this.blCam;
+            this.raycaster.setFromCamera(this.pointer, this.blCam);
+          }
+        } else {
+          if (mouseY < hh) {
+            this.currentCamera = this.trCam;
+            this.raycaster.setFromCamera(this.pointer, this.trCam);
+          } else {
+            this.currentCamera = this.brCam;
+            this.raycaster.setFromCamera(this.pointer, this.brCam);
+          }
+        }
+        break;
+      case 'Side by Side':
+        if (mouseX < hw) {
+          this.currentCamera = this.tlCam;
+          this.raycaster.setFromCamera(this.pointer, this.tlCam);
+        } else {
+          this.currentCamera = this.trCam;
+          this.raycaster.setFromCamera(this.pointer, this.trCam);
+        }
+        break;
+      case 'Single':
+        this.currentCamera = this.tlCam;
+        this.raycaster.setFromCamera(this.pointer, this.tlCam);
+        break;
+      case 'Stacked':
+        if (mouseY < hh) {
+          this.currentCamera = this.tlCam;
+          this.raycaster.setFromCamera(this.pointer, this.tlCam);
+        } else {
+          this.currentCamera = this.trCam;
+          this.raycaster.setFromCamera(this.pointer, this.trCam);
+        }
+        break;
+    }
+
+    if (this.currentCamera === this.tlCam) {
+      this.currentWindow = this.tlWindow;
+    } else if (this.currentCamera === this.trCam) {
+      this.currentWindow = this.trWindow;
+    } else if (this.currentCamera === this.blCam) {
+      this.currentWindow = this.blWindow;
+    } else if (this.currentCamera === this.brCam) {
+      this.currentWindow = this.brWindow;
+    }
+
+    Transform.instance.updateCamera(this.currentCamera, this.currentWindow.current);
+  };
+
+  private updateCameraControls = (control: OrbitControls, reposition = false) => {
+    if (this.selectedItem === undefined) return;
+    cancelAnimationFrame(this.rafID);
+    this.rafID = -1;
+
+    if (this.cameraControls) this.cameraControls.smoothTime = 0.1;
+
+    const speed = 0.15;
+    const clock = new Clock();
+    clock.start();
+    this.selectedItem.getWorldPosition(control.target0);
+
+    const onUpdate = () => {
+      // Update
+      const delta = clock.getDelta();
+      if (this.cameraControls) this.cameraControls.update(delta);
+
+      if (reposition) {
+        control.target.lerp(control.target0, speed);
+        control.object.position.lerp(control.position0, speed);
+        // @ts-ignore
+        control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
+        // @ts-ignore
+        control.object.updateProjectionMatrix();
+        control.dispatchEvent( { type: 'change' } );
+      }
+
+      // Complete?
+      const complete = clock.getElapsedTime() >= 0.5;
+      if (complete) {
+        cancelAnimationFrame(this.rafID);
+        this.rafID = -1;
+        this.clearControls();
+      } else {
+        this.rafID = requestAnimationFrame(onUpdate);
+      }
+    };
+    onUpdate();
+  };
+
+  private clearControls = () => {
+    if (this.cameraControls !== undefined) {
+      this.cameraControls.disconnect();
+      this.cameraControls.dispose();
+      this.cameraControls = undefined;
     }
   };
 
-  // Renderer
-  useEffect(() => {
-    const instance = new WebGLRenderer({
-      canvas: canvasRef.current!,
-      stencil: false
-    });
-    instance.autoClear = false;
-    instance.shadowMap.enabled = true;
-    instance.setPixelRatio(devicePixelRatio);
-    instance.setClearColor(0x000000);
-    props.three.renderer = instance;
-    setRenderer(instance);
-  }, []);
+  // Drawing
 
-  // Setup Scene
-  useEffect(() => {
-    // Scene
-    scene.name = 'Debug Scene';
-    scene.uuid = '';
-
-    helpersContainer.name = 'helpers';
-    scene.add(helpersContainer);
-
-    helpersContainer.add(grid);
-
-    axisHelper.name = 'axisHelper';
-    helpersContainer.add(axisHelper);
-
-    interactionHelper.name = 'interactionHelper';
-    helpersContainer.add(interactionHelper);
-    interactionHelper.visible = false;
-
-    // Cameras
-    createOrtho('Top', new Vector3(0, 1000, 0));
-    createOrtho('Bottom', new Vector3(0, -1000, 0));
-    createOrtho('Left', new Vector3(-1000, 0, 0));
-    createOrtho('Right', new Vector3(1000, 0, 0));
-    createOrtho('Front', new Vector3(0, 0, 1000));
-    createOrtho('Back', new Vector3(0, 0, -1000));
-    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
-    createOrtho('UI', new Vector3());
-
-    const debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
-    debugCamera.name = 'Debug';
-    debugCamera.position.set(500, 500, 500);
-    debugCamera.lookAt(0, 0, 0);
-    cameras.set('Debug', debugCamera);
-
-    tlCam = cameras.get(ls.getItem(`${appID}_tlCam`) as string);
-    trCam = cameras.get(ls.getItem(`${appID}_trCam`) as string);
-    blCam = cameras.get(ls.getItem(`${appID}_blCam`) as string);
-    brCam = cameras.get(ls.getItem(`${appID}_brCam`) as string);
-
-    // In case a scene-specific camera was used and isn't available, defer to default cameras
-    if (tlCam === undefined) tlCam = cameras.get('Debug');
-    if (trCam === undefined) trCam = cameras.get('Orthographic');
-    if (blCam === undefined) blCam = cameras.get('Front');
-    if (brCam === undefined) brCam = cameras.get('Top');
-  }, []);
-
-  // Event handling
-  useEffect(() => {
-    const clearLightHelpers = () => {
-      lightHelpers.forEach((helper: LightHelper) => {
-        helpersContainer.remove(helper);
-        helper.dispose();
-      });
-      lightHelpers.clear();
-    };
-
-    const addLightHelpers = () => {
-      currentScene.traverse((obj: Object3D) => {
-        if (obj.type.search('Light') > -1) {
-          let helper;
-          switch (obj.type) {
-            case 'DirectionalLight':
-              helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
-              helper.name = `${obj.name}Helper`;
-              lightHelpers.set(obj.name, helper);
-              helpersContainer.add(helper);
-              break;
-            case 'HemisphereLight':
-              helper = new HemisphereLightHelper(obj as HemisphereLight, 250);
-              helper.name = `${obj.name}Helper`;
-              lightHelpers.set(obj.name, helper);
-              helpersContainer.add(helper);
-              break;
-            case 'RectAreaLight':
-              helper = new RectAreaLightHelper(obj as RectAreaLight);
-              helper.name = `${obj.name}Helper`;
-              lightHelpers.set(obj.name, helper);
-              helpersContainer.add(helper);
-              break;
-            case 'PointLight':
-              helper = new PointLightHelper(obj as PointLight, 100);
-              helper.name = `${obj.name}Helper`;
-              lightHelpers.set(obj.name, helper);
-              helpersContainer.add(helper);
-              break;
-            case 'SpotLight':
-              helper = new SpotLightHelper(obj as SpotLight);
-              helper.name = `${obj.name}Helper`;
-              lightHelpers.set(obj.name, helper);
-              helpersContainer.add(helper);
-              break;
-          }
-        }
-      });
-    };
-
-    const sceneUpdate = (evt: any) => {
-      helpersContainer.add(axisHelper);
-      clearLightHelpers();
-      dispose(currentScene);
-      scene.remove(currentScene);
-
-      const sceneClass = props.scenes.get(evt.value.name);
-      if (sceneClass !== undefined) {
-        const sceneInstance = new sceneClass();
-        if (props.onSceneSet !== undefined) props.onSceneSet(sceneInstance);
-        currentScene = sceneInstance;
-        props.three.scene = currentScene;
-        scene.add(currentScene);
-        sceneSet = true;
-        addLightHelpers();
-      }
-    };
-
-    const addCamera = (evt: any) => {
-      const data = evt.value;
-      const child = props.three.scene?.getObjectByProperty('uuid', data.uuid);
-      if (child !== undefined) cameras.set(data.name, child as Camera);
-
-      if (child instanceof PerspectiveCamera) {
-        const helper = new CameraHelper(child);
-        cameraHelpers.set(child.name, helper);
-        scene.add(helper);
-      }
-
-      setLastUpdate(Date.now());
-    };
-
-    const removeCamera = (evt: any) => {
-      const helper = cameraHelpers.get(evt.value.name);
-      if (helper !== undefined) {
-        scene.remove(helper);
-        helper.dispose();
-      }
-      cameras.delete(evt.value.name);
-      setLastUpdate(Date.now());
-    };
-
-    const onSelectItem = (evt: any) => {
-      const child = currentScene.getObjectByProperty('uuid', evt.value.uuid);
-      if (child) child.add(axisHelper);
-    };
-
-    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, sceneUpdate);
-    debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, addCamera);
-    debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
-    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
-    return () => {
-      debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, sceneUpdate);
-      debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, addCamera);
-      debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, removeCamera);
-      debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
-    };
-  }, []);
-
-  // Resize handling + drawing
-  useEffect(() => {
-    if (renderer === null) return;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let bw = Math.floor(width / 2);
-    let bh = Math.floor(height / 2);
-    let raf = -1;
-
-    const fpoGeom = new BufferGeometry();
-    const fpoMaterial = new MeshBasicMaterial();
-    const fpoGroup = new Group();
-
-    const onResize = () => {
-      width = window.innerWidth - 300;
-      height = window.innerHeight;
-      bw = Math.floor(width / 2);
-      bh = Math.floor(height / 2);
-      props.three.resize(width, height);
-
-      if (props.onSceneResize !== undefined && sceneSet) {
-        props.onSceneResize(currentScene, width, height);
-      }
-
-      let cw = width;
-      let ch = height;
-      switch (mode) {
-        case 'Side by Side':
-          cw = bw;
-          ch = height;
-          break;
-        case 'Stacked':
-          cw = width;
-          ch = bh;
-          break;
-        case 'Quad':
-          cw = bw;
-          ch = bh;
-          break;
-      }
-
-      const aspect = cw / ch;
-      cameras.forEach((camera) => {
-        if (camera instanceof OrthographicCamera) {
-          camera.left = cw / -2;
-          camera.right = cw / 2;
-          camera.top = ch / 2;
-          camera.bottom = ch / -2;
-          if (camera.name === 'UI') {
-            camera.position.x = width / 2;
-            camera.position.y = height / -2;
-            camera.position.z = 100;
-          }
-          camera.updateProjectionMatrix();
-        } else if (camera instanceof PerspectiveCamera) {
-          camera.aspect = aspect;
-          camera.updateProjectionMatrix();
-          cameraHelpers.get(camera.name)?.update();
-        }
-      });
-    };
-
-    function getSceneOverride(mode: RenderMode): Material | null {
-      switch (mode) {
-        case 'Depth':
-          return depthMaterial;
-        case 'Normals':
-          return normalsMaterial;
-        case 'Renderer':
-          return null;
-        case 'UVs':
-          return uvMaterial;
-        case 'Wireframe':
-          return wireframeMaterial;
-      }
-      return null;
+  private getSceneOverride(mode: RenderMode): Material | null {
+    switch (mode) {
+      case 'Depth':
+        return this.depthMaterial;
+      case 'Normals':
+        return this.normalsMaterial;
+      case 'Renderer':
+        return null;
+      case 'UVs':
+        return this.uvMaterial;
+      case 'Wireframe':
+        return this.wireframeMaterial;
     }
+    return null;
+  }
 
-    const drawSingle = () => {
-      const material = getSceneOverride(tlRender);
-      scene.overrideMaterial = material;
-      renderer.setViewport(0, 0, width, height);
-      renderer.setScissor(0, 0, width, height);
-      currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
-      renderer.render(scene, tlCam);
-    };
+  private drawSingle() {
+    const material = this.getSceneOverride(this.tlRender);
+    this.scene.overrideMaterial = material;
+    this.renderer?.setViewport(0, 0, this.width, this.height);
+    this.renderer?.setScissor(0, 0, this.width, this.height);
+    this.renderer?.render(this.scene, this.tlCam);
+  }
 
-    const drawDouble = () => {
-      const materialA = getSceneOverride(tlRender);
-      const materialB = getSceneOverride(trRender);
-      scene.overrideMaterial = materialA;
-      if (mode === 'Side by Side') {
-        renderer.setViewport(0, 0, bw, height);
-        renderer.setScissor(0, 0, bw, height);
-        currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
-        renderer.render(scene, tlCam);
+  private drawDouble = () => {
+    const materialA = this.getSceneOverride(this.tlRender);
+    const materialB = this.getSceneOverride(this.trRender);
+    const bw = Math.floor(this.width / 2);
+    const bh = Math.floor(this.height / 2);
 
-        scene.overrideMaterial = materialB;
-        renderer.setViewport(bw, 0, bw, height);
-        renderer.setScissor(bw, 0, bw, height);
-        currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
-        renderer.render(scene, trCam);
-      } else {
-        const y = height - bh;
-        renderer.setViewport(0, y, width, bh);
-        renderer.setScissor(0, y, width, bh);
-        currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
-        renderer.render(scene, tlCam);
+    this.scene.overrideMaterial = materialA;
+    if (this.state.mode === 'Side by Side') {
+      this.renderer?.setViewport(0, 0, bw, this.height);
+      this.renderer?.setScissor(0, 0, bw, this.height);
+      this.renderer?.render(this.scene, this.tlCam);
 
-        scene.overrideMaterial = materialB;
-        renderer.setViewport(0, 0, width, bh);
-        renderer.setScissor(0, 0, width, bh);
-        currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
-        renderer.render(scene, trCam);
-      }
-    };
+      this.scene.overrideMaterial = materialB;
+      this.renderer?.setViewport(bw, 0, bw, this.height);
+      this.renderer?.setScissor(bw, 0, bw, this.height);
+      this.renderer?.render(this.scene, this.trCam);
+    } else {
+      const y = this.height - bh;
+      this.renderer?.setViewport(0, y, this.width, bh);
+      this.renderer?.setScissor(0, y, this.width, bh);
+      this.renderer?.render(this.scene, this.tlCam);
 
-    const drawQuad = () => {
-      const materialA = getSceneOverride(tlRender);
-      const materialB = getSceneOverride(trRender);
-      const materialC = getSceneOverride(blRender);
-      const materialD = getSceneOverride(brRender);
-      let x = 0;
-      let y = 0;
-      y = height - bh;
-
-      // TL
-      x = 0;
-      scene.overrideMaterial = materialA;
-      renderer.setViewport(x, y, bw, bh);
-      renderer.setScissor(x, y, bw, bh);
-      currentScene?.onBeforeRender(renderer, currentScene, tlCam, fpoGeom, fpoMaterial, fpoGroup);
-      renderer.render(scene, tlCam);
-
-      // TR
-      x = bw;
-      scene.overrideMaterial = materialB;
-      renderer.setViewport(x, y, bw, bh);
-      renderer.setScissor(x, y, bw, bh);
-      currentScene?.onBeforeRender(renderer, currentScene, trCam, fpoGeom, fpoMaterial, fpoGroup);
-      renderer.render(scene, trCam);
-
-      y = 0;
-
-      // BL
-      x = 0;
-      scene.overrideMaterial = materialC;
-      renderer.setViewport(x, y, bw, bh);
-      renderer.setScissor(x, y, bw, bh);
-      currentScene?.onBeforeRender(renderer, currentScene, blCam, fpoGeom, fpoMaterial, fpoGroup);
-      renderer.render(scene, blCam);
-
-      // BR
-      x = bw;
-      scene.overrideMaterial = materialD;
-      renderer.setViewport(x, y, bw, bh);
-      renderer.setScissor(x, y, bw, bh);
-      currentScene?.onBeforeRender(renderer, currentScene, brCam, fpoGeom, fpoMaterial, fpoGroup);
-      renderer.render(scene, brCam);
-    };
-
-    const onUpdate = () => {
-      // Updates
-      controls.forEach((control: OrbitControls) => {
-        control.update();
-      });
-      cameraHelpers.forEach((helper: CameraHelper) => {
-        helper.update();
-      });
-      lightHelpers.forEach((helper: LightHelper) => {
-        if (helper['update'] !== undefined) helper['update']();
-      });
-
-      if (props.onSceneUpdate !== undefined && sceneSet) props.onSceneUpdate(currentScene);
-
-      // Drawing
-      renderer.clear();
-      switch (mode) {
-        case 'Single':
-          drawSingle();
-          break;
-        case 'Side by Side':
-        case 'Stacked':
-          drawDouble();
-          break;
-        case 'Quad':
-          drawQuad();
-          break;
-      }
-
-      raf = requestAnimationFrame(onUpdate);
-    };
-
-    // Start rendering
-    assignControls();
-    window.addEventListener('resize', onResize);
-    onResize();
-    onUpdate();
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(raf);
-      raf = -1;
-    };
-  }, [mode, renderer]);
-
-  // Raycaster
-  useEffect(() => {
-    if (renderer !== null) {
-      const THREE = {
-        Vector2,
-        Vector3,
-        Vector4,
-        Quaternion,
-        Matrix4,
-        Spherical,
-        Box3,
-        Sphere,
-        Raycaster,
-      };
-      CameraControls.install({ THREE });
-      const raycaster = new Raycaster();
-      const pointer = new Vector2();
-      let currentCamera = tlCam;
-      let currentWindow = tlWindow;
-      let selectedItem: Object3D | undefined = undefined;
-      let cameraControls: CameraControls | undefined = undefined;
-      let raf = -1;
-
-      const updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
-        switch (mode) {
-          case 'Quad':
-            if (mouseX < hw) {
-              if (mouseY < hh) {
-                currentCamera = tlCam;
-                raycaster.setFromCamera(pointer, tlCam);
-              } else {
-                currentCamera = blCam;
-                raycaster.setFromCamera(pointer, blCam);
-              }
-            } else {
-              if (mouseY < hh) {
-                currentCamera = trCam;
-                raycaster.setFromCamera(pointer, trCam);
-              } else {
-                currentCamera = brCam;
-                raycaster.setFromCamera(pointer, brCam);
-              }
-            }
-            break;
-          case 'Side by Side':
-            if (mouseX < hw) {
-              currentCamera = tlCam;
-              raycaster.setFromCamera(pointer, tlCam);
-            } else {
-              currentCamera = trCam;
-              raycaster.setFromCamera(pointer, trCam);
-            }
-            break;
-          case 'Single':
-            currentCamera = tlCam;
-            raycaster.setFromCamera(pointer, tlCam);
-            break;
-          case 'Stacked':
-            if (mouseY < hh) {
-              currentCamera = tlCam;
-              raycaster.setFromCamera(pointer, tlCam);
-            } else {
-              currentCamera = trCam;
-              raycaster.setFromCamera(pointer, trCam);
-            }
-            break;
-        }
-
-        if (currentCamera === tlCam) {
-          currentWindow = tlWindow;
-        } else if (currentCamera === trCam) {
-          currentWindow = trWindow;
-        } else if (currentCamera === blCam) {
-          currentWindow = blWindow;
-        } else if (currentCamera === brCam) {
-          currentWindow = brWindow;
-        }
-      };
-
-      const onMouseMove = (event: MouseEvent) => {
-        const size = new Vector2();
-        renderer!.getSize(size);
-
-        const mouseX = Math.min(event.clientX, size.x);
-        const mouseY = Math.min(event.clientY, size.y);
-        pointer.x = mapLinear(mouseX, 0, size.x, -1, 1);
-        pointer.y = mapLinear(mouseY, 0, size.y, 1, -1);
-
-        const hw = size.x / 2;
-        const hh = size.y / 2;
-
-        const sideBySide = () => {
-          if (mouseX < hw) {
-            pointer.x = mapLinear(mouseX, 0, hw, -1, 1);
-          } else {
-            pointer.x = mapLinear(mouseX, hw, size.x, -1, 1);
-          }
-        };
-
-        const stacked = () => {
-          if (mouseY < hh) {
-            pointer.y = mapLinear(mouseY, 0, hh, 1, -1);
-          } else {
-            pointer.y = mapLinear(mouseY, hh, size.y, 1, -1);
-          }
-        };
-
-        // mapLinear
-        switch (mode) {
-          case 'Quad':
-            sideBySide();
-            stacked();
-            break;
-          case 'Side by Side':
-            sideBySide();
-            break;
-          case 'Stacked':
-            stacked();
-            stacked();
-            break;
-        }
-
-        updateCamera(mouseX, mouseY, hw, hh);
-
-        if (interactionMode === 'Orbit') return;
-        const intersects = raycaster.intersectObjects(currentScene.children);
-        if (intersects.length > 0) interactionHelper.position.copy(intersects[0].point);
-      };
-
-      const onClick = (event: MouseEvent) => {
-        if (interactionMode === 'Orbit') return;
-
-        const size = new Vector2();
-        renderer!.getSize(size);
-        if (event.clientX >= size.x) return;
-
-        onMouseMove(event);
-
-        const intersects = raycaster.intersectObjects(currentScene.children);
-        if (intersects.length > 0) {
-          props.three.getObject(intersects[0].object.uuid);
-          interactionHelper.visible = false;
-          setInteractionMode('Orbit');
-          setLastUpdate(Date.now());
-        }
-      };
-
-      const updateCameraControls = (control: OrbitControls, reposition = false) => {
-        if (selectedItem === undefined) return;
-        cancelAnimationFrame(raf);
-        raf = -1;
-
-        if (cameraControls) cameraControls.smoothTime = 0.1;
-
-        const speed = 0.15;
-        const clock = new Clock();
-        clock.start();
-        selectedItem.getWorldPosition(control.target0);
-
-        const onUpdate = () => {
-          // Update
-          const delta = clock.getDelta();
-          if (cameraControls) cameraControls.update(delta);
-
-          if (reposition) {
-            control.target.lerp(control.target0, speed);
-            control.object.position.lerp(control.position0, speed);
-            // @ts-ignore
-            control.object.zoom = mix(control.object.zoom, control.zoom0, speed);
-            // @ts-ignore
-            control.object.updateProjectionMatrix();
-            control.dispatchEvent( { type: 'change' } );
-          }
-
-          // Complete?
-          const complete = clock.getElapsedTime() >= 0.5;
-          if (complete) {
-            cancelAnimationFrame(raf);
-            raf = -1;
-            clearControls();
-          } else {
-            raf = requestAnimationFrame(onUpdate);
-          }
-        };
-        onUpdate();
-      };
-
-      const clearControls = () => {
-        if (cameraControls !== undefined) {
-          cameraControls.disconnect();
-          cameraControls.dispose();
-          cameraControls = undefined;
-        }
-      };
-
-      const onKey = (evt: KeyboardEvent) => {
-        if (selectedItem !== undefined) {
-          if (evt.ctrlKey) {
-            if (currentCamera.name === 'UI') return;
-
-            const currentControls = controls.get(currentCamera.name)!;
-            if (evt.key === '0') {
-              clearControls();
-
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              if (selectedItem instanceof Mesh || selectedItem instanceof SkinnedMesh) {
-                selectedItem.geometry.computeBoundingBox();
-                cameraControls.fitToBox(selectedItem.geometry.boundingBox, true);
-              } else {
-                cameraControls.fitToSphere(selectedItem, true);
-              }
-              updateCameraControls(currentControls, true);
-            } else if (evt.key === '1') {
-              clearControls();
-  
-              // Rotate to Front
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, Math.PI * 0.5, true);
-              cameraControls.moveTo(selectedItem.position.x, selectedItem.position.y, 0, true);
-              updateCameraControls(currentControls);
-            } else if (evt.key === '2') {
-              clearControls();
-  
-              // Rotate to Top
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(0, 0, true);
-              cameraControls.moveTo(selectedItem.position.x, 0, selectedItem.position.z, true);
-              updateCameraControls(currentControls);
-            } else if (evt.key === '3') {
-              clearControls();
-  
-              // Rotate to Right
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI / 2, Math.PI / 2, true);
-              cameraControls.moveTo(0, selectedItem.position.y, selectedItem.position.z, true);
-              updateCameraControls(currentControls);
-            } else if (evt.key === '4') {
-              clearControls();
-  
-              // Rotate to Back
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(Math.PI, Math.PI / 2, true);
-              cameraControls.moveTo(selectedItem.position.x, selectedItem.position.y, 0, true);
-              updateCameraControls(currentControls);
-            } else if (evt.key === '5') {
-              clearControls();
-  
-              // Rotate to Ortho
-              cameraControls = new CameraControls(currentCamera, currentWindow.current!);
-              cameraControls.rotateTo(degToRad(45), degToRad(45), true);
-              updateCameraControls(currentControls);
-            }
-          }
-        }
-      };
-
-      const onSelectItem = (evt: any) => {
-        selectedItem = currentScene.getObjectByProperty('uuid', evt.value.uuid);
-      };
-
-      const element = containerRef.current!;
-      element.addEventListener('mousemove', onMouseMove, false);
-      element.addEventListener('click', onClick, false);
-      window.addEventListener('keydown', onKey, false);
-      debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
-      return () => {
-        element.removeEventListener('mousemove', onMouseMove);
-        element.removeEventListener('click', onClick);
-        window.removeEventListener('keydown', onKey);
-        debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
-      };
+      this.scene.overrideMaterial = materialB;
+      this.renderer?.setViewport(0, 0, this.width, bh);
+      this.renderer?.setScissor(0, 0, this.width, bh);
+      this.renderer?.render(this.scene, this.trCam);
     }
-  }, [mode, renderer, interactionMode]);
+  };
 
-  // Camera names
-  const cameraOptions: string[] = [];
-  cameras.forEach((_: Camera, key: string) => {
-    cameraOptions.push(key);
-  });
+  private drawQuad = () => {
+    const materialA = this.getSceneOverride(this.tlRender);
+    const materialB = this.getSceneOverride(this.trRender);
+    const materialC = this.getSceneOverride(this.blRender);
+    const materialD = this.getSceneOverride(this.brRender);
+    const bw = Math.floor(this.width / 2);
+    const bh = Math.floor(this.height / 2);
+    let x = 0;
+    let y = 0;
+    y = this.height - bh;
 
-  return (
-    <div className='multiview'>
-      <canvas ref={canvasRef} />
+    // TL
+    x = 0;
+    this.scene.overrideMaterial = materialA;
+    this.renderer?.setViewport(x, y, bw, bh);
+    this.renderer?.setScissor(x, y, bw, bh);
+    this.renderer?.render(this.scene, this.tlCam);
 
-      {renderer !== null && (
-        <>
-          <div className={`cameras ${mode === 'Single' || mode === 'Stacked' ? 'single' : ''}`} ref={containerRef}>
-            {mode === 'Single' && (
-              <>
-                <CameraWindow
-                  camera={tlCam}
-                  options={cameraOptions}
-                  ref={tlWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(tlCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(tlCam);
-                      tlCam = camera;
-                      ls.setItem(`${appID}_tlCam`, camera.name);
-                      createControls(camera, tlWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    tlRender = value;
-                    ls.setItem(`${appID}_tlRender`, value);
-                  }}
-                />
-              </>
-            )}
+    // TR
+    x = bw;
+    this.scene.overrideMaterial = materialB;
+    this.renderer?.setViewport(x, y, bw, bh);
+    this.renderer?.setScissor(x, y, bw, bh);
+    this.renderer?.render(this.scene, this.trCam);
 
-            {(mode === 'Side by Side' || mode === 'Stacked') && (
-              <>
-                <CameraWindow
-                  camera={tlCam}
-                  options={cameraOptions}
-                  ref={tlWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(tlCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(tlCam);
-                      tlCam = camera;
-                      ls.setItem(`${appID}_tlCam`, camera.name);
-                      createControls(camera, tlWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    tlRender = value;
-                    ls.setItem(`${appID}_tlRender`, value);
-                  }}
-                />
-                <CameraWindow
-                  camera={trCam}
-                  options={cameraOptions}
-                  ref={trWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(trCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(trCam);
-                      trCam = camera;
-                      ls.setItem(`${appID}_trCam`, camera.name);
-                      createControls(camera, trWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    trRender = value;
-                    ls.setItem(`${appID}_trRender`, value);
-                  }}
-                />
-              </>
-            )}
+    y = 0;
 
-            {mode === 'Quad' && (
-              <>
-                <CameraWindow
-                  camera={tlCam}
-                  options={cameraOptions}
-                  ref={tlWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(tlCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(tlCam);
-                      tlCam = camera;
-                      ls.setItem(`${appID}_tlCam`, camera.name);
-                      createControls(camera, tlWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    tlRender = value;
-                    ls.setItem(`${appID}_tlRender`, value);
-                  }}
-                />
-                <CameraWindow
-                  camera={trCam}
-                  options={cameraOptions}
-                  ref={trWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(trCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(trCam);
-                      trCam = camera;
-                      ls.setItem(`${appID}_trCam`, camera.name);
-                      createControls(camera, trWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    trRender = value;
-                    ls.setItem(`${appID}_trRender`, value);
-                  }}
-                />
-                <CameraWindow
-                  camera={blCam}
-                  options={cameraOptions}
-                  ref={blWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(blCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(blCam);
-                      blCam = camera;
-                      ls.setItem(`${appID}_blCam`, camera.name);
-                      createControls(camera, blWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    blRender = value;
-                    ls.setItem(`${appID}_blRender`, value);
-                  }}
-                />
-                <CameraWindow
-                  camera={brCam}
-                  options={cameraOptions}
-                  ref={brWindow}
-                  onSelectCamera={(value: string) => {
-                    controls.get(brCam.name)?.dispose();
-                    const camera = cameras.get(value);
-                    if (camera !== undefined) {
-                      clearCamera(brCam);
-                      brCam = camera;
-                      ls.setItem(`${appID}_brCam`, camera.name);
-                      createControls(camera, brWindow.current!);
-                    }
-                  }}
-                  onSelectRenderMode={(value: RenderMode) => {
-                    brRender = value;
-                    ls.setItem(`${appID}_brRender`, value);
-                  }}
-                />
-              </>
-            )}
-          </div>
+    // BL
+    x = 0;
+    this.scene.overrideMaterial = materialC;
+    this.renderer?.setViewport(x, y, bw, bh);
+    this.renderer?.setScissor(x, y, bw, bh);
+    this.renderer?.render(this.scene, this.blCam);
 
-          <div className='settings' key={lastUpdate}>
-            {/* Mode */}
-            <Dropdown
-              title='View'
-              index={ModeOptions.indexOf(mode)}
-              options={ModeOptions}
-              onSelect={(value: string) => {
-                if (value === mode) return;
-                killControls();
-                setMode(value as MultiViewMode);
-              }}
-              open={modeOpen}
-              onToggle={(value: boolean) => {
-                setModeOpen(value);
-                if (renderModeOpen) setRenderModeOpen(false);
-                if (interactionModeOpen) setInteractionModeOpen(false);
-              }}
-            />
+    // BR
+    x = bw;
+    this.scene.overrideMaterial = materialD;
+    this.renderer?.setViewport(x, y, bw, bh);
+    this.renderer?.setScissor(x, y, bw, bh);
+    this.renderer?.render(this.scene, this.brCam);
+  };
 
-            {/* Interaction Mode */}
-            <Dropdown
-              title='Interact'
-              index={interactionMode === 'Orbit' ? 0 : 1}
-              options={[
-                'Orbit Mode',
-                'Selection Mode',
-              ]}
-              onSelect={(value: string) => {
-                interactionHelper.visible = value === 'Selection Mode';
-                setInteractionMode(interactionHelper.visible ? 'Selection' : 'Orbit');
-              }}
-              open={interactionModeOpen}
-              onToggle={(value: boolean) => {
-                if (modeOpen) setModeOpen(false);
-                if (renderModeOpen) setRenderModeOpen(false);
-                setInteractionModeOpen(value);
-              }}
-            />
-          </div>
-        </>
-      )}
-    </div>
-  );
+  // Getters
+
+  get appID(): string {
+    return this.props.three.app.appID;
+  }
+
+  get mode(): MultiViewMode {
+    return this.state.mode;
+  }
+
+  get three(): RemoteThree {
+    return this.props.three;
+  }
 }

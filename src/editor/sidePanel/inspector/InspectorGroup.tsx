@@ -7,6 +7,7 @@ export interface InspectorGroupProps {
   title: string
   expanded?: boolean
   items: InspectorFieldProps[] | InspectorGroupProps[]
+  onToggle?: (value: boolean) => void
 }
 
 function isGroup(obj: any): obj is InspectorGroupProps {
@@ -49,7 +50,13 @@ export default function InspectorGroup(props: InspectorGroupProps) {
   });
 
   return (
-    <Accordion label={props.title} open={props.expanded === true}>
+    <Accordion
+      label={props.title}
+      open={props.expanded === true}
+      onToggle={(value: boolean) => {
+        if (props.onToggle) props?.onToggle(value);
+      }}
+    >
       {children}
     </Accordion>
   );
