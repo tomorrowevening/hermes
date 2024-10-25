@@ -49,6 +49,8 @@ import { ToolEvents, debugDispatcher } from '../global';
 // Components
 import './MultiView.scss';
 import UVMaterial from './UVMaterial';
+// Tools
+import Transform from '../tools/Transform';
 // Utils
 import { dispose, mix } from '../utils';
 
@@ -82,11 +84,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   static instance: MultiView | null = null;
 
   scene = new Scene();
-  cameras: Map<string, Camera> = new Map();
   renderer?: WebGLRenderer | null;
   currentScene?: Scene;
+  cameras: Map<string, Camera> = new Map();
+  controls: Map<string, OrbitControls> = new Map();
+  currentCamera!: PerspectiveCamera | OrthographicCamera;
 
-  private controls: Map<string, OrbitControls> = new Map();
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
   private helpersContainer = new Group();
@@ -104,13 +107,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     wireframe: true
   });
 
-  // Scene
+  // Playback
   private playing = false;
   private rafID = -1;
   private width = 0;
   private height = 0;
 
-  // Cameras
+  // Windows
   private sceneSet = false;
   private tlCam: any = null;
   private trCam: any = null;
@@ -122,9 +125,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private brRender: RenderMode = 'Renderer';
 
   // Interactions
+  private debugCamera!: PerspectiveCamera;
   private raycaster = new Raycaster();
   private pointer = new Vector2();
-  private currentCamera: any;
   private currentWindow: any;
   private selectedItem: Object3D | undefined = undefined;
   private cameraControls: CameraControls | undefined = undefined;
@@ -173,11 +176,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     ls.setItem(`${appID}_blRender`, ls.getItem(`${appID}_blRender`) !== null ? ls.getItem(`${appID}_blRender`) as string : 'Renderer');
     ls.setItem(`${appID}_brRender`, ls.getItem(`${appID}_brRender`) !== null ? ls.getItem(`${appID}_brRender`) as string : 'Renderer');
 
-    // Static-access
-    MultiView.instance = this;
-  }
-
-  componentDidMount(): void {
     const THREE = {
       Vector2,
       Vector3,
@@ -190,12 +188,28 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       Raycaster,
     };
     CameraControls.install({ THREE });
-    this.setupRenderer();
     this.setupScene();
+
+    // Static-access
+    MultiView.instance = this;
+  }
+
+  componentDidMount(): void {
+    this.setupRenderer();
     this.enable();
     this.assignControls();
     this.resize();
     this.play();
+
+    Transform.instance.three = this.props.three;
+    Transform.instance.activeCamera = this.debugCamera;
+  }
+
+  componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void {
+    if (prevState.mode !== this.state.mode) {
+      this.assignControls();
+      this.resize();
+    }
   }
 
   componentWillUnmount(): void {
@@ -236,7 +250,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               />
             </>
           )}
-{/*
+
           {(this.state.mode === 'Side by Side' || this.state.mode === 'Stacked') && (
             <>
               <CameraWindow
@@ -360,7 +374,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               />
             </>
           )}
-*/}
         </div>
 
         <div className='settings' key={this.state.lastUpdate}>
@@ -440,7 +453,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.helpersContainer.add(this.interactionHelper);
     this.interactionHelper.visible = false;
 
-    // Cameras
+    // Create default cameras
+
     const createOrtho = (name: string, position: Vector3) => {
       const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 5000);
       camera.name = name;
@@ -459,11 +473,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
     createOrtho('UI', new Vector3());
 
-    const debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
-    debugCamera.name = 'Debug';
-    debugCamera.position.set(500, 500, 500);
-    debugCamera.lookAt(0, 0, 0);
-    this.cameras.set('Debug', debugCamera);
+    this.debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
+    this.debugCamera.name = 'Debug';
+    this.debugCamera.position.set(500, 500, 500);
+    this.debugCamera.lookAt(0, 0, 0);
+    this.cameras.set('Debug', this.debugCamera);
+
+    // Assign cameras
+    this.currentCamera = this.debugCamera;
 
     const ls = localStorage;
     const appID = this.props.three.app.appID;
@@ -479,7 +496,67 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.brCam === undefined) this.brCam = this.cameras.get('Top');
   }
 
-  // Event handling
+  // Public
+
+  play() {
+    this.playing = true;
+    this.onUpdate();
+  }
+
+  pause() {
+    this.playing = false;
+    cancelAnimationFrame(this.rafID);
+    this.rafID = -1;
+  }
+
+  toggleOrbitControls(value: boolean) {
+    this.controls.forEach((orbit: OrbitControls) => {
+      orbit.enabled = !value;
+    });
+  }
+
+  // Playback
+
+  private update() {
+    // Updates
+    this.controls.forEach((control: OrbitControls) => {
+      control.update();
+    });
+    this.cameraHelpers.forEach((helper: CameraHelper) => {
+      helper.update();
+    });
+    this.lightHelpers.forEach((helper: LightHelper) => {
+      if (helper['update'] !== undefined) helper['update']();
+    });
+
+    if (this.props.onSceneUpdate !== undefined && this.sceneSet) this.props.onSceneUpdate(this.currentScene!);
+  }
+
+  private draw() {
+    this.renderer?.clear();
+    // console.log(this.state.mode);
+    switch (this.state.mode) {
+      case 'Single':
+        this.drawSingle();
+        break;
+      case 'Side by Side':
+      case 'Stacked':
+        this.drawDouble();
+        break;
+      case 'Quad':
+        this.drawQuad();
+        break;
+    }
+  }
+
+  private onUpdate = () => {
+    if (!this.playing) return;
+    this.update();
+    this.draw();
+    this.rafID = requestAnimationFrame(this.onUpdate);
+  };
+
+  // Events
 
   private enable() {
     const element = this.containerRef.current!;
@@ -504,59 +581,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
   }
-
-  // Playback
-
-  play() {
-    this.playing = true;
-    this.onUpdate();
-  }
-
-  pause() {
-    this.playing = false;
-    cancelAnimationFrame(this.rafID);
-    this.rafID = -1;
-  }
-
-  private update() {
-    // Updates
-    this.controls.forEach((control: OrbitControls) => {
-      control.update();
-    });
-    this.cameraHelpers.forEach((helper: CameraHelper) => {
-      helper.update();
-    });
-    this.lightHelpers.forEach((helper: LightHelper) => {
-      if (helper['update'] !== undefined) helper['update']();
-    });
-
-    if (this.props.onSceneUpdate !== undefined && this.sceneSet) this.props.onSceneUpdate(this.currentScene!);
-  }
-
-  private draw() {
-    this.renderer?.clear();
-    switch (this.state.mode) {
-      case 'Single':
-        this.drawSingle();
-        break;
-      case 'Side by Side':
-      case 'Stacked':
-        this.drawDouble();
-        break;
-      case 'Quad':
-        this.drawQuad();
-        break;
-    }
-  }
-
-  private onUpdate = () => {
-    if (!this.playing) return;
-    this.update();
-    this.draw();
-    this.rafID = requestAnimationFrame(this.onUpdate);
-  };
-
-  // Events
 
   private resize = () => {
     this.width = window.innerWidth - 300;
@@ -960,6 +984,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     } else if (this.currentCamera === this.brCam) {
       this.currentWindow = this.brWindow;
     }
+
+    Transform.instance.updateCamera(this.currentCamera, this.currentWindow.current);
   };
 
   private updateCameraControls = (control: OrbitControls, reposition = false) => {
@@ -1107,10 +1133,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.renderer?.render(this.scene, this.brCam);
   };
 
-  // Getters / Setters
+  // Getters
 
   get appID(): string {
     return this.props.three.app.appID;
+  }
+
+  get mode(): MultiViewMode {
+    return this.state.mode;
   }
 
   get three(): RemoteThree {

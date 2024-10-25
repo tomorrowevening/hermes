@@ -3,6 +3,7 @@ import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 // Remote
 import RemoteThree from '@/core/remote/RemoteThree';
+import MultiView from '../multiView/MultiView';
 
 export default class Transform extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart';
@@ -21,7 +22,8 @@ export default class Transform extends EventDispatcher {
     for (const controls of this.controls.values()) {
       controls.detach();
       controls.dispose();
-      controls.parent?.remove(controls);
+      const helper = controls.getHelper();
+      helper.parent?.remove(helper);
     }
     this.controls = new Map();
     this.visibility = new Map();
@@ -30,18 +32,23 @@ export default class Transform extends EventDispatcher {
   add(name: string): TransformControls {
     let controls = this.controls.get(name);
     if (controls === undefined) {
-      controls = new TransformControls(this.activeCamera, this.three.canvas!);
-      controls.name = name;
+      const element = document.querySelector('.clickable') as HTMLDivElement;
+      controls = new TransformControls(this.activeCamera, element);
+      controls.getHelper().name = name;
       this.controls.set(name, controls);
-      this.visibility.set(name, controls.visible);
+      this.visibility.set(name, controls.getHelper().visible);
 
       controls.addEventListener('mouseDown', () => {
         // @ts-ignore
-        this.dispatchEvent({ type: TransformController.DRAG_START });
+        this.dispatchEvent({ type: Transform.DRAG_START });
       });
       controls.addEventListener('mouseUp', () => {
         // @ts-ignore
-        this.dispatchEvent({ type: TransformController.DRAG_END });
+        this.dispatchEvent({ type: Transform.DRAG_END });
+      });
+
+      controls.addEventListener('dragging-changed', (evt: any) => {
+        MultiView.instance?.toggleOrbitControls(evt.value);
       });
 
       // Controls
@@ -58,7 +65,7 @@ export default class Transform extends EventDispatcher {
           {
             type: 'boolean',
             prop: 'visible',
-            value: controls.visible,
+            value: controls.getHelper().visible,
           },
           {
             type: 'button',
@@ -105,7 +112,7 @@ export default class Transform extends EventDispatcher {
               controls.enabled = value;
               break;
             case 'visible':
-              controls.visible = value;
+              controls.getHelper().visible = value;
               break;
             case 'Reset':
               controls.reset();
@@ -132,7 +139,8 @@ export default class Transform extends EventDispatcher {
     if (controls === undefined) return false;
     controls.detach();
     controls.dispose();
-    controls.parent?.remove(controls);
+    const helper = controls.getHelper();
+    helper.parent?.remove(helper);
     this.controls.delete(name);
     return true;
   }
@@ -143,24 +151,40 @@ export default class Transform extends EventDispatcher {
     });
   }
 
-  updateCamera(camera: Camera): void {
+  updateCamera(camera: Camera, element: HTMLElement): void {
     this.activeCamera = camera;
     this.controls.forEach((controls: TransformControls) => {
-      controls.camera = camera;
+      // Update camera
+      if (controls.camera !== camera) {
+        controls.camera = camera;
+        // @ts-ignore
+        camera.getWorldPosition(controls.cameraPosition);
+        // @ts-ignore
+        camera.getWorldQuaternion(controls.cameraQuaternion);
+      }
+
+      // Update element
+      if (controls.domElement !== element) {
+        controls.disconnect();
+        controls.domElement = element;
+        controls.connect();
+      }
     });
   }
 
   show() {
     this.controls.forEach((controls: TransformControls) => {
-      const value = this.visibility.get(controls.name);
-      if (value !== undefined) controls.visible = value;
+      const helper = controls.getHelper();
+      const value = this.visibility.get(helper.name);
+      if (value !== undefined) helper.visible = value;
     });
   }
 
   hide() {
     this.controls.forEach((controls: TransformControls) => {
-      this.visibility.set(controls.name, controls.visible);
-      controls.visible = false;
+      const helper = controls.getHelper();
+      this.visibility.set(helper.name, helper.visible);
+      helper.visible = false;
     });
   }
 
