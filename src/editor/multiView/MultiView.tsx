@@ -50,6 +50,7 @@ import { ToolEvents, debugDispatcher } from '../global';
 import './MultiView.scss';
 import UVMaterial from './UVMaterial';
 // Tools
+import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
 import { dispose, mix } from '../utils';
@@ -99,6 +100,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private axisHelper = new AxesHelper(500);
   private interactionHelper = new AxesHelper(100);
   private currentTransform?: TransformControls;
+
+  // Tools
+  private splineEditor!: SplineEditor;
 
   // Override Materials
   private depthMaterial = new MeshDepthMaterial();
@@ -192,6 +196,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     };
     CameraControls.install({ THREE });
     this.setupScene();
+    this.setupTools();
 
     // Static-access
     MultiView.instance = this;
@@ -203,6 +208,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.assignControls();
     this.resize();
     this.play();
+    this.splineEditor.initDebug();
 
     Transform.instance.three = this.props.three;
     Transform.instance.activeCamera = this.debugCamera;
@@ -497,6 +503,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.trCam === undefined) this.trCam = this.cameras.get('Orthographic');
     if (this.blCam === undefined) this.blCam = this.cameras.get('Front');
     if (this.brCam === undefined) this.brCam = this.cameras.get('Top');
+  }
+
+  private setupTools() {
+    console.log('spline setup');
+    this.splineEditor = new SplineEditor(this.currentCamera);
+    this.scene.add(this.splineEditor);
   }
 
   // Public
@@ -1014,6 +1026,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         }
         break;
     }
+
+    this.splineEditor.camera = this.currentCamera;
 
     if (this.currentCamera === this.tlCam) {
       this.currentWindow = this.tlWindow;
