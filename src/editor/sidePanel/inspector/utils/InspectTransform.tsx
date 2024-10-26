@@ -4,9 +4,11 @@ import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';
 import MultiView from '@/editor/multiView/MultiView';
+import RemoteThree from '@/core/remote/RemoteThree';
 
 type InspectTransformProps = {
   object: RemoteObject;
+  three: RemoteThree;
 }
 
 type InspectTransformState = {
@@ -43,10 +45,14 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
   }
 
   update() {
-    this.position.copy(MultiView.instance!.selectedItem!.position);
-    this.rotation.copy(MultiView.instance!.selectedItem!.rotation);
-    this.scale.copy(MultiView.instance!.selectedItem!.scale);
-    this.setState({ lastUpdated: Date.now() });
+    if (MultiView.instance) {
+      const selectedItem = MultiView.instance.selectedItem;
+      if (selectedItem === undefined) return;
+      this.position.copy(selectedItem.position);
+      this.rotation.copy(selectedItem.rotation);
+      this.scale.copy(selectedItem.scale);
+      this.setState({ lastUpdated: Date.now() });
+    }
   }
 
   render(): ReactNode {
@@ -82,7 +88,7 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
             title: 'Visible',
             prop: 'visible',
             type: 'boolean',
-            value: InspectTransform.instance.props.object.visible,
+            value: this.props.object.visible,
             onChange: this.updateTransform,
           },
         ]}
@@ -93,16 +99,16 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
     );
   }
 
-  private updateTransform(prop: string, value: any) {
+  private updateTransform = (prop: string, value: any) => {
     const realValue = prop === 'rotation' ? { x: value._x, y: value._y, z: value._z } : value;
 
     // App
-    MultiView.instance?.three.updateObject(InspectTransform.instance.props.object.uuid, prop, realValue);
+    this.props.three.updateObject(this.props.object.uuid, prop, realValue);
 
     // Editor
-    const scene = MultiView.instance?.three.getScene(InspectTransform.instance.props.object.uuid);
+    const scene = this.props.three.getScene(this.props.object.uuid);
     if (scene) {
-      const child = scene.getObjectByProperty('uuid', InspectTransform.instance.props.object.uuid);
+      const child = scene.getObjectByProperty('uuid', this.props.object.uuid);
       setItemProps(child, prop, realValue);
     }
   }
