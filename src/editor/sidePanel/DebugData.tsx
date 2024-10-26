@@ -1,5 +1,5 @@
 // Libs
-import { Component, ReactNode } from 'react';
+import { Component, createRef, ReactNode, RefObject } from 'react';
 // Models
 import RemoteThree from '@/core/remote/RemoteThree';
 import { debugDispatcher, ToolEvents } from '../global';
@@ -13,7 +13,8 @@ interface DebugDataProps {
 }
 
 type DebugDataState = {
-  groups: any[];
+  groups: JSX.Element[];
+  groupsRefs: RefObject<InspectorGroup>[];
   groupTitles: string[];
   lastUpdate: number;
 }
@@ -25,6 +26,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     super(props);
     this.state = {
       groups: [],
+      groupsRefs: [],
       groupTitles: [],
       lastUpdate: Date.now(),
     };
@@ -98,7 +100,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
 
   // Static
 
-  static addEditorGroup(data: GroupData) {
+  static addEditorGroup(data: GroupData): RefObject<InspectorGroup> | null {
     const items: InspectorFieldProps[] = [];
 
     data.items.forEach((item: GroupItemData) => {
@@ -117,19 +119,24 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
         },
       });
     });
-    
-    DebugData.instance!.state.groups.push(
+
+    const groupRef = createRef<InspectorGroup>();
+    const group = (
       <InspectorGroup
+        ref={groupRef}
         title={data.title}
         items={items}
         key={Math.random()}
       />
     );
-    DebugData.instance!.state.groupTitles.push(data.title);
-    DebugData.instance!.setState({ lastUpdate: Date.now() });
+    DebugData.instance?.state.groups.push(group);
+    DebugData.instance?.state.groupsRefs.push(groupRef);
+    DebugData.instance?.state.groupTitles.push(data.title);
+    DebugData.instance?.setState({ lastUpdate: Date.now() });
+    return groupRef;
   }
 
   static removeEditorGroup(name: string) {
-    DebugData.instance!.removeGroup({ value: name });
+    DebugData.instance?.removeGroup({ value: name });
   }
 }
