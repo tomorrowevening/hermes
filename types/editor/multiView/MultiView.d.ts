@@ -27,6 +27,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     cameras: Map<string, Camera>;
     controls: Map<string, OrbitControls>;
     currentCamera: PerspectiveCamera | OrthographicCamera;
+    currentWindow: any;
     private cameraHelpers;
     private lightHelpers;
     private helpersContainer;
@@ -34,6 +35,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private axisHelper;
     private interactionHelper;
     private currentTransform?;
+    private splineEditor;
     private depthMaterial;
     private normalsMaterial;
     private uvMaterial;
@@ -62,7 +64,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private trWindow;
     private blWindow;
     private brWindow;
-    private currentWindow;
     constructor(props: MultiViewProps);
     componentDidMount(): void;
     componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void;
@@ -70,6 +71,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     render(): ReactNode;
     private setupRenderer;
     private setupScene;
+    private setupTools;
     play(): void;
     pause(): void;
     toggleOrbitControls(value: boolean): void;

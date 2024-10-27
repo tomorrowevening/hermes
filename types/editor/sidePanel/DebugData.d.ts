@@ -1,23 +1,24 @@
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, RefObject } from 'react';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { GroupData } from '@/core/types';
+import InspectorGroup from './inspector/InspectorGroup';
 interface DebugDataProps {
     three: RemoteThree;
 }
 type DebugDataState = {
-    groups: any[];
-    groupTitles: string[];
     lastUpdate: number;
 };
 export default class DebugData extends Component<DebugDataProps, DebugDataState> {
-    static instance: DebugData | null;
+    static instance: DebugData;
+    static groups: JSX.Element[];
+    static groupsRefs: RefObject<InspectorGroup>[];
+    static groupTitles: string[];
     constructor(props: DebugDataProps);
-    componentDidMount(): void;
     componentWillUnmount(): void;
     render(): ReactNode;
     private addGroup;
     private removeGroup;
-    static addEditorGroup(data: GroupData): void;
+    static addEditorGroup(data: GroupData): RefObject<InspectorGroup> | null;
     static removeEditorGroup(name: string): void;
 }
 export {};

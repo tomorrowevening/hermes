@@ -1,8 +1,23 @@
+import { Component, ReactNode, RefObject } from 'react';
 import { InspectorFieldProps } from './InspectorField';
+import { GroupData } from '@/core/types';
 export interface InspectorGroupProps {
     title: string;
     expanded?: boolean;
     items: InspectorFieldProps[] | InspectorGroupProps[];
     onToggle?: (value: boolean) => void;
 }
-export default function InspectorGroup(props: InspectorGroupProps): import("react/jsx-runtime").JSX.Element;
+type InspectorGroupState = {
+    lastUpdated: number;
+};
+export default class InspectorGroup extends Component<InspectorGroupProps, InspectorGroupState> {
+    subgroupNames: string[];
+    subgroupElements: JSX.Element[];
+    valueOverrides: Map<string, any>;
+    constructor(props: InspectorGroupProps);
+    addGroup(data: GroupData): RefObject<InspectorGroup>;
+    removeGroup(name: string): void;
+    setField(name: string, value: any): void;
+    render(): ReactNode;
+}
+export {};

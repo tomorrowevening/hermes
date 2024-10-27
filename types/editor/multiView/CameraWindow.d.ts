@@ -12,6 +12,7 @@ interface DropdownProps {
 }
 export declare const Dropdown: (props: DropdownProps) => import("react/jsx-runtime").JSX.Element;
 interface CameraWindowProps {
+    name: string;
     camera: Camera;
     onSelectCamera: (value: string) => void;
     onSelectRenderMode: (value: RenderMode) => void;

@@ -50,6 +50,7 @@ import { ToolEvents, debugDispatcher } from '../global';
 import './MultiView.scss';
 import UVMaterial from './UVMaterial';
 // Tools
+import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
 import { dispose, mix } from '../utils';
@@ -91,6 +92,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   cameras: Map<string, Camera> = new Map();
   controls: Map<string, OrbitControls> = new Map();
   currentCamera!: PerspectiveCamera | OrthographicCamera;
+  currentWindow: any; // RefObject to one of the "windows"
 
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
@@ -99,6 +101,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private axisHelper = new AxesHelper(500);
   private interactionHelper = new AxesHelper(100);
   private currentTransform?: TransformControls;
+
+  // Tools
+  private splineEditor!: SplineEditor;
 
   // Override Materials
   private depthMaterial = new MeshDepthMaterial();
@@ -141,7 +146,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private trWindow!: RefObject<HTMLDivElement>;
   private blWindow!: RefObject<HTMLDivElement>;
   private brWindow!: RefObject<HTMLDivElement>;
-  private currentWindow: any; // RefObject to one of the "windows"
 
   constructor(props: MultiViewProps) {
     super(props);
@@ -192,6 +196,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     };
     CameraControls.install({ THREE });
     this.setupScene();
+    this.setupTools();
 
     // Static-access
     MultiView.instance = this;
@@ -233,6 +238,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           {this.state.mode === 'Single' && (
             <>
               <CameraWindow
+                name='tl'
                 camera={this.tlCam}
                 options={cameraOptions}
                 ref={this.tlWindow}
@@ -257,6 +263,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           {(this.state.mode === 'Side by Side' || this.state.mode === 'Stacked') && (
             <>
               <CameraWindow
+                name='tl'
                 camera={this.tlCam}
                 options={cameraOptions}
                 ref={this.tlWindow}
@@ -276,6 +283,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
                 }}
               />
               <CameraWindow
+                name='tr'
                 camera={this.trCam}
                 options={cameraOptions}
                 ref={this.trWindow}
@@ -300,6 +308,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           {this.state.mode === 'Quad' && (
             <>
               <CameraWindow
+                name='tl'
                 camera={this.tlCam}
                 options={cameraOptions}
                 ref={this.tlWindow}
@@ -319,6 +328,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
                 }}
               />
               <CameraWindow
+                name='tr'
                 camera={this.trCam}
                 options={cameraOptions}
                 ref={this.trWindow}
@@ -338,6 +348,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
                 }}
               />
               <CameraWindow
+                name='bl'
                 camera={this.blCam}
                 options={cameraOptions}
                 ref={this.blWindow}
@@ -357,6 +368,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
                 }}
               />
               <CameraWindow
+                name='br'
                 camera={this.brCam}
                 options={cameraOptions}
                 ref={this.brWindow}
@@ -497,6 +509,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.trCam === undefined) this.trCam = this.cameras.get('Orthographic');
     if (this.blCam === undefined) this.blCam = this.cameras.get('Front');
     if (this.brCam === undefined) this.brCam = this.cameras.get('Top');
+  }
+
+  private setupTools() {
+    this.splineEditor = new SplineEditor(this.currentCamera);
+    this.splineEditor.initDebug();
+    this.scene.add(this.splineEditor);
   }
 
   // Public
@@ -973,47 +991,43 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private updateCamera = (mouseX: number, mouseY: number, hw: number, hh: number) => {
     switch (this.state.mode) {
       case 'Quad':
-        if (mouseX < hw) {
-          if (mouseY < hh) {
+        if (mouseY < hh) {
+          // Top
+          if (mouseX < hw) {
             this.currentCamera = this.tlCam;
-            this.raycaster.setFromCamera(this.pointer, this.tlCam);
           } else {
-            this.currentCamera = this.blCam;
-            this.raycaster.setFromCamera(this.pointer, this.blCam);
+            this.currentCamera = this.trCam;
           }
         } else {
-          if (mouseY < hh) {
-            this.currentCamera = this.trCam;
-            this.raycaster.setFromCamera(this.pointer, this.trCam);
+          // Bottom
+          if (mouseX < hw) {
+            this.currentCamera = this.blCam;
           } else {
             this.currentCamera = this.brCam;
-            this.raycaster.setFromCamera(this.pointer, this.brCam);
           }
         }
         break;
       case 'Side by Side':
         if (mouseX < hw) {
           this.currentCamera = this.tlCam;
-          this.raycaster.setFromCamera(this.pointer, this.tlCam);
         } else {
           this.currentCamera = this.trCam;
-          this.raycaster.setFromCamera(this.pointer, this.trCam);
         }
         break;
       case 'Single':
         this.currentCamera = this.tlCam;
-        this.raycaster.setFromCamera(this.pointer, this.tlCam);
         break;
       case 'Stacked':
         if (mouseY < hh) {
           this.currentCamera = this.tlCam;
-          this.raycaster.setFromCamera(this.pointer, this.tlCam);
         } else {
           this.currentCamera = this.trCam;
-          this.raycaster.setFromCamera(this.pointer, this.trCam);
         }
         break;
     }
+
+    this.splineEditor.camera = this.currentCamera;
+    this.raycaster.setFromCamera(this.pointer, this.currentCamera);
 
     if (this.currentCamera === this.tlCam) {
       this.currentWindow = this.tlWindow;

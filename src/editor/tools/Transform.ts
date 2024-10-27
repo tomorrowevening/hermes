@@ -38,7 +38,7 @@ export default class Transform extends EventDispatcher {
       controls.getHelper().name = name;
       controls.setSpace('local');
       this.controls.set(name, controls);
-      this.visibility.set(name, controls.getHelper().visible);
+      this.visibility.set(name, true);
 
       controls.addEventListener('mouseDown', () => {
         // @ts-ignore
@@ -67,7 +67,7 @@ export default class Transform extends EventDispatcher {
           {
             type: 'boolean',
             prop: 'visible',
-            value: controls.getHelper().visible,
+            value: true,
           },
           {
             type: 'button',
