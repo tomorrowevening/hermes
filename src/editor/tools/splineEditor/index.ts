@@ -1,8 +1,9 @@
-import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
+import { Camera, CatmullRomCurve3, Object3D, Vector2, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
 import DebugData from '@/editor/sidePanel/DebugData';
 import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
+import { debugDispatcher, ToolEvents } from '@/editor/global';
 
 let splinesCreated = 0;
 
@@ -24,6 +25,7 @@ export default class SplineEditor extends Object3D {
     super();
     this.name = 'Spline Editor';
     this._camera = camera;
+    debugDispatcher.addEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
   }
 
   initDebug() {
@@ -73,17 +75,22 @@ export default class SplineEditor extends Object3D {
   }
 
   dispose() {
+    debugDispatcher.removeEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
     DebugData.removeEditorGroup(this.name);
+  }
+
+  addSpline(spline: Spline) {
+    spline.draggableScale = this.defaultScale;
+    spline.hideTransform();
+    if (this.group?.current !== null) spline.initDebug(this.group!.current);
+    this.add(spline);
   }
 
   createSpline = (defaultPoints: Array<Vector3> = []): Spline => {
     const name = `Spline ${splinesCreated + 1}`;
     const spline = new Spline(name, this._camera);
-    spline.draggableScale = this.defaultScale;
     spline.addPoints(defaultPoints);
-    spline.hideTransform();
-    if (this.group?.current !== null) spline.initDebug(this.group!.current);
-    this.add(spline);
+    this.addSpline(spline);
     splinesCreated++;
     return spline;
   };
@@ -117,6 +124,19 @@ export default class SplineEditor extends Object3D {
       const spline = child as Spline;
       spline.showPoints(visible);
     });
+  };
+
+  private onAddSpline = (evt: any) => {
+    const data = JSON.parse(evt.value);
+    const name = `Spline ${splinesCreated + 1}`;
+    const pts: Vector3[] = [];
+    data.points.forEach((pt: number[]) => {
+      pts.push(new Vector3(pt[0], pt[1], 0));
+    });
+    const spline = new Spline(name, this.camera);
+    spline.addPoints(pts);
+    this.addSpline(spline);
+    splinesCreated++;
   };
 
   get camera(): Camera {

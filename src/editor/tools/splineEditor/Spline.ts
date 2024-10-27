@@ -128,13 +128,13 @@ export default class Spline extends Object3D {
 
   // Modifiers
 
-  addPoints = (defaultPoints: Array<Vector3> = []) => {
-    if (defaultPoints.length > 0) {
-      const total = defaultPoints.length - 1;
+  addPoints = (pts: Array<Vector3> = []) => {
+    if (pts.length > 0) {
+      const total = pts.length - 1;
       for (let i = 0; i < total; i++) {
-        this.addPoint(defaultPoints[i], false);
+        this.addPoint(pts[i], false);
       }
-      this.addPoint(defaultPoints[total]);
+      this.addPoint(pts[total]);
     } else {
       this.addPoint(new Vector3(-50, 0, 0), false);
       this.addPoint(new Vector3(50, 0, 0));

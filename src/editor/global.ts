@@ -21,6 +21,7 @@ export enum ToolEvents {
   // Custom
   ADD_GROUP = 'ToolEvents::addGroup',
   REMOVE_GROUP = 'ToolEvents::removeGroup',
+  ADD_SPLINE = 'ToolEvents::addSpline',
 }
 
 export type ToolEvent = {

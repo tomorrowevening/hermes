@@ -1,4 +1,4 @@
-import { Camera, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
@@ -130,6 +130,14 @@ export default class RemoteThree extends BaseRemote {
       });
     });
     this.groups.clear();
+  }
+
+  addSpline(spline: Curve<any>) {
+    this.app.send({
+      event: 'addSpline',
+      target: 'editor',
+      data: JSON.stringify(spline.toJSON()),
+    });
   }
 
   // Scenes
@@ -284,6 +292,9 @@ export default class RemoteThree extends BaseRemote {
         break;
       case 'removeGroup':
         debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
+        break;
+      case 'addSpline':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
         break;
     }
   }

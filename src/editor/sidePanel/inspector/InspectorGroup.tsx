@@ -60,7 +60,6 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
     );
     this.subgroupNames.push(data.title);
     this.subgroupElements.push(element);
-
     this.setState({ lastUpdated: Date.now() });
 
     return elementRef;
