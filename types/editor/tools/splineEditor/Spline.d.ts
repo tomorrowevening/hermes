@@ -27,7 +27,7 @@ export default class Spline extends Object3D {
     hideTransform: () => void;
     exportSpline: () => void;
     showPoints: (visible?: boolean) => void;
-    addPoints: (defaultPoints?: Array<Vector3>) => void;
+    addPoints: (pts?: Array<Vector3>) => void;
     addPoint: (position: Vector3, update?: boolean) => Mesh;
     addNextPt: () => void;
     removePoint: (child: Object3D) => void;

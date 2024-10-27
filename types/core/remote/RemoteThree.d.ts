@@ -1,4 +1,4 @@
-import { Camera, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
@@ -18,6 +18,7 @@ export default class RemoteThree extends BaseRemote {
     removeGroup(name: string): void;
     updateGroup(group: string, prop: string, value: any): void;
     removeAllGroups(): void;
+    addSpline(spline: Curve<any>): void;
     addScene(value: Scene): void;
     refreshScene(value: string): void;
     removeScene(value: Scene): void;

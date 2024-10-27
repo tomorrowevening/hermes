@@ -60,6 +60,7 @@ export type EditorEvent =
   | 'requestMethod'
   | 'addCamera'
   | 'removeCamera'
+  | 'addSpline'
 // GUI
   | 'addFolder'
   | 'bindObject'

@@ -15,11 +15,13 @@ export default class SplineEditor extends Object3D {
     constructor(camera: Camera);
     initDebug(): void;
     dispose(): void;
+    addSpline(spline: Spline): void;
     createSpline: (defaultPoints?: Array<Vector3>) => Spline;
     createSplineFromArray: (points: Array<number[]>) => Spline;
     createSplineFromCurve: (curve: CatmullRomCurve3) => Spline;
     createSplineFromJSON: (data: SplineJSON) => Spline;
     showPoints: (visible?: boolean) => void;
+    private onAddSpline;
     get camera(): Camera;
     set camera(value: Camera);
 }

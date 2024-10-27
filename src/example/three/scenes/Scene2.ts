@@ -14,7 +14,9 @@ import {
   RectAreaLight,
   SkinnedMesh,
   SphereGeometry,
+  SplineCurve,
   SpotLight,
+  Vector2,
   WebGLRenderer,
 } from 'three';
 // @ts-ignore
