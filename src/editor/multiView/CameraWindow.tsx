@@ -46,6 +46,7 @@ export const Dropdown = (props: DropdownProps) => {
 };
 
 interface CameraWindowProps {
+  name: string;
   camera: Camera
   onSelectCamera: (value: string) => void;
   onSelectRenderMode: (value: RenderMode) => void;
@@ -68,7 +69,7 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
   const [open, setOpen] = useState(false);
 
   return (
-    <div className='CameraWindow'>
+    <div className={`CameraWindow ${props.name}`}>
       <div ref={ref} className='clickable' onClick={() => {
         if (open) setOpen(false);
       }} />

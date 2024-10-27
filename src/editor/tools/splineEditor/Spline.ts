@@ -17,8 +17,11 @@ import {
 } from 'three';
 import { lerp } from 'three/src/math/MathUtils';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { RefObject } from 'react';
 // Tools
+import MultiView from '@/editor/multiView/MultiView';
 import Transform from '../Transform';
+import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
 // Utils
 import { copyToClipboard, dispose, round } from '../../utils';
 
@@ -40,23 +43,23 @@ export default class Spline extends Object3D {
   curveType: CurveType;
   offset = 1;
 
+  private lineMaterial: LineBasicMaterial;
   private _camera: Camera;
   private _curvePercentage = 0;
   private _draggableScale = 10;
   private _transform?: TransformControls;
   private raycaster: Raycaster;
   private draggedMat = new MeshBasicMaterial();
-  // debugFolder?: FolderApi;
-  // private nameInput?: InputBindingApi<unknown, any>;
-  // pointsFolder?: FolderApi;
-  // private inputs: Map<string, InputBindingApi<unknown, any>> = new Map();
+  private parentGroup!: InspectorGroup;
+  private group!: RefObject<InspectorGroup>;
 
   constructor(name: string, camera: Camera) {
     const color = new Color(lerp(0.5, 1, Math.random()), lerp(0.5, 1, Math.random()), lerp(0.5, 1, Math.random()));
     super();
     this.name = name;
 
-    this.line = new Line(new BufferGeometry(), new LineBasicMaterial({ color: color }));
+    this.lineMaterial = new LineBasicMaterial({ color: color });
+    this.line = new Line(new BufferGeometry(), this.lineMaterial);
     this.line.name = 'line';
     this.add(this.line);
 
@@ -68,7 +71,7 @@ export default class Spline extends Object3D {
     this.draggable.name = 'draggablePoints';
     this.add(this.draggable);
 
-    this.curvePos = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ color: color }));
+    this.curvePos = new Mesh(new SphereGeometry(1.5), new MeshBasicMaterial({ color: color }));
     this.curvePos.name = 'curvePos';
     this.curvePos.scale.setScalar(this._draggableScale);
     this.curvePos.visible = false;
@@ -90,9 +93,13 @@ export default class Spline extends Object3D {
   }
 
   dispose = () => {
-    Transform.instance.remove(`${this.name} controls`);
+    if (this._transform) {
+      this._transform.removeEventListener('objectChange', this.updateSpline);
+      Transform.instance.remove(this.name);
+    }
+
     this.disable();
-    // this.debugFolder?.dispose();
+    this.parentGroup.removeGroup(this.name);
   };
 
   hideTransform = () => {
@@ -129,8 +136,8 @@ export default class Spline extends Object3D {
       }
       this.addPoint(defaultPoints[total]);
     } else {
-      this.addPoint(new Vector3(-this._draggableScale * 5, 0, 0), false);
-      this.addPoint(new Vector3(this._draggableScale * 5, 0, 0));
+      this.addPoint(new Vector3(-50, 0, 0), false);
+      this.addPoint(new Vector3(50, 0, 0));
     }
   };
 
@@ -141,8 +148,6 @@ export default class Spline extends Object3D {
     mesh.position.copy(position);
     mesh.scale.setScalar(this._draggableScale);
     this.draggable.add(mesh);
-
-    // if (this.debugFolder !== undefined) this.debugPoint(mesh);
 
     if (update) this.updateSpline();
 
@@ -159,11 +164,17 @@ export default class Spline extends Object3D {
     if (total > 0) pos.add(this.draggable.children[total - 1].position);
     const mesh = this.addPoint(pos);
     this._transform?.attach(mesh);
+
+    this.group.current?.setField('Current Point', mesh.position);
   };
 
   removePoint = (child: Object3D) => {
-    if (this._transform?.object === child) this._transform?.detach();
-    // this.inputs.delete(child.name);
+    if (this._transform?.object === child) {
+      this._transform?.detach();
+      const nextPt = this.draggable.children[this.draggable.children.length - 1];
+      this._transform?.attach(nextPt);
+      this.group.current?.setField('Current Point', nextPt.position);
+    }
     dispose(child);
     this.updateSpline();
   };
@@ -181,16 +192,17 @@ export default class Spline extends Object3D {
     this.curve = new CatmullRomCurve3(this.points, this.closed, this.curveType, this.tension);
     this.line.geometry.setFromPoints(this.getPoints());
     this.curvePos.position.copy(this.getPointAt(this._curvePercentage));
-    // this.inputs.forEach((input: InputBindingApi<unknown, any>) => {
-    //   input.refresh();
-    // });
   };
 
   // Handlers
 
   private onMouseClick = (evt: MouseEvent) => {
-    pointer.x = (evt.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(evt.clientY / window.innerHeight) * 2 + 1;
+    if (!MultiView.instance) return;
+
+    const element = MultiView.instance.currentWindow.current as HTMLDivElement;
+    const bounds = element.getBoundingClientRect();
+    pointer.x = ((evt.clientX - bounds.x) / bounds.width) * 2 - 1;
+    pointer.y = -((evt.clientY - bounds.y) / bounds.height) * 2 + 1;
     //
     this.raycaster.setFromCamera(pointer, this.camera!);
     const intersects = this.raycaster.intersectObjects(this.draggable.children, false);
@@ -198,6 +210,7 @@ export default class Spline extends Object3D {
       const object = intersects[0].object;
       if (object !== this._transform?.object) {
         this._transform?.attach(object);
+        this.group.current?.setField('Current Point', object.position);
       }
     }
   };
@@ -258,103 +271,201 @@ export default class Spline extends Object3D {
 
   // Debug
 
-  initDebug() {
-    this._transform = Transform.instance.add(`${this.name} controls`);
-    this._transform.camera = this._camera;
-    this._transform.addEventListener('objectChange', this.updateSpline);
-    this.add(this._transform.getHelper());
+  private onUpdateTransform = () => {
+    if (this._transform?.object && this.group) {
+      const obj = this._transform?.object;
+      if (obj.name.search('point') > -1) {
+        this.group.current?.setField('Current Point', obj.position);
+      }
+    }
 
-    /*
-    this.debugFolder = debugFolder(this.name, parentFolder);
-    this.nameInput = debugInput(this.debugFolder, this, 'name', {
-      onChange: (value: string) => {
-        this.debugFolder!.title = value;
-      },
-    });
-    debugInput(this.debugFolder, this, 'closed', {
-      onChange: this.updateSpline,
-    });
-    debugInput(this.debugFolder, this, 'subdivide', {
-      min: 1,
-      max: 100,
-      step: 1,
-      onChange: this.updateSpline,
-    });
-    debugInput(this.debugFolder, this, 'tension', {
-      min: 0,
-      max: 1,
-      onChange: this.updateSpline,
-    });
-    debugOptions(
-      this.debugFolder,
-      'Curve Type',
-      [
+    this.updateSpline();
+  };
+
+  initDebug(parentGroup: InspectorGroup) {
+    const pts = this.draggable.children;
+
+    this.parentGroup = parentGroup;
+    this._transform = Transform.instance.add(this.name);
+    this._transform.camera = this._camera;
+    this._transform.addEventListener('objectChange', this.onUpdateTransform);
+    this._transform.attach(pts.length > 0 ? pts[pts.length - 1] : this);
+    MultiView.instance?.scene.add(this._transform.getHelper());
+
+    const currentPoint = pts.length > 0 ? pts[pts.length - 1].position : { x: 0, y: 0, z: 0 };
+    this.group = parentGroup.addGroup({
+      title: this.name,
+      items: [
         {
-          text: 'catmullrom',
+          prop: 'Closed',
+          type: 'boolean',
+          value: this.closed,
+        },
+        {
+          prop: 'Visible',
+          type: 'boolean',
+          value: this.visible,
+        },
+        {
+          prop: 'Show Position',
+          type: 'boolean',
+          value: this.curvePos.visible,
+        },
+        {
+          prop: 'Show Points',
+          type: 'boolean',
+          value: this.draggable.visible,
+        },
+        {
+          prop: 'Color',
+          type: 'color',
+          value: `#${this.draggedMat.color.getHexString()}`,
+        },
+        {
+          prop: 'Curve',
+          type: 'option',
+          options: [
+            {
+              title: 'Catmullrom',
+              value: 'catmullrom'
+            },
+            {
+              title: 'Centripetal',
+              value: 'centripetal'
+            },
+            {
+              title: 'Chordal',
+              value: 'chordal'
+            },
+          ],
+        },
+        {
+          prop: 'Draggable Scale',
+          type: 'range',
+          min: 0.01,
+          max: 100,
+          step: 0.01,
+          value: this._draggableScale,
+        },
+        {
+          prop: 'Subdivide',
+          type: 'range',
+          min: 1,
+          max: 100,
+          step: 1,
+          value: this.subdivide,
+        },
+        {
+          prop: 'Tension',
+          type: 'range',
+          min: 0,
+          max: 1,
+          step: 0.01,
+          value: this.tension,
+        },
+        {
+          prop: 'New Pt Offset',
+          type: 'range',
+          min: 0,
+          max: 10,
+          value: this.offset,
+        },
+        {
+          prop: 'Curve At',
+          type: 'range',
+          min: 0,
+          max: 1,
+          step: 0.01,
           value: 0,
         },
         {
-          text: 'centripetal',
-          value: 1,
+          prop: 'Add Point',
+          type: 'button',
         },
         {
-          text: 'chordal',
-          value: 2,
+          prop: 'Remove Point',
+          type: 'button',
+        },
+        {
+          prop: 'Export',
+          type: 'button',
+        },
+        {
+          prop: 'Delete',
+          type: 'button',
+        },
+        {
+          prop: 'Current Point',
+          type: 'grid3',
+          value: currentPoint,
         },
       ],
-      (value: number) => {
-        switch (value) {
-          case 0:
-            this.curveType = 'catmullrom';
+      onUpdate: (prop: string, value: any) => {
+        switch (prop) {
+          case 'Closed':
+            this.closed = value;
+            this.updateSpline();
             break;
-          case 1:
-            this.curveType = 'centripetal';
+          case 'Visible':
+            this.visible = value;
             break;
-          case 2:
-            this.curveType = 'chordal';
+          case 'Color':
+            this.lineMaterial.color.setStyle(value);
+            this.draggedMat.color.setStyle(value);
+            break;
+          case 'Curve':
+            this.curveType = value;
+            this.updateSpline();
+            break;
+          case 'Draggable Scale':
+            this.draggableScale = value;
+            break;
+          case 'Subdivide':
+            this.subdivide = value;
+            this.updateSpline();
+            break;
+          case 'Tension':
+            this.tension = value;
+            this.updateSpline();
+            break;
+          case 'New Pt Offset':
+            this.offset = value;
+            break;
+          case 'Curve At':
+            this.curvePos.position.copy(this.getPointAt(value));
+            break;
+          case 'Show Position':
+            this.curvePos.visible = value;
+            break;
+          case 'Show Points':
+            this.draggable.visible = value;
+            break;
+          case 'Add Point':
+            this.addNextPt();
+            break;
+          case 'Remove Point':
+            this.removeSelectedPt();
+            break;
+          case 'Export':
+            this.exportSpline();
+            break;
+          case 'Delete':
+            dispose(this);
+            break;
+          case 'Current Point':
+            if (this.group.current && this._transform?.object) {
+              const obj = this._transform?.object;
+              if (obj.name.search('point') > -1) {
+                obj.position.copy(value);
+                this.updateSpline();
+              }
+            }
             break;
         }
-        this.updateSpline();
-      },
-    );
-    debugInput(this.debugFolder, this, 'draggableScale', {
-      min: 0.01,
-      max: 100,
-    });
-    debugInput(this.debugFolder, this, 'visible');
-    debugColor(this.debugFolder, this.line.material, 'color', {
-      onChange: (value: any) => {
-        this.draggedMat.color.setRGB(value.r / 255, value.g / 255, value.b / 255);
       },
     });
-    debugInput(this.debugFolder, this, 'offset', {
-      min: 0,
-      max: 10,
-      label: 'New Pt Offset',
-    });
-    debugInput(this.debugFolder, this.curvePos, 'visible', {
-      label: 'Show Position',
-    });
-    debugInput(this.debugFolder, this, 'curvePercentage', {
-      min: 0,
-      max: 1,
-      onChange: (value: number) => {
-        this.curvePos.position.copy(this.getPointAt(value));
-      },
-    });
-    debugInput(this.debugFolder, this.draggable, 'visible', {
-      label: 'Show Points',
-    });
-    debugButton(this.debugFolder, 'Add Point', this.addNextPt);
-    debugButton(this.debugFolder, 'Remove Point', this.removeSelectedPt);
-    debugButton(this.debugFolder, 'Export Spline', this.exportSpline);
-    debugButton(this.debugFolder, 'Delete Spline', () => {
-      dispose(this);
-    });
-    */
 
     // debug points that exist
-    // this.pointsFolder = debugFolder('Points', this.debugFolder);
     this.draggable.children.forEach((obj: Object3D) => {
       this.debugPoint(obj as Mesh);
     });

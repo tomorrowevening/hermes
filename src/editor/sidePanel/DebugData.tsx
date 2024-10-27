@@ -13,27 +13,20 @@ interface DebugDataProps {
 }
 
 type DebugDataState = {
-  groups: JSX.Element[];
-  groupsRefs: RefObject<InspectorGroup>[];
-  groupTitles: string[];
   lastUpdate: number;
 }
 
 export default class DebugData extends Component<DebugDataProps, DebugDataState> {
-  static instance: DebugData | null = null;
+  static instance: DebugData;
+  static groups: JSX.Element[] = [];
+  static groupsRefs: RefObject<InspectorGroup>[] = [];
+  static groupTitles: string[] = [];
 
   constructor(props: DebugDataProps) {
     super(props);
-    this.state = {
-      groups: [],
-      groupsRefs: [],
-      groupTitles: [],
-      lastUpdate: Date.now(),
-    };
+    this.state = { lastUpdate: Date.now() };
     DebugData.instance = this;
-  }
 
-  componentDidMount(): void {
     debugDispatcher.addEventListener(ToolEvents.ADD_GROUP, this.addGroup);
     debugDispatcher.addEventListener(ToolEvents.REMOVE_GROUP, this.removeGroup);
   }
@@ -46,7 +39,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
   render(): ReactNode {
     return (
       <div className='customGroups' key={this.state.lastUpdate}>
-        {this.state.groups}
+        {DebugData.groups}
       </div>
     );
   }
@@ -74,24 +67,24 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
       });
     });
     
-    this.state.groups.push(
+    DebugData.groups.push(
       <InspectorGroup
         title={data.title}
         items={items}
         key={Math.random()}
       />
     );
-    this.state.groupTitles.push(data.title);
+    DebugData.groupTitles.push(data.title);
     this.setState({ lastUpdate: Date.now() });
   };
 
   private removeGroup = (evt: any) => {
     const name = evt.value;
-    const total = this.state.groupTitles.length;
+    const total = DebugData.groupTitles.length;
     for (let i = 0; i < total; i++) {
-      if (name === this.state.groupTitles[i]) {
-        this.state.groups.splice(i, 1);
-        this.state.groupTitles.splice(i, 1);
+      if (name === DebugData.groupTitles[i]) {
+        DebugData.groups.splice(i, 1);
+        DebugData.groupTitles.splice(i, 1);
         this.setState({ lastUpdate: Date.now() });
         return;
       }
@@ -129,14 +122,23 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
         key={Math.random()}
       />
     );
-    DebugData.instance?.state.groups.push(group);
-    DebugData.instance?.state.groupsRefs.push(groupRef);
-    DebugData.instance?.state.groupTitles.push(data.title);
-    DebugData.instance?.setState({ lastUpdate: Date.now() });
+    DebugData.groups.push(group);
+    DebugData.groupsRefs.push(groupRef);
+    DebugData.groupTitles.push(data.title);
     return groupRef;
   }
 
   static removeEditorGroup(name: string) {
-    DebugData.instance?.removeGroup({ value: name });
+    const total = DebugData.groupTitles.length;
+    console.log('removeEditorGroup:', name, DebugData.groupTitles);
+    for (let i = 0; i < total; i++) {
+      if (name === DebugData.groupTitles[i]) {
+        console.log('remove group:', name);
+        DebugData.groups.splice(i, 1);
+        DebugData.groupTitles.splice(i, 1);
+        DebugData.instance.setState({ lastUpdate: Date.now() });
+        return;
+      }
+    }
   }
 }

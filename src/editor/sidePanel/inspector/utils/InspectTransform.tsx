@@ -111,5 +111,5 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
       const child = scene.getObjectByProperty('uuid', this.props.object.uuid);
       setItemProps(child, prop, realValue);
     }
-  }
+  };
 }

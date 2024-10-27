@@ -1,6 +1,8 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
+import { RefObject } from 'react';
 import Spline from './Spline';
 import DebugData from '@/editor/sidePanel/DebugData';
+import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
 
 let splinesCreated = 0;
 
@@ -14,27 +16,73 @@ export type SplineJSON = {
 }
 
 export default class SplineEditor extends Object3D {
-  public defaultScale = 1;
+  public defaultScale = 10;
   private _camera: Camera;
+  private group: RefObject<InspectorGroup> | null = null;
 
   constructor(camera: Camera) {
     super();
-    this.name = 'SplineEditor';
+    this.name = 'Spline Editor';
     this._camera = camera;
-    this.visible = false;
+  }
+
+  initDebug() {
+    this.group = DebugData.addEditorGroup({
+      title: this.name,
+      items: [
+        {
+          type: 'button',
+          prop: 'New Spline',
+        },
+        {
+          type: 'boolean',
+          prop: 'Show Points',
+          value: true,
+        },
+        {
+          type: 'boolean',
+          prop: 'Visible',
+          value: this.visible,
+        },
+        {
+          type: 'range',
+          prop: 'Default Scale',
+          min: 0,
+          max: 50,
+          step: 0.01,
+          value: this.defaultScale,
+        },
+      ],
+      onUpdate: (prop: string, value: any) => {
+        switch (prop) {
+          case 'New Spline':
+            this.createSpline();
+            break;
+          case 'Show Points':
+            this.showPoints(value);
+            break;
+          case 'Visible':
+            this.visible = value;
+            break;
+          case 'Default Scale':
+            this.defaultScale = value;
+            break;
+        }
+      },
+    });
   }
 
   dispose() {
-    //
+    DebugData.removeEditorGroup(this.name);
   }
 
   createSpline = (defaultPoints: Array<Vector3> = []): Spline => {
-    const name = `spline_${splinesCreated}`;
+    const name = `Spline ${splinesCreated + 1}`;
     const spline = new Spline(name, this._camera);
     spline.draggableScale = this.defaultScale;
     spline.addPoints(defaultPoints);
     spline.hideTransform();
-    spline.initDebug();
+    if (this.group?.current !== null) spline.initDebug(this.group!.current);
     this.add(spline);
     splinesCreated++;
     return spline;
@@ -63,31 +111,6 @@ export default class SplineEditor extends Object3D {
     spline.updateSpline();
     return spline;
   };
-
-  initDebug() {
-    DebugData.addEditorGroup({
-      title: 'Spline Editor',
-      items: [],
-      onUpdate: (prop: string, value: any) => {
-        console.log(prop, value);
-      },
-    });
-    /*
-    debugButton(this.debugFolder, 'New Spline', this.createSpline);
-    debugInput(this.debugFolder, this, 'visible');
-    debugInput(this.debugFolder, this, 'defaultScale', {
-      min: 0,
-      max: 50,
-      step: 0.01,
-    });
-    debugButton(this.debugFolder, 'Show Points', () => {
-      this.showPoints(true);
-    });
-    debugButton(this.debugFolder, 'Hide Points', () => {
-      this.showPoints(false);
-    });
-    */
-  }
 
   showPoints = (visible = true) => {
     this.children.forEach((child: Object3D) => {
