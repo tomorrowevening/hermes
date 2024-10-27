@@ -15,7 +15,8 @@ export declare enum ToolEvents {
     ADD_CAMERA = "ToolEvents::addCamera",
     REMOVE_CAMERA = "ToolEvents::removeCamera",
     ADD_GROUP = "ToolEvents::addGroup",
-    REMOVE_GROUP = "ToolEvents::removeGroup"
+    REMOVE_GROUP = "ToolEvents::removeGroup",
+    ADD_SPLINE = "ToolEvents::addSpline"
 }
 export type ToolEvent = {
     [key in ToolEvents]: {
