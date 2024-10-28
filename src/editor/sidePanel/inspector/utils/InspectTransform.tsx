@@ -5,6 +5,7 @@ import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';
 import MultiView from '@/editor/multiView/MultiView';
 import RemoteThree from '@/core/remote/RemoteThree';
+import { round } from '@/editor/utils';
 
 type InspectTransformProps = {
   object: RemoteObject;
@@ -48,9 +49,13 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
     if (MultiView.instance) {
       const selectedItem = MultiView.instance.selectedItem;
       if (selectedItem === undefined) return;
-      this.position.copy(selectedItem.position);
+      this.position.x = round(selectedItem.position.x, 3);
+      this.position.y = round(selectedItem.position.y, 3);
+      this.position.z = round(selectedItem.position.z, 3);
       this.rotation.copy(selectedItem.rotation);
-      this.scale.copy(selectedItem.scale);
+      this.scale.x = round(selectedItem.scale.x, 3);
+      this.scale.y = round(selectedItem.scale.y, 3);
+      this.scale.z = round(selectedItem.scale.z, 3);
       this.setState({ lastUpdated: Date.now() });
     }
   }
@@ -73,7 +78,7 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
           {
             title: 'Rotation',
             prop: 'rotation',
-            type: 'grid3',
+            type: 'euler',
             value: this.rotation,
             onChange: this.updateTransform,
           },
