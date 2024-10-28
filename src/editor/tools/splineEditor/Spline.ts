@@ -199,6 +199,8 @@ export default class Spline extends Object3D {
   private onMouseClick = (evt: MouseEvent) => {
     if (!MultiView.instance) return;
 
+    if (this._transform && !this._transform.getHelper().visible) return;
+
     const element = MultiView.instance.currentWindow.current as HTMLDivElement;
     const bounds = element.getBoundingClientRect();
     pointer.x = ((evt.clientX - bounds.x) / bounds.width) * 2 - 1;
@@ -379,6 +381,10 @@ export default class Spline extends Object3D {
           value: 0,
         },
         {
+          prop: 'Toggle Transform',
+          type: 'button',
+        },
+        {
           prop: 'Add Point',
           type: 'button',
         },
@@ -439,6 +445,11 @@ export default class Spline extends Object3D {
             break;
           case 'Show Points':
             this.draggable.visible = value;
+            break;
+          case 'Toggle Transform':
+            if (this._transform) {
+              this._transform.getHelper().visible = !this._transform.getHelper().visible;
+            }
             break;
           case 'Add Point':
             this.addNextPt();
