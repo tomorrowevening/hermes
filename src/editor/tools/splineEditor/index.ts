@@ -1,4 +1,4 @@
-import { Camera, CatmullRomCurve3, Object3D, Vector2, Vector3 } from 'three';
+import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
 import DebugData from '@/editor/sidePanel/DebugData';
@@ -103,7 +103,7 @@ export default class SplineEditor extends Object3D {
     return this.createSpline(vectors);
   };
 
-  createSplineFromCurve = (curve: CatmullRomCurve3): Spline => {
+  createSplineFromCatmullRom = (curve: CatmullRomCurve3): Spline => {
     return this.createSpline(curve.points);
   };
 
@@ -131,7 +131,7 @@ export default class SplineEditor extends Object3D {
     const name = `Spline ${splinesCreated + 1}`;
     const pts: Vector3[] = [];
     data.points.forEach((pt: number[]) => {
-      pts.push(new Vector3(pt[0], pt[1], 0));
+      pts.push(new Vector3(pt[0], pt[1], pt[2]));
     });
     const spline = new Spline(name, this.camera);
     spline.addPoints(pts);

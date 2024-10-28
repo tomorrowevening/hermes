@@ -6487,7 +6487,7 @@ class Ia extends lt {
       t.push(new O(i[0], i[1], i[2]));
     }), this.createSpline(t);
   };
-  createSplineFromCurve = (e) => this.createSpline(e.points);
+  createSplineFromCatmullRom = (e) => this.createSpline(e.points);
   createSplineFromJSON = (e) => {
     const t = this.createSplineFromArray(e.points);
     return t.name = e.name, t.closed = e.closed, t.subdivide = e.subdivide, t.tension = e.tension, t.type = e.type, t.updateSpline(), t;
@@ -6500,7 +6500,7 @@ class Ia extends lt {
   onAddSpline = (e) => {
     const t = JSON.parse(e.value), i = `Spline ${Zt + 1}`, n = [];
     t.points.forEach((r) => {
-      n.push(new O(r[0], r[1], 0));
+      n.push(new O(r[0], r[1], r[2]));
     });
     const a = new Os(i, this.camera);
     a.addPoints(n), this.addSpline(a), Zt++;
