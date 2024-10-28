@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Euler, Matrix3, Vector3 } from 'three';
 import InspectNumber from './InspectNumber';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils';
 
 interface InspectGrid3Props {
   value: Vector3 | Matrix3 | Euler;
@@ -15,7 +16,29 @@ export default function InspectGrid3(props: InspectGrid3Props) {
   const step = props.step !== undefined ? props.step : 0.01;
   const children: any[] = [];
 
-  if (isVector) {
+  if (isEuler) {
+    const euler = useMemo(() => props.value as Euler, []);
+    const params = ['_x', '_y', '_z'];
+    params.forEach((param: string) => {
+      const labelRef = useRef<HTMLLabelElement>(null);
+      children.push(
+        <div key={param}>
+          <label ref={labelRef}>{param.substring(1).toUpperCase()}</label>
+          <InspectNumber
+            value={radToDeg(euler[param])}
+            type='number'
+            prop={param}
+            step={0.1}
+            labelRef={labelRef}
+            onChange={(prop: string, value: number) => {
+              euler[prop] = degToRad(value);
+              props.onChange({ target: { value: euler } });
+            }}
+          />
+        </div>
+      );
+    });
+  } else if (isVector) {
     const vector = useMemo(() => props.value as Vector3, []);
     const onChange = (prop: string, value: number) => {
       vector[prop] = value;
@@ -30,30 +53,6 @@ export default function InspectGrid3(props: InspectGrid3Props) {
           <label ref={labelRef}>{param.toUpperCase()}</label>
           <InspectNumber
             value={vector[param]}
-            type='number'
-            prop={param}
-            step={step}
-            labelRef={labelRef}
-            onChange={onChange}
-          />
-        </div>
-      );
-    });
-  } else if (isEuler) {
-    const euler = useMemo(() => props.value as Euler, []);
-    const onChange = (prop: string, value: number) => {
-      euler[prop] = value;
-      props.onChange({ target: { value: euler } });
-    };
-
-    const params = ['_x', '_y', '_z'];
-    params.forEach((param: string) => {
-      const labelRef = useRef<HTMLLabelElement>(null);
-      children.push(
-        <div key={param}>
-          <label ref={labelRef}>{param.substring(1).toUpperCase()}</label>
-          <InspectNumber
-            value={euler[param]}
             type='number'
             prop={param}
             step={step}
