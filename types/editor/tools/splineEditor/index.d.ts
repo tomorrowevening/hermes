@@ -18,7 +18,7 @@ export default class SplineEditor extends Object3D {
     addSpline(spline: Spline): void;
     createSpline: (defaultPoints?: Array<Vector3>) => Spline;
     createSplineFromArray: (points: Array<number[]>) => Spline;
-    createSplineFromCurve: (curve: CatmullRomCurve3) => Spline;
+    createSplineFromCatmullRom: (curve: CatmullRomCurve3) => Spline;
     createSplineFromJSON: (data: SplineJSON) => Spline;
     showPoints: (visible?: boolean) => void;
     private onAddSpline;
