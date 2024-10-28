@@ -133,11 +133,13 @@ export default class RemoteThree extends BaseRemote {
   }
 
   addSpline(spline: Curve<any>) {
-    this.app.send({
-      event: 'addSpline',
-      target: 'editor',
-      data: JSON.stringify(spline.toJSON()),
-    });
+    setTimeout(() => {
+      this.app.send({
+        event: 'addSpline',
+        target: 'editor',
+        data: JSON.stringify(spline.toJSON()),
+      });
+    }, 1);
   }
 
   // Scenes
