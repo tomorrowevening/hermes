@@ -830,6 +830,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             case 't':
               this.currentTransform.setMode('translate');
               break;
+            case 'q':
+              this.currentTransform.setSpace(this.currentTransform.space === 'local' ? 'world' : 'local');
+              break;
           }
         }
       }

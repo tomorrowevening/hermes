@@ -9,7 +9,6 @@ export default class Transform extends EventDispatcher {
     activeCamera: Camera;
     controls: Map<string, TransformControls>;
     private visibility;
-    private groups;
     clear(): void;
     add(name: string): TransformControls;
     get(name: string): TransformControls | undefined;
