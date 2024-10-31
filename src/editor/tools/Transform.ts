@@ -4,6 +4,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 // Remote
 import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
+// Utils
 import { dispose } from '../utils';
 
 export default class Transform extends EventDispatcher {
@@ -17,7 +18,6 @@ export default class Transform extends EventDispatcher {
   controls: Map<string, TransformControls> = new Map();
 
   private visibility: Map<string, boolean> = new Map();
-  private groups: string[] = [];
 
   clear(): void {
     for (const controls of this.controls.values()) {
@@ -51,82 +51,6 @@ export default class Transform extends EventDispatcher {
 
       controls.addEventListener('dragging-changed', (evt: any) => {
         MultiView.instance?.toggleOrbitControls(evt.value);
-      });
-
-      // Controls
-      const groupName = `Controls: ${name}`;
-      this.groups.push(groupName);
-      this.three.addGroup({
-        title: groupName,
-        items: [
-          {
-            type: 'boolean',
-            prop: 'enabled',
-            value: controls.enabled,
-          },
-          {
-            type: 'boolean',
-            prop: 'visible',
-            value: true,
-          },
-          {
-            type: 'button',
-            prop: 'Reset',
-          },
-          {
-            type: 'option',
-            prop: 'Mode',
-            options: [
-              {
-                title: 'Translate',
-                value: 'translate',
-              },
-              {
-                title: 'Rotate',
-                value: 'rotate',
-              },
-              {
-                title: 'Scale',
-                value: 'scale',
-              },
-            ],
-          },
-          {
-            type: 'option',
-            prop: 'Space',
-            options: [
-              {
-                title: 'World',
-                value: 'world',
-              },
-              {
-                title: 'Local',
-                value: 'local',
-              },
-            ],
-          },
-        ],
-        onUpdate: (prop: string, value: any) => {
-          if (controls === undefined) return;
-
-          switch (prop) {
-            case 'enabled':
-              controls.enabled = value;
-              break;
-            case 'visible':
-              controls.getHelper().visible = value;
-              break;
-            case 'Reset':
-              controls.reset();
-              break;
-            case 'Mode':
-              controls.setMode(value);
-              break;
-            case 'Space':
-              controls.setSpace(value);
-              break;
-          }
-        },
       });
     }
     return controls;

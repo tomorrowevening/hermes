@@ -1,6 +1,7 @@
 // Libs
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createRafDriver } from '@theatre/core';
 import studio from '@theatre/studio';
 // Models
 import { IS_DEV } from './constants';
@@ -10,7 +11,6 @@ import CustomEditor from './CustomEditor';
 import Wrapper from './components/Wrapper';
 // Tools
 import RemoteTheatre from '../core/remote/RemoteTheatre';
-import { createRafDriver } from '@theatre/core';
 
 // Debug tools
 RemoteTheatre.rafDriver = createRafDriver();
