@@ -25,7 +25,10 @@ $padding: 2px;
 
     .dropdown-toggle {
       cursor: pointer;
-      padding: $padding 10px;
+      padding: 0px 10px;
+      height: 30px;
+      line-height: 30px;
+      overflow: hidden;
       &:hover {
         background-color: #333;
       }
@@ -33,7 +36,7 @@ $padding: 2px;
   
     .dropdown-menu {
       position: absolute;
-      top: 100%;
+      top: 20px;
       left: 0;
       z-index: 1;
       list-style: none;
@@ -43,9 +46,12 @@ $padding: 2px;
   
       li {
         background-color: #222;
-        border-bottom: 1px solid #191919;
+        border-top: 1px solid #191919;
         cursor: pointer;
-        padding: $padding;
+        height: 30px;
+        line-height: 30px;
+        overflow: hidden;
+        padding: 0px;
         transition: 0.2s linear background-color;
         &:hover {
           background-color: #333;
@@ -81,6 +87,7 @@ $padding: 2px;
 
       .options {
         position: absolute;
+        height: 30px;
         top: initial;
         bottom: 0;
         left: 50%;
@@ -110,5 +117,23 @@ $padding: 2px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+
+    .toggle {
+      background-blend-mode: overlay;
+      background-color: #222;
+      background-position: 2px 2px;
+      background-repeat: no-repeat;
+      background-size: 26px 26px;
+      display: inline-block;
+      position: relative;
+      left: 0;
+      transform: none;
+      width: 30px;
+      height: 30px;
+      overflow: hidden;
+      &.selected {
+        background-blend-mode: normal;
+      }
+    }
   }
 }
