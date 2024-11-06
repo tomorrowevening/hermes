@@ -1,10 +1,8 @@
 import { Scene } from 'three';
-import { useEffect } from 'react';
 import Editor from './Editor';
 import MultiView from './multiView/MultiView';
 import RemoteThree from '@/core/remote/RemoteThree';
 import SidePanel from './sidePanel/SidePanel';
-import { customizeTheatreElements } from './theatreUtils';
 
 interface ThreeEditorProps {
   three: RemoteThree
@@ -15,10 +13,6 @@ interface ThreeEditorProps {
 }
 
 export default function ThreeEditor(props: ThreeEditorProps) {
-  useEffect(() => {
-    customizeTheatreElements();
-  }, []);
-
   return (
     <Editor>
       <>
