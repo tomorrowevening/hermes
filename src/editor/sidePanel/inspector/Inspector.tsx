@@ -11,6 +11,7 @@ import { InspectMaterial } from './utils/InspectMaterial';
 import { InspectTransform } from './utils/InspectTransform';
 import { InspectLight } from './utils/InspectLight';
 import InspectAnimation from './utils/InspectAnimation';
+import Transform from '@/editor/tools/Transform';
 
 const defaultObject: RemoteObject = {
   name: '',
@@ -58,7 +59,19 @@ export default function Inspector(props: CoreComponentProps) {
     || objType.search('points') > -1;
 
   return (
-    <Accordion label='Inspector' key='Inspector'>
+    <Accordion
+      label='Inspector'
+      key='Inspector'
+      button={
+        currentObject.uuid.length > 0 ? (
+          <button className='remove' onClick={() => {
+            Transform.instance.remove(currentObject.name);
+            currentObject = {...defaultObject};
+            setLastUpdated(Date.now());
+          }}></button>
+        ) : undefined
+      }
+    >
       <div id='Inspector' className={props.class} key={lastUpdated}>
         {currentObject.uuid.length > 0 && (
           <>

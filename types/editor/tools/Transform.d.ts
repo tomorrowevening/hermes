@@ -9,6 +9,7 @@ export default class Transform extends EventDispatcher {
     activeCamera: Camera;
     controls: Map<string, TransformControls>;
     private visibility;
+    constructor();
     clear(): void;
     add(name: string): TransformControls;
     get(name: string): TransformControls | undefined;
@@ -17,5 +18,6 @@ export default class Transform extends EventDispatcher {
     updateCamera(camera: Camera, element: HTMLElement): void;
     show(): void;
     hide(): void;
+    private setScene;
     static get instance(): Transform;
 }
