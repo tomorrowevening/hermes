@@ -268,13 +268,30 @@ function Qr(i, e, t) {
     t.ui.hide();
 }
 function $r() {
-  const i = document.getElementById("theatrejs-studio-root")?.shadowRoot?.getElementById("pointer-root")?.children[0], e = i?.children[1];
-  e.style.justifyContent = "left";
-  const t = e.children[1];
-  for (t.style.transform = "translateX(10px)"; t.children.length > 1; )
-    t.removeChild(t.children[0]);
-  const s = i?.children[3];
-  s.style.top = "0", s.style.right = "300px";
+  setTimeout(() => {
+    const i = document.getElementById("theatrejs-studio-root");
+    if (i === null || i.shadowRoot === null)
+      return;
+    const e = i.shadowRoot.getElementById("pointer-root");
+    if (e === null)
+      return;
+    const t = e.children[0];
+    if (t === null)
+      return;
+    const s = t.children[1];
+    s.style.justifyContent = "left";
+    try {
+      const n = s.children[1];
+      for (n.style.transform = "translateX(10px)"; n.children.length > 1; )
+        n.removeChild(n.children[0]);
+    } catch {
+    }
+    try {
+      const n = t.children[3];
+      n.style.top = "0", n.style.right = "300px";
+    } catch {
+    }
+  }, 1e3);
 }
 class qr extends Li {
   project;
