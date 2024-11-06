@@ -28,8 +28,6 @@ function App() {
 
   // Theatre
   useEffect(() => {
-    if (theatre === undefined) return;
-
     const container = elementRef.current!;
     container.style.visibility = app.editor ? 'hidden' : 'inherit';
 
@@ -55,7 +53,7 @@ function App() {
   }, []);
 
   // Renderer setup
-  if (!app.editor) {
+  if (app.isApp) {
     useEffect(() => {
       renderer = new WebGLRenderer({
         canvas: canvasRef.current!,
@@ -73,51 +71,47 @@ function App() {
   }
 
   // ThreeJS
-  useEffect(() => {
-    let stats: Stats;
-    if (!app.editor) {
-      stats = new Stats();
+  if (app.isApp) {
+    useEffect(() => {
+      const stats = new Stats();
       stats.init(renderer);
       document.body.appendChild(stats.dom);
-    }
-
-    // Start RAF
-    let raf = -1;
-
-    const onResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      currentScene?.resize(width, height);
-      renderer.setSize(width, height);
-    };
-
-    const updateApp = () => {
-      RemoteTheatre.rafDriver?.tick(performance.now());
-      currentScene?.update();
-      stats.begin();
-      currentScene?.draw();
-      stats.end();
-      stats.update();
-      raf = requestAnimationFrame(updateApp);
-    };
-
-    if (!app.editor) {
+  
+      // Start RAF
+      let raf = -1;
+  
+      const onResize = () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        currentScene?.resize(width, height);
+        renderer.setSize(width, height);
+      };
+  
+      const updateApp = () => {
+        currentScene?.update();
+        stats.begin();
+        currentScene?.draw();
+        stats.end();
+        stats.update();
+        raf = requestAnimationFrame(updateApp);
+      };
+  
       window.addEventListener('resize', onResize);
       onResize();
       updateApp();
-    }
-
-    return () => {
-      if (currentScene !== undefined) {
-        three.removeCamera(currentScene.camera);
-        three.removeScene(currentScene);
-        dispose(currentScene);
-      }
-      window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(raf);
-      raf = -1;
-    };
-  }, []);
+  
+      return () => {
+        if (currentScene !== undefined) {
+          three.removeCamera(currentScene.camera);
+          three.removeScene(currentScene);
+          dispose(currentScene);
+        }
+        window.removeEventListener('resize', onResize);
+        cancelAnimationFrame(raf);
+        raf = -1;
+      };
+    }, []);
+  }
 
   // Load the scenes
 

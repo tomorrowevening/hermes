@@ -22,6 +22,17 @@ function prettyName(name: string): string {
 }
 
 export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
+  function expandedName(): string {
+    return `${three.app.appID}_camera`;
+  }
+
+  const expandedValue = localStorage.getItem(expandedName());
+  const expanded = expandedValue !== null ? expandedValue === 'open' : false;
+
+  function saveExpanded(value: boolean) {
+    localStorage.setItem(expandedName(), value ? 'open' : 'closed');
+  }
+
   const items: any[] = [];
 
   if (object.perspectiveCameraInfo !== undefined) {
@@ -80,6 +91,10 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
     <InspectorGroup
       title='Camera'
       items={items}
+      expanded={expanded}
+      onToggle={(value: boolean) => {
+        saveExpanded(value);
+      }}
     />
   );
 }

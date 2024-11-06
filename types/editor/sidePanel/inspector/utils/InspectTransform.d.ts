@@ -21,5 +21,7 @@ export declare class InspectTransform extends Component<InspectTransformProps, I
     update(): void;
     render(): ReactNode;
     private updateTransform;
+    private saveExpanded;
+    get expandedName(): string;
 }
 export {};

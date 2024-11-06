@@ -20,6 +20,17 @@ function prettyName(value: string): string {
 }
 
 export function InspectLight(object: RemoteObject, three: RemoteThree) {
+  function expandedName(): string {
+    return `${three.app.appID}_light`;
+  }
+
+  const expandedValue = localStorage.getItem(expandedName());
+  const expanded = expandedValue !== null ? expandedValue === 'open' : false;
+
+  function saveExpanded(value: boolean) {
+    localStorage.setItem(expandedName(), value ? 'open' : 'closed');
+  }
+
   const items: any[] = [];
   if (object.lightInfo !== undefined) {
     for (const i in object.lightInfo) {
@@ -71,6 +82,10 @@ export function InspectLight(object: RemoteObject, three: RemoteThree) {
     <InspectorGroup
       title='Light'
       items={items}
+      expanded={expanded}
+      onToggle={(value: boolean) => {
+        saveExpanded(value);
+      }}
     />
   );
 }

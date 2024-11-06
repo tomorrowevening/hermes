@@ -8,14 +8,6 @@ import BaseScene from './three/scenes/BaseScene';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
 import RTTScene from './three/scenes/RTTScene';
-// Utils
-import { customizeTheatreElements } from '../editor/theatreUtils';
-
-// Referenced Scenes
-const scenes: Map<string, any> = new Map();
-scenes.set('Scene1', Scene1);
-scenes.set('Scene2', Scene2);
-scenes.set('RTTScene', RTTScene);
 
 export default function CustomEditor() {
   const [loaded, setLoaded] = useState(false);
@@ -23,20 +15,21 @@ export default function CustomEditor() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-      setTimeout(() => {
-        customizeTheatreElements();
-      }, 100);
       setLoaded(true);
     };
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
   }, []);
 
-  const three = app.components.get('three') as RemoteThree;
+  const scenes: Map<string, any> = new Map();
+  scenes.set('Scene1', Scene1);
+  scenes.set('Scene2', Scene2);
+  scenes.set('RTTScene', RTTScene);
+
   return (
     <>
-      {loaded && app.editor && (
+      {loaded && (
         <ThreeEditor
-          three={three}
+          three={app.components.get('three') as RemoteThree}
           scenes={scenes}
           onSceneUpdate={(scene: any) => {
             // Custom callback for animation updates
