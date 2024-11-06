@@ -37,35 +37,41 @@ export default class RemoteTheatre extends BaseRemote {
     }
 
     const sheetID = this.getSheetInstance(name, instanceId);
+    // Use referenced sheet
     let sheet = this.sheets.get(sheetID);
     if (sheet !== undefined) return sheet;
 
+    // Create Sheet
     sheet = this.project?.sheet(name, instanceId);
     this.sheets.set(sheetID, sheet);
     return sheet;
   }
 
   playSheet(name: string, params?: any, instanceId?: string): Promise<boolean> {
-    this.app.send({
-      event: 'playSheet',
-      target: 'editor',
-      data: {
-        sheet: name,
-        instance: instanceId,
-        value: params,
-      },
-    });
-
     return new Promise((resolve) => {
+      // Play locally
       const rafParams = params !== undefined ? {...params} : {};
       rafParams.rafDriver = RemoteTheatre.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
+
+      // Remotely
+      this.app.send({
+        event: 'playSheet',
+        target: 'editor',
+        data: {
+          sheet: name,
+          instance: instanceId,
+          value: params,
+        },
+      });
     });
   }
 
   pauseSheet(name: string, instanceId?: string) {
+    // Play locally
     this.sheet(name, instanceId)?.sequence.pause();
 
+    // Remotely
     this.app.send({
       event: 'pauseSheet',
       target: 'editor',

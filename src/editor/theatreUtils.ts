@@ -70,14 +70,14 @@ export function theatreEditorApp(app: Application, theatre: RemoteTheatre, studi
 // Call this after the Theatre's studio has inited (onload is good)
 export function customizeTheatreElements() {
   const theatreEl = document.getElementById('theatrejs-studio-root')?.shadowRoot?.getElementById('pointer-root')?.children[0];
-
   const headerEl = theatreEl?.children[1] as HTMLDivElement;
   headerEl.style.justifyContent = 'left';
 
   const rightBtns = headerEl.children[1] as HTMLDivElement;
   rightBtns.style.transform = 'translateX(10px)';
-  rightBtns.removeChild(rightBtns.children[0]);
-  rightBtns.removeChild(rightBtns.children[0]);
+  while (rightBtns.children.length > 1) {
+    rightBtns.removeChild(rightBtns.children[0]);
+  }
 
   const exportEl = theatreEl?.children[3] as HTMLDivElement;
   exportEl.style.top = '0';

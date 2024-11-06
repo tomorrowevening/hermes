@@ -447,7 +447,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             height={24}
             top={2}
             onClick={(selected: boolean) => {
-              console.log(selected);
               this.cameraHelpers.forEach((helper: CameraHelper) => {
                 helper.visible = selected;
               });
@@ -461,7 +460,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             height={24}
             top={4}
             onClick={(selected: boolean) => {
-              console.log(selected);
               this.lightHelpers.forEach((helper: LightHelper) => {
                 helper.visible = selected;
               });
