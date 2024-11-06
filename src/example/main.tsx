@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { createRafDriver } from '@theatre/core';
 import studio from '@theatre/studio';
 // Models
-import { IS_DEV } from './constants';
+import { app, IS_DEV } from './constants';
 // Components
 import './index.scss';
 import CustomEditor from './CustomEditor';
@@ -24,7 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
     {IS_DEV ? (
       <>
-        <CustomEditor />
+        {app.editor && <CustomEditor />}
         <Wrapper />
       </>
     ) : (
