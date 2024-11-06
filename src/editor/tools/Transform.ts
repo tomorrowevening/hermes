@@ -6,6 +6,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils
 import { dispose } from '../utils';
+import { debugDispatcher, ToolEvents } from '../global';
 
 export default class Transform extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart';
@@ -19,12 +20,17 @@ export default class Transform extends EventDispatcher {
 
   private visibility: Map<string, boolean> = new Map();
 
+  constructor() {
+    super();
+    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.setScene);
+  }
+
   clear(): void {
     for (const controls of this.controls.values()) {
       controls.detach();
-      controls.dispose();
+      controls.disconnect();
       const helper = controls.getHelper();
-      helper.parent?.remove(helper);
+      dispose(helper);
     }
     this.controls = new Map();
     this.visibility = new Map();
@@ -113,6 +119,10 @@ export default class Transform extends EventDispatcher {
       helper.visible = false;
     });
   }
+
+  private setScene = () => {
+    this.clear();
+  };
 
   public static get instance(): Transform {
     if (!Transform._instance) {
