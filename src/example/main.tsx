@@ -1,7 +1,6 @@
 // Libs
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createRafDriver } from '@theatre/core';
 import studio from '@theatre/studio';
 // Models
 import { app, IS_DEV } from './constants';
@@ -9,13 +8,10 @@ import { app, IS_DEV } from './constants';
 import './index.scss';
 import CustomEditor from './CustomEditor';
 import Wrapper from './components/Wrapper';
-// Tools
-import RemoteTheatre from '../core/remote/RemoteTheatre';
 
 // Debug tools
-RemoteTheatre.rafDriver = createRafDriver();
 if (IS_DEV) {
-  studio.initialize({ __experimental_rafDriver: RemoteTheatre.rafDriver });
+  studio.initialize();
 }
 
 // React

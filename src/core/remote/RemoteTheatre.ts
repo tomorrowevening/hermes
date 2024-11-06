@@ -1,5 +1,5 @@
 // Libs
-import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, ISheet, ISheetObject } from '@theatre/core';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
@@ -15,8 +15,6 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
-
-  public static rafDriver?: IRafDriver | undefined = undefined;
 
   override dispose(): void {
     this.project = undefined;
@@ -51,7 +49,6 @@ export default class RemoteTheatre extends BaseRemote {
     return new Promise((resolve) => {
       // Play locally
       const rafParams = params !== undefined ? {...params} : {};
-      rafParams.rafDriver = RemoteTheatre.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
 
       // Remotely

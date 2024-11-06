@@ -88,7 +88,6 @@ function App() {
       };
   
       const updateApp = () => {
-        RemoteTheatre.rafDriver?.tick(performance.now());
         currentScene?.update();
         stats.begin();
         currentScene?.draw();
