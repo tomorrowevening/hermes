@@ -4,6 +4,17 @@ import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
 
 export default function InspectAnimation(object: RemoteObject, three: RemoteThree) {
+  function expandedName(): string {
+    return `${three.app.appID}_animation`;
+  }
+
+  const expandedValue = localStorage.getItem(expandedName());
+  const expanded = expandedValue !== null ? expandedValue === 'open' : false;
+
+  function saveExpanded(value: boolean) {
+    localStorage.setItem(expandedName(), value ? 'open' : 'closed');
+  }
+
   const items: any[] = [];
   const animations: any[] = [];
   let maxDuration = 0;
@@ -83,6 +94,13 @@ export default function InspectAnimation(object: RemoteObject, three: RemoteThre
   }
 
   return (
-    <InspectorGroup title='Animation' items={items} />
+    <InspectorGroup
+      title='Animation'
+      items={items}
+      expanded={expanded}
+      onToggle={(value: boolean) => {
+        saveExpanded(value);
+      }}
+    />
   );
 }

@@ -137,6 +137,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private trRender: RenderMode = 'Renderer';
   private blRender: RenderMode = 'Renderer';
   private brRender: RenderMode = 'Renderer';
+  private cameraVisibility = true;
+  private lightVisibility = true;
 
   // Interactions
   selectedItem: Object3D | undefined = undefined;
@@ -203,6 +205,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     CameraControls.install({ THREE });
     this.setupScene();
     this.setupTools();
+
+    const expandedCameraVisibility = localStorage.getItem(this.expandedCameraVisibility);
+    this.cameraVisibility = expandedCameraVisibility !== null ? expandedCameraVisibility === 'open' : false;
+    this.saveExpandedCameraVisibility();
+
+    const expandedLightVisibility = localStorage.getItem(this.expandedLightVisibility);
+    this.lightVisibility = expandedLightVisibility !== null ? expandedLightVisibility === 'open' : false;
+    this.saveExpandedLightVisibility();
 
     // Static-access
     MultiView.instance = this;
@@ -407,9 +417,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               if (value === this.state.mode) return;
               this.killControls();
               this.setState({ mode: value as MultiViewMode });
+              localStorage.setItem(`${this.appID}_mode`, value);
             }}
             open={this.state.modeOpen}
             onToggle={(value: boolean) => {
+              
               this.setState({
                 modeOpen: value,
                 renderModeOpen: false,
@@ -443,10 +455,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           <Toggle
             name='cameraHelper'
             icon={cameraIcon}
-            selected={true}
+            selected={this.cameraVisibility}
             height={24}
             top={2}
             onClick={(selected: boolean) => {
+              this.cameraVisibility = selected;
+              this.saveExpandedCameraVisibility();
               this.cameraHelpers.forEach((helper: CameraHelper) => {
                 helper.visible = selected;
               });
@@ -456,10 +470,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           <Toggle
             name='lightHelper'
             icon={lightIcon}
-            selected={true}
+            selected={this.lightVisibility}
             height={24}
             top={4}
             onClick={(selected: boolean) => {
+              this.lightVisibility = selected;
+              this.saveExpandedLightVisibility();
               this.lightHelpers.forEach((helper: LightHelper) => {
                 helper.visible = selected;
               });
@@ -710,6 +726,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     if (child instanceof PerspectiveCamera) {
       const helper = new CameraHelper(child);
+      helper.visible = this.cameraVisibility;
       this.cameraHelpers.set(child.name, helper);
       this.scene.add(helper);
     }
@@ -919,30 +936,35 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           case 'DirectionalLight':
             helper = new DirectionalLightHelper(obj as DirectionalLight, 100);
             helper.name = `${obj.name}Helper`;
+            helper.visible = this.lightVisibility;
             this.lightHelpers.set(obj.name, helper);
             this.helpersContainer.add(helper);
             break;
           case 'HemisphereLight':
             helper = new HemisphereLightHelper(obj as HemisphereLight, 250);
             helper.name = `${obj.name}Helper`;
+            helper.visible = this.lightVisibility;
             this.lightHelpers.set(obj.name, helper);
             this.helpersContainer.add(helper);
             break;
           case 'RectAreaLight':
             helper = new RectAreaLightHelper(obj as RectAreaLight);
             helper.name = `${obj.name}Helper`;
+            helper.visible = this.lightVisibility;
             this.lightHelpers.set(obj.name, helper);
             this.helpersContainer.add(helper);
             break;
           case 'PointLight':
             helper = new PointLightHelper(obj as PointLight, 100);
             helper.name = `${obj.name}Helper`;
+            helper.visible = this.lightVisibility;
             this.lightHelpers.set(obj.name, helper);
             this.helpersContainer.add(helper);
             break;
           case 'SpotLight':
             helper = new SpotLightHelper(obj as SpotLight);
             helper.name = `${obj.name}Helper`;
+            helper.visible = this.lightVisibility;
             this.lightHelpers.set(obj.name, helper);
             this.helpersContainer.add(helper);
             break;
@@ -1126,6 +1148,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
   };
 
+  private saveExpandedCameraVisibility() {
+    localStorage.setItem(this.expandedCameraVisibility, this.cameraVisibility ? 'open' : 'closed');
+  }
+
+  private saveExpandedLightVisibility() {
+    localStorage.setItem(this.expandedLightVisibility, this.lightVisibility ? 'open' : 'closed');
+  }
+
   // Drawing
 
   private getSceneOverride(mode: RenderMode): Material | null {
@@ -1235,5 +1265,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   get three(): RemoteThree {
     return this.props.three;
+  }
+
+  get expandedCameraVisibility(): string {
+    return `${this.appID}_multiviewCameraVisibility`;
+  }
+
+  get expandedLightVisibility(): string {
+    return `${this.appID}_multiviewLightVisibility`;
   }
 }

@@ -29,9 +29,14 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
   constructor(props: InspectTransformProps) {
     super(props);
 
+    const expandedValue = localStorage.getItem(this.expandedName);
+    const expanded = expandedValue !== null ? expandedValue === 'open' : false;
+    this.open = expanded;
+    this.saveExpanded();
+
     this.state = {
       lastUpdated: 0,
-      expanded: false,
+      expanded: expanded,
     };
 
     // @ts-ignore
@@ -99,6 +104,7 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
         ]}
         onToggle={(value: boolean) => {
           this.open = value;
+          this.saveExpanded();
         }}
       />
     );
@@ -117,4 +123,12 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
       setItemProps(child, prop, realValue);
     }
   };
+
+  private saveExpanded() {
+    localStorage.setItem(this.expandedName, this.open ? 'open' : 'closed');
+  }
+
+  get expandedName(): string {
+    return `${this.props.three.app.appID}_transform`;
+  }
 }

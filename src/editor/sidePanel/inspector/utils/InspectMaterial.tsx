@@ -907,6 +907,17 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 
 // RemoteMaterial | RemoteMaterial[]
 export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
+  function expandedName(): string {
+    return `${three.app.appID}_material`;
+  }
+
+  const expandedValue = localStorage.getItem(expandedName());
+  const expanded = expandedValue !== null ? expandedValue === 'open' : false;
+
+  function saveExpanded(value: boolean) {
+    localStorage.setItem(expandedName(), value ? 'open' : 'closed');
+  }
+
   const material = object.material!;
   if (Array.isArray(material)) {
     const items: any[] = [];
@@ -926,6 +937,10 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
       <InspectorGroup
         title='Material'
         items={inspectMaterialItems(material, object, three)}
+        expanded={expanded}
+        onToggle={(value: boolean) => {
+          saveExpanded(value);
+        }}
       />
     );
   }
