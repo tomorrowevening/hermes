@@ -130,10 +130,8 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
 
   static removeEditorGroup(name: string) {
     const total = DebugData.groupTitles.length;
-    console.log('removeEditorGroup:', name, DebugData.groupTitles);
     for (let i = 0; i < total; i++) {
       if (name === DebugData.groupTitles[i]) {
-        console.log('remove group:', name);
         DebugData.groups.splice(i, 1);
         DebugData.groupTitles.splice(i, 1);
         DebugData.instance.setState({ lastUpdate: Date.now() });

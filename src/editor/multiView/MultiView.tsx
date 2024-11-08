@@ -464,6 +464,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               this.cameraHelpers.forEach((helper: CameraHelper) => {
                 helper.visible = selected;
               });
+
+              if (this.selectedItem !== undefined) {
+                if (!selected && this.selectedItem instanceof PerspectiveCamera) {
+                  const helper = this.cameraHelpers.get(this.selectedItem.name);
+                  if (helper !== undefined) helper.visible = true;
+                }
+              }
             }}
           />
 
@@ -479,6 +486,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               this.lightHelpers.forEach((helper: LightHelper) => {
                 helper.visible = selected;
               });
+
+              if (this.selectedItem !== undefined) {
+                if (!selected && this.selectedItem['isLight'] === true) {
+                  const helper = this.lightHelpers.get(this.selectedItem.name);
+                  if (helper !== undefined) helper.visible = true;
+                }
+              }
             }}
           />
 
@@ -890,6 +904,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private onSetSelectedItem = (evt: any) => {
+    // Unselect
+    if (this.selectedItem !== undefined) {
+      this.updateSelectedItemHelper(false);
+    }
+
     this.selectedItem = this.currentScene!.getObjectByProperty('uuid', evt.value.uuid);
     if (this.selectedItem === undefined) return;
 
@@ -902,7 +921,21 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.currentTransform.attach(this.selectedItem);
     this.scene.add(this.currentTransform.getHelper());
     this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
+
+    this.updateSelectedItemHelper(true);
   };
+
+  private updateSelectedItemHelper(visible: boolean) {
+    if (this.selectedItem === undefined) return;
+
+    if (this.selectedItem instanceof PerspectiveCamera && !this.cameraVisibility) {
+      const helper = this.cameraHelpers.get(this.selectedItem.name);
+      if (helper !== undefined) helper.visible = visible;
+    } else if (this.selectedItem['isLight'] === true && !this.lightVisibility) {
+      const helper = this.lightHelpers.get(this.selectedItem.name);
+      if (helper !== undefined) helper.visible = visible;
+    }
+  }
 
   private onUpdateTransform = () => {
     if (this.selectedItem === undefined) return;
