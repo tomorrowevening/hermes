@@ -90,6 +90,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private onClick;
     private onKey;
     private onSetSelectedItem;
+    private updateSelectedItemHelper;
     private onUpdateTransform;
     private clearLightHelpers;
     private addLightHelpers;
