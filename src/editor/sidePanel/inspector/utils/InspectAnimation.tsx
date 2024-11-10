@@ -1,9 +1,19 @@
-import { AnimationMixer } from 'three';
+import { useEffect } from 'react';
+import { AnimationMixer, SkeletonHelper } from 'three';
 import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
+import MultiView from '@/editor/multiView/MultiView';
+import { dispose } from '@/editor/utils';
 
-export default function InspectAnimation(object: RemoteObject, three: RemoteThree) {
+type InspectAnimationProps = {
+  object: RemoteObject;
+  three: RemoteThree;
+}
+
+export default function InspectAnimation(props: InspectAnimationProps) {
+  const object = props.object;
+  const three = props.three;
   function expandedName(): string {
     return `${three.app.appID}_animation`;
   }
@@ -55,13 +65,13 @@ export default function InspectAnimation(object: RemoteObject, three: RemoteThre
     items: animations
   });
 
+  let helper: SkeletonHelper | undefined = undefined;
   const scene = three.getScene(object.uuid);
   if (scene !== null) {
     const child = scene.getObjectByProperty('uuid', object.uuid);
-    let hasMixer = false;
     if (child !== undefined) {
       const mixer = child['mixer'] as AnimationMixer;
-      hasMixer = mixer !== undefined;
+      const hasMixer = mixer !== undefined;
       if (hasMixer) {
         const mixerItems: any[] = [
           {
@@ -89,9 +99,18 @@ export default function InspectAnimation(object: RemoteObject, three: RemoteThre
           title: 'Mixer',
           items: mixerItems
         });
+
+        helper = new SkeletonHelper(child);
+        MultiView.instance?.scene.add(helper);
       }
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (helper !== undefined) dispose(helper);
+    };
+  }, []);
 
   return (
     <InspectorGroup
