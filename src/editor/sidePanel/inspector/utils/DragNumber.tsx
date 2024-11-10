@@ -19,6 +19,11 @@ export default function DragNumber(props: DragProps) {
     let mouseStart = -1;
     let valueStart = 0;
     let value = props.defaultValue;
+    let multiplyAmount = false;
+
+    const onKeyEvent = (evt: KeyboardEvent) => {
+      multiplyAmount = evt.ctrlKey;
+    };
 
     const onMouseDown = (evt: MouseEvent) => {
       mouseDown = true;
@@ -32,7 +37,7 @@ export default function DragNumber(props: DragProps) {
     const onMouseMove = (evt: MouseEvent) => {
       if (!mouseDown) return;
       const deltaAmt = props.step !== undefined ? props.step : 1;
-      const delta = (evt.clientX - mouseStart) * deltaAmt;
+      const delta = (evt.clientX - mouseStart) * deltaAmt * (multiplyAmount ? 10 : 1);
       value = Number((valueStart + delta).toFixed(4));
       if (props.min !== undefined) value = Math.max(value, props.min);
       if (props.max !== undefined) value = Math.min(value, props.max);
@@ -63,6 +68,8 @@ export default function DragNumber(props: DragProps) {
     if (props.sliderRef !== undefined) {
       props.sliderRef.current?.addEventListener('input', onSlide);
     }
+    document.addEventListener('keydown', onKeyEvent, false);
+    document.addEventListener('keyup', onKeyEvent, false);
 
     return () => {
       props.input.current?.removeEventListener('input', onChange);
@@ -73,6 +80,8 @@ export default function DragNumber(props: DragProps) {
       document.removeEventListener('mouseup', onMouseUp);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('contextmenu', onMouseUp);
+      document.removeEventListener('keydown', onKeyEvent);
+      document.addEventListener('keyup', onKeyEvent, false);
     };
   }, []);
 
