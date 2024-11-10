@@ -1,3 +1,8 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import { RemoteObject } from '../../types';
-export default function InspectAnimation(object: RemoteObject, three: RemoteThree): import("react/jsx-runtime").JSX.Element;
+type InspectAnimationProps = {
+    object: RemoteObject;
+    three: RemoteThree;
+};
+export default function InspectAnimation(props: InspectAnimationProps): import("react/jsx-runtime").JSX.Element;
+export {};
