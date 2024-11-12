@@ -61,6 +61,8 @@ export type EditorEvent =
   | 'addCamera'
   | 'removeCamera'
   | 'addSpline'
+  | 'addRenderer'
+  | 'updateRenderer'
 // GUI
   | 'addFolder'
   | 'bindObject'

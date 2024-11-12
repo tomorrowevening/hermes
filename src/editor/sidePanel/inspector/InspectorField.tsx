@@ -6,7 +6,7 @@ import InspectVector2 from './InspectVector2';
 import InspectGrid3 from './InspectGrid3';
 import InspectGrid4 from './InspectGrid4';
 import InspectImage from './InspectImage';
-import { Color } from 'three';
+import { Color, LinearSRGBColorSpace } from 'three';
 
 export type InspectorFieldType = 'string' |
   'number' |
@@ -41,7 +41,7 @@ export default function InspectorField(props: InspectorFieldProps) {
     if (propsValue.isColor !== undefined) {
       propsValue = colorToHex(props.value);
     } else if (props.type === 'color') {
-      propsValue = colorToHex(new Color(props.value));
+      propsValue = colorToHex(new Color().setStyle(props.value, LinearSRGBColorSpace));
     }
   }
 

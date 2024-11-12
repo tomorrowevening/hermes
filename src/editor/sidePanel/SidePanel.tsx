@@ -9,6 +9,7 @@ import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import DebugData from './DebugData';
 import Inspector from './inspector/Inspector';
+import InspectRenderer from './inspector/utils/InspectRenderer';
 
 export default function SidePanel(props: SidePanelState) {
   const [scenes] = useState<RemoteObject[]>([]);
@@ -87,6 +88,7 @@ export default function SidePanel(props: SidePanelState) {
         {sceneComponents}
       </div>
       <Inspector three={props.three} />
+      <InspectRenderer three={props.three} />
       <DebugData three={props.three} />
     </div>
   );
