@@ -42,6 +42,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private wireframeMaterial;
     private playing;
     private rafID;
+    private cameraControlsRafID;
     private width;
     private height;
     private sceneSet;
