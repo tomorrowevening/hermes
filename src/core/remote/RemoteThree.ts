@@ -1,4 +1,4 @@
-import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
@@ -142,6 +142,40 @@ export default class RemoteThree extends BaseRemote {
     }, 1);
   }
 
+  // Renderer
+
+  addRenderer(value: WebGLRenderer) {
+    this.renderer = value;
+
+    if (!this.app.debugEnabled) return;
+    const color = `#${value.getClearColor(new Color()).getHexString()}`;
+    this.app.send({
+      event: 'addRenderer',
+      target: 'editor',
+      data: {
+        autoClear: value.autoClear,
+        autoClearColor: value.autoClearColor,
+        autoClearDepth: value.autoClearDepth,
+        autoClearStencil: value.autoClearStencil,
+        outputColorSpace: value.outputColorSpace,
+        localClippingEnabled: value.localClippingEnabled,
+        clearColor: color,
+        clearAlpha: value.getClearAlpha(),
+        colorManagement: ColorManagement.enabled,
+        toneMapping: value.toneMapping,
+        toneMappingExposure: value.toneMappingExposure,
+      },
+    });
+  }
+
+  updateRenderer(data: any) {
+    this.app.send({
+      event: 'updateRenderer',
+      target: 'app',
+      data,
+    });
+  }
+
   // Scenes
 
   addScene(value: Scene) {
@@ -257,6 +291,20 @@ export default class RemoteThree extends BaseRemote {
           data: stripScene(three.scenes.get(msg.data.name)!),
         });
         break;
+      case 'updateRenderer':
+        if (three.renderer) {
+          three.renderer.autoClear = msg.data.autoClear;
+          three.renderer.autoClearColor = msg.data.autoClearColor;
+          three.renderer.autoClearDepth = msg.data.autoClearDepth;
+          three.renderer.autoClearStencil = msg.data.autoClearStencil;
+          three.renderer.outputColorSpace = msg.data.outputColorSpace;
+          three.renderer.localClippingEnabled = msg.data.localClippingEnabled;
+          three.renderer.setClearColor(msg.data.clearColor, msg.data.clearAlpha);
+          three.renderer.toneMapping = msg.data.toneMapping;
+          three.renderer.toneMappingExposure = msg.data.toneMappingExposure;
+          ColorManagement.enabled = msg.data.colorManagement;
+        }
+        break;
     }
 
     if (msg.event === 'updateGroup') {
@@ -298,6 +346,8 @@ export default class RemoteThree extends BaseRemote {
       case 'addSpline':
         debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
         break;
+      case 'addRenderer':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
     }
   }
 
