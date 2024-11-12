@@ -63,7 +63,7 @@ function App() {
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
-      three.renderer = renderer;
+      three.addRenderer(renderer);
       return () => {
         renderer.dispose();
       };
