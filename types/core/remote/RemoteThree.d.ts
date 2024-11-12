@@ -19,6 +19,8 @@ export default class RemoteThree extends BaseRemote {
     updateGroup(group: string, prop: string, value: any): void;
     removeAllGroups(): void;
     addSpline(spline: Curve<any>): void;
+    addRenderer(value: WebGLRenderer): void;
+    updateRenderer(data: any): void;
     addScene(value: Scene): void;
     refreshScene(value: string): void;
     removeScene(value: Scene): void;
