@@ -11,6 +11,26 @@ Open the [Application](https://hermes-lovat.vercel.app/) and [editor](https://he
 - [ThreeJS](https://threejs.org/)
 - Custom ThreeJS Scene + Object Inspector
 
+### MultiView
+
+| Action | Keys |
+| ------ | ------ |
+| Zoom to Selected Item | CTRL + 0 |
+| Rotate to Front | CTRL + 1 |
+| Rotate to Top | CTRL + 2 |
+| Rotate to Right | CTRL + 3 |
+| Rotate to Back | CTRL + 4 |
+| Set Transform Controls to Rotate | r |
+| Set Transform Controls to Scale | s |
+| Set Transform Controls to Translate | t |
+| Toggles Transform Controls between **world** and **local** | q |
+
+### Side Panel
+
+Holding down the **CTRL** key while dragging a number's label will multiply the delta by 10
+
+![Drag Multiplier](images/dragMultiplier.gif)
+
 ### Assets
 
 Animation / Models found at [Mixamo](https://www.mixamo.com/)
