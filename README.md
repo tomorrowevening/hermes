@@ -16,10 +16,10 @@ Open the [Application](https://hermes-lovat.vercel.app/) and [editor](https://he
 | Action | Keys |
 | ------ | ------ |
 | Zoom to Selected Item | CTRL + 0 |
-| Rotate to Front | CTRL + 1 |
-| Rotate to Top | CTRL + 2 |
-| Rotate to Right | CTRL + 3 |
-| Rotate to Back | CTRL + 4 |
+| Rotate to Front of Selected Item | CTRL + 1 |
+| Rotate to Top of Selected Item | CTRL + 2 |
+| Rotate to Right of Selected Item | CTRL + 3 |
+| Rotate to Back of Selected Item | CTRL + 4 |
 | Set Transform Controls to Rotate | r |
 | Set Transform Controls to Scale | s |
 | Set Transform Controls to Translate | t |
