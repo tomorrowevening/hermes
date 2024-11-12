@@ -124,6 +124,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Playback
   private playing = false;
   private rafID = -1;
+  private cameraControlsRafID = -1;
   private width = 0;
   private height = 0;
 
@@ -832,6 +833,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
         const currentControls = this.controls.get(this.currentCamera.name)!;
         if (evt.key === '0') {
+          evt.preventDefault();
           this.clearControls();
 
           this.cameraControls = new CameraControls(this.currentCamera, this.currentWindow.current!);
@@ -843,6 +845,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           }
           this.updateCameraControls(currentControls, true);
         } else if (evt.key === '1') {
+          evt.preventDefault();
           this.clearControls();
 
           // Rotate to Front
@@ -851,6 +854,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           this.cameraControls.moveTo(this.selectedItem.position.x, this.selectedItem.position.y, 0, true);
           this.updateCameraControls(currentControls);
         } else if (evt.key === '2') {
+          evt.preventDefault();
           this.clearControls();
 
           // Rotate to Top
@@ -859,6 +863,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           this.cameraControls.moveTo(this.selectedItem.position.x, 0, this.selectedItem.position.z, true);
           this.updateCameraControls(currentControls);
         } else if (evt.key === '3') {
+          evt.preventDefault();
           this.clearControls();
 
           // Rotate to Right
@@ -867,6 +872,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           this.cameraControls.moveTo(0, this.selectedItem.position.y, this.selectedItem.position.z, true);
           this.updateCameraControls(currentControls);
         } else if (evt.key === '4') {
+          evt.preventDefault();
           this.clearControls();
 
           // Rotate to Back
@@ -875,6 +881,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           this.cameraControls.moveTo(this.selectedItem.position.x, this.selectedItem.position.y, 0, true);
           this.updateCameraControls(currentControls);
         } else if (evt.key === '5') {
+          evt.preventDefault();
           this.clearControls();
 
           // Rotate to Ortho
@@ -1135,8 +1142,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   private updateCameraControls = (control: OrbitControls, reposition = false) => {
     if (this.selectedItem === undefined) return;
-    cancelAnimationFrame(this.rafID);
-    this.rafID = -1;
+    cancelAnimationFrame(this.cameraControlsRafID);
+    this.cameraControlsRafID = -1;
 
     if (this.cameraControls) this.cameraControls.smoothTime = 0.1;
 
@@ -1163,11 +1170,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       // Complete?
       const complete = clock.getElapsedTime() >= 0.5;
       if (complete) {
-        cancelAnimationFrame(this.rafID);
-        this.rafID = -1;
+        cancelAnimationFrame(this.cameraControlsRafID);
+        this.cameraControlsRafID = -1;
         this.clearControls();
       } else {
-        this.rafID = requestAnimationFrame(onUpdate);
+        this.cameraControlsRafID = requestAnimationFrame(onUpdate);
       }
     };
     onUpdate();
