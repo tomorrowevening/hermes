@@ -989,9 +989,11 @@ class uo extends Ui {
   }
   resize(e, t) {
     const i = this.dpr;
-    this.renderTargets.forEach((n) => {
-      n.setSize(e * i, t * i);
-    }), this.renderer?.setSize(e, t);
+    this.renderTargets.forEach((r) => {
+      r.setSize(e * i, t * i);
+    });
+    const n = !(this.renderer?.domElement instanceof OffscreenCanvas);
+    this.renderer?.setSize(e, t, n);
   }
   set dpr(e) {
     this.renderer?.setPixelRatio(Be(1, 2, e));

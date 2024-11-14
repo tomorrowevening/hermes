@@ -364,7 +364,8 @@ export default class RemoteThree extends BaseRemote {
     this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
       renderTarget.setSize(width * dpr, height * dpr);
     });
-    this.renderer?.setSize(width, height);
+    const update = !(this.renderer?.domElement instanceof OffscreenCanvas);
+    this.renderer?.setSize(width, height, update);
   }
 
   set dpr(value: number) {
