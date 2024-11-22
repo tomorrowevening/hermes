@@ -1,31 +1,5 @@
-import { Material, Object3D, Texture, WebGLRenderer } from 'three';
 export declare function capitalize(value: string): string;
 export declare function copyToClipboard(data: any): string;
-export declare function clamp(min: number, max: number, value: number): number;
-export declare function normalize(min: number, max: number, value: number): number;
-export declare function mix(min: number, max: number, value: number): number;
-export declare function distance(x: number, y: number): number;
 export declare function randomID(): string;
 export declare function isColor(obj: any): boolean;
 export declare function colorToHex(obj: any): string;
-export declare function round(value: number, precision?: number): number;
-export declare let totalThreeObjects: number;
-export declare const resetThreeObjects: () => void;
-export declare const hierarchyUUID: (object: Object3D) => void;
-export declare const disposeTexture: (texture?: Texture) => void;
-export declare const disposeMaterial: (material?: Material | Material[]) => void;
-export declare const dispose: (object: Object3D) => void;
-export declare class ExportTexture {
-    static renderer: WebGLRenderer;
-    private static canvas;
-    private static context;
-    private static scene;
-    private static camera;
-    private static material;
-    private static inited;
-    private static width;
-    private static height;
-    private static init;
-    static renderToBlob(texture: Texture): string;
-    private static renderToCanvas;
-}

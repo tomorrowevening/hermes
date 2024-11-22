@@ -3,6 +3,8 @@ import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export default class RemoteThree extends BaseRemote {
+    canvas: HTMLCanvasElement | null;
+    inputElement: any;
     scene?: Scene;
     scenes: Map<string, Scene>;
     renderer?: WebGLRenderer;
@@ -19,7 +21,7 @@ export default class RemoteThree extends BaseRemote {
     updateGroup(group: string, prop: string, value: any): void;
     removeAllGroups(): void;
     addSpline(spline: Curve<any>): void;
-    addRenderer(value: WebGLRenderer): void;
+    setRenderer(value: WebGLRenderer, inputElement?: any): void;
     updateRenderer(data: any): void;
     addScene(value: Scene): void;
     refreshScene(value: string): void;
@@ -37,5 +39,4 @@ export default class RemoteThree extends BaseRemote {
     get dpr(): number;
     get width(): number;
     get height(): number;
-    get canvas(): HTMLCanvasElement | null;
 }

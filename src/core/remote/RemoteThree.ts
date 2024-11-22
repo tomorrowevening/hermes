@@ -4,13 +4,17 @@ import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
-import { clamp, dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/editor/utils';
+import { clamp } from '@/utils/math';
+import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/utils/three';
 
 export default class RemoteThree extends BaseRemote {
+  canvas: HTMLCanvasElement | null = null; // Canvas or OffscreenCanvas
+  inputElement: any = null; // reference this to receive events
   scene?: Scene = undefined;
   scenes: Map<string, Scene> = new Map();
   renderer?: WebGLRenderer = undefined;
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
+
   private groups = new Map<string, GroupCallback>();
 
   override dispose(): void {
@@ -144,8 +148,10 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
-  addRenderer(value: WebGLRenderer) {
+  setRenderer(value: WebGLRenderer, inputElement: any = null) {
     this.renderer = value;
+    this.canvas = value.domElement;
+    this.inputElement = inputElement;
 
     if (!this.app.debugEnabled) return;
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
@@ -382,9 +388,5 @@ export default class RemoteThree extends BaseRemote {
 
   get height(): number {
     return this.renderer !== undefined ? this.renderer.domElement.height / this.dpr : 0;
-  }
-
-  get canvas(): HTMLCanvasElement | null {
-    return this.renderer !== undefined ? this.renderer?.domElement : null;
   }
 }

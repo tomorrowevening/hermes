@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.115",
+  "version": "0.0.116",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -60,6 +60,7 @@
     "@typescript-eslint/parser": "^6.4.0",
     "@vitejs/plugin-react": "^4.0.3",
     "camera-controls": "^2.9.0",
+    "detect-gpu": "^5.0.57",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",

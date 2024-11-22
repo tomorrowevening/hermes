@@ -21,7 +21,7 @@ import {
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
 import { IS_DEV, app } from '../../constants';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
-import { hierarchyUUID } from '../../../editor/utils';
+import { hierarchyUUID } from '../../../utils/three';
 import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
