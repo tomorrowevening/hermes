@@ -1,6 +1,6 @@
 import { Color, DirectionalLight, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene, TorusKnotGeometry, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
 import { IS_DEV } from '../../constants';
-import { hierarchyUUID } from '../../../editor/utils';
+import { hierarchyUUID } from '../../../utils/three';
 import { cubeTextures } from '../loader';
 
 const zero3 = new Vector3();

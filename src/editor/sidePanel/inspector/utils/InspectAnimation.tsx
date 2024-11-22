@@ -4,7 +4,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
 import MultiView from '@/editor/multiView/MultiView';
-import { dispose } from '@/editor/utils';
+import { dispose } from '@/utils/three';
 
 type InspectAnimationProps = {
   object: RemoteObject;

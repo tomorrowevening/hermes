@@ -10,7 +10,7 @@ import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
-import { dispose } from '../../editor/utils';
+import { dispose } from '../../utils/three';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';

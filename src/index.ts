@@ -1,6 +1,8 @@
 // Core
 export * from './core/types';
 export * from './editor/utils';
+export * from './utils/three';
+export * from './utils/detectSettings';
 export { default as Application } from './core/Application';
 export { debugDispatcher, ToolEvents } from './editor/global';
 export { default as BaseRemote } from './core/remote/BaseRemote';

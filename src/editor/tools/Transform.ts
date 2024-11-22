@@ -5,7 +5,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils
-import { dispose } from '../utils';
+import { dispose } from '@/utils/three';
 import { debugDispatcher, ToolEvents } from '../global';
 
 export default class Transform extends EventDispatcher {

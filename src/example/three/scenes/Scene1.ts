@@ -24,7 +24,7 @@ import {
   VignetteEffect,
 } from 'postprocessing';
 import CustomMaterial from '../CustomMaterial';
-import { hierarchyUUID } from '../../../editor/utils';
+import { hierarchyUUID } from '../../../utils/three';
 import { IS_DEV, app } from '../../constants';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';

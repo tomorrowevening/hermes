@@ -1,6 +1,6 @@
 import { AnimationClip, CubeTexture, Line, Material, Mesh, Object3D, Points, RepeatWrapping, Texture } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
-import { ExportTexture } from '../utils';
+import { ExportTexture } from '@/utils/three';
 
 export function determineIcon(obj: RemoteObject): string {
   if (obj.name === 'cameras') {

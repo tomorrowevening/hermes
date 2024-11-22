@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { clamp, mix, normalize, round } from '@/editor/utils';
+import { clamp, mix, normalize, round } from '@/utils/math';
 
 interface InspectVector2Props {
   min: number

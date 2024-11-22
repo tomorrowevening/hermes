@@ -54,7 +54,8 @@ import UVMaterial from './UVMaterial';
 import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
-import { dispose, mix } from '../utils';
+import { mix } from '@/utils/math';
+import { dispose } from '@/utils/three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 
