@@ -55,15 +55,16 @@ function App() {
   // Renderer setup
   if (app.isApp) {
     useEffect(() => {
+      const canvas = canvasRef.current!;
       renderer = new WebGLRenderer({
-        canvas: canvasRef.current!,
+        canvas,
         stencil: false
       });
       renderer.autoClear = false;
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
-      three.addRenderer(renderer);
+      three.setRenderer(renderer, canvas);
       return () => {
         renderer.dispose();
       };
