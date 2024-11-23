@@ -18,21 +18,22 @@ export interface InspectNumberProps {
 }
 
 export default function InspectNumber(props: InspectNumberProps) {
-  // References
   const inputRef = useRef<HTMLInputElement>(null);
   const sliderRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(props.value);
 
   // Hooks
-  const inputValue = DragNumber({
+  DragNumber({
     label: props.labelRef,
     input: inputRef,
     sliderRef: sliderRef,
-    defaultValue: props.value,
+    defaultValue: value,
     min: props.min,
     max: props.max,
     step: props.step,
-    onChange: (value: number) => {
-      if (props.onChange !== undefined) props.onChange(props.prop, value);
+    onChange: (newValue: number) => {
+      setValue(newValue);
+      if (props.onChange !== undefined) props.onChange(props.prop, newValue);
     }
   });
 
@@ -44,13 +45,16 @@ export default function InspectNumber(props: InspectNumberProps) {
           className={props.className}
           ref={inputRef}
           type='number'
-          value={inputValue}
+          value={value}
           min={props.min}
           max={props.max}
           step={props.step}
           disabled={props.disabled}
           onChange={(evt: any) => {
+            setValue(evt.target.value);
+            if (evt.target.value.length === 0) return;
             const value = Number(evt.target.value);
+            if (isNaN(value)) return;
             if (props.onChange !== undefined) props.onChange(props.prop, value);
           }}
         />
@@ -60,19 +64,21 @@ export default function InspectNumber(props: InspectNumberProps) {
         <>
           <input
             type='text'
-            value={inputValue.toString()}
+            value={value.toString()}
             disabled={props.disabled}
             ref={inputRef}
             className='min'
             onChange={(evt: any) => {
+              if (evt.target.value.length === 0) return;
               const value = Number(evt.target.value);
+              if (isNaN(value)) return;
               if (props.onChange !== undefined) props.onChange(props.prop, value);
             }}
           />
           <input
             disabled={props.disabled}
             type='range'
-            value={inputValue}
+            value={value}
             min={props.min}
             max={props.max}
             step={props.step}

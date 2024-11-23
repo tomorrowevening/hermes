@@ -1,5 +1,5 @@
 // Libs
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 // Models
 import { debugDispatcher, ToolEvents } from '../global';
 import { RemoteObject, SidePanelState } from './types';
@@ -15,6 +15,7 @@ export default function SidePanel(props: SidePanelState) {
   const [scenes] = useState<RemoteObject[]>([]);
   const [sceneComponents] = useState<any[]>([]);
   const [lastUpdate, setLastUpdate] = useState(0);
+  const [value, setValue] = useState(0);
 
   const onAddScene = (evt: any) => {
     const scene = evt.value;
@@ -90,6 +91,15 @@ export default function SidePanel(props: SidePanelState) {
       <Inspector three={props.three} />
       <InspectRenderer three={props.three} />
       <DebugData three={props.three} />
+      <input
+        type='number'
+        value={value}
+        onChange={(evt: ChangeEvent) => {
+          // @ts-ignore
+          const newValue = evt.target.value;
+          setValue(newValue);
+        }}
+      />
     </div>
   );
 }

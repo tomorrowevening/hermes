@@ -52,18 +52,12 @@ export default function DragNumber(props: DragProps) {
       document.removeEventListener('contextmenu', onMouseUp);
     };
 
-    const onChange = (evt: any) => {
-      const newValue = Number(evt.target.value);
-      setFieldValue(newValue);
-    };
-
     const onSlide = (evt: any) => {
       const newValue = Number(evt.target.value);
       if (props.onChange !== undefined) props.onChange(newValue);
       setFieldValue(newValue);
     };
 
-    props.input.current?.addEventListener('input', onChange);
     props.label.current?.addEventListener('mousedown', onMouseDown, false);
     if (props.sliderRef !== undefined) {
       props.sliderRef.current?.addEventListener('input', onSlide);
@@ -72,7 +66,6 @@ export default function DragNumber(props: DragProps) {
     document.addEventListener('keyup', onKeyEvent, false);
 
     return () => {
-      props.input.current?.removeEventListener('input', onChange);
       props.label.current?.removeEventListener('mousedown', onMouseDown);
       if (props.sliderRef !== undefined) {
         props.sliderRef.current?.removeEventListener('input', onSlide);
