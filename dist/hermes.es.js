@@ -24,9 +24,236 @@ function os(s) {
   }, r = n(e), a = n(t), o = n(i);
   return "#" + r + a + o;
 }
-const vo = (s) => {
+function fi(s, e, t, i) {
+  return new (t || (t = Promise))(function(n, r) {
+    function a(l) {
+      try {
+        c(i.next(l));
+      } catch (d) {
+        r(d);
+      }
+    }
+    function o(l) {
+      try {
+        c(i.throw(l));
+      } catch (d) {
+        r(d);
+      }
+    }
+    function c(l) {
+      var d;
+      l.done ? n(l.value) : (d = l.value, d instanceof t ? d : new t(function(p) {
+        p(d);
+      })).then(a, o);
+    }
+    c((i = i.apply(s, e || [])).next());
+  });
+}
+const ka = ["geforce 320m", "geforce 8600", "geforce 8600m gt", "geforce 8800 gs", "geforce 8800 gt", "geforce 9400", "geforce 9400m g", "geforce 9400m", "geforce 9600m gt", "geforce 9600m", "geforce fx go5200", "geforce gt 120", "geforce gt 130", "geforce gt 330m", "geforce gtx 285", "google swiftshader", "intel g41", "intel g45", "intel gma 4500mhd", "intel gma x3100", "intel hd 3000", "intel q45", "legacy", "mali-2", "mali-3", "mali-4", "quadro fx 1500", "quadro fx 4", "quadro fx 5", "radeon hd 2400", "radeon hd 2600", "radeon hd 4670", "radeon hd 4850", "radeon hd 4870", "radeon hd 5670", "radeon hd 5750", "radeon hd 6290", "radeon hd 6300", "radeon hd 6310", "radeon hd 6320", "radeon hd 6490m", "radeon hd 6630m", "radeon hd 6750m", "radeon hd 6770m", "radeon hd 6970m", "sgx 543", "sgx543"];
+function ls(s) {
+  return s = s.toLowerCase().replace(/.*angle ?\((.+)\)(?: on vulkan [0-9.]+)?$/i, "$1").replace(/\s(\d{1,2}gb|direct3d.+$)|\(r\)| \([^)]+\)$/g, "").replace(/(?:vulkan|opengl) \d+\.\d+(?:\.\d+)?(?: \((.*)\))?/, "$1");
+}
+const pn = typeof window > "u", Le = (() => {
+  if (pn)
+    return;
+  const { userAgent: s, platform: e, maxTouchPoints: t } = window.navigator, i = /(iphone|ipod|ipad)/i.test(s), n = e === "iPad" || e === "MacIntel" && t > 0 && !window.MSStream;
+  return { isIpad: n, isMobile: /android/i.test(s) || i || n, isSafari12: /Version\/12.+Safari/.test(s), isFirefox: /Firefox/.test(s) };
+})();
+function Ua(s, e, t) {
+  if (!t)
+    return [e];
+  const i = function(l) {
+    const d = `
+    precision highp float;
+    attribute vec3 aPosition;
+    varying float vvv;
+    void main() {
+      vvv = 0.31622776601683794;
+      gl_Position = vec4(aPosition, 1.0);
+    }
+  `, p = `
+    precision highp float;
+    varying float vvv;
+    void main() {
+      vec4 enc = vec4(1.0, 255.0, 65025.0, 16581375.0) * vvv;
+      enc = fract(enc);
+      enc -= enc.yzww * vec4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);
+      gl_FragColor = enc;
+    }
+  `, m = l.createShader(35633), g = l.createShader(35632), S = l.createProgram();
+    if (!(g && m && S))
+      return;
+    l.shaderSource(m, d), l.shaderSource(g, p), l.compileShader(m), l.compileShader(g), l.attachShader(S, m), l.attachShader(S, g), l.linkProgram(S), l.detachShader(S, m), l.detachShader(S, g), l.deleteShader(m), l.deleteShader(g), l.useProgram(S);
+    const T = l.createBuffer();
+    l.bindBuffer(34962, T), l.bufferData(34962, new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 35044);
+    const M = l.getAttribLocation(S, "aPosition");
+    l.vertexAttribPointer(M, 3, 5126, !1, 0, 0), l.enableVertexAttribArray(M), l.clearColor(1, 1, 1, 1), l.clear(16384), l.viewport(0, 0, 1, 1), l.drawArrays(4, 0, 3);
+    const f = new Uint8Array(4);
+    return l.readPixels(0, 0, 1, 1, 6408, 5121, f), l.deleteProgram(S), l.deleteBuffer(T), f.join("");
+  }(s), n = "801621810", r = "8016218135", a = "80162181161", o = Le?.isIpad ? [["a7", a, 12], ["a8", r, 15], ["a8x", r, 15], ["a9", r, 15], ["a9x", r, 15], ["a10", r, 15], ["a10x", r, 15], ["a12", n, 15], ["a12x", n, 15], ["a12z", n, 15], ["a14", n, 15], ["a15", n, 15], ["m1", n, 15], ["m2", n, 15]] : [["a7", a, 12], ["a8", r, 12], ["a9", r, 15], ["a10", r, 15], ["a11", n, 15], ["a12", n, 15], ["a13", n, 15], ["a14", n, 15], ["a15", n, 15], ["a16", n, 15], ["a17", n, 15]];
+  let c;
+  return i === "80162181255" ? c = o.filter(([, , l]) => l >= 14) : (c = o.filter(([, l]) => l === i), c.length || (c = o)), c.map(([l]) => `apple ${l} gpu`);
+}
+class cs extends Error {
+  constructor(e) {
+    super(e), Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+const gi = [], hs = [];
+function ja(s, e) {
+  if (s === e)
+    return 0;
+  const t = s;
+  s.length > e.length && (s = e, e = t);
+  let i = s.length, n = e.length;
+  for (; i > 0 && s.charCodeAt(~-i) === e.charCodeAt(~-n); )
+    i--, n--;
+  let r, a = 0;
+  for (; a < i && s.charCodeAt(a) === e.charCodeAt(a); )
+    a++;
+  if (i -= a, n -= a, i === 0)
+    return n;
+  let o, c, l = 0, d = 0, p = 0;
+  for (; d < i; )
+    hs[d] = s.charCodeAt(a + d), gi[d] = ++d;
+  for (; p < n; )
+    for (r = e.charCodeAt(a + p), o = p++, l = p, d = 0; d < i; d++)
+      c = r === hs[d] ? o : o + 1, o = gi[d], l = gi[d] = o > l ? c > l ? l + 1 : c : c > o ? o + 1 : c;
+  return l;
+}
+function Na(s) {
+  return s != null;
+}
+const Fa = ({ mobileTiers: s = [0, 15, 30, 60], desktopTiers: e = [0, 15, 30, 60], override: t = {}, glContext: i, failIfMajorPerformanceCaveat: n = !1, benchmarksURL: r = "https://unpkg.com/detect-gpu@5.0.57/dist/benchmarks" } = {}) => fi(void 0, void 0, void 0, function* () {
+  const a = {};
+  if (pn)
+    return { tier: 0, type: "SSR" };
+  const { isIpad: o = !!Le?.isIpad, isMobile: c = !!Le?.isMobile, screenSize: l = window.screen, loadBenchmarks: d = (C) => fi(void 0, void 0, void 0, function* () {
+    const w = yield fetch(`${r}/${C}`).then((I) => I.json());
+    if (parseInt(w.shift().split(".")[0], 10) < 4)
+      throw new cs("Detect GPU benchmark data is out of date. Please update to version 4x");
+    return w;
+  }) } = t;
+  let { renderer: p } = t;
+  const m = (C, w, I, U, K) => ({ device: K, fps: U, gpu: I, isMobile: c, tier: C, type: w });
+  let g, S = "";
+  if (p)
+    p = ls(p), g = [p];
+  else {
+    const C = i || function(I, U = !1) {
+      const K = { alpha: !1, antialias: !1, depth: !1, failIfMajorPerformanceCaveat: U, powerPreference: "high-performance", stencil: !1 };
+      I && delete K.powerPreference;
+      const me = window.document.createElement("canvas"), Ae = me.getContext("webgl", K) || me.getContext("experimental-webgl", K);
+      return Ae ?? void 0;
+    }(Le?.isSafari12, n);
+    if (!C)
+      return m(0, "WEBGL_UNSUPPORTED");
+    const w = Le?.isFirefox ? null : C.getExtension("WEBGL_debug_renderer_info");
+    if (p = w ? C.getParameter(w.UNMASKED_RENDERER_WEBGL) : C.getParameter(C.RENDERER), !p)
+      return m(1, "FALLBACK");
+    S = p, p = ls(p), g = function(I, U, K) {
+      return U === "apple gpu" ? Ua(I, U, K) : [U];
+    }(C, p, c);
+  }
+  const T = (yield Promise.all(g.map(function(C) {
+    var w;
+    return fi(this, void 0, void 0, function* () {
+      const I = ((V) => {
+        const re = c ? ["adreno", "apple", "mali-t", "mali", "nvidia", "powervr", "samsung"] : ["intel", "apple", "amd", "radeon", "nvidia", "geforce", "adreno"];
+        for (const Oe of re)
+          if (V.includes(Oe))
+            return Oe;
+      })(C);
+      if (!I)
+        return;
+      const U = `${c ? "m" : "d"}-${I}${o ? "-ipad" : ""}.json`, K = a[U] = (w = a[U]) !== null && w !== void 0 ? w : d(U);
+      let me;
+      try {
+        me = yield K;
+      } catch (V) {
+        if (V instanceof cs)
+          throw V;
+        return;
+      }
+      const Ae = function(V) {
+        var re;
+        const Oe = (V = V.replace(/\([^)]+\)/, "")).match(/\d+/) || V.match(/(\W|^)([A-Za-z]{1,3})(\W|$)/g);
+        return (re = Oe?.join("").replace(/\W|amd/g, "")) !== null && re !== void 0 ? re : "";
+      }(C);
+      let Ce = me.filter(([, V]) => V === Ae);
+      Ce.length || (Ce = me.filter(([V]) => V.includes(C)));
+      const le = Ce.length;
+      if (le === 0)
+        return;
+      const Q = C.split(/[.,()\[\]/\s]/g).sort().filter((V, re, Oe) => re === 0 || V !== Oe[re - 1]).join(" ");
+      let G, [Ue, , , , ce] = le > 1 ? Ce.map((V) => [V, ja(Q, V[2])]).sort(([, V], [, re]) => V - re)[0][0] : Ce[0], be = Number.MAX_VALUE;
+      const { devicePixelRatio: te } = window, je = l.width * te * l.height * te;
+      for (const V of ce) {
+        const [re, Oe] = V, vt = re * Oe, it = Math.abs(je - vt);
+        it < be && (be = it, G = V);
+      }
+      if (!G)
+        return;
+      const [, , Ne, Fe] = G;
+      return [be, Ne, Ue, Fe];
+    });
+  }))).filter(Na).sort(([C = Number.MAX_VALUE, w], [I = Number.MAX_VALUE, U]) => C === I ? w - U : C - I);
+  if (!T.length) {
+    const C = ka.find((w) => p.includes(w));
+    return C ? m(0, "BLOCKLISTED", C) : m(1, "FALLBACK", `${p} (${S})`);
+  }
+  const [, M, f, v] = T[0];
+  if (M === -1)
+    return m(0, "BLOCKLISTED", f, M, v);
+  const E = c ? s : e;
+  let b = 0;
+  for (let C = 0; C < E.length; C++)
+    M >= E[C] && (b = C);
+  return m(b, "BENCHMARK", f, M, v);
+});
+var za = /* @__PURE__ */ ((s) => (s[s.High = 0] = "High", s[s.Medium = 1] = "Medium", s[s.Low = 2] = "Low", s))(za || {});
+function vo(s) {
+  return new Promise((e) => {
+    Fa().then((t) => {
+      let i = !1;
+      const n = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if (i = "transferControlToOffscreen" in s, n) {
+        const a = navigator.userAgent.match(/version\/(\d+)/i);
+        i = (a ? parseInt(a[1]) : 0) >= 17;
+      }
+      const r = {
+        dpr: devicePixelRatio,
+        fps: t.fps !== void 0 ? t.fps : 30,
+        width: innerWidth,
+        height: innerHeight,
+        mobile: t.isMobile !== void 0 ? t.isMobile : !1,
+        supportOffScreenCanvas: i,
+        quality: 2
+        /* Low */
+      };
+      t.tier === 3 ? r.quality = 0 : t.tier === 2 && (r.quality = 1), e(r);
+    });
+  });
+}
+function $e(s, e, t) {
+  return Math.min(e, Math.max(s, t));
+}
+function ds(s, e, t) {
+  return (t - s) / (e - s);
+}
+function Di(s, e, t) {
+  return s * (1 - t) + e * t;
+}
+function yo(s, e) {
+  const t = s - e;
+  return Math.sqrt(t * t);
+}
+function Me(s, e = 1) {
+  return Number(s.toFixed(e));
+}
+const bo = (s) => {
   s?.dispose();
-}, ka = (s) => {
+}, Ha = (s) => {
   s && (Array.isArray(s) ? s.forEach((e) => e.dispose()) : s.dispose());
 }, He = (s) => {
   if (s) {
@@ -36,19 +263,19 @@ const vo = (s) => {
     }
     if (s.parent && s.parent.remove(s), s.isMesh) {
       const e = s;
-      e.geometry?.dispose(), ka(e.material);
+      e.geometry?.dispose(), Ha(e.material);
     }
     s.dispose !== void 0 && s.dispose();
   }
 };
-let Di = 0;
-const ls = () => {
-  Di = 0;
-}, Ri = (s) => {
+let Ri = 0;
+const us = () => {
+  Ri = 0;
+}, Ii = (s) => {
   if (!s)
     return;
   let e = s.name.replaceAll(" ", "").replaceAll("/", ".");
-  if (e.length === 0 && (e = `obj_${Di}`, Di++), s.parent !== null && s.parent.uuid.length > 0 && (e = `${s.parent.uuid}.${e}`), s.uuid = e, s.isMesh !== void 0) {
+  if (e.length === 0 && (e = `obj_${Ri}`, Ri++), s.parent !== null && s.parent.uuid.length > 0 && (e = `${s.parent.uuid}.${e}`), s.uuid = e, s.isMesh !== void 0) {
     const t = s;
     if (Array.isArray(t.material))
       t.material.forEach((i, n) => {
@@ -59,7 +286,7 @@ const ls = () => {
       i.uuid = `${e}.material`;
     }
   }
-  s.children.forEach((t) => Ri(t));
+  s.children.forEach((t) => Ii(t));
 };
 class Jt {
   static renderer;
@@ -105,218 +332,7 @@ class Jt {
     return this.renderer.domElement;
   }
 }
-function fi(s, e, t, i) {
-  return new (t || (t = Promise))(function(n, r) {
-    function a(l) {
-      try {
-        c(i.next(l));
-      } catch (d) {
-        r(d);
-      }
-    }
-    function o(l) {
-      try {
-        c(i.throw(l));
-      } catch (d) {
-        r(d);
-      }
-    }
-    function c(l) {
-      var d;
-      l.done ? n(l.value) : (d = l.value, d instanceof t ? d : new t(function(p) {
-        p(d);
-      })).then(a, o);
-    }
-    c((i = i.apply(s, e || [])).next());
-  });
-}
-const Ua = ["geforce 320m", "geforce 8600", "geforce 8600m gt", "geforce 8800 gs", "geforce 8800 gt", "geforce 9400", "geforce 9400m g", "geforce 9400m", "geforce 9600m gt", "geforce 9600m", "geforce fx go5200", "geforce gt 120", "geforce gt 130", "geforce gt 330m", "geforce gtx 285", "google swiftshader", "intel g41", "intel g45", "intel gma 4500mhd", "intel gma x3100", "intel hd 3000", "intel q45", "legacy", "mali-2", "mali-3", "mali-4", "quadro fx 1500", "quadro fx 4", "quadro fx 5", "radeon hd 2400", "radeon hd 2600", "radeon hd 4670", "radeon hd 4850", "radeon hd 4870", "radeon hd 5670", "radeon hd 5750", "radeon hd 6290", "radeon hd 6300", "radeon hd 6310", "radeon hd 6320", "radeon hd 6490m", "radeon hd 6630m", "radeon hd 6750m", "radeon hd 6770m", "radeon hd 6970m", "sgx 543", "sgx543"];
-function cs(s) {
-  return s = s.toLowerCase().replace(/.*angle ?\((.+)\)(?: on vulkan [0-9.]+)?$/i, "$1").replace(/\s(\d{1,2}gb|direct3d.+$)|\(r\)| \([^)]+\)$/g, "").replace(/(?:vulkan|opengl) \d+\.\d+(?:\.\d+)?(?: \((.*)\))?/, "$1");
-}
-const pn = typeof window > "u", Le = (() => {
-  if (pn)
-    return;
-  const { userAgent: s, platform: e, maxTouchPoints: t } = window.navigator, i = /(iphone|ipod|ipad)/i.test(s), n = e === "iPad" || e === "MacIntel" && t > 0 && !window.MSStream;
-  return { isIpad: n, isMobile: /android/i.test(s) || i || n, isSafari12: /Version\/12.+Safari/.test(s), isFirefox: /Firefox/.test(s) };
-})();
-function ja(s, e, t) {
-  if (!t)
-    return [e];
-  const i = function(l) {
-    const d = `
-    precision highp float;
-    attribute vec3 aPosition;
-    varying float vvv;
-    void main() {
-      vvv = 0.31622776601683794;
-      gl_Position = vec4(aPosition, 1.0);
-    }
-  `, p = `
-    precision highp float;
-    varying float vvv;
-    void main() {
-      vec4 enc = vec4(1.0, 255.0, 65025.0, 16581375.0) * vvv;
-      enc = fract(enc);
-      enc -= enc.yzww * vec4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);
-      gl_FragColor = enc;
-    }
-  `, m = l.createShader(35633), g = l.createShader(35632), S = l.createProgram();
-    if (!(g && m && S))
-      return;
-    l.shaderSource(m, d), l.shaderSource(g, p), l.compileShader(m), l.compileShader(g), l.attachShader(S, m), l.attachShader(S, g), l.linkProgram(S), l.detachShader(S, m), l.detachShader(S, g), l.deleteShader(m), l.deleteShader(g), l.useProgram(S);
-    const T = l.createBuffer();
-    l.bindBuffer(34962, T), l.bufferData(34962, new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 35044);
-    const M = l.getAttribLocation(S, "aPosition");
-    l.vertexAttribPointer(M, 3, 5126, !1, 0, 0), l.enableVertexAttribArray(M), l.clearColor(1, 1, 1, 1), l.clear(16384), l.viewport(0, 0, 1, 1), l.drawArrays(4, 0, 3);
-    const f = new Uint8Array(4);
-    return l.readPixels(0, 0, 1, 1, 6408, 5121, f), l.deleteProgram(S), l.deleteBuffer(T), f.join("");
-  }(s), n = "801621810", r = "8016218135", a = "80162181161", o = Le?.isIpad ? [["a7", a, 12], ["a8", r, 15], ["a8x", r, 15], ["a9", r, 15], ["a9x", r, 15], ["a10", r, 15], ["a10x", r, 15], ["a12", n, 15], ["a12x", n, 15], ["a12z", n, 15], ["a14", n, 15], ["a15", n, 15], ["m1", n, 15], ["m2", n, 15]] : [["a7", a, 12], ["a8", r, 12], ["a9", r, 15], ["a10", r, 15], ["a11", n, 15], ["a12", n, 15], ["a13", n, 15], ["a14", n, 15], ["a15", n, 15], ["a16", n, 15], ["a17", n, 15]];
-  let c;
-  return i === "80162181255" ? c = o.filter(([, , l]) => l >= 14) : (c = o.filter(([, l]) => l === i), c.length || (c = o)), c.map(([l]) => `apple ${l} gpu`);
-}
-class hs extends Error {
-  constructor(e) {
-    super(e), Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-const gi = [], ds = [];
-function Na(s, e) {
-  if (s === e)
-    return 0;
-  const t = s;
-  s.length > e.length && (s = e, e = t);
-  let i = s.length, n = e.length;
-  for (; i > 0 && s.charCodeAt(~-i) === e.charCodeAt(~-n); )
-    i--, n--;
-  let r, a = 0;
-  for (; a < i && s.charCodeAt(a) === e.charCodeAt(a); )
-    a++;
-  if (i -= a, n -= a, i === 0)
-    return n;
-  let o, c, l = 0, d = 0, p = 0;
-  for (; d < i; )
-    ds[d] = s.charCodeAt(a + d), gi[d] = ++d;
-  for (; p < n; )
-    for (r = e.charCodeAt(a + p), o = p++, l = p, d = 0; d < i; d++)
-      c = r === ds[d] ? o : o + 1, o = gi[d], l = gi[d] = o > l ? c > l ? l + 1 : c : c > o ? o + 1 : c;
-  return l;
-}
-function Fa(s) {
-  return s != null;
-}
-const za = ({ mobileTiers: s = [0, 15, 30, 60], desktopTiers: e = [0, 15, 30, 60], override: t = {}, glContext: i, failIfMajorPerformanceCaveat: n = !1, benchmarksURL: r = "https://unpkg.com/detect-gpu@5.0.57/dist/benchmarks" } = {}) => fi(void 0, void 0, void 0, function* () {
-  const a = {};
-  if (pn)
-    return { tier: 0, type: "SSR" };
-  const { isIpad: o = !!Le?.isIpad, isMobile: c = !!Le?.isMobile, screenSize: l = window.screen, loadBenchmarks: d = (C) => fi(void 0, void 0, void 0, function* () {
-    const w = yield fetch(`${r}/${C}`).then((I) => I.json());
-    if (parseInt(w.shift().split(".")[0], 10) < 4)
-      throw new hs("Detect GPU benchmark data is out of date. Please update to version 4x");
-    return w;
-  }) } = t;
-  let { renderer: p } = t;
-  const m = (C, w, I, U, K) => ({ device: K, fps: U, gpu: I, isMobile: c, tier: C, type: w });
-  let g, S = "";
-  if (p)
-    p = cs(p), g = [p];
-  else {
-    const C = i || function(I, U = !1) {
-      const K = { alpha: !1, antialias: !1, depth: !1, failIfMajorPerformanceCaveat: U, powerPreference: "high-performance", stencil: !1 };
-      I && delete K.powerPreference;
-      const me = window.document.createElement("canvas"), Ae = me.getContext("webgl", K) || me.getContext("experimental-webgl", K);
-      return Ae ?? void 0;
-    }(Le?.isSafari12, n);
-    if (!C)
-      return m(0, "WEBGL_UNSUPPORTED");
-    const w = Le?.isFirefox ? null : C.getExtension("WEBGL_debug_renderer_info");
-    if (p = w ? C.getParameter(w.UNMASKED_RENDERER_WEBGL) : C.getParameter(C.RENDERER), !p)
-      return m(1, "FALLBACK");
-    S = p, p = cs(p), g = function(I, U, K) {
-      return U === "apple gpu" ? ja(I, U, K) : [U];
-    }(C, p, c);
-  }
-  const T = (yield Promise.all(g.map(function(C) {
-    var w;
-    return fi(this, void 0, void 0, function* () {
-      const I = ((V) => {
-        const re = c ? ["adreno", "apple", "mali-t", "mali", "nvidia", "powervr", "samsung"] : ["intel", "apple", "amd", "radeon", "nvidia", "geforce", "adreno"];
-        for (const Oe of re)
-          if (V.includes(Oe))
-            return Oe;
-      })(C);
-      if (!I)
-        return;
-      const U = `${c ? "m" : "d"}-${I}${o ? "-ipad" : ""}.json`, K = a[U] = (w = a[U]) !== null && w !== void 0 ? w : d(U);
-      let me;
-      try {
-        me = yield K;
-      } catch (V) {
-        if (V instanceof hs)
-          throw V;
-        return;
-      }
-      const Ae = function(V) {
-        var re;
-        const Oe = (V = V.replace(/\([^)]+\)/, "")).match(/\d+/) || V.match(/(\W|^)([A-Za-z]{1,3})(\W|$)/g);
-        return (re = Oe?.join("").replace(/\W|amd/g, "")) !== null && re !== void 0 ? re : "";
-      }(C);
-      let Ce = me.filter(([, V]) => V === Ae);
-      Ce.length || (Ce = me.filter(([V]) => V.includes(C)));
-      const le = Ce.length;
-      if (le === 0)
-        return;
-      const Q = C.split(/[.,()\[\]/\s]/g).sort().filter((V, re, Oe) => re === 0 || V !== Oe[re - 1]).join(" ");
-      let G, [Ue, , , , ce] = le > 1 ? Ce.map((V) => [V, Na(Q, V[2])]).sort(([, V], [, re]) => V - re)[0][0] : Ce[0], be = Number.MAX_VALUE;
-      const { devicePixelRatio: te } = window, je = l.width * te * l.height * te;
-      for (const V of ce) {
-        const [re, Oe] = V, vt = re * Oe, it = Math.abs(je - vt);
-        it < be && (be = it, G = V);
-      }
-      if (!G)
-        return;
-      const [, , Ne, Fe] = G;
-      return [be, Ne, Ue, Fe];
-    });
-  }))).filter(Fa).sort(([C = Number.MAX_VALUE, w], [I = Number.MAX_VALUE, U]) => C === I ? w - U : C - I);
-  if (!T.length) {
-    const C = Ua.find((w) => p.includes(w));
-    return C ? m(0, "BLOCKLISTED", C) : m(1, "FALLBACK", `${p} (${S})`);
-  }
-  const [, M, f, v] = T[0];
-  if (M === -1)
-    return m(0, "BLOCKLISTED", f, M, v);
-  const E = c ? s : e;
-  let b = 0;
-  for (let C = 0; C < E.length; C++)
-    M >= E[C] && (b = C);
-  return m(b, "BENCHMARK", f, M, v);
-});
-var Ha = /* @__PURE__ */ ((s) => (s[s.High = 0] = "High", s[s.Medium = 1] = "Medium", s[s.Low = 2] = "Low", s))(Ha || {});
-function yo(s) {
-  return new Promise((e) => {
-    za().then((t) => {
-      let i = !1;
-      const n = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if (i = "transferControlToOffscreen" in s, n) {
-        const a = navigator.userAgent.match(/version\/(\d+)/i);
-        i = (a ? parseInt(a[1]) : 0) >= 17;
-      }
-      const r = {
-        dpr: devicePixelRatio,
-        fps: t.fps !== void 0 ? t.fps : 30,
-        width: innerWidth,
-        height: innerHeight,
-        mobile: t.isMobile !== void 0 ? t.isMobile : !1,
-        supportOffScreenCanvas: i,
-        quality: 2
-        /* Low */
-      };
-      t.tier === 3 ? r.quality = 0 : t.tier === 2 && (r.quality = 1), e(r);
-    });
-  });
-}
-class bo {
+class Eo {
   components = /* @__PURE__ */ new Map();
   listen;
   // Protected
@@ -388,7 +404,7 @@ class zi {
   handleEditor(e, t, i) {
   }
 }
-class Eo extends zi {
+class Co extends zi {
   selectDropdown(e, t) {
     this.app.send({
       event: "selectComponent",
@@ -420,7 +436,7 @@ class Eo extends zi {
     }
   }
 }
-function Co(s, e, t) {
+function So(s, e, t) {
   if (s.editor) {
     t.ui.restore(), t.onSelectionChange((a) => {
       a.length < 1 || a.forEach((o) => {
@@ -463,7 +479,7 @@ function Co(s, e, t) {
   } else
     t.ui.hide();
 }
-function So() {
+function wo() {
   setTimeout(() => {
     const s = document.getElementById("theatrejs-studio-root");
     if (s === null || s.shadowRoot === null)
@@ -489,7 +505,7 @@ function So() {
     }
   }, 1e3);
 }
-class wo extends zi {
+class xo extends zi {
   project;
   sheets = /* @__PURE__ */ new Map();
   sheetObjects = /* @__PURE__ */ new Map();
@@ -898,19 +914,7 @@ function mn(s) {
     }, i.onerror = t, i.src = s;
   });
 }
-function $e(s, e, t) {
-  return Math.min(e, Math.max(s, t));
-}
-function us(s, e, t) {
-  return (t - s) / (e - s);
-}
-function Ii(s, e, t) {
-  return s * (1 - t) + e * t;
-}
-function Me(s, e = 1) {
-  return Number(s.toFixed(e));
-}
-class xo extends zi {
+class Oo extends zi {
   canvas = null;
   // Canvas or OffscreenCanvas
   inputElement = null;
@@ -1055,7 +1059,7 @@ class xo extends zi {
   addScene(e) {
     if (e === void 0 || (this.scenes.set(e.name, e), !this.app.debugEnabled))
       return;
-    ls(), Ri(e);
+    us(), Ii(e);
     const t = ut(e);
     this.app.send({
       event: "addScene",
@@ -1098,7 +1102,7 @@ class xo extends zi {
   setScene(e) {
     if (e === void 0 || (this.scene = e, !this.app.debugEnabled))
       return;
-    this.renderer !== void 0 && (Jt.renderer = this.renderer), ls(), Ri(e);
+    this.renderer !== void 0 && (Jt.renderer = this.renderer), us(), Ii(e);
     const t = ut(e);
     this.app.send({
       event: "setScene",
@@ -1954,7 +1958,7 @@ function er(s) {
   }
   return /* @__PURE__ */ u.jsx("li", { className: t === e.title ? "selected" : "", children: n }, Ia());
 }
-function Oo(s, e, t) {
+function To(s, e, t) {
   function i(r) {
     switch (e.forEach((a) => {
       a.callback(s, a.remote, r);
@@ -2142,7 +2146,7 @@ function Qe(s) {
         "input",
         {
           type: "text",
-          value: s.value.toString(),
+          value: i.toString(),
           disabled: s.disabled,
           ref: e,
           className: "min",
@@ -2159,7 +2163,7 @@ function Qe(s) {
         {
           disabled: s.disabled,
           type: "range",
-          value: s.value,
+          value: i,
           min: s.min,
           max: s.max,
           step: s.step,
@@ -2182,7 +2186,7 @@ function ir(s) {
     window.removeEventListener("mousemove", T), window.removeEventListener("mouseup", S), m(!1);
   }
   function T(b) {
-    const C = r.current.getBoundingClientRect(), w = $e(0, 99, b.clientX - C.left) / 99, I = $e(0, 99, b.clientY - C.top) / 99, U = Me(Ii(l.min, l.max, w), 3), K = Me(Ii(l.min, l.max, I), 3);
+    const C = r.current.getBoundingClientRect(), w = $e(0, 99, b.clientX - C.left) / 99, I = $e(0, 99, b.clientY - C.top) / 99, U = Me(Di(l.min, l.max, w), 3), K = Me(Di(l.min, l.max, I), 3);
     s.onChange({ target: { value: { x: U, y: K } } }), c({ x: U, y: K });
   }
   function M(b) {
@@ -2198,7 +2202,7 @@ function ir(s) {
     d({ min: l.min, max: b }), (o.x > b || o.y > b) && c({ x: $e(l.min, b, o.x), y: $e(l.min, b, o.y) });
   }
   tt(() => {
-    const b = us(l.min, l.max, o.x), C = us(l.min, l.max, o.y);
+    const b = ds(l.min, l.max, o.x), C = ds(l.min, l.max, o.y);
     a.current.style.left = `${b * 100}%`, a.current.style.top = `${C * 100}%`;
   }, [l, o]);
   const E = s.step !== void 0 ? s.step : 0.01;
@@ -7357,7 +7361,7 @@ class pe extends jt {
     n.start(), this.selectedItem.getWorldPosition(e.target0);
     const r = () => {
       const a = n.getDelta();
-      this.cameraControls && this.cameraControls.update(a), t && (e.target.lerp(e.target0, i), e.object.position.lerp(e.position0, i), e.object.zoom = Ii(e.object.zoom, e.zoom0, i), e.object.updateProjectionMatrix(), e.dispatchEvent({ type: "change" })), n.getElapsedTime() >= 0.5 ? (cancelAnimationFrame(this.cameraControlsRafID), this.cameraControlsRafID = -1, this.clearControls()) : this.cameraControlsRafID = requestAnimationFrame(r);
+      this.cameraControls && this.cameraControls.update(a), t && (e.target.lerp(e.target0, i), e.object.position.lerp(e.position0, i), e.object.zoom = Di(e.object.zoom, e.zoom0, i), e.object.updateProjectionMatrix(), e.dispatchEvent({ type: "change" })), n.getElapsedTime() >= 0.5 ? (cancelAnimationFrame(this.cameraControlsRafID), this.cameraControlsRafID = -1, this.clearControls()) : this.cameraControlsRafID = requestAnimationFrame(r);
     };
     r();
   };
@@ -7968,7 +7972,7 @@ class ho extends jt {
   }
 }
 function uo(s) {
-  const [e] = B([]), [t] = B([]), [i, n] = B(0), r = (d) => {
+  const [e] = B([]), [t] = B([]), [i, n] = B(0), [r, a] = B(0), o = (d) => {
     const p = d.value;
     e.push(p), t.push(
       /* @__PURE__ */ u.jsx(
@@ -7985,7 +7989,7 @@ function uo(s) {
         Math.random()
       )
     ), n(Date.now());
-  }, a = (d) => {
+  }, c = (d) => {
     const p = d.value;
     for (let m = 0; m < e.length; m++)
       if (p.uuid === e[m].uuid) {
@@ -8004,7 +8008,7 @@ function uo(s) {
         ), n(Date.now());
         return;
       }
-  }, o = (d) => {
+  }, l = (d) => {
     const p = d.value;
     for (let m = 0; m < e.length; m++)
       if (p.uuid === e[m].uuid) {
@@ -8012,11 +8016,9 @@ function uo(s) {
         return;
       }
   };
-  tt(() => (D.addEventListener(P.ADD_SCENE, r), D.addEventListener(P.REFRESH_SCENE, a), D.addEventListener(P.REMOVE_SCENE, o), () => {
-    D.removeEventListener(P.ADD_SCENE, r), D.removeEventListener(P.REFRESH_SCENE, a), D.removeEventListener(P.REMOVE_SCENE, o);
-  }), []);
-  const [c, l] = B(0);
-  return /* @__PURE__ */ u.jsxs("div", { id: "SidePanel", children: [
+  return tt(() => (D.addEventListener(P.ADD_SCENE, o), D.addEventListener(P.REFRESH_SCENE, c), D.addEventListener(P.REMOVE_SCENE, l), () => {
+    D.removeEventListener(P.ADD_SCENE, o), D.removeEventListener(P.REFRESH_SCENE, c), D.removeEventListener(P.REMOVE_SCENE, l);
+  }), []), /* @__PURE__ */ u.jsxs("div", { id: "SidePanel", children: [
     /* @__PURE__ */ u.jsx("div", { className: "scenes", children: t }, i),
     /* @__PURE__ */ u.jsx(co, { three: s.three }),
     /* @__PURE__ */ u.jsx(ho, { three: s.three }),
@@ -8025,16 +8027,16 @@ function uo(s) {
       "input",
       {
         type: "number",
-        value: c,
+        value: r,
         onChange: (d) => {
           const p = d.target.value;
-          console.log(`Value: ${p}, Length: ${p.length}, #${Number(p)}`), l(p);
+          a(p);
         }
       }
     )
   ] });
 }
-function To(s) {
+function Mo(s) {
   return tt(() => {
     function e(o) {
       let c = null;
@@ -8100,7 +8102,7 @@ function po(s) {
     /* @__PURE__ */ u.jsx("div", { className: "footer", children: s.footer })
   ] });
 }
-function Mo(s) {
+function Ao(s) {
   return /* @__PURE__ */ u.jsx(po, { children: /* @__PURE__ */ u.jsxs(u.Fragment, { children: [
     /* @__PURE__ */ u.jsx(
       pe,
@@ -8117,7 +8119,7 @@ function Mo(s) {
 }
 export {
   ni as Accordion,
-  bo as Application,
+  Eo as Application,
   zi as BaseRemote,
   gn as ChildObject,
   fs as ContainerObject,
@@ -8130,33 +8132,38 @@ export {
   co as Inspector,
   pe as MultiView,
   fn as NavButton,
-  Ha as QualityType,
-  Eo as RemoteComponents,
-  Oo as RemoteController,
-  wo as RemoteTheatre,
-  xo as RemoteThree,
-  To as SceneInspector,
+  za as QualityType,
+  Co as RemoteComponents,
+  To as RemoteController,
+  xo as RemoteTheatre,
+  Oo as RemoteThree,
+  Mo as SceneInspector,
   uo as SidePanel,
   Ns as Spline,
   no as SplineEditor,
-  Mo as ThreeEditor,
+  Ao as ThreeEditor,
   P as ToolEvents,
   ge as Transform,
   si as capitalize,
+  $e as clamp,
   os as colorToHex,
   Ra as copyToClipboard,
-  So as customizeTheatreElements,
+  wo as customizeTheatreElements,
   D as debugDispatcher,
   _o as defaultTheatreCallback,
-  yo as detectSettings,
+  vo as detectSettings,
   He as dispose,
-  ka as disposeMaterial,
-  vo as disposeTexture,
-  Ri as hierarchyUUID,
+  Ha as disposeMaterial,
+  bo as disposeTexture,
+  yo as distance,
+  Ii as hierarchyUUID,
   La as isColor,
+  Di as mix,
   un as noop,
+  ds as normalize,
   Ia as randomID,
-  ls as resetThreeObjects,
-  Co as theatreEditorApp,
-  Di as totalThreeObjects
+  us as resetThreeObjects,
+  Me as round,
+  So as theatreEditorApp,
+  Ri as totalThreeObjects
 };
