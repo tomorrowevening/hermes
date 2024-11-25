@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { clamp, mix, normalize, round } from '@/utils/math';
+import DragNumber from './utils/DragNumber';
 
 interface InspectVector2Props {
   min: number
@@ -17,19 +18,77 @@ export default function InspectVector2(props: InspectVector2Props) {
   const maxRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const pointRef = useRef<HTMLDivElement>(null);
+  const xLabelRef = useRef<HTMLLabelElement>(null);
+  const yLabelRef = useRef<HTMLLabelElement>(null);
+  const minLabelRef = useRef<HTMLLabelElement>(null);
+  const maxLabelRef = useRef<HTMLLabelElement>(null);
 
   // States
-  const [value, setValue] = useState(props.value);
+  const [x, setX] = useState(props.value.x);
+  const [y, setY] = useState(props.value.y);
   const [bounds, setBounds] = useState({
     min: Math.min(props.min, Math.min(props.value.x, props.value.y)),
     max: Math.max(props.max, Math.max(props.value.x, props.value.y)),
   });
   const [mouseDown, setMouseDown] = useState(false);
 
+  // Hooks
+
+  DragNumber({
+    label: xLabelRef,
+    input: xRef,
+    defaultValue: x,
+    min: bounds.min,
+    max: bounds.max,
+    step: 0.01,
+    onChange: (newValue: number) => {
+      setX(newValue);
+      props.onChange({ target: { value: { x: newValue, y } } });
+    }
+  });
+
+  DragNumber({
+    label: yLabelRef,
+    input: yRef,
+    defaultValue: y,
+    min: bounds.min,
+    max: bounds.max,
+    step: 0.01,
+    onChange: (newValue: number) => {
+      setY(newValue);
+      props.onChange({ target: { value: { x, y: newValue } } });
+    }
+  });
+
+  DragNumber({
+    label: minLabelRef,
+    input: minRef,
+    defaultValue: bounds.min,
+    min: bounds.min - 1,
+    max: bounds.max + 1,
+    step: 0.01,
+    onChange: (newValue: number) => {
+      setBounds({ min: newValue, max: bounds.max });
+    }
+  });
+
+  DragNumber({
+    label: maxLabelRef,
+    input: maxRef,
+    defaultValue: bounds.max,
+    min: bounds.min - 1,
+    max: bounds.max + 1,
+    step: 0.01,
+    onChange: (newValue: number) => {
+      setBounds({ min: bounds.min, max: newValue });
+    }
+  });
+
+  // Mouse
+
   function onMouseDown() {
     if (mouseDown) return;
     window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
     window.addEventListener('mouseup', onMouseUp);
     setMouseDown(true);
   }
@@ -43,47 +102,37 @@ export default function InspectVector2(props: InspectVector2Props) {
   function onMouseMove(evt: MouseEvent) {
     const containerBounds = containerRef.current!.getBoundingClientRect();
     const xPercent = clamp(0, 99, evt.clientX - containerBounds.left) / 99;
-    const yPercent = clamp(0, 99, evt.clientY - containerBounds.top) / 99;
+    const yPercent = 1 - (clamp(0, 99, evt.clientY - containerBounds.top) / 99);
 
-    const x = round(mix(bounds.min, bounds.max, xPercent), 3);
-    const y = round(mix(bounds.min, bounds.max, yPercent), 3);
-    props.onChange({ target: { value: { x, y } } });
-    setValue({ x, y });
+    const xValue = round(mix(bounds.min, bounds.max, xPercent), 3);
+    const yValue = round(mix(bounds.min, bounds.max, yPercent), 3);
+    props.onChange({ target: { value: { x: xValue, y: yValue } } });
+    setX(xValue);
+    setY(yValue);
   }
 
-  function changeInput(evt: any) {
-    let x = value.x;
-    let y = value.y;
-    if (evt.target === xRef.current) {
-      x = Number(evt.target.value);
-    } else {
-      y = Number(evt.target.value);
-    }
-    setValue({ x, y });
-  }
+  // Input
 
   function changeMin() {
     const min = Number(minRef.current!.value);
     setBounds({ min: min, max: bounds.max });
-    if (value.x < min || value.y < min) {
-      setValue({ x: clamp(min, bounds.max, value.x), y: clamp(min, bounds.max, value.y) });
-    }
+
+    if (x < min) setX(clamp(min, bounds.max, x));
+    if (y < min) setY(clamp(min, bounds.max, y));
   }
 
   function changeMax() {
     const max = Number(maxRef.current!.value);
     setBounds({ min: bounds.min, max: max });
-    if (value.x > max || value.y > max) {
-      setValue({ x: clamp(bounds.min, max, value.x), y: clamp(bounds.min, max, value.y) });
-    }
+
+    if (x > max) setX(clamp(bounds.min, max, x));
+    if (y > max) setY(clamp(bounds.min, max, y));
   }
 
   useEffect(() => {
-    const x = normalize(bounds.min, bounds.max, value.x);
-    const y = normalize(bounds.min, bounds.max, value.y);
-    pointRef.current!.style.left = `${x * 100}%`;
-    pointRef.current!.style.top = `${y * 100}%`;
-  }, [bounds, value]);
+    pointRef.current!.style.left = `${normalize(bounds.min, bounds.max, x) * 100}%`;
+    pointRef.current!.style.top = `${(1 - normalize(bounds.min, bounds.max, y)) * 100}%`;
+  }, [bounds, x, y]);
 
   const step = props.step !== undefined ? props.step : 0.01;
 
@@ -91,31 +140,45 @@ export default function InspectVector2(props: InspectVector2Props) {
     <div className='vector2'>
       <div className='fields'>
         <div>
-          <label>X:</label>
+          <label ref={xLabelRef}>X</label>
           <input
             ref={xRef}
             type='number'
-            value={value.x}
+            value={x}
             min={bounds.min}
             max={bounds.max}
             step={step}
-            onChange={changeInput}
+            onChange={(evt: any) => {
+              setX(evt.target.value);
+              if (evt.target.value.length === 0) return;
+              const value = Number(evt.target.value);
+              if (isNaN(value)) return;
+              props.onChange({ target: { value: { x: value, y } } });
+              if (value < bounds.min) setBounds({ min: value, max: bounds.max });
+            }}
           />
         </div>
         <div>
-          <label>Y:</label>
+          <label ref={yLabelRef}>Y</label>
           <input
             ref={yRef}
             type='number'
-            value={value.y}
+            value={y}
             min={bounds.min}
             max={bounds.max}
             step={step}
-            onChange={changeInput}
+            onChange={(evt: any) => {
+              setY(evt.target.value);
+              if (evt.target.value.length === 0) return;
+              const value = Number(evt.target.value);
+              if (isNaN(value)) return;
+              props.onChange({ target: { value: { x, y: value } } });
+              if (value > bounds.max) setBounds({ min: bounds.min, max: value });
+            }}
           />
         </div>
         <div>
-          <label>Min:</label>
+          <label ref={minLabelRef}>Min</label>
           <input
             ref={minRef}
             type='number'
@@ -125,7 +188,7 @@ export default function InspectVector2(props: InspectVector2Props) {
           />
         </div>
         <div>
-          <label>Max:</label>
+          <label ref={maxLabelRef}>Max</label>
           <input
             ref={maxRef}
             type='number'
