@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.125",
+  "version": "0.0.126",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -50,8 +50,8 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@theatre/core": "0.7.0",
-    "@theatre/studio": "0.7.0",
+    "@theatre/core": "^0.7.2",
+    "@theatre/studio": "^0.7.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.169.0",

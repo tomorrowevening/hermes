@@ -1,4 +1,5 @@
 import {
+  AnimationClip,
   AnimationMixer,
   Audio,
   BufferGeometry,
@@ -8,6 +9,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
+  Object3DEventMap,
   ObjectLoader,
   OrthographicCamera,
   Scene,
@@ -192,31 +194,39 @@ export class ExportTexture {
 
 // Webworkers
 
-export function parseModelLite(model: ModelLite) {
-  const loader = new ObjectLoader();
-  const scene = loader.parse(model.scene);
+export type ParsedModel = {
+  cameras: Object3D[]
+  model: Object3D<Object3DEventMap>
+  mixer: AnimationMixer
+}
 
-  // Load animations
-  const mixer = new AnimationMixer(scene);
-  if (model.animations.length > 0) {
-    // @ts-ignore
-    const animations = model.animations.map(data => AnimationClip.parse(data));
-    // Play the first animation
-    const action = mixer.clipAction(animations[0]);
-    action.play();
-  }
+export function parseModelLite(model: ModelLite): Promise<ParsedModel> {
+  return new Promise((resolve) => {
+    const loader = new ObjectLoader();
+    loader.parseAsync(model.scene).then((scene: Object3D<Object3DEventMap>) => {
+      // Load animations
+      const mixer = new AnimationMixer(scene);
+      if (model.animations.length > 0) {
+        // @ts-ignore
+        const animations = model.animations.map(data => AnimationClip.parse(data));
+        // Play the first animation
+        const action = mixer.clipAction(animations[0]);
+        action.play();
+      }
 
-  const cameras: Object3D[] = [];
-  if (model.cameras && model.cameras.length > 0) {
-    model.cameras.forEach((value: unknown) => {
-      const camera = loader.parse(value);
-      cameras.push(camera);
+      const cameras: Object3D[] = [];
+      if (model.cameras && model.cameras.length > 0) {
+        model.cameras.forEach((value: unknown) => {
+          const camera = loader.parse(value);
+          cameras.push(camera);
+        });
+      }
+
+      resolve({
+        model: scene,
+        mixer,
+        cameras,
+      });
     });
-  }
-
-  return {
-    model: scene,
-    mixer,
-    cameras,
-  };
+  });
 }
