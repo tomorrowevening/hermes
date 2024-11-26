@@ -8,8 +8,8 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'Hermes',
+      formats: ['cjs', 'es'],
       fileName: (format) => `hermes.${format}.js`,
-      formats: ['cjs', 'es']
     },
     manifest: true,
     rollupOptions: {
@@ -19,8 +19,6 @@ export default defineConfig({
         'framer-motion',
         '@theatre/core',
         '@theatre/studio',
-        'tweakpane',
-        '@tweakpane/plugin-essentials',
         'postprocessing'
       ],
       output: {

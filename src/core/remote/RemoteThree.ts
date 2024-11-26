@@ -151,7 +151,7 @@ export default class RemoteThree extends BaseRemote {
   setRenderer(value: WebGLRenderer, inputElement: any = null) {
     this.renderer = value;
     this.canvas = value.domElement;
-    this.inputElement = inputElement;
+    this.inputElement = inputElement !== null ? inputElement : this.canvas;
 
     if (!this.app.debugEnabled) return;
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
