@@ -4,6 +4,7 @@ export * from './utils/detectSettings';
 export * from './utils/math';
 export * from './utils/three';
 export * from './webworkers/types';
+export * from './webworkers/EventHandling';
 export * from './webworkers/ProxyManager';
 export { default as Application } from './core/Application';
 export { debugDispatcher, ToolEvents } from './editor/global';

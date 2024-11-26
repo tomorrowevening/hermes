@@ -29,6 +29,11 @@ export class ElementProxyReceiver extends EventDispatcher {
   height: number = 0;
   ownerDocument: any = undefined;
 
+  constructor() {
+    super()
+    this.ownerDocument = this
+  }
+
   get clientWidth(): number {
     return this.width;
   }
@@ -79,10 +84,12 @@ export class ElementProxyReceiver extends EventDispatcher {
     this.dispatchEvent(data);
   }
 
-  focus(): void { }
+  focus(): void {
+    // No-op
+  }
 
   getRootNode(): any {
-    return this;
+    return this
   }
 }
 
