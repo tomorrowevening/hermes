@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.121",
+  "version": "0.0.122",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -22,8 +22,7 @@
     "dist/hermes.es.js",
     "dist/hermes.cjs.js",
     "dist/style.css",
-    "types/**/*.d.ts",
-    "src/webworkers/LoadWorker.ts"
+    "types/**/*.d.ts"
   ],
   "exports": {
     ".": {
@@ -31,7 +30,7 @@
       "require": "./dist/hermes.cjs.js",
       "types": "./types/index.d.ts"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css"
   },
   "repository": {
     "type": "git",
