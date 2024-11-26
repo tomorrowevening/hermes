@@ -6,7 +6,6 @@ export * from './utils/math';
 export * from './utils/three';
 export * from './webworkers/types';
 export * from './webworkers/ProxyManager';
-export { default as CreateLoadWorker } from './webworkers/CreateLoadWorker';
 export { default as Application } from './core/Application';
 export { debugDispatcher, ToolEvents } from './editor/global';
 export { default as BaseRemote } from './core/remote/BaseRemote';

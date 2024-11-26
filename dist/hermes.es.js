@@ -415,10 +415,7 @@ class xo {
     this.targets[e.id]?.handleEvent(e.data);
   }
 }
-function Oo() {
-  return new Worker(new URL("/assets/LoadWorker-5918cc62.js", self.location), { type: "module" });
-}
-class To {
+class Oo {
   components = /* @__PURE__ */ new Map();
   listen;
   // Protected
@@ -490,7 +487,7 @@ class Bi {
   handleEditor(e, t, i) {
   }
 }
-class Mo extends Bi {
+class To extends Bi {
   selectDropdown(e, t) {
     this.app.send({
       event: "selectComponent",
@@ -522,7 +519,7 @@ class Mo extends Bi {
     }
   }
 }
-function Ao(s, e, t) {
+function Mo(s, e, t) {
   if (s.editor) {
     t.ui.restore(), t.onSelectionChange((a) => {
       a.length < 1 || a.forEach((o) => {
@@ -565,7 +562,7 @@ function Ao(s, e, t) {
   } else
     t.ui.hide();
 }
-function Po() {
+function Ao() {
   setTimeout(() => {
     const s = document.getElementById("theatrejs-studio-root");
     if (s === null || s.shadowRoot === null)
@@ -591,7 +588,7 @@ function Po() {
     }
   }, 1e3);
 }
-class Do extends Bi {
+class Po extends Bi {
   project;
   sheets = /* @__PURE__ */ new Map();
   sheetObjects = /* @__PURE__ */ new Map();
@@ -1000,7 +997,7 @@ function fn(s) {
     }, i.onerror = t, i.src = s;
   });
 }
-class Ro extends Bi {
+class Do extends Bi {
   canvas = null;
   // Canvas or OffscreenCanvas
   inputElement = null;
@@ -2044,7 +2041,7 @@ function nr(s) {
   }
   return /* @__PURE__ */ u.jsx("li", { className: t === e.title ? "selected" : "", children: n }, Ua());
 }
-function Io(s, e, t) {
+function Ro(s, e, t) {
   function i(r) {
     switch (e.forEach((a) => {
       a.callback(s, a.remote, r);
@@ -8157,7 +8154,7 @@ function fo(s) {
     /* @__PURE__ */ u.jsx(ae, { three: s.three })
   ] });
 }
-function Lo(s) {
+function Io(s) {
   return tt(() => {
     function e(o) {
       let c = null;
@@ -8223,7 +8220,7 @@ function go(s) {
     /* @__PURE__ */ u.jsx("div", { className: "footer", children: s.footer })
   ] });
 }
-function ko(s) {
+function Lo(s) {
   return /* @__PURE__ */ u.jsx(go, { children: /* @__PURE__ */ u.jsxs(u.Fragment, { children: [
     /* @__PURE__ */ u.jsx(
       me,
@@ -8240,11 +8237,10 @@ function ko(s) {
 }
 export {
   ri as Accordion,
-  To as Application,
+  Oo as Application,
   Bi as BaseRemote,
   _n as ChildObject,
   vs as ContainerObject,
-  Oo as CreateLoadWorker,
   ir as Draggable,
   tr as DraggableItem,
   sr as Dropdown,
@@ -8257,22 +8253,22 @@ export {
   gn as NavButton,
   xo as ProxyManager,
   Ba as QualityType,
-  Mo as RemoteComponents,
-  Io as RemoteController,
-  Do as RemoteTheatre,
-  Ro as RemoteThree,
-  Lo as SceneInspector,
+  To as RemoteComponents,
+  Ro as RemoteController,
+  Po as RemoteTheatre,
+  Do as RemoteThree,
+  Io as SceneInspector,
   fo as SidePanel,
   Hs as Spline,
   oo as SplineEditor,
-  ko as ThreeEditor,
+  Lo as ThreeEditor,
   P as ToolEvents,
   ge as Transform,
   ai as capitalize,
   $e as clamp,
   hs as colorToHex,
   ka as copyToClipboard,
-  Po as customizeTheatreElements,
+  Ao as customizeTheatreElements,
   D as debugDispatcher,
   bo as defaultTheatreCallback,
   Co as detectSettings,
@@ -8289,6 +8285,6 @@ export {
   Ua as randomID,
   fs as resetThreeObjects,
   Ae as round,
-  Ao as theatreEditorApp,
+  Mo as theatreEditorApp,
   Li as totalThreeObjects
 };

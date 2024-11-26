@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.123",
+  "version": "0.0.124",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -30,7 +30,8 @@
       "require": "./dist/hermes.cjs.js",
       "types": "./types/index.d.ts"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./LoadWorker.ts": "./src/webworkers/LoadWorker.ts"
   },
   "repository": {
     "type": "git",
