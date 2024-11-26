@@ -195,6 +195,7 @@ export class ExportTexture {
 // Webworkers
 
 export type ParsedModel = {
+  animations: AnimationClip[]
   cameras: Object3D[]
   model: Object3D<Object3DEventMap>
   mixer: AnimationMixer
@@ -223,6 +224,7 @@ export function parseModelLite(model: ModelLite): Promise<ParsedModel> {
       }
 
       resolve({
+        animations: model.animations,
         model: scene,
         mixer,
         cameras,

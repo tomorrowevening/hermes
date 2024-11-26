@@ -346,6 +346,7 @@ function Uo(s) {
         const o = t.parse(a);
         r.push(o);
       }), e({
+        animations: s.animations,
         model: i,
         mixer: n,
         cameras: r

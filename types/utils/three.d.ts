@@ -1,4 +1,4 @@
-import { AnimationMixer, Material, Object3D, Object3DEventMap, Texture, WebGLRenderer } from 'three';
+import { AnimationClip, AnimationMixer, Material, Object3D, Object3DEventMap, Texture, WebGLRenderer } from 'three';
 import { ModelLite } from '../webworkers/types';
 export declare const disposeTexture: (texture?: Texture) => void;
 export declare const disposeMaterial: (material?: Material | Material[]) => void;
@@ -21,6 +21,7 @@ export declare class ExportTexture {
     private static renderToCanvas;
 }
 export type ParsedModel = {
+    animations: AnimationClip[];
     cameras: Object3D[];
     model: Object3D<Object3DEventMap>;
     mixer: AnimationMixer;
