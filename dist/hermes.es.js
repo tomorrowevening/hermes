@@ -416,7 +416,7 @@ class xo {
   }
 }
 function Oo() {
-  return new Worker(new URL("/assets/LoadWorker-e3775bcc.js", self.location), { type: "module" });
+  return new Worker(new URL("/assets/LoadWorker-5918cc62.js", self.location), { type: "module" });
 }
 class To {
   components = /* @__PURE__ */ new Map();

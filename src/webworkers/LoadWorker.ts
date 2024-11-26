@@ -142,6 +142,7 @@ function loadStart() {
 
 function onLoad() {
   loadedAssets++;
+  self.postMessage({ type: 'loadProgress', data: loadedAssets / assetList.length });
   if (loadedAssets >= assetList.length) loadComplete();
 }
 
