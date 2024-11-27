@@ -339,7 +339,7 @@ function Uo(s) {
       const n = new Xn(i);
       if (s.animations.length > 0) {
         const a = s.animations.map((c) => $n.parse(c));
-        n.clipAction(a[0]).play();
+        n.clipAction(a[0]).play(), n.getRoot().animations = s.animations, n.getRoot().mixer = n;
       }
       const r = [];
       s.cameras && s.cameras.length > 0 && s.cameras.forEach((a) => {

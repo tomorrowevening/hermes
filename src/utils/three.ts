@@ -213,6 +213,10 @@ export function parseModelLite(model: ModelLite): Promise<ParsedModel> {
         // Play the first animation
         const action = mixer.clipAction(animations[0]);
         action.play();
+
+        // Assign
+        mixer.getRoot()['animations'] = model.animations;
+        mixer.getRoot()['mixer'] = mixer;
       }
 
       const cameras: Object3D[] = [];
