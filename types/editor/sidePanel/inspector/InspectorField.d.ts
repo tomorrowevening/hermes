@@ -1,4 +1,5 @@
 import { KeyboardEvent } from 'react';
+import { OptionInfo } from '@/core/types';
 export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option' | 'vector2' | 'grid3' | 'grid4' | 'euler';
 export interface InspectorFieldProps {
     title: string;
@@ -9,7 +10,7 @@ export interface InspectorFieldProps {
     max?: number;
     step?: number;
     disabled?: boolean;
-    options?: any[];
+    options?: OptionInfo[];
     onChange?: (prop: string, value: any) => void;
     onKeyDown?: (evt: KeyboardEvent) => void;
 }

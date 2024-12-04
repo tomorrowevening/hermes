@@ -7,6 +7,7 @@ import InspectGrid3 from './InspectGrid3';
 import InspectGrid4 from './InspectGrid4';
 import InspectImage from './InspectImage';
 import { Color, LinearSRGBColorSpace } from 'three';
+import { OptionInfo } from '@/core/types';
 
 export type InspectorFieldType = 'string' |
   'number' |
@@ -30,7 +31,7 @@ export interface InspectorFieldProps {
   max?: number
   step?: number
   disabled?: boolean
-  options?: any[]
+  options?: OptionInfo[]
   onChange?: (prop: string, value: any) => void
   onKeyDown?: (evt: KeyboardEvent) => void
 }
