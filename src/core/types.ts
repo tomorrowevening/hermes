@@ -8,6 +8,11 @@ export interface BroadcastData {
   data?: any
 }
 
+export type OptionInfo = {
+  title: string
+  value: any
+}
+
 export interface GroupItemData {
   type: InspectorFieldType
   prop: string
@@ -17,7 +22,7 @@ export interface GroupItemData {
   max?: number
   step?: number
   disabled?: boolean
-  options?: any[]
+  options?: OptionInfo[]
 }
 
 export interface GroupData {

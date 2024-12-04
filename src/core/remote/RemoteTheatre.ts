@@ -1,11 +1,60 @@
 // Libs
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
+import { Vector3 } from 'three';
 // Core
 import Application from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
+
+type KeyframeData = {
+  position: number
+  value: number
+  type: string
+  handles: number[]
+}
+
+type KeyframeVector = {
+  position: number
+  x: number
+  y: number
+  z: number
+}
+
+// Cubic Bézier formula
+function cubicBezier(t: number, p0: number, p1: number, p2: number, p3: number): number {
+  const u = 1 - t;
+  return (
+    u * u * u * p0 +
+    3 * u * u * t * p1 +
+    3 * u * t * t * p2 +
+    t * t * t * p3
+  );
+}
+
+function interpolateBezierValue(
+  prevKeyframe: KeyframeData,
+  nextKeyframe: KeyframeData,
+  position: number
+): number {
+  if (prevKeyframe.type !== 'bezier' || prevKeyframe.handles.length !== 4) {
+    throw new Error('Invalid keyframe data for Bézier interpolation.');
+  }
+
+  const [h1Y, h2Y] = prevKeyframe.handles;
+
+  // Normalize the time within the segment
+  const t = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position);
+
+  return cubicBezier(
+    t,
+    prevKeyframe.value,
+    prevKeyframe.value + h1Y,
+    nextKeyframe.value + h2Y,
+    nextKeyframe.value
+  );
+}
 
 export default class RemoteTheatre extends BaseRemote {
   project: IProject | undefined;
@@ -103,11 +152,11 @@ export default class RemoteTheatre extends BaseRemote {
     const sheetID = this.getSheetInstance(sheetName, instanceId);
     const objName = `${sheetID}_${key}`;
     let obj = this.sheetObjects.get(objName);
+    let objProps = props;
     if (obj !== undefined) {
-      obj = sheet.object(key, {...props, ...obj.value}, {reconfigure: true});
-    } else {
-      obj = sheet.object(key, props);
+      objProps = {...props, ...obj.value}, {reconfigure: true};
     }
+    obj = sheet.object(key, objProps);
 
     this.sheetObjects.set(objName, obj);
     this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop);
@@ -144,6 +193,72 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
 
     return obj;
+  }
+
+  getSheetObjectKeyframes(sheetName: string, sheetObject: string, prop: string): any[] {
+    const sheet = this.sheet(sheetName);
+    if (sheet === undefined) return [];
+
+    const name = `${sheetName}_${sheetObject}`;
+    const sheetObjects = this.sheetObjects.get(name);
+    if (sheetObjects === undefined) return [];
+
+    return sheet.sequence.__experimental_getKeyframes(sheetObjects.props[prop]);
+  }
+
+  getSheetObjectVectors(sheetName: string, sheetObject: string): KeyframeVector[] {
+    const sheet = this.sheet(sheetName);
+    if (sheet === undefined) return [];
+
+    const name = `${sheetName}_${sheetObject}`;
+    const sheetObjects = this.sheetObjects.get(name);
+    if (sheetObjects === undefined) return [];
+
+    const keyframes: KeyframeVector[] = [];
+    const x = sheet.sequence.__experimental_getKeyframes(sheetObjects.props.x);
+    const y = sheet.sequence.__experimental_getKeyframes(sheetObjects.props.y);
+    const z = sheet.sequence.__experimental_getKeyframes(sheetObjects.props.z);
+
+    // Create a Set of all unique positions
+    const uniquePositions = new Set<number>();
+    x.forEach((kf) => uniquePositions.add(kf.position));
+    y.forEach((kf) => uniquePositions.add(kf.position));
+    z.forEach((kf) => uniquePositions.add(kf.position));
+
+    // Sort positions
+    const sortedPositions = Array.from(uniquePositions).sort((a, b) => a - b);
+    sortedPositions.forEach((position) => {
+      const interpolateValue = (
+        // keyframes: KeyframeData[],
+        keyframes: any[],
+        position: number
+      ): number => {
+        const prevKeyframe = keyframes.find((kf, i) => {
+          return kf.position <= position && (keyframes[i + 1]?.position || Infinity) > position;
+        });
+  
+        const nextKeyframe = keyframes.find((kf) => kf.position > position);
+  
+        if (!prevKeyframe) return nextKeyframe?.value || 0;
+        if (!nextKeyframe || prevKeyframe.position === position) return prevKeyframe.value;
+  
+        if (prevKeyframe.type === 'bezier') {
+          return interpolateBezierValue(prevKeyframe, nextKeyframe, position);
+        }
+  
+        // Linear interpolation for non-bezier keyframes
+        const t = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position);
+        return prevKeyframe.value + t * (nextKeyframe.value - prevKeyframe.value);
+      };
+  
+      keyframes.push({
+        position,
+        x: interpolateValue(x, position),
+        y: interpolateValue(y, position),
+        z: interpolateValue(z, position),
+      });
+    });
+    return keyframes;
   }
 
   unsubscribe(sheetObject: ISheetObject) {

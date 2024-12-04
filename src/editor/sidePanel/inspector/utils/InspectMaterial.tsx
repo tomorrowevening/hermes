@@ -37,6 +37,7 @@ import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 import { KeyboardEvent } from 'react';
+import { OptionInfo } from '@/core/types';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -427,7 +428,7 @@ const blendDestinationOpts: any[] = [
   },
 ];
 
-function updateFieldOptions(obj: any, options: any[]) {
+function updateFieldOptions(obj: any, options: OptionInfo[]) {
   obj.needsUpdate = true;
   obj.type = 'option';
   obj.options = options;

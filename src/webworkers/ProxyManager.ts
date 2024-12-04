@@ -30,8 +30,8 @@ export class ElementProxyReceiver extends EventDispatcher {
   ownerDocument: any = undefined;
 
   constructor() {
-    super()
-    this.ownerDocument = this
+    super();
+    this.ownerDocument = this;
   }
 
   get clientWidth(): number {
@@ -89,7 +89,7 @@ export class ElementProxyReceiver extends EventDispatcher {
   }
 
   getRootNode(): any {
-    return this
+    return this;
   }
 }
 
