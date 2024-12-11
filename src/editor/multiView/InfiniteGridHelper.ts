@@ -1,5 +1,5 @@
 import { Mesh, PlaneGeometry } from 'three';
-import InfiniteGridMaterial from './InfiniteGridMaterial';
+import InfiniteGridMaterial, { InfiniteGridProps } from './InfiniteGridMaterial';
 
 /**
  * Copied from:
@@ -9,13 +9,12 @@ import InfiniteGridMaterial from './InfiniteGridMaterial';
 export default class InfiniteGridHelper extends Mesh {
   gridMaterial: InfiniteGridMaterial;
 
-  constructor() {
-    const material = new InfiniteGridMaterial();
-    super(new PlaneGeometry(2, 2), material);
+  constructor(props?: InfiniteGridProps) {
+    const material = new InfiniteGridMaterial(props);
+    super(new PlaneGeometry(), material);
     this.gridMaterial = material;
     this.frustumCulled = false;
     this.name = 'InfiniteGridHelper';
-    this.position.y = 0.1;
   }
 
   update() {
