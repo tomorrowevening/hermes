@@ -1,7 +1,7 @@
 import { Mesh } from 'three';
-import InfiniteGridMaterial from './InfiniteGridMaterial';
+import InfiniteGridMaterial, { InfiniteGridProps } from './InfiniteGridMaterial';
 export default class InfiniteGridHelper extends Mesh {
     gridMaterial: InfiniteGridMaterial;
-    constructor();
+    constructor(props?: InfiniteGridProps);
     update(): void;
 }

@@ -1,5 +1,5 @@
 // Libs
-import { CSSProperties, Component, ReactNode, RefObject, createRef, useState } from 'react';
+import { Component, ReactNode, RefObject, createRef } from 'react';
 import {
   AxesHelper,
   Box3,
@@ -58,6 +58,7 @@ import { mix } from '@/utils/math';
 import { dispose } from '@/utils/three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
+import DebugData from '../sidePanel/DebugData';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
@@ -105,8 +106,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private lightHelpers: Map<string, LightHelper> = new Map();
   private helpersContainer = new Group();
   private grid = new InfiniteGridHelper();
-  private axisHelper = new AxesHelper(500);
-  private interactionHelper = new AxesHelper(100);
+  private interactionHelper = new AxesHelper(25);
   private currentTransform?: TransformControls;
 
   // Tools
@@ -240,6 +240,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   componentWillUnmount(): void {
     this.disable();
+    DebugData.removeEditorGroup('View Settings');
   }
 
   render(): ReactNode {
@@ -526,17 +527,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     this.helpersContainer.add(this.grid);
 
-    this.axisHelper.name = 'axisHelper';
-    this.helpersContainer.add(this.axisHelper);
-
     this.interactionHelper.name = 'interactionHelper';
-    this.helpersContainer.add(this.interactionHelper);
     this.interactionHelper.visible = false;
+    this.helpersContainer.add(this.interactionHelper);
 
     // Create default cameras
 
     const createOrtho = (name: string, position: Vector3) => {
-      const camera = new OrthographicCamera(-100, 100, 100, -100, 50, 5000);
+      const camera = new OrthographicCamera(-100, 100, 100, -100, 0, 3000);
       camera.name = name;
       camera.position.copy(position);
       camera.lookAt(0, 0, 0);
@@ -544,13 +542,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       return camera;
     };
 
-    createOrtho('Top', new Vector3(0, 1000, 0));
-    createOrtho('Bottom', new Vector3(0, -1000, 0));
-    createOrtho('Left', new Vector3(-1000, 0, 0));
-    createOrtho('Right', new Vector3(1000, 0, 0));
-    createOrtho('Front', new Vector3(0, 0, 1000));
-    createOrtho('Back', new Vector3(0, 0, -1000));
-    createOrtho('Orthographic', new Vector3(1000, 1000, 1000));
+    const dist = 1000;
+    createOrtho('Top', new Vector3(0, dist, 0));
+    createOrtho('Bottom', new Vector3(0, -dist, 0));
+    createOrtho('Left', new Vector3(-dist, 0, 0));
+    createOrtho('Right', new Vector3(dist, 0, 0));
+    createOrtho('Front', new Vector3(0, 0, dist));
+    createOrtho('Back', new Vector3(0, 0, -dist));
+    createOrtho('Orthographic', new Vector3(dist, dist, dist));
     createOrtho('UI', new Vector3());
 
     this.debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
@@ -577,6 +576,24 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   private setupTools() {
+    DebugData.addEditorGroup({
+      title: 'View Settings',
+      items: [
+        {
+          type: 'boolean',
+          prop: 'Show Grid',
+          value: this.grid.visible,
+        }
+      ],
+      onUpdate: (prop: string, value: any) => {
+        switch (prop) {
+          case 'Show Grid':
+            this.grid.visible = value;
+            break;
+        }
+      },
+    });
+
     this.splineEditor = new SplineEditor(this.currentCamera);
     this.splineEditor.initDebug();
     this.scene.add(this.splineEditor);
@@ -718,7 +735,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private sceneUpdate = (evt: any) => {
-    this.helpersContainer.add(this.axisHelper);
     this.clearLightHelpers();
     this.scene.remove(this.currentScene!);
     dispose(this.currentScene!);
@@ -1215,12 +1231,28 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     return null;
   }
 
+  private drawTo(x: number, y: number, width: number, height: number, camera: Camera, material: Material | null) {
+    switch (camera.name) {
+      case 'Left':
+      case 'Right':
+        this.grid.rotation.z = Math.PI / 2;
+        break;
+      case 'Front':
+      case 'Back':
+        this.grid.rotation.x = Math.PI / 2;
+        break;
+    }
+
+    this.scene.overrideMaterial = material;
+    this.renderer?.setViewport(x, y, width, height);
+    this.renderer?.setScissor(x, y, width, height);
+    this.renderer?.render(this.scene, camera);
+    this.grid.rotation.set(0, 0, 0);
+  }
+
   private drawSingle() {
     const material = this.getSceneOverride(this.tlRender);
-    this.scene.overrideMaterial = material;
-    this.renderer?.setViewport(0, 0, this.width, this.height);
-    this.renderer?.setScissor(0, 0, this.width, this.height);
-    this.renderer?.render(this.scene, this.tlCam);
+    this.drawTo(0, 0, this.width, this.height, this.tlCam, material);
   }
 
   private drawDouble = () => {
@@ -1229,26 +1261,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     const bw = Math.floor(this.width / 2);
     const bh = Math.floor(this.height / 2);
 
-    this.scene.overrideMaterial = materialA;
     if (this.state.mode === 'Side by Side') {
-      this.renderer?.setViewport(0, 0, bw, this.height);
-      this.renderer?.setScissor(0, 0, bw, this.height);
-      this.renderer?.render(this.scene, this.tlCam);
-
-      this.scene.overrideMaterial = materialB;
-      this.renderer?.setViewport(bw, 0, bw, this.height);
-      this.renderer?.setScissor(bw, 0, bw, this.height);
-      this.renderer?.render(this.scene, this.trCam);
+      this.drawTo(0, 0, bw, this.height, this.tlCam, materialA);
+      this.drawTo(bw, 0, bw, this.height, this.trCam, materialB);
     } else {
       const y = this.height - bh;
-      this.renderer?.setViewport(0, y, this.width, bh);
-      this.renderer?.setScissor(0, y, this.width, bh);
-      this.renderer?.render(this.scene, this.tlCam);
-
-      this.scene.overrideMaterial = materialB;
-      this.renderer?.setViewport(0, 0, this.width, bh);
-      this.renderer?.setScissor(0, 0, this.width, bh);
-      this.renderer?.render(this.scene, this.trCam);
+      this.drawTo(0, y, this.width, bh, this.tlCam, materialA);
+      this.drawTo(0, 0, this.width, bh, this.trCam, materialB);
     }
   };
 
@@ -1265,33 +1284,22 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     // TL
     x = 0;
-    this.scene.overrideMaterial = materialA;
-    this.renderer?.setViewport(x, y, bw, bh);
-    this.renderer?.setScissor(x, y, bw, bh);
-    this.renderer?.render(this.scene, this.tlCam);
+    this.drawTo(x, y, bw, bh, this.tlCam, materialA);
 
     // TR
     x = bw;
-    this.scene.overrideMaterial = materialB;
-    this.renderer?.setViewport(x, y, bw, bh);
-    this.renderer?.setScissor(x, y, bw, bh);
-    this.renderer?.render(this.scene, this.trCam);
+    this.drawTo(x, y, bw, bh, this.trCam, materialB);
 
     y = 0;
 
     // BL
     x = 0;
     this.scene.overrideMaterial = materialC;
-    this.renderer?.setViewport(x, y, bw, bh);
-    this.renderer?.setScissor(x, y, bw, bh);
-    this.renderer?.render(this.scene, this.blCam);
+    this.drawTo(x, y, bw, bh, this.blCam, materialC);
 
     // BR
     x = bw;
-    this.scene.overrideMaterial = materialD;
-    this.renderer?.setViewport(x, y, bw, bh);
-    this.renderer?.setScissor(x, y, bw, bh);
-    this.renderer?.render(this.scene, this.brCam);
+    this.drawTo(x, y, bw, bh, this.brCam, materialD);
   };
 
   // Getters

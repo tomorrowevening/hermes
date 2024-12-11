@@ -27,7 +27,7 @@ export default function InspectGrid4(props: InspectGrid4Props) {
         <div key={param}>
           <label ref={labelRef}>{param.toUpperCase()}</label>
           <InspectNumber
-            value={vector.x}
+            value={vector[param]}
             type='number'
             prop={param}
             step={step}

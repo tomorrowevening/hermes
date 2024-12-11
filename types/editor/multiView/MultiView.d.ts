@@ -32,7 +32,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private lightHelpers;
     private helpersContainer;
     private grid;
-    private axisHelper;
     private interactionHelper;
     private currentTransform?;
     private splineEditor;
@@ -105,6 +104,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private saveExpandedCameraVisibility;
     private saveExpandedLightVisibility;
     private getSceneOverride;
+    private drawTo;
     private drawSingle;
     private drawDouble;
     private drawQuad;

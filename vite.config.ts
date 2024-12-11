@@ -29,7 +29,16 @@ export default defineConfig({
       }
     }
   },
-  plugins: [glsl(), react()],
+  plugins: [
+    glsl({
+      include: ['**/*.glsl', '**/*.vert', '**/*.frag'],
+      warnDuplicatedImports: true,
+      defaultExtension: 'glsl',
+      compress: false,
+      watch: true,
+    }),
+    react()
+  ],
   resolve: {
     alias: {
       '@': '/src',

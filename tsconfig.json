@@ -40,7 +40,10 @@
     "dist",
     "node_modules",
     "src/example",
-    "types"
+    "types",
+    "*.vert",
+    "*.frag",
+    "*.glsl"
   ],
   "references": [
     {
