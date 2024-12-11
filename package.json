@@ -65,6 +65,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "framer-motion": "^10.16.0",
+    "glslify": "^7.1.1",
+    "glslify-loader": "^2.0.0",
     "path": "^0.12.7",
     "postprocessing": "^6.36.3",
     "react": "^18.2.0",
