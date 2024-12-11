@@ -1,5 +1,5 @@
 import { Color, ShaderMaterial } from 'three';
-type InfiniteGridProps = {
+export type InfiniteGridProps = {
     divisions?: number;
     scale?: number;
     color?: Color;
@@ -10,4 +10,3 @@ type InfiniteGridProps = {
 export default class InfiniteGridMaterial extends ShaderMaterial {
     constructor(props?: InfiniteGridProps);
 }
-export {};
