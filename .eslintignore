@@ -7,3 +7,6 @@ dist
 public
 types
 node_modules
+*.vert
+*.frag
+*.glsl
