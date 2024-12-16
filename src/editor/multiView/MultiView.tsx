@@ -469,7 +469,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               });
 
               if (this.selectedItem !== undefined) {
-                if (!selected && this.selectedItem instanceof PerspectiveCamera) {
+                if (!selected) {
                   const helper = this.cameraHelpers.get(this.selectedItem.name);
                   if (helper !== undefined) helper.visible = true;
                 }
@@ -622,16 +622,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   private update() {
     // Updates
-    this.controls.forEach((control: OrbitControls) => {
-      control.update();
-    });
-    this.cameraHelpers.forEach((helper: CameraHelper) => {
-      helper.update();
-    });
+    this.controls.forEach((control: OrbitControls) => control.update());
+    this.cameraHelpers.forEach((helper: CameraHelper) => helper.update());
     this.lightHelpers.forEach((helper: LightHelper) => {
       if (helper['update'] !== undefined) helper['update']();
     });
-
     if (this.props.onSceneUpdate !== undefined && this.sceneSet) this.props.onSceneUpdate(this.currentScene!);
   }
 
@@ -729,8 +724,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       } else if (camera instanceof PerspectiveCamera) {
         camera.aspect = aspect;
         camera.updateProjectionMatrix();
-        this.cameraHelpers.get(camera.name)?.update();
       }
+      this.cameraHelpers.get(camera.name)?.update();
     });
   };
 
@@ -754,16 +749,17 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private addCamera = (evt: any) => {
     const data = evt.value;
     const child = this.props.three.scene?.getObjectByProperty('uuid', data.uuid);
-    if (child !== undefined) this.cameras.set(data.name, child as Camera);
+    if (child !== undefined) {
+      const camera = child as Camera;
+      this.cameras.set(data.name, camera);
 
-    if (child instanceof PerspectiveCamera) {
-      const helper = new CameraHelper(child);
+      const helper = new CameraHelper(camera);
       helper.visible = this.cameraVisibility;
-      this.cameraHelpers.set(child.name, helper);
+      this.cameraHelpers.set(camera.name, helper);
       this.scene.add(helper);
-    }
 
-    this.setState({ lastUpdate: Date.now() });
+      this.setState({ lastUpdate: Date.now() });
+    }
   };
 
   private removeCamera = (evt: any) => {
@@ -952,7 +948,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private updateSelectedItemHelper(visible: boolean) {
     if (this.selectedItem === undefined) return;
 
-    if (this.selectedItem instanceof PerspectiveCamera && !this.cameraVisibility) {
+    if (!this.cameraVisibility) {
       const helper = this.cameraHelpers.get(this.selectedItem.name);
       if (helper !== undefined) helper.visible = visible;
     } else if (this.selectedItem['isLight'] === true && !this.lightVisibility) {
