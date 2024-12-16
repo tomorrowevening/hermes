@@ -67,7 +67,7 @@ export function InspectCamera(object: RemoteObject, three: RemoteThree): any {
         prop: i,
         type: 'number',
         step: 0.01,
-        value: object.perspectiveCameraInfo![i],
+        value: object.orthographicCameraInfo![i],
         onChange: (prop: string, value: any) => {
           // App
           three.updateObject(object.uuid, prop, value);
