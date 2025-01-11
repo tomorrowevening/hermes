@@ -13,6 +13,7 @@ import {
   ObjectLoader,
   OrthographicCamera,
   Scene,
+  ShaderMaterial,
   Texture,
   WebGLRenderer,
 } from 'three';
@@ -30,6 +31,28 @@ export const disposeMaterial = (material?: Material | Material[]): void => {
   if (Array.isArray(material)) {
     material.forEach((mat: Material) => mat.dispose());
   } else {
+    // Dispose Textures
+    for (const i in material) {
+      const prop = material[i];
+      if (prop !== null) {
+        if (prop instanceof Texture) {
+          disposeTexture(prop as Texture);
+        }
+      }
+    }
+
+    // Shader Material
+    if (material['isShaderMaterial'] === true) {
+      const shaderMat = material as ShaderMaterial;
+      for (const i in shaderMat.uniforms) {
+        const uniform = shaderMat.uniforms[i];
+        if (uniform.value !== null) {
+          if (uniform.value instanceof Texture) {
+            disposeTexture(uniform.value as Texture);
+          }
+        }
+      }
+    }
     material.dispose();
   }
 };
