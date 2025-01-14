@@ -27,8 +27,7 @@ export default class BaseScene extends Scene {
 
   init(): Promise<void> {
     return new Promise((resolve) => {
-      this.setupCameras()
-        .then(() => this.setupLights())
+      this.setupLights()
         .then(() => this.setupCameras())
         .then(() => this.setupWorld())
         .then(() => this.setupPost())
