@@ -35,4 +35,4 @@ export { default as Editor } from './editor/Editor';
 export { default as ThreeEditor } from './editor/ThreeEditor';
 export { default as Transform } from './editor/tools/Transform';
 export { default as Spline } from './editor/tools/splineEditor/Spline';
-export { default as SplineEditor } from './editor/tools/splineEditor/index';
+export { default as SplineEditor } from './editor/tools/splineEditor';
