@@ -8,7 +8,7 @@ export interface DropdownOption {
   onSelect?: (value: any) => void
   selectable?: boolean
   // Draggable
-  onDragComplete?: (options: Array<string>) => void
+  onDragComplete?: (options: string[]) => void
 }
 
 export interface DropdownProps {
@@ -22,7 +22,7 @@ export interface DropdownItemProps {
   option: DropdownOption
   onSelect?: (value: any) => void
   // Draggable
-  onDragComplete?: (options: Array<string>) => void
+  onDragComplete?: (options: string[]) => void
 }
 
 // Draggable
@@ -30,12 +30,16 @@ export interface DropdownItemProps {
 export interface DraggableItemProps {
   index: number
   title: string
+  draggingIndex: number | null
   onDelete: (index: number) => void
+  onDragStart: (value: number) => void
+  onDragOver: (value: number) => void
+  onDragEnd: () => void
 }
 
 export interface DraggableProps {
   title: string
-  options: Array<string>
-  onDragComplete: (options: Array<string>) => void
+  options: string[]
+  onDragComplete: (options: string[]) => void
   subdropdown?: boolean
 }
