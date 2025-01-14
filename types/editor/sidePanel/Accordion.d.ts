@@ -1,4 +1,3 @@
-/// <reference types="react" />
 type AccordionProps = {
     label: string;
     scene?: any;

@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.132",
+  "version": "0.0.133",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -64,7 +64,6 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "framer-motion": "^10.16.0",
     "glslify": "^7.1.1",
     "glslify-loader": "^2.0.0",
     "path": "^0.12.7",

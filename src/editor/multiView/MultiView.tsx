@@ -525,6 +525,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.helpersContainer.name = 'helpers';
     this.scene.add(this.helpersContainer);
 
+    this.grid.position.y = -1;
     this.helpersContainer.add(this.grid);
 
     this.interactionHelper.name = 'interactionHelper';

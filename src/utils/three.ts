@@ -29,7 +29,7 @@ export const disposeMaterial = (material?: Material | Material[]): void => {
   if (!material) return;
 
   if (Array.isArray(material)) {
-    material.forEach((mat: Material) => mat.dispose());
+    material.forEach((mat: Material) => disposeMaterial(mat));
   } else {
     // Dispose Textures
     for (const i in material) {

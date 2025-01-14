@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { Camera } from 'three';
 import { RenderMode } from './MultiViewData';
 interface DropdownProps {

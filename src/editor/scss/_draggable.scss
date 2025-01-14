@@ -2,6 +2,14 @@
 
 .editor .header .draggable {
   li {
+    cursor: grab;
+    transition: transform 0.25s ease-out;
+    &.dragging {
+      transform: scale(1.1);
+      div {
+        background-color: $BTN_DRAG;
+      }
+    }
     div {
       background-color: $BAR_COLOR;
       line-height: 14px;
@@ -29,9 +37,7 @@
         width: 14px;
         height: 14px;
         transform: translateY(-50%);
-        &:hover {
-          background-color: transparent;
-        }
+        visibility: inherit;
         svg {
           background-color: transparent;
           left: 0px;
