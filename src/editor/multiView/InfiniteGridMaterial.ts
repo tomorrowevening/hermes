@@ -119,8 +119,6 @@ export default class InfiniteGridMaterial extends ShaderMaterial {
       side: DoubleSide,
       transparent: true,
       name: 'InfiniteGrid',
-      depthTest: false,
-      depthWrite: false,
       vertexShader: vertex,
       fragmentShader: fragment,
     });
