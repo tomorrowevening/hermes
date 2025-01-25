@@ -8,18 +8,24 @@ export type File = {
   type: FileType
 }
 
-export type Assets = {
-  audio: any
-  blob: any
-  buffer: any
-  images: any
-  json: any
-  models: any
-  video: any
+export type ModelInfo = {
+  animations: AnimationClip[]
+  cameras?: Object3DJSON[]
+  scene: Object3DJSON
 }
 
 export type ModelLite = {
   animations: AnimationClip[]
   cameras?: Object3DJSON[]
   scene: Object3DJSON
+}
+
+export type Assets = {
+  audio: Map<string, ArrayBuffer>
+  blob: Map<string, Blob>
+  buffer: Map<string, ArrayBuffer>
+  image: Map<string, ImageBitmap>
+  json: Map<string, any>
+  model: Map<string, ModelInfo>
+  video: Map<string, Blob>
 }
