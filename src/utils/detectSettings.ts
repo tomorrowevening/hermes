@@ -16,6 +16,25 @@ export type AppSettings = {
   quality: QualityType;
 }
 
+function detectMaxFrameRate(callback: (fps: number) => void) {
+  let frameCount = 0;
+  const startTime = performance.now();
+
+  function measureFrameRate() {
+    frameCount++;
+    const currentTime = performance.now();
+    if (currentTime - startTime >= 40) {
+      const frameRate = frameCount / ((currentTime - startTime) / 1000);
+      const roundedFPS = Math.round(frameRate / 30) * 30;
+      callback(roundedFPS);
+    } else {
+      requestAnimationFrame(measureFrameRate);
+    }
+  }
+
+  requestAnimationFrame(measureFrameRate);
+}
+
 export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> {
   return new Promise((resolve) => {
     // Detect settings
@@ -35,7 +54,7 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
       // Update Settings
       const settings: AppSettings = {
         dpr: devicePixelRatio,
-        fps: gpuTier.fps !== undefined ? gpuTier.fps : 30,
+        fps: 30,
         width: innerWidth,
         height: innerHeight,
         mobile: gpuTier.isMobile !== undefined ? gpuTier.isMobile : false,
@@ -45,7 +64,10 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
       if (gpuTier.tier === 3) settings.quality = QualityType.High;
       else if (gpuTier.tier === 2) settings.quality = QualityType.Medium;
 
-      resolve(settings);
+      detectMaxFrameRate((fps: number) => {
+        settings.fps = fps;
+        resolve(settings);
+      });
     });
   });
 }
