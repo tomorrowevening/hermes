@@ -16,14 +16,14 @@ export type AppSettings = {
   quality: QualityType;
 }
 
-function detectMaxFrameRate(callback: (fps: number) => void) {
+export function detectMaxFrameRate(callback: (fps: number) => void) {
   let frameCount = 0;
   const startTime = performance.now();
 
   function measureFrameRate() {
     frameCount++;
     const currentTime = performance.now();
-    if (currentTime - startTime >= 40) {
+    if (currentTime - startTime >= 100) {
       const frameRate = frameCount / ((currentTime - startTime) / 1000);
       const roundedFPS = Math.round(frameRate / 30) * 30;
       callback(roundedFPS);
@@ -37,9 +37,8 @@ function detectMaxFrameRate(callback: (fps: number) => void) {
 
 export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> {
   return new Promise((resolve) => {
-    // Detect settings
+
     getGPUTier().then((gpuTier: TierResult) => {
-      // Detect Support
       let supportOffScreenWebGL = false;
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       supportOffScreenWebGL = 'transferControlToOffscreen' in canvas;
@@ -51,7 +50,6 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
         supportOffScreenWebGL = safariVersion >= 17;
       }
     
-      // Update Settings
       const settings: AppSettings = {
         dpr: devicePixelRatio,
         fps: 30,
@@ -68,6 +66,8 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
         settings.fps = fps;
         resolve(settings);
       });
+
+      resolve(settings);
     });
   });
 }

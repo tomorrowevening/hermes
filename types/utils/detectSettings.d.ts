@@ -12,4 +12,5 @@ export type AppSettings = {
     supportOffScreenCanvas: boolean;
     quality: QualityType;
 };
+export declare function detectMaxFrameRate(callback: (fps: number) => void): void;
 export declare function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings>;
