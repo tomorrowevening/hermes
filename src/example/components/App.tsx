@@ -10,6 +10,7 @@ import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 import { debugDispatcher, ToolEvents } from '../../editor/global';
+import { detectSettings } from '../../utils/detectSettings';
 import { dispose } from '../../utils/three';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
@@ -50,6 +51,13 @@ function App() {
       if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
       app.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas !== null) {
+      detectSettings(canvas).then((settings) => console.log('Settings', settings));
+    }
   }, []);
 
   // Renderer setup
