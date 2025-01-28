@@ -22,7 +22,6 @@ export { default as DraggableItem } from './editor/components/DraggableItem';
 export { default as Draggable } from './editor/components/Draggable';
 export { default as DropdownItem } from './editor/components/DropdownItem';
 export { default as Dropdown } from './editor/components/Dropdown';
-export { default as RemoteController } from './core/RemoteController';
 // RemoteThree
 export { default as SidePanel } from './editor/sidePanel/SidePanel';
 export { default as Accordion } from './editor/sidePanel/Accordion';

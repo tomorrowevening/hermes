@@ -1,7 +1,6 @@
 import { EventDispatcher } from 'three';
 import studio from '@theatre/studio';
 import Application from '../core/Application';
-import RemoteController from '../core/RemoteController';
 import RemoteComponents from '../core/remote/RemoteComponents';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import RemoteThree from '../core/remote/RemoteThree';
@@ -30,16 +29,15 @@ if (IS_DEV) {
   theatre.studio = studio;
   const components = new RemoteComponents(app);
   app.addComponent('components', components);
-  const appHandlers: any[] = [
+  app.appHandlers = [
     { remote: theatre, callback: theatre.handleApp },
     { remote: three, callback: three.handleApp },
     { remote: components, callback: components.handleApp },
   ];
-  const editorHandlers: any[] = [
+  app.editorHandlers = [
     { remote: theatre, callback: theatre.handleEditor },
     { remote: three, callback: three.handleEditor },
   ];
-  RemoteController(app, appHandlers, editorHandlers);
 
   const onLoad = () => {
     threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);

@@ -1,9 +1,17 @@
+import { debugDispatcher, ToolEvents } from '@/editor/global';
 import BaseRemote from './remote/BaseRemote';
 import { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
 
+export type RemoteCallback = (app: Application, remote: any, msg: BroadcastData) => void;
+interface RemoteCall {
+  remote: any;
+  callback: RemoteCallback;
+}
+
 export default class Application {
   components: Map<string, any> = new Map();
-  listen?: BroadcastCallback;
+  appHandlers: RemoteCall[] = [];
+  editorHandlers: RemoteCall[] = [];
   
   // Protected
   protected _appID = '';
@@ -64,14 +72,39 @@ export default class Application {
   }
 
   private messageHandler = (evt: MessageEvent) => {
-    if (this.listen !== undefined) {
-      if (this._useBC) {
-        this.listen(evt.data);
-      } else {
-        this.listen(JSON.parse(evt.data));
-      }
+    let data: BroadcastData = evt.data;
+    if (!this._useBC) data = JSON.parse(evt.data);
+
+    if (data.target === 'editor') {
+      this.handleEditorBroadcast(data);
+    } else {
+      this.handleAppBroadcast(data);
     }
   };
+
+  private handleAppBroadcast(msg: BroadcastData) {
+    this.appHandlers.forEach((remoteCall: RemoteCall) => {
+      remoteCall.callback(this, remoteCall.remote, msg);
+    });
+
+    switch (msg.event) {
+      case 'custom':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+    }
+  }
+
+  private handleEditorBroadcast(msg: BroadcastData) {
+    this.editorHandlers.forEach((remoteCall: RemoteCall) => {
+      remoteCall.callback(this, remoteCall.remote, msg);
+    });
+
+    switch (msg.event) {
+      case 'custom':
+        debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+    }
+  }
 
   private openHandler = () => {
     this._connected = true;
