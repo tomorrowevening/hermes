@@ -44,8 +44,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
-// Models
-import { ToolEvents, debugDispatcher } from '../global';
+import Application, { ToolEvents } from '@/core/Application';
 // Components
 import './MultiView.scss';
 import Toggle from './Toggle';
@@ -63,6 +62,7 @@ import DebugData from '../sidePanel/DebugData';
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
 type MultiViewProps = {
+  app: Application
   three: RemoteThree;
   scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
@@ -94,6 +94,7 @@ const lightIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAAC
 export default class MultiView extends Component<MultiViewProps, MultiViewState> {
   static instance: MultiView | null = null;
 
+  app: Application;
   scene = new Scene();
   renderer?: WebGLRenderer | null;
   currentScene?: Scene;
@@ -159,6 +160,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   constructor(props: MultiViewProps) {
     super(props);
+
+    this.app = props.app;
 
     // Refs
     this.canvasRef = createRef<HTMLCanvasElement>();
@@ -227,7 +230,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.resize();
     this.play();
 
-    Transform.instance.three = this.props.three;
+    Transform.instance.setApp(this.props.app, this.props.three);
     Transform.instance.activeCamera = this.debugCamera;
   }
 
@@ -595,7 +598,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       },
     });
 
-    this.splineEditor = new SplineEditor(this.currentCamera);
+    this.splineEditor = new SplineEditor(this.currentCamera, this.app);
     this.splineEditor.initDebug();
     this.scene.add(this.splineEditor);
   }
@@ -663,10 +666,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.addEventListener('click', this.onClick);
     window.addEventListener('keydown', this.onKey);
     window.addEventListener('resize', this.resize);
-    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
-    debugDispatcher.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
-    debugDispatcher.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
-    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.app.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    this.app.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
   }
 
   private disable() {
@@ -675,10 +678,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.removeEventListener('click', this.onClick);
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('resize', this.resize);
-    debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
-    debugDispatcher.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
-    debugDispatcher.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
-    debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.app.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.app.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    this.app.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    this.app.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
   }
 
   private resize = () => {

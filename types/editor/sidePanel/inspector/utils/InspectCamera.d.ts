@@ -1,3 +1,4 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import { RemoteObject } from '../../types';
-export declare function InspectCamera(object: RemoteObject, three: RemoteThree): any;
+import Application from '@/core/Application';
+export declare function InspectCamera(object: RemoteObject, app: Application, three: RemoteThree): any;

@@ -3,8 +3,13 @@ import { Events, threeDispatcher } from '../constants';
 import { loadAssets } from '../three/loader';
 import './App.css';
 import App from './App';
+import Application from '../../core/Application';
 
-export default function Wrapper() {
+type WrapperProps = {
+  app: Application
+}
+
+export default function Wrapper(props: WrapperProps) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -14,13 +19,13 @@ export default function Wrapper() {
     };
 
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
-    loadAssets();
+    loadAssets(props.app);
   }, [setLoaded]);
 
   return (
     <>
       {!loaded && <p>Loading...</p>}
-      {loaded && <App />}
+      {loaded && <App app={props.app} />}
     </>
   );
 }

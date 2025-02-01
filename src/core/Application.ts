@@ -1,6 +1,36 @@
-import { debugDispatcher, ToolEvents } from '@/editor/global';
+import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
-import { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
+import { ApplicationMode, BroadcastData } from './types';
+
+export enum ToolEvents {
+  CUSTOM = 'ToolEvents::custom',
+  // Components
+  SELECT_DROPDOWN = 'ToolEvents::selectDropdown',
+  DRAG_UPDATE = 'ToolEvents::dragUpdate',
+  // SceneHierarchy
+  ADD_SCENE = 'ToolEvents::addScene',
+  REFRESH_SCENE = 'ToolEvents::refreshScene',
+  REMOVE_SCENE = 'ToolEvents::removeScene',
+  SET_SCENE = 'ToolEvents::setScene',
+  GET_OBJECT = 'ToolEvents::getObject',
+  SET_OBJECT = 'ToolEvents::setObject',
+  UPDATE_OBJECT = 'ToolEvents::updateObject',
+  CREATE_TEXTURE = 'ToolEvents::createTexture',
+  REQUEST_METHOD = 'ToolEvents::requestMethod',
+  // MultiView
+  ADD_CAMERA = 'ToolEvents::addCamera',
+  REMOVE_CAMERA = 'ToolEvents::removeCamera',
+  // Custom
+  ADD_GROUP = 'ToolEvents::addGroup',
+  REMOVE_GROUP = 'ToolEvents::removeGroup',
+  ADD_SPLINE = 'ToolEvents::addSpline',
+  ADD_RENDERER = 'ToolEvents::addRenderer',
+  UPDATE_RENDERER = 'ToolEvents::updateRenderer',
+}
+
+export type ToolEvent = {
+  [key in ToolEvents]: { value?: unknown }
+}
 
 export type RemoteCallback = (app: Application, remote: any, msg: BroadcastData) => void;
 interface RemoteCall {
@@ -8,7 +38,7 @@ interface RemoteCall {
   callback: RemoteCallback;
 }
 
-export default class Application {
+export default class Application extends EventDispatcher<ToolEvent> {
   components: Map<string, any> = new Map();
   appHandlers: RemoteCall[] = [];
   editorHandlers: RemoteCall[] = [];
@@ -23,6 +53,7 @@ export default class Application {
   protected _useBC = false;
 
   constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
+    super();
     this._appID = id;
     this._debugEnabled = debugEnabled;
 
@@ -89,7 +120,7 @@ export default class Application {
 
     switch (msg.event) {
       case 'custom':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }
   }
@@ -101,7 +132,7 @@ export default class Application {
 
     switch (msg.event) {
       case 'custom':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
     }
   }

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import Application, { ToolEvents } from '@/core/Application';
 import { capitalize } from '@/editor/utils';
-import { debugDispatcher, ToolEvents } from '../global';
 
 type AccordionProps = {
+  app: Application
   label: string
   scene?: any
   button?: JSX.Element
@@ -17,7 +18,7 @@ export default function Accordion(props: AccordionProps) {
   const hide = !open || props.children === undefined;
 
   const onRemove = () => {
-    debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
+    props.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
   };
 
   return (

@@ -16,12 +16,13 @@ import {
   SRGBColorSpace,
   ToneMapping,
 } from 'three';
+import Application, { ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import MultiView from '@/editor/multiView/MultiView';
-import { debugDispatcher, ToolEvents } from '@/editor/global';
 
 type InspectRendererProps = {
+  app: Application
   three: RemoteThree;
 }
 
@@ -33,6 +34,7 @@ type InspectRendererState = {
 
 export default class InspectRenderer extends Component<InspectRendererProps, InspectRendererState> {
   // Renderer
+  private app: Application;
   private autoClear = true;
   private autoClearColor = true;
   private autoClearDepth = true;
@@ -46,6 +48,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
 
   constructor(props: InspectRendererProps) {
     super(props);
+    this.app = props.app;
 
     const expandedValue = localStorage.getItem(this.expandedName);
     const expanded = expandedValue !== null ? expandedValue === 'open' : false;
@@ -73,11 +76,11 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
       }
     }
 
-    debugDispatcher.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
+    this.app.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
   componentwillunmount() {
-    debugDispatcher.removeEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
+    this.app.removeEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
   private onAddRenderer = (evt: any) => {
@@ -147,6 +150,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
 
     return (
       <InspectorGroup
+        app={this.app}
         key={Math.random()}
         title='Renderer'
         expanded={this.state.expanded}

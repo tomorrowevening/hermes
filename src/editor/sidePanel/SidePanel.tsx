@@ -1,7 +1,7 @@
 // Libs
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // Models
-import { debugDispatcher, ToolEvents } from '../global';
+import Application, { ToolEvents } from '@/core/Application';
 import { RemoteObject, SidePanelState } from './types';
 // Components
 import '../scss/_sidePanel.scss';
@@ -21,6 +21,7 @@ export default function SidePanel(props: SidePanelState) {
     scenes.push(scene);
     sceneComponents.push(
       <Accordion
+        app={props.app}
         label={`Scene: ${scene.name}`}
         scene={scene}
         open={true}
@@ -29,7 +30,7 @@ export default function SidePanel(props: SidePanelState) {
           props.three.refreshScene(scene.name);
         }}
       >
-        <ContainerObject child={scene} scene={scene} three={props.three} />
+        <ContainerObject app={props.app} child={scene} scene={scene} three={props.three} />
       </Accordion>
     );
     setLastUpdate(Date.now());
@@ -42,6 +43,7 @@ export default function SidePanel(props: SidePanelState) {
         scenes[i] = scene;
         sceneComponents[i] = (
           <Accordion
+            app={props.app}
             label={`Scene: ${scene.name}`}
             scene={scene}
             open={true}
@@ -50,7 +52,7 @@ export default function SidePanel(props: SidePanelState) {
               props.three.refreshScene(scene.name);
             }}
           >
-            <ContainerObject child={scene} scene={scene} three={props.three} />
+            <ContainerObject app={props.app} child={scene} scene={scene} three={props.three} />
           </Accordion>
         );
         setLastUpdate(Date.now());
@@ -72,13 +74,13 @@ export default function SidePanel(props: SidePanelState) {
   };
 
   useEffect(() => {
-    debugDispatcher.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
-    debugDispatcher.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
-    debugDispatcher.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
+    props.app.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
+    props.app.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
+    props.app.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     return () => {
-      debugDispatcher.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
-      debugDispatcher.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
-      debugDispatcher.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
+      props.app.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
+      props.app.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
+      props.app.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     };
   }, []);
 
@@ -87,9 +89,9 @@ export default function SidePanel(props: SidePanelState) {
       <div className='scenes' key={lastUpdate}>
         {sceneComponents}
       </div>
-      <Inspector three={props.three} />
-      <InspectRenderer three={props.three} />
-      <DebugData three={props.three} />
+      <Inspector app={props.app} three={props.three} />
+      <InspectRenderer app={props.app} three={props.three} />
+      <DebugData app={props.app} three={props.three} />
     </div>
   );
 }

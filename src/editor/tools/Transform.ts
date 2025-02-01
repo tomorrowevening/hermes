@@ -2,11 +2,11 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 // Remote
+import Application, { ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils
 import { dispose } from '@/utils/three';
-import { debugDispatcher, ToolEvents } from '../global';
 
 export default class Transform extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart';
@@ -14,15 +14,17 @@ export default class Transform extends EventDispatcher {
 
   private static _instance: Transform;
 
+  app!: Application;
   three!: RemoteThree;
   activeCamera!: Camera;
   controls: Map<string, TransformControls> = new Map();
 
   private visibility: Map<string, boolean> = new Map();
 
-  constructor() {
-    super();
-    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, this.setScene);
+  setApp(app: Application, three: RemoteThree) {
+    this.app = app;
+    this.three = three;
+    this.app.addEventListener(ToolEvents.SET_SCENE, this.setScene);
   }
 
   clear(): void {

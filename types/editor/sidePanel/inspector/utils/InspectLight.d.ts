@@ -1,3 +1,4 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import { RemoteObject } from '../../types';
-export declare function InspectLight(object: RemoteObject, three: RemoteThree): import("react/jsx-runtime").JSX.Element;
+import Application from '@/core/Application';
+export declare function InspectLight(object: RemoteObject, app: Application, three: RemoteThree): import("react/jsx-runtime").JSX.Element;

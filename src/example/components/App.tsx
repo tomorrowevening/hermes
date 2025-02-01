@@ -4,12 +4,12 @@ import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
-import { app, IS_DEV } from '../constants';
+import Application, { ToolEvents } from '../../core/Application';
+import { IS_DEV } from '../constants';
 // Components
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
-import { debugDispatcher, ToolEvents } from '../../editor/global';
 import { detectSettings } from '../../utils/detectSettings';
 import { dispose } from '../../utils/three';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
@@ -20,17 +20,21 @@ let renderer: WebGLRenderer;
 let currentScene: BaseScene;
 let sceneName = '';
 
-function App() {
+type AppProps = {
+  app: Application
+}
+
+function App(props: AppProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const theatre = app.components.get('theatre') as RemoteTheatre;
-  const three = app.components.get('three') as RemoteThree;
+  const theatre = props.app.components.get('theatre') as RemoteTheatre;
+  const three = props.app.components.get('three') as RemoteThree;
 
   // Theatre
   useEffect(() => {
     const container = elementRef.current!;
-    container.style.visibility = app.editor ? 'hidden' : 'inherit';
+    container.style.visibility = props.app.editor ? 'hidden' : 'inherit';
 
     // Theatre Example
     theatre.sheet('App');
@@ -49,7 +53,7 @@ function App() {
 
     return () => {
       if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
-      app.dispose();
+      props.app.dispose();
     };
   }, []);
 
@@ -61,7 +65,7 @@ function App() {
   }, []);
 
   // Renderer setup
-  if (app.isApp) {
+  if (props.app.isApp) {
     useEffect(() => {
       const canvas = canvasRef.current!;
       renderer = new WebGLRenderer({
@@ -80,7 +84,7 @@ function App() {
   }
 
   // ThreeJS
-  if (app.isApp) {
+  if (props.app.isApp) {
     useEffect(() => {
       const stats = new Stats();
       stats.init(renderer);
@@ -131,10 +135,12 @@ function App() {
       dispose(currentScene);
     }
     if (sceneName === 'scene1') {
-      currentScene = new Scene1(renderer);
+      currentScene = new Scene1();
     } else {
-      currentScene = new Scene2(renderer);
+      currentScene = new Scene2();
     }
+    currentScene.setup(props.app, renderer);
+    currentScene.init();
     currentScene.resize(window.innerWidth, window.innerHeight);
   };
 
@@ -154,7 +160,7 @@ function App() {
   if (IS_DEV) {
     useEffect(() => {
       const container = elementRef.current!;
-      container.style.visibility = app.editor ? 'hidden' : 'inherit';
+      container.style.visibility = props.app.editor ? 'hidden' : 'inherit';
 
       // Components Example
       const onCustom = (evt: any) => {
@@ -168,18 +174,18 @@ function App() {
           createScene2();
         }
       };
-      debugDispatcher.addEventListener(ToolEvents.CUSTOM, onCustom);
-      debugDispatcher.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
+      props.app.addEventListener(ToolEvents.CUSTOM, onCustom);
+      props.app.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
       return () => {
-        debugDispatcher.removeEventListener(ToolEvents.CUSTOM, onCustom);
-        debugDispatcher.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
+        props.app.removeEventListener(ToolEvents.CUSTOM, onCustom);
+        props.app.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
       };
     }, []);
   }
 
   return (
     <>
-      {app.isApp && <canvas ref={canvasRef} />}
+      {props.app.isApp && <canvas ref={canvasRef} />}
 
       <div id='box' ref={elementRef}>
         <button onClick={() => {
@@ -192,7 +198,7 @@ function App() {
         }}>Click</button>
       </div>
 
-      {app.isApp && (
+      {props.app.isApp && (
         <div style={{
           position: 'absolute',
           bottom: '20px',
@@ -203,7 +209,7 @@ function App() {
         </div>
       )}
 
-      {IS_DEV && <SceneInspector three={three} />}
+      {IS_DEV && <SceneInspector app={props.app} three={three} />}
     </>
   );
 }

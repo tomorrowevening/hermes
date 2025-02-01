@@ -1,9 +1,9 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
+import Application, { ToolEvents } from '@/core/Application';
 import DebugData from '@/editor/sidePanel/DebugData';
 import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
-import { debugDispatcher, ToolEvents } from '@/editor/global';
 
 let splinesCreated = 0;
 
@@ -20,12 +20,14 @@ export default class SplineEditor extends Object3D {
   public defaultScale = 10;
   private _camera: Camera;
   private group: RefObject<InspectorGroup> | null = null;
+  private app: Application;
 
-  constructor(camera: Camera) {
+  constructor(camera: Camera, app: Application) {
     super();
     this.name = 'Spline Editor';
     this._camera = camera;
-    debugDispatcher.addEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
+    this.app = app;
+    this.app.addEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
   }
 
   initDebug() {
@@ -75,7 +77,7 @@ export default class SplineEditor extends Object3D {
   }
 
   dispose() {
-    debugDispatcher.removeEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
+    this.app.removeEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
     DebugData.removeEditorGroup(this.name);
   }
 

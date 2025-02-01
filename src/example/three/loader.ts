@@ -1,8 +1,9 @@
 import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Texture, TextureLoader } from 'three';
 // @ts-ignore
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { app, Events, threeDispatcher } from '../constants';
+import { Events, threeDispatcher } from '../constants';
 import { getProject } from '@theatre/core';
+import Application from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export const cubeTextures: Map<string, CubeTexture> = new Map();
@@ -83,7 +84,7 @@ export function loadJSON(name: string, source: string): Promise<any> {
   });
 }
 
-export function loadAssets(): Promise<void> {
+export function loadAssets(app: Application): Promise<void> {
   return new Promise((resolve, reject) => {
     const assets: (() => Promise<any>)[] = [
       () => loadCube('environment', [
@@ -109,7 +110,8 @@ export function loadAssets(): Promise<void> {
           resolve();
         });
       })
-      .catch(() => {
+      .catch((reason) => {
+        console.log(reason);
         reject();
       });
   });

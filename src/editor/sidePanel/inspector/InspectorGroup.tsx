@@ -3,12 +3,14 @@ import Accordion from '../Accordion';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
 import { capitalize } from '@/editor/utils';
 import { GroupData, GroupItemData } from '@/core/types';
+import Application from '@/core/Application';
 
 function isGroup(obj: any): obj is InspectorGroupProps {
   return 'items' in obj;
 }
 
 export interface InspectorGroupProps {
+  app: Application
   title: string
   expanded?: boolean
   items: InspectorFieldProps[] | InspectorGroupProps[]
@@ -23,9 +25,11 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
   subgroupNames: string[] = [];
   subgroupElements: JSX.Element[] = [];
   valueOverrides: Map<string, any> = new Map();
+  app: Application;
 
   constructor(props: InspectorGroupProps) {
     super(props);
+    this.app = props.app;
     this.state = { lastUpdated: Date.now() };
   }
 
@@ -52,6 +56,7 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
     const elementRef = createRef<InspectorGroup>();
     const element = (
       <InspectorGroup
+        app={this.app}
         ref={elementRef}
         title={data.title}
         items={items}
@@ -88,7 +93,7 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
     this.props.items.forEach((child: InspectorFieldProps | InspectorGroupProps) => {
       if (isGroup(child)) {
         children.push(
-          <InspectorGroup title={capitalize(child.title)} items={child.items} key={Math.random()} />
+          <InspectorGroup app={this.app} title={capitalize(child.title)} items={child.items} key={Math.random()} />
         );
       } else {
         const valueOverride = this.valueOverrides.get(child.title);
@@ -125,6 +130,7 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
 
     return (
       <Accordion
+        app={this.app}
         label={this.props.title}
         open={this.props.expanded === true}
         onToggle={(value: boolean) => {
