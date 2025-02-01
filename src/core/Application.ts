@@ -1,9 +1,47 @@
+import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
-import { ApplicationMode, BroadcastCallback, BroadcastData } from './types';
+import { ApplicationMode, BroadcastData } from './types';
 
-export default class Application {
+export enum ToolEvents {
+  CUSTOM = 'ToolEvents::custom',
+  // Components
+  SELECT_DROPDOWN = 'ToolEvents::selectDropdown',
+  DRAG_UPDATE = 'ToolEvents::dragUpdate',
+  // SceneHierarchy
+  ADD_SCENE = 'ToolEvents::addScene',
+  REFRESH_SCENE = 'ToolEvents::refreshScene',
+  REMOVE_SCENE = 'ToolEvents::removeScene',
+  SET_SCENE = 'ToolEvents::setScene',
+  GET_OBJECT = 'ToolEvents::getObject',
+  SET_OBJECT = 'ToolEvents::setObject',
+  UPDATE_OBJECT = 'ToolEvents::updateObject',
+  CREATE_TEXTURE = 'ToolEvents::createTexture',
+  REQUEST_METHOD = 'ToolEvents::requestMethod',
+  // MultiView
+  ADD_CAMERA = 'ToolEvents::addCamera',
+  REMOVE_CAMERA = 'ToolEvents::removeCamera',
+  // Custom
+  ADD_GROUP = 'ToolEvents::addGroup',
+  REMOVE_GROUP = 'ToolEvents::removeGroup',
+  ADD_SPLINE = 'ToolEvents::addSpline',
+  ADD_RENDERER = 'ToolEvents::addRenderer',
+  UPDATE_RENDERER = 'ToolEvents::updateRenderer',
+}
+
+export type ToolEvent = {
+  [key in ToolEvents]: { value?: unknown }
+}
+
+export type RemoteCallback = (app: Application, remote: any, msg: BroadcastData) => void;
+interface RemoteCall {
+  remote: any;
+  callback: RemoteCallback;
+}
+
+export default class Application extends EventDispatcher<ToolEvent> {
   components: Map<string, any> = new Map();
-  listen?: BroadcastCallback;
+  appHandlers: RemoteCall[] = [];
+  editorHandlers: RemoteCall[] = [];
   
   // Protected
   protected _appID = '';
@@ -15,6 +53,7 @@ export default class Application {
   protected _useBC = false;
 
   constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
+    super();
     this._appID = id;
     this._debugEnabled = debugEnabled;
 
@@ -64,14 +103,39 @@ export default class Application {
   }
 
   private messageHandler = (evt: MessageEvent) => {
-    if (this.listen !== undefined) {
-      if (this._useBC) {
-        this.listen(evt.data);
-      } else {
-        this.listen(JSON.parse(evt.data));
-      }
+    let data: BroadcastData = evt.data;
+    if (!this._useBC) data = JSON.parse(evt.data);
+
+    if (data.target === 'editor') {
+      this.handleEditorBroadcast(data);
+    } else {
+      this.handleAppBroadcast(data);
     }
   };
+
+  private handleAppBroadcast(msg: BroadcastData) {
+    this.appHandlers.forEach((remoteCall: RemoteCall) => {
+      remoteCall.callback(this, remoteCall.remote, msg);
+    });
+
+    switch (msg.event) {
+      case 'custom':
+        this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+    }
+  }
+
+  private handleEditorBroadcast(msg: BroadcastData) {
+    this.editorHandlers.forEach((remoteCall: RemoteCall) => {
+      remoteCall.callback(this, remoteCall.remote, msg);
+    });
+
+    switch (msg.event) {
+      case 'custom':
+        this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
+        break;
+    }
+  }
 
   private openHandler = () => {
     this._connected = true;

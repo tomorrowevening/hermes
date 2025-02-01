@@ -1,5 +1,6 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import Spline from './Spline';
+import Application from '@/core/Application';
 export type SplineJSON = {
     name: string;
     points: Array<number[]>;
@@ -12,7 +13,8 @@ export default class SplineEditor extends Object3D {
     defaultScale: number;
     private _camera;
     private group;
-    constructor(camera: Camera);
+    private app;
+    constructor(camera: Camera, app: Application);
     initDebug(): void;
     dispose(): void;
     addSpline(spline: Spline): void;

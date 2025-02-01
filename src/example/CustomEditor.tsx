@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Application from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
 // Models
-import { Events, app, threeDispatcher } from './constants';
+import { Events, threeDispatcher } from './constants';
 // Views
 import ThreeEditor from '../editor/ThreeEditor';
 import BaseScene from './three/scenes/BaseScene';
@@ -11,7 +12,11 @@ import RTTScene from './three/scenes/RTTScene';
 // Utils
 import { customizeTheatreElements } from '../editor/theatreUtils';
 
-export default function CustomEditor() {
+type CustomEditorProps = {
+  app: Application
+}
+
+export default function CustomEditor(props: CustomEditorProps) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -32,8 +37,13 @@ export default function CustomEditor() {
     <>
       {loaded && (
         <ThreeEditor
-          three={app.components.get('three') as RemoteThree}
+          app={props.app}
+          three={props.app.components.get('three') as RemoteThree}
           scenes={scenes}
+          onSceneSet={(scene: any) => {
+            scene.setup(props.app);
+            scene.init();
+          }}
           onSceneUpdate={(scene: any) => {
             // Custom callback for animation updates
             const baseScene = scene as BaseScene;

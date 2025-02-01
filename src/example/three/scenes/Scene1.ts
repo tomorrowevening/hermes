@@ -11,7 +11,6 @@ import {
   Object3D,
   SphereGeometry,
   SpotLight,
-  WebGLRenderer,
 } from 'three';
 import {
   BlendFunction,
@@ -25,7 +24,7 @@ import {
 } from 'postprocessing';
 import CustomMaterial from '../CustomMaterial';
 import { hierarchyUUID } from '../../../utils/three';
-import { IS_DEV, app } from '../../constants';
+import { IS_DEV } from '../../constants';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
 import BaseScene from './BaseScene';
@@ -38,13 +37,16 @@ export default class Scene1 extends BaseScene {
   private customMat!: CustomMaterial;
   private post!: EffectComposer;
 
-  constructor(renderer: WebGLRenderer) {
-    super(renderer);
+  constructor() {
+    super();
     this.name = 'Scene1';
+  }
+
+  override init(): void {
     const envMap = cubeTextures.get('environment')!;
     this.background = envMap;
 
-    if (app.editor) {
+    if (this.app.editor) {
       const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: envMap, side: BackSide }));
       bg.name = 'bg';
       bg.scale.setScalar(1000);
@@ -53,11 +55,11 @@ export default class Scene1 extends BaseScene {
 
     this.createLights();
     this.createWorld();
-    if (!app.editor) this.createPost();
+    if (!this.app.editor) this.createPost();
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
-    const three = app.components.get('three') as RemoteThree;
+    const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
@@ -184,7 +186,7 @@ export default class Scene1 extends BaseScene {
   }
 
   private createAnimation() {
-    const theatre = app.components.get('theatre') as RemoteTheatre;
+    const theatre = this.app.components.get('theatre') as RemoteTheatre;
     theatre.sheet(this.name);
 
     // Camera
@@ -241,7 +243,7 @@ export default class Scene1 extends BaseScene {
   }
 
   override draw() {
-    if (app.editor) {
+    if (this.app.editor) {
       //
     } else {
       //
@@ -251,6 +253,6 @@ export default class Scene1 extends BaseScene {
 
   override resize(width: number, height: number): void {
     super.resize(width, height);
-    if (!app.editor) this.post.setSize(width, height);
+    if (!this.app.editor) this.post.setSize(width, height);
   }
 }

@@ -3,11 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import studio from '@theatre/studio';
 // Models
-import { app, IS_DEV } from './constants';
+import { IS_DEV } from './constants';
 // Components
 import './index.scss';
-import CustomEditor from './CustomEditor';
-import Wrapper from './components/Wrapper';
+import AppWrapper from './components/AppWrapper';
 
 // Debug tools
 if (IS_DEV) {
@@ -20,12 +19,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
     {IS_DEV ? (
       <>
-        {app.editor && <CustomEditor />}
-        <Wrapper />
+        <AppWrapper />
       </>
     ) : (
       <React.StrictMode>
-        <Wrapper />
+        <AppWrapper />
       </React.StrictMode>
     )}
   </>,

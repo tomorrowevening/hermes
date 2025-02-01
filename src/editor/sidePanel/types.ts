@@ -1,18 +1,22 @@
+import Application from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { Color } from 'three';
 
 export interface CoreComponentProps {
+  app: Application
   class?: string
   three: RemoteThree
 }
 
 export interface ChildObjectProps extends CoreComponentProps {
+  app: Application
   child?: RemoteObject
   scene?: RemoteObject
   three: RemoteThree
 }
 
 export interface SidePanelState {
+  app: Application
   scene?: RemoteObject
   three: RemoteThree
 }

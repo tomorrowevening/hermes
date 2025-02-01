@@ -53,6 +53,7 @@ $font: Arial;
       appearance: none;
       background-color: #191919;
       border: 4px solid #191919;
+      cursor: pointer;
       display: inline-block;
       flex: none;
       min-height: 16px;
@@ -68,6 +69,7 @@ $font: Arial;
       appearance: none;
       border: none;
       block-size: revert;
+      cursor: pointer;
       height: calc($barHeight + 8px);
       padding-block: revert;
       padding: 0;
@@ -86,6 +88,7 @@ $font: Arial;
     input[type='range']::-webkit-slider-thumb {
       appearance: none;
       background-color: #666;
+      cursor: pointer;
       height: 17px;
       width: 17px;
       transition: 0.2s linear background-color;
@@ -137,11 +140,16 @@ $font: Arial;
       background-color: #222;
       border: 1px solid #333;
       color: white;
+      cursor: pointer;
       font-family: $font;
       font-size: 12px;
       padding: 1px 5px;
       position: absolute;
       right: 4px;
+    }
+
+    option {
+      cursor: pointer;
     }
 
     .vector2 {

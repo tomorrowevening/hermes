@@ -15,11 +15,10 @@ import {
   SkinnedMesh,
   SphereGeometry,
   SpotLight,
-  WebGLRenderer,
 } from 'three';
 // @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
-import { IS_DEV, app } from '../../constants';
+import { IS_DEV } from '../../constants';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 import { hierarchyUUID } from '../../../utils/three';
 import BaseScene from './BaseScene';
@@ -36,9 +35,12 @@ export default class Scene2 extends BaseScene {
   rttScene!: RTTScene;
   speed = 1;
 
-  constructor(renderer: WebGLRenderer) {
-    super(renderer);
+  constructor() {
+    super();
     this.name = 'Scene2';
+  }
+
+  override init(): void {
     this.camera.position.set(0, 100, 125);
     this.camera.lookAt(0, 50, 0);
 
@@ -47,7 +49,7 @@ export default class Scene2 extends BaseScene {
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
-    const three = app.components.get('three') as RemoteThree;
+    const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
@@ -55,7 +57,7 @@ export default class Scene2 extends BaseScene {
   }
 
   override dispose(): void {
-    const three = app.components.get('three') as RemoteThree;
+    const three = this.app.components.get('three') as RemoteThree;
     three.removeGroup(customGroupName);
     three.removeScene(this.rttScene);
     super.dispose();
@@ -117,7 +119,7 @@ export default class Scene2 extends BaseScene {
     world.add(lines);
 
     this.rttScene = new RTTScene();
-    const three = app.components.get('three') as RemoteThree;
+    const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this.rttScene);
 
     const rttMat = new MeshBasicMaterial();
@@ -181,7 +183,7 @@ export default class Scene2 extends BaseScene {
   }
 
   private createAnimation() {
-    const theatre = app.components.get('theatre') as RemoteTheatre;
+    const theatre = this.app.components.get('theatre') as RemoteTheatre;
     theatre.sheet(this.name);
 
     // Camera

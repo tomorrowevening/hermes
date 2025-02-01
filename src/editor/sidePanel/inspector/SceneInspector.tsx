@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { Scene, Texture } from 'three';
+import Application, { ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
-import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
+  app: Application
   three: RemoteThree
 }
 
@@ -105,16 +106,16 @@ export default function SceneInspector(props: SceneInspectorProps) {
       }
     };
 
-    debugDispatcher.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
-    debugDispatcher.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-    debugDispatcher.addEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
-    debugDispatcher.addEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
+    props.app.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
+    props.app.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
+    props.app.addEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
+    props.app.addEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
 
     return () => {
-      debugDispatcher.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
-      debugDispatcher.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      debugDispatcher.removeEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
-      debugDispatcher.removeEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
+      props.app.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
+      props.app.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
+      props.app.removeEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
+      props.app.removeEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
     };
   }, []);
 

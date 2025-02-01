@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import Application, { ToolEvents } from '@/core/Application';
 import { CoreComponentProps, RemoteObject } from '../types';
-import { ToolEvents, debugDispatcher } from '../../global';
 // Components
 import './inspector.scss';
 import Accordion from '../Accordion';
@@ -43,11 +43,11 @@ export default function Inspector(props: CoreComponentProps) {
       setLastUpdated(Date.now());
     }
 
-    debugDispatcher.addEventListener(ToolEvents.SET_SCENE, setScene);
-    debugDispatcher.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
+    props.app.addEventListener(ToolEvents.SET_SCENE, setScene);
+    props.app.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     return () => {
-      debugDispatcher.removeEventListener(ToolEvents.SET_SCENE, setScene);
-      debugDispatcher.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
+      props.app.removeEventListener(ToolEvents.SET_SCENE, setScene);
+      props.app.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };
   }, []);
 
@@ -60,6 +60,7 @@ export default function Inspector(props: CoreComponentProps) {
 
   return (
     <Accordion
+      app={props.app}
       label='Inspector'
       key='Inspector'
       button={
@@ -103,15 +104,15 @@ export default function Inspector(props: CoreComponentProps) {
             {/* Data */}
             <>
               {/* Transform */}
-              <InspectTransform object={currentObject} three={props.three} />
+              <InspectTransform object={currentObject} app={props.app} three={props.three} />
               {/* Animations */}
-              {hasAnimation ? <InspectAnimation object={currentObject} three={props.three} /> : null}
+              {hasAnimation ? <InspectAnimation app={props.app} object={currentObject} three={props.three} /> : null}
               {/* Cameras */}
-              {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
+              {objType.search('camera') > -1 ? InspectCamera(currentObject, props.app, props.three) : null}
               {/* Lights */}
-              {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
+              {objType.search('light') > -1 ? InspectLight(currentObject, props.app, props.three) : null}
               {/* Material */}
-              {hasMaterial ? InspectMaterial(currentObject, props.three) : null}
+              {hasMaterial ? InspectMaterial(currentObject, props.app, props.three) : null}
             </>
           </>
         )}

@@ -3,8 +3,10 @@ import { Camera, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRe
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
+import Application from '@/core/Application';
 import './MultiView.scss';
 type MultiViewProps = {
+    app: Application;
     three: RemoteThree;
     scenes: Map<string, any>;
     onSceneSet?: (scene: Scene) => void;
@@ -21,6 +23,7 @@ type MultiViewState = {
 };
 export default class MultiView extends Component<MultiViewProps, MultiViewState> {
     static instance: MultiView | null;
+    app: Application;
     scene: Scene;
     renderer?: WebGLRenderer | null;
     currentScene?: Scene;

@@ -1,4 +1,6 @@
+import Application from '@/core/Application';
 type AccordionProps = {
+    app: Application;
     label: string;
     scene?: any;
     button?: JSX.Element;

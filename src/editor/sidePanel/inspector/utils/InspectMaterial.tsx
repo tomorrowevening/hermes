@@ -38,6 +38,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 import { KeyboardEvent } from 'react';
 import { OptionInfo } from '@/core/types';
+import Application from '@/core/Application';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -907,7 +908,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
 }
 
 // RemoteMaterial | RemoteMaterial[]
-export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
+export function InspectMaterial(object: RemoteObject, app: Application, three: RemoteThree): any {
   function expandedName(): string {
     return `${three.app.appID}_material`;
   }
@@ -926,6 +927,7 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
     for (let i = 0; i < total; i++) {
       items.push(
         <InspectorGroup
+          app={app}
           title={`Material ${i}`}
           key={`Material ${i}`}
           items={inspectMaterialItems(material[i], object, three)}
@@ -936,6 +938,7 @@ export function InspectMaterial(object: RemoteObject, three: RemoteThree): any {
   } else {
     return (
       <InspectorGroup
+        app={app}
         title='Material'
         items={inspectMaterialItems(material, object, three)}
         expanded={expanded}

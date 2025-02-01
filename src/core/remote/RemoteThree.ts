@@ -1,8 +1,7 @@
 import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import Application from '../Application';
+import Application, { ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
-import { ToolEvents, debugDispatcher } from '@/editor/global';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { clamp } from '@/utils/math';
 import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/utils/three';
@@ -279,16 +278,16 @@ export default class RemoteThree extends BaseRemote {
     const three = remote as RemoteThree;
     switch (msg.event) {
       case 'getObject':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
         break;
       case 'updateObject':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
         break;
       case 'createTexture':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
         break;
       case 'requestMethod':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
         break;
       case 'refreshScene':
         app.send({
@@ -323,37 +322,37 @@ export default class RemoteThree extends BaseRemote {
   override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
     switch (msg.event) {
       case 'setObject':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
         break;
       case 'addScene':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
         break;
       case 'refreshScene':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
         break;
       case 'removeScene':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
         break;
       case 'setScene':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
         break;
       case 'addCamera':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
         break;
       case 'removeCamera':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
         break;
       case 'addGroup':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
         break;
       case 'removeGroup':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
         break;
       case 'addSpline':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
         break;
       case 'addRenderer':
-        debugDispatcher.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
+        app.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
     }
   }
 
