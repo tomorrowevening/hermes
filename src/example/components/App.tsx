@@ -4,7 +4,7 @@ import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
-import Application, { ToolEvents } from '../../core/Application';
+import { Application, ToolEvents } from '../../core/Application';
 import { IS_DEV } from '../constants';
 // Components
 import BaseScene from '../three/scenes/BaseScene';

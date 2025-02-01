@@ -1,6 +1,6 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import Spline from './Spline';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 export type SplineJSON = {
     name: string;
     points: Array<number[]>;

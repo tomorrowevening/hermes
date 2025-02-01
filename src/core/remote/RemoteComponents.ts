@@ -1,5 +1,5 @@
 // Core
-import Application, { ToolEvents } from '../Application';
+import { Application, ToolEvents } from '../Application';
 import { BroadcastData } from '../types';
 import BaseRemote from './BaseRemote';
 

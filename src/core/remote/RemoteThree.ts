@@ -1,5 +1,5 @@
 import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import Application, { ToolEvents } from '../Application';
+import { Application, ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';

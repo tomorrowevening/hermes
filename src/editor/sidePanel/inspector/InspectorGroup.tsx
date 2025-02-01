@@ -3,7 +3,7 @@ import Accordion from '../Accordion';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
 import { capitalize } from '@/editor/utils';
 import { GroupData, GroupItemData } from '@/core/types';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 
 function isGroup(obj: any): obj is InspectorGroupProps {
   return 'items' in obj;

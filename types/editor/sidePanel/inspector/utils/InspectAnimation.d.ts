@@ -1,6 +1,6 @@
 import RemoteThree from '@/core/remote/RemoteThree';
 import { RemoteObject } from '../../types';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 type InspectAnimationProps = {
     app: Application;
     object: RemoteObject;

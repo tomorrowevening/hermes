@@ -1,7 +1,7 @@
 // Libs
 import { Component, createRef, ReactNode, RefObject } from 'react';
 // Models
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { GroupData, GroupItemData } from '@/core/types';
 // Components

@@ -1,6 +1,6 @@
 import { RemoteMaterial, RemoteObject } from '../../types';
 import RemoteThree from '@/core/remote/RemoteThree';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 export declare function acceptedMaterialNames(name: string): boolean;
 export declare function imageNames(name: string): string;
 export declare function prettyName(name: string): string;

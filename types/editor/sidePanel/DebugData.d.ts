@@ -1,5 +1,5 @@
 import { Component, ReactNode, RefObject } from 'react';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { GroupData } from '@/core/types';
 import InspectorGroup from './inspector/InspectorGroup';

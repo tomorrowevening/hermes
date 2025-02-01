@@ -6,7 +6,7 @@ import { setItemProps } from '../../utils';
 import MultiView from '@/editor/multiView/MultiView';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { round } from '@/utils/math';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 
 type InspectTransformProps = {
   app: Application

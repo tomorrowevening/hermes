@@ -2,7 +2,7 @@
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
 import { Vector3 } from 'three';
 // Core
-import Application from '../Application';
+import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils

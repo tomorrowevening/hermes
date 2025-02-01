@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { IS_DEV, IS_EDITOR } from '../constants';
-import Application from '../../core/Application';
+import { Application } from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
 import RemoteSetup from './RemoteSetup';

@@ -1,5 +1,5 @@
 import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import Application from '../../../core/Application';
+import { Application } from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 
 export default class BaseScene extends Scene {

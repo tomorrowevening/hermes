@@ -1,5 +1,5 @@
 import { Component, ReactNode } from 'react';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 type InspectRendererProps = {
     app: Application;

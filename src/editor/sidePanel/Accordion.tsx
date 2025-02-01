@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import { capitalize } from '@/editor/utils';
 
 type AccordionProps = {

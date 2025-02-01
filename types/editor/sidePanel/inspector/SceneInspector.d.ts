@@ -1,4 +1,4 @@
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 export interface SceneInspectorProps {
     app: Application;

@@ -16,7 +16,7 @@ import {
   SRGBColorSpace,
   ToneMapping,
 } from 'three';
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import MultiView from '@/editor/multiView/MultiView';

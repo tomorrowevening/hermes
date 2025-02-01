@@ -44,7 +44,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 // Components
 import './MultiView.scss';
 import Toggle from './Toggle';

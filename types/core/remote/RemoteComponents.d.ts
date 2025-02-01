@@ -1,4 +1,4 @@
-import Application from '../Application';
+import { Application } from '../Application';
 import { BroadcastData } from '../types';
 import BaseRemote from './BaseRemote';
 export default class RemoteComponents extends BaseRemote {

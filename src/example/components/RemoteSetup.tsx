@@ -1,5 +1,5 @@
 import studio from '@theatre/studio';
-import Application from '../../core/Application';
+import { Application } from '../../core/Application';
 import RemoteComponents from '../../core/remote/RemoteComponents';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';

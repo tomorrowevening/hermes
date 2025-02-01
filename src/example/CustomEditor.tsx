@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Application from '../core/Application';
+import { Application } from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
 // Models
 import { Events, threeDispatcher } from './constants';

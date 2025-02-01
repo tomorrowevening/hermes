@@ -1,5 +1,5 @@
 import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import Application from '../Application';
+import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export default class RemoteThree extends BaseRemote {

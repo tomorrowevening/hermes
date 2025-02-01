@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import { CoreComponentProps, RemoteObject } from '../types';
 // Components
 import './inspector.scss';

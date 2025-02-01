@@ -1,4 +1,4 @@
-import Application from '../Application';
+import { Application } from '../Application';
 import type { BroadcastData } from '../types';
 export default class BaseRemote {
     app: Application;

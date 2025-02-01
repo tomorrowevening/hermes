@@ -1,7 +1,7 @@
 import { Scene } from 'three';
 import Editor from './Editor';
 import MultiView from './multiView/MultiView';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import SidePanel from './sidePanel/SidePanel';
 

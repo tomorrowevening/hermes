@@ -1,5 +1,5 @@
 import type { ISheet } from '@theatre/core';
-import Application from '../core/Application';
+import { Application } from '../core/Application';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 import type { EditorEvent }  from '../core/types';
 

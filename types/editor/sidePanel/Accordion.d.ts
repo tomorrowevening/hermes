@@ -1,4 +1,4 @@
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 type AccordionProps = {
     app: Application;
     label: string;

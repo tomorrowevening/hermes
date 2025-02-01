@@ -2,7 +2,7 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 // Remote
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils

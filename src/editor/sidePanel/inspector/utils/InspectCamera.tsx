@@ -2,7 +2,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 
 function prettyName(name: string): string {
   switch (name) {

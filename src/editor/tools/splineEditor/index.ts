@@ -1,7 +1,7 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
-import Application, { ToolEvents } from '@/core/Application';
+import { Application, ToolEvents } from '@/core/Application';
 import DebugData from '@/editor/sidePanel/DebugData';
 import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
 

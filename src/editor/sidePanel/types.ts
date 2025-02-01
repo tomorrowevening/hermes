@@ -1,4 +1,4 @@
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { Color } from 'three';
 

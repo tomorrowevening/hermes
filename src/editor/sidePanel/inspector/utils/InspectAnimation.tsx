@@ -5,7 +5,7 @@ import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
 import MultiView from '@/editor/multiView/MultiView';
 import { dispose } from '@/utils/three';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 
 type InspectAnimationProps = {
   app: Application

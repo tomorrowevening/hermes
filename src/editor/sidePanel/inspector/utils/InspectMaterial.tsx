@@ -38,7 +38,7 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 import { KeyboardEvent } from 'react';
 import { OptionInfo } from '@/core/types';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(

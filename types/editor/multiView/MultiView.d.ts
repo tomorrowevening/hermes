@@ -3,7 +3,7 @@ import { Camera, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRe
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import './MultiView.scss';
 type MultiViewProps = {
     app: Application;

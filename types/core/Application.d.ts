@@ -32,7 +32,7 @@ interface RemoteCall {
     remote: any;
     callback: RemoteCallback;
 }
-export default class Application extends EventDispatcher<ToolEvent> {
+export declare class Application extends EventDispatcher<ToolEvent> {
     components: Map<string, any>;
     appHandlers: RemoteCall[];
     editorHandlers: RemoteCall[];

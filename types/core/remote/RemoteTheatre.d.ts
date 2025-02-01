@@ -1,5 +1,5 @@
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
-import Application from '../Application';
+import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 type KeyframeVector = {

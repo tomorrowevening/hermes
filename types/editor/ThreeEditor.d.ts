@@ -1,5 +1,5 @@
 import { Scene } from 'three';
-import Application from '@/core/Application';
+import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 interface ThreeEditorProps {
     app: Application;
