@@ -1,5 +1,5 @@
 import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Application, ToolEvents } from '../Application';
+import { ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
@@ -274,39 +274,38 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
-  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
-    const three = remote as RemoteThree;
+  override handleApp(msg: BroadcastData): void {
     switch (msg.event) {
       case 'getObject':
-        app.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
         break;
       case 'updateObject':
-        app.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
         break;
       case 'createTexture':
-        app.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
         break;
       case 'requestMethod':
-        app.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
         break;
       case 'refreshScene':
-        app.send({
+        this.app.send({
           event: 'refreshScene',
           target: 'editor',
-          data: stripScene(three.scenes.get(msg.data.name)!),
+          data: stripScene(this.scenes.get(msg.data.name)!),
         });
         break;
       case 'updateRenderer':
-        if (three.renderer) {
-          three.renderer.autoClear = msg.data.autoClear;
-          three.renderer.autoClearColor = msg.data.autoClearColor;
-          three.renderer.autoClearDepth = msg.data.autoClearDepth;
-          three.renderer.autoClearStencil = msg.data.autoClearStencil;
-          three.renderer.outputColorSpace = msg.data.outputColorSpace;
-          three.renderer.localClippingEnabled = msg.data.localClippingEnabled;
-          three.renderer.setClearColor(msg.data.clearColor, msg.data.clearAlpha);
-          three.renderer.toneMapping = msg.data.toneMapping;
-          three.renderer.toneMappingExposure = msg.data.toneMappingExposure;
+        if (this.renderer) {
+          this.renderer.autoClear = msg.data.autoClear;
+          this.renderer.autoClearColor = msg.data.autoClearColor;
+          this.renderer.autoClearDepth = msg.data.autoClearDepth;
+          this.renderer.autoClearStencil = msg.data.autoClearStencil;
+          this.renderer.outputColorSpace = msg.data.outputColorSpace;
+          this.renderer.localClippingEnabled = msg.data.localClippingEnabled;
+          this.renderer.setClearColor(msg.data.clearColor, msg.data.clearAlpha);
+          this.renderer.toneMapping = msg.data.toneMapping;
+          this.renderer.toneMappingExposure = msg.data.toneMappingExposure;
           ColorManagement.enabled = msg.data.colorManagement;
         }
         break;
@@ -314,45 +313,45 @@ export default class RemoteThree extends BaseRemote {
 
     if (msg.event === 'updateGroup') {
       const groupData = JSON.parse(msg.data);
-      const group = three.groups.get(groupData.group);
+      const group = this.groups.get(groupData.group);
       group?.onUpdate(groupData.prop, groupData.value);
     }
   }
 
-  override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
+  override handleEditor(msg: BroadcastData): void {
     switch (msg.event) {
       case 'setObject':
-        app.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
         break;
       case 'addScene':
-        app.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
         break;
       case 'refreshScene':
-        app.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
         break;
       case 'removeScene':
-        app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
         break;
       case 'setScene':
-        app.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
         break;
       case 'addCamera':
-        app.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
         break;
       case 'removeCamera':
-        app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
         break;
       case 'addGroup':
-        app.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
         break;
       case 'removeGroup':
-        app.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
         break;
       case 'addSpline':
-        app.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
         break;
       case 'addRenderer':
-        app.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
+        this.app.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
     }
   }
 

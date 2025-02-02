@@ -1,4 +1,4 @@
-import { Application } from '../Application';
+import { Application, RemoteCall } from '../Application';
 import type { BroadcastData } from '../types';
 
 /**
@@ -9,17 +9,23 @@ export default class BaseRemote {
 
   constructor(app: Application) {
     this.app = app;
+    this.app.appHandlers.push({ remote: this, callback: this.handleApp.bind(this) });
+    this.app.editorHandlers.push({ remote: this, callback: this.handleEditor.bind(this) });
   }
 
   dispose() {
+    const index = this.app.appHandlers.findIndex((rc: RemoteCall) => rc.remote === this);
+    if (index > -1) {
+      this.app.appHandlers.splice(index, 1);
+      this.app.editorHandlers.splice(index, 1);
+    }
+  }
+
+  handleApp(msg: BroadcastData) {
     //
   }
 
-  handleApp(app: Application, remote: BaseRemote, msg: BroadcastData) {
-    //
-  }
-
-  handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData) {
+  handleEditor(msg: BroadcastData) {
     //
   }
 }
