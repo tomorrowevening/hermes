@@ -52,10 +52,11 @@ export class Application extends EventDispatcher<ToolEvent> {
   protected _connected = false;
   protected _useBC = false;
 
-  constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
+  constructor(id: string, debugEnabled: boolean, editor: boolean, useBC:boolean = true) {
     super();
     this._appID = id;
     this._debugEnabled = debugEnabled;
+    this.editor = editor;
 
     if (debugEnabled) {
       this._useBC = useBC;

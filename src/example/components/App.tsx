@@ -189,12 +189,12 @@ function App(props: AppProps) {
 
       <div id='box' ref={elementRef}>
         <button onClick={() => {
-          // app.send({
-          //   target: 'editor',
-          //   event: 'custom',
-          //   data: 'hello editor!'
-          // });
-          theatre.playSheet('Scene1');
+          props.app.send({
+            target: 'editor',
+            event: 'custom',
+            data: 'hello editor!'
+          });
+          theatre.playSheet('App');
         }}>Click</button>
       </div>
 

@@ -229,8 +229,6 @@ export default class Scene2 extends BaseScene {
         this.dance.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
       }
     );
-
-    theatre.playSheet(this.name, { iterationCount: Infinity });
   }
 
   override update(): void {
