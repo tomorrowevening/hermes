@@ -27,8 +27,8 @@ export type ToolEvent = {
         value?: unknown;
     };
 };
-export type RemoteCallback = (app: Application, remote: any, msg: BroadcastData) => void;
-interface RemoteCall {
+export type RemoteCallback = (msg: BroadcastData) => void;
+export interface RemoteCall {
     remote: any;
     callback: RemoteCallback;
 }
@@ -43,7 +43,7 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     protected _mode: ApplicationMode;
     protected _connected: boolean;
     protected _useBC: boolean;
-    constructor(id: string, debugEnabled: boolean, useBC?: boolean);
+    constructor(id: string, debugEnabled: boolean, editor: boolean, useBC?: boolean);
     addComponent(name: string, component: BaseRemote): void;
     dispose(): void;
     send(data: BroadcastData): void;
@@ -60,4 +60,3 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     get editor(): boolean;
     set editor(value: boolean);
 }
-export {};

@@ -1,5 +1,4 @@
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
-import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 type KeyframeVector = {
@@ -26,8 +25,8 @@ export default class RemoteTheatre extends BaseRemote {
     getSheetObjectKeyframes(sheetName: string, sheetObject: string, prop: string): any[];
     getSheetObjectVectors(sheetName: string, sheetObject: string): KeyframeVector[];
     unsubscribe(sheetObject: ISheetObject): undefined;
-    handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
-    handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
-    handleEditorApp(app: Application, theatre: RemoteTheatre): void;
+    handleApp(msg: BroadcastData): void;
+    handleEditor(msg: BroadcastData): void;
+    handleEditorApp(): void;
 }
 export {};

@@ -14,6 +14,8 @@ export type AppSettings = {
   mobile: boolean;
   supportOffScreenCanvas: boolean;
   quality: QualityType;
+  dev: boolean;
+  editor: boolean;
 }
 
 export function detectMaxFrameRate(callback: (fps: number) => void) {
@@ -35,9 +37,8 @@ export function detectMaxFrameRate(callback: (fps: number) => void) {
   requestAnimationFrame(measureFrameRate);
 }
 
-export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> {
+export function detectSettings(canvas: HTMLCanvasElement, dev: boolean, editor: boolean): Promise<AppSettings> {
   return new Promise((resolve) => {
-
     getGPUTier().then((gpuTier: TierResult) => {
       let supportOffScreenWebGL = false;
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -45,8 +46,8 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
   
       // If it's Safari, then check the version because Safari < 17 doesn't support OffscreenCanvas with a WebGL context.
       if (isSafari) {
-        const versionMatch = navigator.userAgent.match( /version\/(\d+)/i );
-        const safariVersion = versionMatch ? parseInt( versionMatch[ 1 ] ) : 0;
+        const versionMatch = navigator.userAgent.match(/version\/(\d+)/i);
+        const safariVersion = versionMatch ? parseInt(versionMatch[1]) : 0;
         supportOffScreenWebGL = safariVersion >= 17;
       }
     
@@ -58,6 +59,8 @@ export function detectSettings(canvas: HTMLCanvasElement): Promise<AppSettings> 
         mobile: gpuTier.isMobile !== undefined ? gpuTier.isMobile : false,
         supportOffScreenCanvas: supportOffScreenWebGL,
         quality: QualityType.Low,
+        dev,
+        editor,
       };
       if (gpuTier.tier === 3) settings.quality = QualityType.High;
       else if (gpuTier.tier === 2) settings.quality = QualityType.Medium;

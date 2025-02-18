@@ -6,7 +6,8 @@ type ToggleProps = {
   selected: boolean;
   onClick: (selected: boolean) => void;
   height: number;
-  top: number;
+  width?: number;
+  top?: number;
 }
 
 export default function Toggle(props: ToggleProps) {
@@ -23,8 +24,9 @@ export default function Toggle(props: ToggleProps) {
       }}
       style={{
         backgroundImage: `url(${props.icon})`,
-        backgroundPositionY: `${props.top}px`,
-        backgroundSize: `26px ${props.height}px`,
+        backgroundPositionX: 'center',
+        backgroundPositionY: props.top !== undefined ? `${props.top}px` : 'center',
+        backgroundSize: `${props.width !== undefined ? `${props.width}px` : '26px'} ${props.height}px`,
       }}
     ></button>
   );

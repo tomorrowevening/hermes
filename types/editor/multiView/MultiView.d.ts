@@ -58,6 +58,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private brRender;
     private cameraVisibility;
     private lightVisibility;
+    private gridVisibility;
     selectedItem: Object3D | undefined;
     private debugCamera;
     private raycaster;
@@ -106,6 +107,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private clearControls;
     private saveExpandedCameraVisibility;
     private saveExpandedLightVisibility;
+    private saveExpandedGridVisibility;
     private getSceneOverride;
     private drawTo;
     private drawSingle;
@@ -116,5 +118,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     get three(): RemoteThree;
     get expandedCameraVisibility(): string;
     get expandedLightVisibility(): string;
+    get expandedGridVisibility(): string;
 }
 export {};

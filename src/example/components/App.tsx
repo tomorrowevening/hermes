@@ -5,7 +5,7 @@ import { WebGLRenderer } from 'three';
 import Stats from 'stats-gl';
 // Models
 import { Application, ToolEvents } from '../../core/Application';
-import { IS_DEV } from '../constants';
+import { IS_DEV, IS_EDITOR } from '../constants';
 // Components
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
@@ -60,7 +60,7 @@ function App(props: AppProps) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas !== null) {
-      detectSettings(canvas).then((settings) => console.log('Settings', settings));
+      detectSettings(canvas, IS_DEV, IS_EDITOR).then((settings) => console.log('Settings', settings));
     }
   }, []);
 
@@ -189,12 +189,12 @@ function App(props: AppProps) {
 
       <div id='box' ref={elementRef}>
         <button onClick={() => {
-          // app.send({
-          //   target: 'editor',
-          //   event: 'custom',
-          //   data: 'hello editor!'
-          // });
-          theatre.playSheet('Scene1');
+          props.app.send({
+            target: 'editor',
+            event: 'custom',
+            data: 'hello editor!'
+          });
+          theatre.playSheet('App');
         }}>Click</button>
       </div>
 

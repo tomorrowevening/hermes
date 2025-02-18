@@ -1,8 +1,6 @@
 // Libs
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
-import { Vector3 } from 'three';
 // Core
-import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
@@ -282,54 +280,52 @@ export default class RemoteTheatre extends BaseRemote {
     }
   }
 
-  override handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void {
-    const theatre = remote as RemoteTheatre;
+  override handleApp(msg: BroadcastData): void {
     let value: any = undefined;
     switch (msg.event) {
       case 'setSheet':
-        value = theatre.sheets.get(msg.data.sheet);
+        value = this.sheets.get(msg.data.sheet);
         if (value !== undefined) {
-          theatre.activeSheet = value as ISheet;
+          this.activeSheet = value as ISheet;
           this.studio?.setSelection([value]);
         }
         break;
       case 'setSheetObject':
-        value = theatre.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
+        value = this.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
         if (value !== undefined) {
           this.studio?.setSelection([value]);
         }
         break;
       case 'updateSheetObject':
-        value = theatre.sheets.get(msg.data.sheet); // pause current animation
+        value = this.sheets.get(msg.data.sheet); // pause current animation
         if (value !== undefined) value.sequence.pause();
-        value = theatre.sheetObjectCBs.get(msg.data.sheetObject);
+        value = this.sheetObjectCBs.get(msg.data.sheetObject);
         if (value !== undefined) value(msg.data.values);
         break;
       case 'updateTimeline':
-        value = theatre.sheets.get(msg.data.sheet);
-        if (theatre.activeSheet !== undefined) {
-          theatre.activeSheet.sequence.position = msg.data.position;
+        value = this.sheets.get(msg.data.sheet);
+        if (this.activeSheet !== undefined) {
+          this.activeSheet.sequence.position = msg.data.position;
         }
         break;
     }
   }
 
-  override handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void {
-    if (app.editor) {
-      const theatre = remote as RemoteTheatre;
+  override handleEditor(msg: BroadcastData): void {
+    if (this.app.editor) {
       switch (msg.event) {
         case 'playSheet':
-          theatre.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
+          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
           break;
         case 'pauseSheet':
-          theatre.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
+          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
           break;
       }
     }
   }
 
-  handleEditorApp(app: Application, theatre: RemoteTheatre) {
-    if (app.editor) {
+  handleEditorApp() {
+    if (this.app.editor) {
       this.studio?.ui.restore();
       this.studio?.onSelectionChange((value: any[]) => {
         if (value.length < 1) return;
@@ -344,7 +340,7 @@ export default class RemoteTheatre extends BaseRemote {
               data = {
                 sheet: obj.address.sheetId,
               };
-              theatre.activeSheet = theatre.sheets.get(obj.address.sheetId);
+              this.activeSheet = this.sheets.get(obj.address.sheetId);
               break;
   
             case 'Theatre_SheetObject_PublicAPI':
@@ -355,10 +351,10 @@ export default class RemoteTheatre extends BaseRemote {
                 sheet: obj.address.sheetId,
                 key: obj.address.objectKey,
               };
-              theatre.activeSheet = theatre.sheets.get(obj.address.sheetId);
+              this.activeSheet = this.sheets.get(obj.address.sheetId);
               break;
           }
-          app.send({ event: type, target: 'app', data: data });
+          this.app.send({ event: type, target: 'app', data: data });
         });
       });
   
@@ -366,12 +362,12 @@ export default class RemoteTheatre extends BaseRemote {
       let position = -1;
       const onRafUpdate = () => {
         if (
-          theatre.activeSheet !== undefined &&
-          position !== theatre.activeSheet.sequence.position
+          this.activeSheet !== undefined &&
+          position !== this.activeSheet.sequence.position
         ) {
-          position = theatre.activeSheet.sequence.position;
-          const t = theatre.activeSheet as ISheet;
-          app.send({
+          position = this.activeSheet.sequence.position;
+          const t = this.activeSheet as ISheet;
+          this.app.send({
             event: 'updateTimeline',
             target: 'app',
             data: {

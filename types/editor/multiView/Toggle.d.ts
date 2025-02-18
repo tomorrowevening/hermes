@@ -4,7 +4,8 @@ type ToggleProps = {
     selected: boolean;
     onClick: (selected: boolean) => void;
     height: number;
-    top: number;
+    width?: number;
+    top?: number;
 };
 export default function Toggle(props: ToggleProps): import("react/jsx-runtime").JSX.Element;
 export {};

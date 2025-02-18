@@ -32,8 +32,8 @@ export type ToolEvent = {
   [key in ToolEvents]: { value?: unknown }
 }
 
-export type RemoteCallback = (app: Application, remote: any, msg: BroadcastData) => void;
-interface RemoteCall {
+export type RemoteCallback = (msg: BroadcastData) => void;
+export interface RemoteCall {
   remote: any;
   callback: RemoteCallback;
 }
@@ -52,10 +52,11 @@ export class Application extends EventDispatcher<ToolEvent> {
   protected _connected = false;
   protected _useBC = false;
 
-  constructor(id: string, debugEnabled: boolean, useBC:boolean = true) {
+  constructor(id: string, debugEnabled: boolean, editor: boolean, useBC:boolean = true) {
     super();
     this._appID = id;
     this._debugEnabled = debugEnabled;
+    this.editor = editor;
 
     if (debugEnabled) {
       this._useBC = useBC;
@@ -115,7 +116,7 @@ export class Application extends EventDispatcher<ToolEvent> {
 
   private handleAppBroadcast(msg: BroadcastData) {
     this.appHandlers.forEach((remoteCall: RemoteCall) => {
-      remoteCall.callback(this, remoteCall.remote, msg);
+      remoteCall.callback(msg);
     });
 
     switch (msg.event) {
@@ -127,7 +128,7 @@ export class Application extends EventDispatcher<ToolEvent> {
 
   private handleEditorBroadcast(msg: BroadcastData) {
     this.editorHandlers.forEach((remoteCall: RemoteCall) => {
-      remoteCall.callback(this, remoteCall.remote, msg);
+      remoteCall.callback(msg);
     });
 
     switch (msg.event) {
