@@ -1,5 +1,4 @@
 import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export default class RemoteThree extends BaseRemote {
@@ -31,8 +30,8 @@ export default class RemoteThree extends BaseRemote {
     setScene(value: Scene): void;
     addCamera(camera: Camera): void;
     removeCamera(camera: Camera): void;
-    handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
-    handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
+    handleApp(msg: BroadcastData): void;
+    handleEditor(msg: BroadcastData): void;
     addRT(name: string, params?: RenderTargetOptions): void;
     resize(width: number, height: number): void;
     set dpr(value: number);

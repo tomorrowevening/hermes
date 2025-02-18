@@ -4,6 +4,6 @@ export default class BaseRemote {
     app: Application;
     constructor(app: Application);
     dispose(): void;
-    handleApp(app: Application, remote: BaseRemote, msg: BroadcastData): void;
-    handleEditor(app: Application, remote: BaseRemote, msg: BroadcastData): void;
+    handleApp(msg: BroadcastData): void;
+    handleEditor(msg: BroadcastData): void;
 }
