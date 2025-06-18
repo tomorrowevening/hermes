@@ -15,6 +15,7 @@ import {
   ReinhardToneMapping,
   SRGBColorSpace,
   ToneMapping,
+  WebGLRenderer,
 } from 'three';
 import { Application, ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
@@ -45,6 +46,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
   private clearAlpha = 1;
   private toneMapping: ToneMapping = NoToneMapping;
   private toneMappingExposure = 1;
+  private type = '';
 
   constructor(props: InspectRendererProps) {
     super(props);
@@ -67,12 +69,13 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
         this.autoClearColor = renderer.autoClearColor;
         this.autoClearDepth = renderer.autoClearDepth;
         this.autoClearStencil = renderer.autoClearStencil;
-        this.outputColorSpace = renderer.outputColorSpace;
-        this.localClippingEnabled = renderer.localClippingEnabled;
         this.clearAlpha = renderer.getClearAlpha();
         this.toneMapping = renderer.toneMapping;
         this.toneMappingExposure = renderer.toneMappingExposure;
-        renderer.getClearColor(this.clearColor);
+        if (renderer instanceof WebGLRenderer) {
+          this.localClippingEnabled = renderer.localClippingEnabled;
+          renderer.getClearColor(this.clearColor);
+        }
       }
     }
 
@@ -92,6 +95,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     this.outputColorSpace = data.outputColorSpace;
     this.localClippingEnabled = data.localClippingEnabled;
     this.clearAlpha = data.clearAlpha;
+    this.type = data.type;
     this.toneMapping = data.toneMapping;
     this.toneMappingExposure = data.toneMappingExposure;
     this.clearColor.setStyle(data.clearColor, LinearSRGBColorSpace);
@@ -306,6 +310,12 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
               this.toneMappingExposure = value;
               updateMultiView();
             }
+          },
+          {
+            type: 'string',
+            title: 'Type',
+            value: this.type,
+            disabled: true,
           },
         ]}
         onToggle={(value: boolean) => {

@@ -1,5 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { Camera, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
@@ -25,7 +26,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     static instance: MultiView | null;
     app: Application;
     scene: Scene;
-    renderer?: WebGLRenderer | null;
+    renderer?: WebGLRenderer | WebGPURenderer | null;
     currentScene?: Scene;
     cameras: Map<string, Camera>;
     controls: Map<string, OrbitControls>;

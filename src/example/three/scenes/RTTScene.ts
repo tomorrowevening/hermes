@@ -1,4 +1,16 @@
-import { Color, DirectionalLight, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene, TorusKnotGeometry, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
+import {
+  Color,
+  DirectionalLight,
+  Mesh,
+  MeshNormalMaterial,
+  MeshPhysicalMaterial,
+  PerspectiveCamera,
+  RenderTarget,
+  Scene,
+  SphereGeometry,
+  TorusKnotGeometry,
+  Vector3,
+} from 'three';
 import { IS_DEV } from '../../constants';
 import { hierarchyUUID } from '../../../utils/three';
 import { cubeTextures } from '../loader';
@@ -6,7 +18,7 @@ import { cubeTextures } from '../loader';
 const zero3 = new Vector3();
 
 export default class RTTScene extends Scene {
-  renderTarget: WebGLRenderTarget;
+  renderTarget: RenderTarget;
   camera: PerspectiveCamera;
   mesh: Mesh;
 
@@ -21,7 +33,7 @@ export default class RTTScene extends Scene {
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(zero3);
 
-    const light = new DirectionalLight(new Color(0xffffff), 0.125);
+    const light = new DirectionalLight(new Color(0xffffff), 1);
     light.name = 'sun';
     this.add(light);
 
@@ -29,23 +41,41 @@ export default class RTTScene extends Scene {
     this.mesh.name = 'normalMesh';
     this.add(this.mesh);
 
-    this.renderTarget = new WebGLRenderTarget(512, 512);
+    const ball = new Mesh(new SphereGeometry(20), new MeshNormalMaterial());
+    ball.name = 'ball';
+    ball.position.set(-40, 0, 0);
+    this.add(ball);
+
+    this.renderTarget = new RenderTarget(512, 512);
+
+    // const radius = 100;
+    // const angle = Math.PI / 2;
+    // const x = Math.cos(angle) * radius;
+    // const z = Math.sin(angle) * radius;
+    // this.camera.position.set(x, 0, z);
+    this.camera.position.set(0, 0, 100);
+    this.camera.lookAt(zero3);
 
     if (IS_DEV) hierarchyUUID(this);
   }
 
-  draw(time: number, renderer: WebGLRenderer) {
-    const radius = 100;
-    const angle = time * 0.05 * Math.PI * 2;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    this.camera.position.set(x, 0, z);
-    this.camera.lookAt(zero3);
+  draw(time: number, renderer: any) {
+    // const radius = 100;
+    // const angle = time * 0.05 * Math.PI * 2;
+    // const x = Math.cos(angle) * radius;
+    // const z = Math.sin(angle) * radius;
+    // this.camera.position.set(x, 0, z);
+    // this.camera.lookAt(zero3);
 
     // Draw
-    renderer.setRenderTarget(this.renderTarget);
-    renderer.clear();
-    renderer.render(this, this.camera);
-    renderer.setRenderTarget(null);
+    if (renderer.isWebGLRenderer) {
+      renderer.setRenderTarget(this.renderTarget);
+      renderer.render(this, this.camera);
+      renderer.setRenderTarget(null);
+    } else {
+      renderer.setRenderTarget(this.renderTarget);
+      renderer.renderAsync(this, this.camera);
+      renderer.setRenderTarget(null);
+    }
   }
 }

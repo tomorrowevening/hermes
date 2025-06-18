@@ -34,7 +34,6 @@ export default defineConfig({
       include: ['**/*.glsl', '**/*.vert', '**/*.frag'],
       warnDuplicatedImports: true,
       defaultExtension: 'glsl',
-      compress: false,
       watch: true,
     }),
     react()

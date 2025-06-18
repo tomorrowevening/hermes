@@ -36,6 +36,7 @@ import {
   Vector4,
   WebGLRenderer,
 } from 'three';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils';
@@ -47,6 +48,8 @@ import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
 import { Application, ToolEvents } from '@/core/Application';
 // Components
 import './MultiView.scss';
+import DebugData from '../sidePanel/DebugData';
+import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 import Toggle from './Toggle';
 import UVMaterial from './UVMaterial';
 // Tools
@@ -56,8 +59,6 @@ import Transform from '../tools/Transform';
 import { mix } from '@/utils/math';
 import { dispose } from '@/utils/three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
-import DebugData from '../sidePanel/DebugData';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
@@ -98,7 +99,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   app: Application;
   scene = new Scene();
-  renderer?: WebGLRenderer | null;
+  renderer?: WebGLRenderer | WebGPURenderer | null;
   currentScene?: Scene;
   cameras: Map<string, Camera> = new Map();
   controls: Map<string, OrbitControls> = new Map();
@@ -165,6 +166,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     super(props);
 
     this.app = props.app;
+    this.app.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
 
     // Refs
     this.canvasRef = createRef<HTMLCanvasElement>();
@@ -232,7 +234,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   componentDidMount(): void {
-    this.setupRenderer();
     this.enable();
     this.assignControls();
     this.resize();
@@ -530,17 +531,36 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   // Setup
 
-  private setupRenderer() {
-    this.renderer = new WebGLRenderer({
-      canvas: this.canvasRef.current!,
-      stencil: false
-    });
-    this.renderer.autoClear = false;
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.setPixelRatio(devicePixelRatio);
-    this.renderer.setClearColor(0x000000);
-    this.props.three.renderer = this.renderer;
-  }
+  private setupRenderer = (evt: any) => {
+    if (this.renderer) {
+      this.renderer.dispose();
+    }
+
+    const canvas = this.canvasRef.current!;
+    const data = evt.value;
+    if (data.type === 'WebGLRenderer') {
+      this.renderer = new WebGLRenderer({
+        canvas: canvas,
+        stencil: false
+      });
+      this.grid.visible = true;
+    } else if (data.type === 'WebGPURenderer') {
+      this.renderer = new WebGPURenderer({
+        canvas: canvas,
+        stencil: false
+      });
+      this.grid.visible = false;
+    }
+
+    if (this.renderer) {
+      this.renderer.autoClear = false;
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.setPixelRatio(devicePixelRatio);
+      this.renderer.setClearColor(0x000000);
+      this.resize();
+      this.props.three.renderer = this.renderer;
+    }
+  };
 
   private setupScene() {
     this.scene.name = 'Debug Scene';
@@ -638,8 +658,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   private draw() {
-    this.renderer?.clear();
-    // console.log(this.state.mode);
+    if (this.renderer) {
+      if (this.renderer instanceof WebGLRenderer) {
+        this.renderer?.clear();
+      } else if (this.renderer instanceof WebGPURenderer) {
+        this.renderer?.clearAsync();
+      }
+    }
     switch (this.state.mode) {
       case 'Single':
         this.drawSingle();
@@ -690,6 +715,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private resize = () => {
     this.width = window.innerWidth - 300;
     this.height = window.innerHeight;
+
+    this.renderer?.setSize(this.width, this.height);
     const bw = Math.floor(this.width / 2);
     const bh = Math.floor(this.height / 2);
     this.props.three.resize(this.width, this.height);
@@ -737,6 +764,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private sceneUpdate = (evt: any) => {
+    // return;
     this.clearLightHelpers();
     this.scene.remove(this.currentScene!);
     dispose(this.currentScene!);
@@ -781,7 +809,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   private onMouseMove = (event: MouseEvent) => {
     const size = new Vector2();
-    this.renderer!.getSize(size);
+    this.renderer?.getSize(size);
 
     const mouseX = Math.min(event.clientX, size.x);
     const mouseY = Math.min(event.clientY, size.y);
@@ -1251,9 +1279,15 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
 
     this.scene.overrideMaterial = material;
-    this.renderer?.setViewport(x, y, width, height);
-    this.renderer?.setScissor(x, y, width, height);
-    this.renderer?.render(this.scene, camera);
+    if (this.renderer) {
+      this.renderer?.setViewport(x, y, width, height);
+      this.renderer?.setScissor(x, y, width, height);
+      if (this.renderer instanceof WebGLRenderer) {
+        this.renderer?.render(this.scene, camera);
+      } else if (this.renderer instanceof WebGPURenderer) {
+        this.renderer?.renderAsync(this.scene, camera);
+      }
+    }
     this.grid.rotation.set(0, 0, 0);
   }
 

@@ -11,7 +11,7 @@ export default class RemoteThree extends BaseRemote {
   inputElement: any = null; // reference this to receive events
   scene?: Scene = undefined;
   scenes: Map<string, Scene> = new Map();
-  renderer?: WebGLRenderer = undefined;
+  renderer?: any = undefined;
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
 
   private groups = new Map<string, GroupCallback>();
@@ -147,12 +147,13 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
-  setRenderer(value: WebGLRenderer, inputElement: any = null) {
+  setRenderer(value: any, inputElement: any = null) {
     this.renderer = value;
     this.canvas = value.domElement;
     this.inputElement = inputElement !== null ? inputElement : this.canvas;
 
     if (!this.app.debugEnabled) return;
+
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
     this.app.send({
       event: 'addRenderer',
@@ -169,6 +170,7 @@ export default class RemoteThree extends BaseRemote {
         colorManagement: ColorManagement.enabled,
         toneMapping: value.toneMapping,
         toneMappingExposure: value.toneMappingExposure,
+        type: value.isWebGLRenderer ? 'WebGLRenderer' : 'WebGPURenderer',
       },
     });
   }

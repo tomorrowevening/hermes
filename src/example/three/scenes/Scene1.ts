@@ -22,7 +22,7 @@ import {
   TiltShiftEffect,
   VignetteEffect,
 } from 'postprocessing';
-import CustomMaterial from '../CustomMaterial';
+import CustomShaderMaterial from '../CustomShaderMaterial';
 import { hierarchyUUID } from '../../../utils/three';
 import { IS_DEV } from '../../constants';
 import FBXAnimation from '../FBXAnimation';
@@ -34,8 +34,8 @@ import RemoteThree from '../../../core/remote/RemoteThree';
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
 
-  private customMat!: CustomMaterial;
-  private post!: EffectComposer;
+  private customMat?: CustomShaderMaterial;
+  private post?: EffectComposer;
 
   constructor() {
     super();
@@ -46,16 +46,9 @@ export default class Scene1 extends BaseScene {
     const envMap = cubeTextures.get('environment')!;
     this.background = envMap;
 
-    if (this.app.editor) {
-      const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: envMap, side: BackSide }));
-      bg.name = 'bg';
-      bg.scale.setScalar(1000);
-      this.add(bg);
-    }
-
     this.createLights();
     this.createWorld();
-    if (!this.app.editor) this.createPost();
+    // if (!this.app.editor) this.createPost();
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
@@ -149,11 +142,16 @@ export default class Scene1 extends BaseScene {
     items.push(mesh3);
 
     // CustomMaterial
-    this.customMat = new CustomMaterial();
-    const mesh4 = new Mesh(geom, this.customMat);
-    mesh4.name = 'Shader';
-    world.add(mesh4);
-    items.push(mesh4);
+    const three = this.app.components.get('three') as RemoteThree;
+    if (three.renderer.isWebGLRenderer) {
+      this.customMat = new CustomShaderMaterial();
+      const mesh4 = new Mesh(geom, this.customMat);
+      mesh4.name = 'Shader';
+      world.add(mesh4);
+      items.push(mesh4);
+    } else {
+      // WebGPU
+    }
 
     const spacing = 50;
     const total = items.length;
@@ -238,21 +236,13 @@ export default class Scene1 extends BaseScene {
 
   override update() {
     const delta = this.clock.getDelta();
-    this.customMat.update(delta);
+    this.customMat?.update(delta);
     this.dance.update(delta);
-  }
-
-  override draw() {
-    if (this.app.editor) {
-      //
-    } else {
-      //
-    }
-    this.post.render();
   }
 
   override resize(width: number, height: number): void {
     super.resize(width, height);
-    if (!this.app.editor) this.post.setSize(width, height);
+    this.renderer?.setSize(width, height);
+    if (!this.app.editor) this.post?.setSize(width, height);
   }
 }

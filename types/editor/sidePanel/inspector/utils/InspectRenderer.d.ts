@@ -21,6 +21,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     private clearAlpha;
     private toneMapping;
     private toneMappingExposure;
+    private type;
     constructor(props: InspectRendererProps);
     componentwillunmount(): void;
     private onAddRenderer;
