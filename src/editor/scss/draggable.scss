@@ -1,4 +1,4 @@
-@use 'theme';
+@use './theme';
 
 .editor .header .draggable {
   li {
@@ -7,16 +7,16 @@
     &.dragging {
       transform: scale(1.1);
       div {
-        background-color: $BTN_DRAG;
+        background-color: theme.$BTN_DRAG;
       }
     }
     div {
-      background-color: $BAR_COLOR;
+      background-color: theme.$BAR_COLOR;
       line-height: 14px;
       padding: 5px 10px;
       transition: background-color 0.25s linear;
       &:hover {
-        background-color: $BTN_HOVER;
+        background-color: theme.$BTN_HOVER;
       }
       span {
         font-size: 12px;

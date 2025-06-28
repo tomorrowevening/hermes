@@ -1,4 +1,5 @@
 import {
+  BackSide,
   CircleGeometry,
   Color,
   LineBasicMaterial,
@@ -15,7 +16,6 @@ import {
   SkinnedMesh,
   SphereGeometry,
   SpotLight,
-  WebGLRenderer,
 } from 'three';
 // @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
@@ -82,7 +82,7 @@ export default class Scene2 extends BaseScene {
     lights.add(spotlight);
 
     // Rect Light
-    if (three.renderer !== undefined && three.renderer instanceof WebGLRenderer) {
+    if (three.renderer !== undefined && three.renderer.isWebGLRenderer) {
       RectAreaLightUniformsLib.init();
       const rectLight = new RectAreaLight(0xff0000, 1, 300, 100);
       rectLight.name = 'rectLight';
@@ -124,26 +124,26 @@ export default class Scene2 extends BaseScene {
     lines.position.set(100, 50, 0);
     world.add(lines);
 
-    // this.rttScene = new RTTScene();
-    // three.addScene(this.rttScene);
+    this.rttScene = new RTTScene();
+    three.addScene(this.rttScene);
 
-    // const rttMat = new MeshBasicMaterial();
-    // rttMat.map = this.rttScene.renderTarget.texture;
-    // const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
-    // rttExample.name = 'rttExample';
-    // rttExample.position.set(-120, 50, -100);
-    // // if (!three.renderer.isWebGLRenderer) {
-    // //   rttExample.scale.set(1, 1, 1);
-    // // }
-    // world.add(rttExample);
+    const rttMat = new MeshBasicMaterial();
+    rttMat.map = this.rttScene.renderTarget.texture;
+    const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
+    rttExample.name = 'rttExample';
+    rttExample.position.set(-100, 0, -150);
+    this.camera.add(rttExample);
 
     if (three.renderer.isWebGLRenderer) {
       const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
       testShader.name = 'customShaderMaterial';
-      testShader.position.set(0, 50, -100);
+      testShader.position.set(100, 50, -100);
       world.add(testShader);
     } else {
       // WebGPU
+      rttExample.scale.y = -1;
+      rttMat.side = BackSide;
+      rttMat.needsUpdate = true;
     }
 
     this.dance = new FBXAnimation('Flair');

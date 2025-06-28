@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
-import { WebGPURenderer } from 'three/webgpu';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
 import { Application, ToolEvents } from '../../core/Application';
@@ -59,6 +59,7 @@ function App(props: AppProps) {
     };
   }, []);
 
+  // Detect settings
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas !== null) {
@@ -70,7 +71,7 @@ function App(props: AppProps) {
   if (props.app.isApp) {
     useEffect(() => {
       const canvas = canvasRef.current!;
-      const useWebGPU = true;
+      const useWebGPU = false;
       console.log('WebGPU:', useWebGPU);
       if (useWebGPU) {
         renderer = new WebGPURenderer({

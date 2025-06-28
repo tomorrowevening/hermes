@@ -1,5 +1,4 @@
 import {
-  BackSide,
   CircleGeometry,
   DirectionalLight,
   HemisphereLight,
@@ -12,16 +11,6 @@ import {
   SphereGeometry,
   SpotLight,
 } from 'three';
-import {
-  BlendFunction,
-  EffectComposer,
-  EffectPass,
-  FXAAEffect,
-  NoiseEffect,
-  RenderPass,
-  TiltShiftEffect,
-  VignetteEffect,
-} from 'postprocessing';
 import CustomShaderMaterial from '../CustomShaderMaterial';
 import { hierarchyUUID } from '../../../utils/three';
 import { IS_DEV } from '../../constants';
@@ -35,7 +24,6 @@ export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
 
   private customMat?: CustomShaderMaterial;
-  private post?: EffectComposer;
 
   constructor() {
     super();
@@ -45,6 +33,9 @@ export default class Scene1 extends BaseScene {
   override init(): void {
     const envMap = cubeTextures.get('environment')!;
     this.background = envMap;
+
+    this.camera.position.set(0, 50, 50);
+    this.camera.lookAt(0, 50, 0);
 
     this.createLights();
     this.createWorld();
@@ -67,7 +58,7 @@ export default class Scene1 extends BaseScene {
     sun.name = 'sun';
     sun.castShadow = true;
     sun.position.set(0, 50, 50);
-    const shadow = 256;
+    const shadow = 1024;
     sun.shadow.camera.top = shadow;
     sun.shadow.camera.bottom = -shadow;
     sun.shadow.camera.left = - shadow;
@@ -76,7 +67,7 @@ export default class Scene1 extends BaseScene {
     sun.shadow.mapSize.height = 1024;
     sun.shadow.camera.near = 10;
     sun.shadow.camera.far = 1000;
-    sun.shadow.bias = 0.0001;
+    sun.shadow.bias = -0.001;
     lights.add(sun);
 
     const hemi = new HemisphereLight(0x6fb4e2, 0xc46d27, 0.5);
@@ -90,6 +81,11 @@ export default class Scene1 extends BaseScene {
     spotlight.penumbra = Math.PI;
     spotlight.name = 'spotlight';
     spotlight.castShadow = true;
+    spotlight.shadow.mapSize.width = 1024;
+    spotlight.shadow.mapSize.height = 1024;
+    spotlight.shadow.camera.near = 10;
+    spotlight.shadow.camera.far = 1000;
+    spotlight.shadow.bias = -0.001;
     spotlight.position.set(-50, 200, 200);
     spotlight.lookAt(0, 50, 0);
     lights.add(spotlight);
@@ -163,26 +159,6 @@ export default class Scene1 extends BaseScene {
     }
   }
 
-  private createPost() {
-    this.post = new EffectComposer(this.renderer);
-    this.post.addPass(new RenderPass(this, this.camera));
-
-    const fxaaEffect = new FXAAEffect();
-    fxaaEffect.minEdgeThreshold = 0.01;
-    this.post.addPass(new EffectPass(this.camera, fxaaEffect));
-    
-    const blur = new TiltShiftEffect({
-      focusArea: 0.6
-    });
-    this.post.addPass(new EffectPass(this.camera, blur));
-
-    const noiseEffect = new NoiseEffect({});
-    noiseEffect.blendMode.opacity.value = 0.33;
-    noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
-    const vignette = new VignetteEffect({});
-    this.post.addPass(new EffectPass(this.camera, noiseEffect, vignette));
-  }
-
   private createAnimation() {
     const theatre = this.app.components.get('theatre') as RemoteTheatre;
     theatre.sheet(this.name);
@@ -243,6 +219,5 @@ export default class Scene1 extends BaseScene {
   override resize(width: number, height: number): void {
     super.resize(width, height);
     this.renderer?.setSize(width, height);
-    if (!this.app.editor) this.post?.setSize(width, height);
   }
 }

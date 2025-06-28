@@ -5,6 +5,7 @@ import {
   MeshNormalMaterial,
   MeshPhysicalMaterial,
   PerspectiveCamera,
+  PlaneGeometry,
   RenderTarget,
   Scene,
   SphereGeometry,
@@ -37,35 +38,41 @@ export default class RTTScene extends Scene {
     light.name = 'sun';
     this.add(light);
 
-    this.mesh = new Mesh(new TorusKnotGeometry(10, 3, 100, 6), new MeshPhysicalMaterial({ envMap: envMap, envMapIntensity: 10 }));
+    this.mesh = new Mesh(
+      new TorusKnotGeometry(10, 3, 100, 6),
+      new MeshPhysicalMaterial({ envMap: envMap, envMapIntensity: 10 })
+    );
     this.mesh.name = 'normalMesh';
     this.add(this.mesh);
 
-    const ball = new Mesh(new SphereGeometry(20), new MeshNormalMaterial());
+    const ball = new Mesh(new SphereGeometry(10), new MeshNormalMaterial());
     ball.name = 'ball';
-    ball.position.set(-40, 0, 0);
+    ball.position.set(25, 25, 0);
     this.add(ball);
 
-    this.renderTarget = new RenderTarget(512, 512);
+    const floor = new Mesh(
+      new PlaneGeometry(200, 200),
+      new MeshPhysicalMaterial({
+        envMap: envMap,
+      })
+    );
+    floor.name = 'floor';
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set(0, -20, 0);
+    this.add(floor);
 
-    // const radius = 100;
-    // const angle = Math.PI / 2;
-    // const x = Math.cos(angle) * radius;
-    // const z = Math.sin(angle) * radius;
-    // this.camera.position.set(x, 0, z);
-    this.camera.position.set(0, 0, 100);
-    this.camera.lookAt(zero3);
+    this.renderTarget = new RenderTarget(512, 512);
 
     if (IS_DEV) hierarchyUUID(this);
   }
 
   draw(time: number, renderer: any) {
-    // const radius = 100;
-    // const angle = time * 0.05 * Math.PI * 2;
-    // const x = Math.cos(angle) * radius;
-    // const z = Math.sin(angle) * radius;
-    // this.camera.position.set(x, 0, z);
-    // this.camera.lookAt(zero3);
+    const radius = 100;
+    const angle = time * 0.05 * Math.PI * 2;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    this.camera.position.set(x, 0, z);
+    this.camera.lookAt(zero3);
 
     // Draw
     if (renderer.isWebGLRenderer) {

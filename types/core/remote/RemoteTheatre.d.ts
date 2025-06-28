@@ -1,6 +1,7 @@
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
+import { Application } from '../Application';
 type KeyframeVector = {
     position: number;
     x: number;
@@ -15,6 +16,7 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
     activeSheet: ISheet | undefined;
     studio: any;
+    constructor(app: Application);
     dispose(): void;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;

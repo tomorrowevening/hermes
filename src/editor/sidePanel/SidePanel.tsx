@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Application, ToolEvents } from '@/core/Application';
 import { RemoteObject, SidePanelState } from './types';
 // Components
-import '../scss/_sidePanel.scss';
+import '../scss/sidePanel.scss';
 import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import DebugData from './DebugData';

@@ -17,9 +17,11 @@ import {
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
+  MeshPhysicalMaterial,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,
+  PlaneGeometry,
   PointLight,
   PointLightHelper,
   Quaternion,
@@ -34,7 +36,7 @@ import {
   Vector2,
   Vector3,
   Vector4,
-  WebGLRenderer,
+  WebGLRenderer
 } from 'three';
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
@@ -98,7 +100,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   static instance: MultiView | null = null;
 
   app: Application;
-  scene = new Scene();
+  scene: Scene;
   renderer?: WebGLRenderer | WebGPURenderer | null;
   currentScene?: Scene;
   cameras: Map<string, Camera> = new Map();
@@ -167,6 +169,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     this.app = props.app;
     this.app.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
+
+    this.scene = new Scene();
+    this.scene.name = this.scene.uuid = 'Debug Scene';
 
     // Refs
     this.canvasRef = createRef<HTMLCanvasElement>();
@@ -564,7 +569,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   private setupScene() {
     this.scene.name = 'Debug Scene';
-    this.scene.uuid = '';
+    this.scene.uuid = 'Debug Scene';
 
     this.helpersContainer.name = 'helpers';
     this.scene.add(this.helpersContainer);

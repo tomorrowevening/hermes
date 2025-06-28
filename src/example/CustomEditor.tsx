@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Application } from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
 // Models
