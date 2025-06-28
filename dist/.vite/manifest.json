@@ -1,11 +1,12 @@
 {
   "src/index.ts": {
     "file": "hermes.es.js",
-    "isEntry": true,
-    "src": "src/index.ts"
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true
   },
   "style.css": {
-    "file": "style.css",
+    "file": "hermes.css",
     "src": "style.css"
   }
 }
