@@ -1,4 +1,4 @@
-@use 'theme';
+@use './theme';
 
 .editor .header .dropdown {
   color: #FFF;
@@ -11,35 +11,35 @@
 
   button {
     backdrop-filter: blur(2px);
-    background-color: $BAR_COLOR;
+    background-color: theme.$BAR_COLOR;
     border: none;
     color: rgba($color: #FFF, $alpha: 0.5);
     font-size: 12px;
     padding: 5px 10px;
     position: relative;
     text-align: left;
-    min-width: $ROW_HEIGHT;
+    min-width: theme.$ROW_HEIGHT;
     width: 100%;
-    height: $BTN_SIZE;
+    height: theme.$BTN_SIZE;
     transition: all 0.2s linear;
 
     &:hover {
-      background-color: $BTN_HOVER;
+      background-color: theme.$BTN_HOVER;
       color: #FFF;
     }
 
     &.svg {
       line-height: 0;
-      width: $BTN_SIZE;
+      width: theme.$BTN_SIZE;
     }
   }
 
   p {
-    background-color: $BAR_COLOR;
+    background-color: theme.$BAR_COLOR;
     display: inline-block;
-    height: $ROW_HEIGHT;
+    height: theme.$ROW_HEIGHT;
     margin: 0;
-    min-width: $ROW_HEIGHT;
+    min-width: theme.$ROW_HEIGHT;
     padding: 5px;
   }
 
@@ -58,15 +58,15 @@
     width: max-content;
 
     li {
-      border-top: 1px solid $BORDER_COLOR;
+      border-top: 1px solid theme.$BORDER_COLOR;
       display: block;
       position: relative;
 
       &.selected button {
-        background-color: $BTN_SELECTED;
+        background-color: theme.$BTN_SELECTED;
 
         &:hover {
-          background-color: $BTN_SELECTED_HOVER;
+          background-color: theme.$BTN_SELECTED_HOVER;
         }
       }
     }
@@ -76,7 +76,7 @@
     min-width: 100%;
 
     ul {
-      border-left: 1px solid $BORDER_COLOR;
+      border-left: 1px solid theme.$BORDER_COLOR;
       left: 100%;
       top: -1px;
     }

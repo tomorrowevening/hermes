@@ -101,7 +101,7 @@ export default class Transform extends EventDispatcher {
       if (controls.domElement !== element) {
         controls.disconnect();
         controls.domElement = element;
-        controls.connect();
+        controls.connect(element);
       }
     });
   }

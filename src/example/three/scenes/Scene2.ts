@@ -1,4 +1,5 @@
 import {
+  BackSide,
   CircleGeometry,
   Color,
   LineBasicMaterial,
@@ -25,14 +26,14 @@ import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
-import CustomMaterial from '../CustomMaterial';
+import CustomShaderMaterial from '../CustomShaderMaterial';
 import RTTScene from './RTTScene';
 
 const customGroupName = 'Custom Group';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
-  rttScene!: RTTScene;
+  rttScene?: RTTScene;
   speed = 1;
 
   constructor() {
@@ -41,6 +42,8 @@ export default class Scene2 extends BaseScene {
   }
 
   override init(): void {
+    const three = this.app.components.get('three') as RemoteThree;
+
     this.camera.position.set(0, 100, 125);
     this.camera.lookAt(0, 50, 0);
 
@@ -49,7 +52,6 @@ export default class Scene2 extends BaseScene {
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
-    const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
@@ -59,13 +61,12 @@ export default class Scene2 extends BaseScene {
   override dispose(): void {
     const three = this.app.components.get('three') as RemoteThree;
     three.removeGroup(customGroupName);
-    three.removeScene(this.rttScene);
+    if (this.rttScene) three.removeScene(this.rttScene);
     super.dispose();
   }
 
   private createLights() {
-    RectAreaLightUniformsLib.init();
-
+    const three = this.app.components.get('three') as RemoteThree;
     const lights = new Object3D();
     lights.name = 'lights';
     this.add(lights);
@@ -80,14 +81,19 @@ export default class Scene2 extends BaseScene {
     spotlight.lookAt(0, 50, 0);
     lights.add(spotlight);
 
-    const rectLight = new RectAreaLight(0xff0000, 1, 300, 100);
-    rectLight.name = 'rectLight';
-    rectLight.position.set(250, 100, 100);
-    rectLight.lookAt(0, 50, 0);
-    lights.add(rectLight);
+    // Rect Light
+    if (three.renderer !== undefined && three.renderer.isWebGLRenderer) {
+      RectAreaLightUniformsLib.init();
+      const rectLight = new RectAreaLight(0xff0000, 1, 300, 100);
+      rectLight.name = 'rectLight';
+      rectLight.position.set(250, 100, 100);
+      rectLight.lookAt(0, 50, 0);
+      lights.add(rectLight);
+    }
   }
 
   private createWorld() {
+    const three = this.app.components.get('three') as RemoteThree;
     const envMap = cubeTextures.get('environment')!.clone();
     this.background = envMap;
     
@@ -119,20 +125,26 @@ export default class Scene2 extends BaseScene {
     world.add(lines);
 
     this.rttScene = new RTTScene();
-    const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this.rttScene);
 
     const rttMat = new MeshBasicMaterial();
     rttMat.map = this.rttScene.renderTarget.texture;
     const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
     rttExample.name = 'rttExample';
-    rttExample.position.set(-120, 50, -100);
-    world.add(rttExample);
+    rttExample.position.set(-100, 0, -150);
+    this.camera.add(rttExample);
 
-    const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomMaterial());
-    testShader.name = 'testShader';
-    testShader.position.set(0, 50, -100);
-    world.add(testShader);
+    if (three.renderer.isWebGLRenderer) {
+      const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
+      testShader.name = 'customShaderMaterial';
+      testShader.position.set(100, 50, -100);
+      world.add(testShader);
+    } else {
+      // WebGPU
+      rttExample.scale.y = -1;
+      rttMat.side = BackSide;
+      rttMat.needsUpdate = true;
+    }
 
     this.dance = new FBXAnimation('Flair');
     this.dance.name = 'flair';
@@ -234,6 +246,6 @@ export default class Scene2 extends BaseScene {
   override update(): void {
     const delta = this.clock.getDelta();
     this.dance.update(delta * this.speed);
-    if (this.renderer) this.rttScene.draw(this.clock.getElapsedTime(), this.renderer);
+    if (this.renderer) this.rttScene?.draw(this.clock.getElapsedTime(), this.renderer);
   }
 }

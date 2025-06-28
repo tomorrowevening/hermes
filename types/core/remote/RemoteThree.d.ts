@@ -1,4 +1,5 @@
-import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import { Camera, Curve, RenderTargetOptions, Scene, RenderTarget } from 'three';
+import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export default class RemoteThree extends BaseRemote {
@@ -6,9 +7,10 @@ export default class RemoteThree extends BaseRemote {
     inputElement: any;
     scene?: Scene;
     scenes: Map<string, Scene>;
-    renderer?: WebGLRenderer;
-    renderTargets: Map<string, WebGLRenderTarget>;
+    renderer?: any;
+    renderTargets: Map<string, RenderTarget>;
     private groups;
+    constructor(app: Application);
     dispose(): void;
     getObject(uuid: string): void;
     setObject(value: any): void;
@@ -20,7 +22,7 @@ export default class RemoteThree extends BaseRemote {
     updateGroup(group: string, prop: string, value: any): void;
     removeAllGroups(): void;
     addSpline(spline: Curve<any>): void;
-    setRenderer(value: WebGLRenderer, inputElement?: any): void;
+    setRenderer(value: any, inputElement?: any): void;
     updateRenderer(data: any): void;
     addScene(value: Scene): void;
     refreshScene(value: string): void;

@@ -1,5 +1,4 @@
 import {
-  BackSide,
   CircleGeometry,
   DirectionalLight,
   HemisphereLight,
@@ -12,17 +11,7 @@ import {
   SphereGeometry,
   SpotLight,
 } from 'three';
-import {
-  BlendFunction,
-  EffectComposer,
-  EffectPass,
-  FXAAEffect,
-  NoiseEffect,
-  RenderPass,
-  TiltShiftEffect,
-  VignetteEffect,
-} from 'postprocessing';
-import CustomMaterial from '../CustomMaterial';
+import CustomShaderMaterial from '../CustomShaderMaterial';
 import { hierarchyUUID } from '../../../utils/three';
 import { IS_DEV } from '../../constants';
 import FBXAnimation from '../FBXAnimation';
@@ -34,8 +23,7 @@ import RemoteThree from '../../../core/remote/RemoteThree';
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
 
-  private customMat!: CustomMaterial;
-  private post!: EffectComposer;
+  private customMat?: CustomShaderMaterial;
 
   constructor() {
     super();
@@ -46,16 +34,12 @@ export default class Scene1 extends BaseScene {
     const envMap = cubeTextures.get('environment')!;
     this.background = envMap;
 
-    if (this.app.editor) {
-      const bg = new Mesh(new SphereGeometry(), new MeshBasicMaterial({ envMap: envMap, side: BackSide }));
-      bg.name = 'bg';
-      bg.scale.setScalar(1000);
-      this.add(bg);
-    }
+    this.camera.position.set(0, 50, 50);
+    this.camera.lookAt(0, 50, 0);
 
     this.createLights();
     this.createWorld();
-    if (!this.app.editor) this.createPost();
+    // if (!this.app.editor) this.createPost();
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
@@ -74,7 +58,7 @@ export default class Scene1 extends BaseScene {
     sun.name = 'sun';
     sun.castShadow = true;
     sun.position.set(0, 50, 50);
-    const shadow = 256;
+    const shadow = 1024;
     sun.shadow.camera.top = shadow;
     sun.shadow.camera.bottom = -shadow;
     sun.shadow.camera.left = - shadow;
@@ -83,7 +67,7 @@ export default class Scene1 extends BaseScene {
     sun.shadow.mapSize.height = 1024;
     sun.shadow.camera.near = 10;
     sun.shadow.camera.far = 1000;
-    sun.shadow.bias = 0.0001;
+    sun.shadow.bias = -0.001;
     lights.add(sun);
 
     const hemi = new HemisphereLight(0x6fb4e2, 0xc46d27, 0.5);
@@ -97,6 +81,11 @@ export default class Scene1 extends BaseScene {
     spotlight.penumbra = Math.PI;
     spotlight.name = 'spotlight';
     spotlight.castShadow = true;
+    spotlight.shadow.mapSize.width = 1024;
+    spotlight.shadow.mapSize.height = 1024;
+    spotlight.shadow.camera.near = 10;
+    spotlight.shadow.camera.far = 1000;
+    spotlight.shadow.bias = -0.001;
     spotlight.position.set(-50, 200, 200);
     spotlight.lookAt(0, 50, 0);
     lights.add(spotlight);
@@ -149,11 +138,16 @@ export default class Scene1 extends BaseScene {
     items.push(mesh3);
 
     // CustomMaterial
-    this.customMat = new CustomMaterial();
-    const mesh4 = new Mesh(geom, this.customMat);
-    mesh4.name = 'Shader';
-    world.add(mesh4);
-    items.push(mesh4);
+    const three = this.app.components.get('three') as RemoteThree;
+    if (three.renderer.isWebGLRenderer) {
+      this.customMat = new CustomShaderMaterial();
+      const mesh4 = new Mesh(geom, this.customMat);
+      mesh4.name = 'Shader';
+      world.add(mesh4);
+      items.push(mesh4);
+    } else {
+      // WebGPU
+    }
 
     const spacing = 50;
     const total = items.length;
@@ -163,26 +157,6 @@ export default class Scene1 extends BaseScene {
       items[i].position.set(x, 100, -150);
       items[i].castShadow = true;
     }
-  }
-
-  private createPost() {
-    this.post = new EffectComposer(this.renderer);
-    this.post.addPass(new RenderPass(this, this.camera));
-
-    const fxaaEffect = new FXAAEffect();
-    fxaaEffect.minEdgeThreshold = 0.01;
-    this.post.addPass(new EffectPass(this.camera, fxaaEffect));
-    
-    const blur = new TiltShiftEffect({
-      focusArea: 0.6
-    });
-    this.post.addPass(new EffectPass(this.camera, blur));
-
-    const noiseEffect = new NoiseEffect({});
-    noiseEffect.blendMode.opacity.value = 0.33;
-    noiseEffect.blendMode.blendFunction = BlendFunction.MULTIPLY;
-    const vignette = new VignetteEffect({});
-    this.post.addPass(new EffectPass(this.camera, noiseEffect, vignette));
   }
 
   private createAnimation() {
@@ -238,21 +212,12 @@ export default class Scene1 extends BaseScene {
 
   override update() {
     const delta = this.clock.getDelta();
-    this.customMat.update(delta);
+    this.customMat?.update(delta);
     this.dance.update(delta);
-  }
-
-  override draw() {
-    if (this.app.editor) {
-      //
-    } else {
-      //
-    }
-    this.post.render();
   }
 
   override resize(width: number, height: number): void {
     super.resize(width, height);
-    if (!this.app.editor) this.post.setSize(width, height);
+    this.renderer?.setSize(width, height);
   }
 }

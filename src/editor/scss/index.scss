@@ -1,6 +1,7 @@
-@import 'theme';
-@import 'debug';
-@import 'sidePanel';
+@use './debug';
+@use './sidePanel';
+@use './dropdown';
+@use './draggable';
 
 .editor {
   font-family: Arial, Helvetica, sans-serif;
@@ -37,9 +38,6 @@
     bottom: 0;
   }
 }
-
-@import 'dropdown';
-@import 'draggable';
 
 .fsAbsolute {
   position: absolute;

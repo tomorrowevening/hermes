@@ -19,7 +19,6 @@ export default defineConfig({
         'framer-motion',
         '@theatre/core',
         '@theatre/studio',
-        'postprocessing'
       ],
       output: {
         globals: {
@@ -34,7 +33,6 @@ export default defineConfig({
       include: ['**/*.glsl', '**/*.vert', '**/*.frag'],
       warnDuplicatedImports: true,
       defaultExtension: 'glsl',
-      compress: false,
       watch: true,
     }),
     react()

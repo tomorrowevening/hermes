@@ -1,22 +1,25 @@
 // Libs
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
 import { Application, ToolEvents } from '../../core/Application';
 import { IS_DEV, IS_EDITOR } from '../constants';
 // Components
-import BaseScene from '../three/scenes/BaseScene';
-import Scene1 from '../three/scenes/Scene1';
-import Scene2 from '../three/scenes/Scene2';
-import { detectSettings } from '../../utils/detectSettings';
-import { dispose } from '../../utils/three';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
+// Three
+import BaseScene from '../three/scenes/BaseScene';
+import Scene1 from '../three/scenes/Scene1';
+import Scene2 from '../three/scenes/Scene2';
+// Utils
+import { detectSettings } from '../../utils/detectSettings';
+import { dispose } from '../../utils/three';
 
-let renderer: WebGLRenderer;
+let renderer: WebGLRenderer | WebGPURenderer;
 let currentScene: BaseScene;
 let sceneName = '';
 
@@ -27,7 +30,6 @@ type AppProps = {
 function App(props: AppProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const theatre = props.app.components.get('theatre') as RemoteTheatre;
   const three = props.app.components.get('three') as RemoteThree;
 
@@ -57,6 +59,7 @@ function App(props: AppProps) {
     };
   }, []);
 
+  // Detect settings
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas !== null) {
@@ -68,11 +71,19 @@ function App(props: AppProps) {
   if (props.app.isApp) {
     useEffect(() => {
       const canvas = canvasRef.current!;
-      renderer = new WebGLRenderer({
-        canvas,
-        stencil: false
-      });
-      renderer.autoClear = false;
+      const useWebGPU = false;
+      console.log('WebGPU:', useWebGPU);
+      if (useWebGPU) {
+        renderer = new WebGPURenderer({
+          canvas,
+          stencil: false
+        });
+      } else {
+        renderer = new WebGLRenderer({
+          canvas,
+          stencil: false
+        });
+      }
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);

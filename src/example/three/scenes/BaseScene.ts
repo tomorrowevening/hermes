@@ -1,11 +1,11 @@
-import { Clock, Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { Clock, Object3D, PerspectiveCamera, Scene } from 'three';
 import { Application } from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 
 export default class BaseScene extends Scene {
   app: Application;
   camera: PerspectiveCamera;
-  renderer?: WebGLRenderer;
+  renderer?: any;
   clock: Clock;
 
   constructor() {
@@ -24,7 +24,7 @@ export default class BaseScene extends Scene {
     cameras.add(this.camera);
   }
 
-  setup(app: Application, renderer?: WebGLRenderer) {
+  setup(app: Application, renderer?: any) {
     this.app = app;
     this.renderer = renderer;
   }
@@ -48,7 +48,10 @@ export default class BaseScene extends Scene {
   }
 
   draw() {
-    this.renderer?.clear();
-    this.renderer?.render(this, this.camera);
+    if (this.renderer.isWebGLRenderer) {
+      this.renderer.render(this, this.camera);
+    } else {
+      this.renderer.renderAsync(this, this.camera);
+    }
   }
 }

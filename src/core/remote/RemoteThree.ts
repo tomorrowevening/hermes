@@ -1,5 +1,5 @@
-import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
-import { ToolEvents } from '../Application';
+import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, RenderTarget } from 'three';
+import { Application, ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
@@ -11,10 +11,16 @@ export default class RemoteThree extends BaseRemote {
   inputElement: any = null; // reference this to receive events
   scene?: Scene = undefined;
   scenes: Map<string, Scene> = new Map();
-  renderer?: WebGLRenderer = undefined;
-  renderTargets: Map<string, WebGLRenderTarget> = new Map();
+  renderer?: any = undefined;
+  renderTargets: Map<string, RenderTarget> = new Map();
 
   private groups = new Map<string, GroupCallback>();
+
+  constructor(app: Application) {
+      super(app);
+      // @ts-ignore
+      window.RemoteThree = this;
+    }
 
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
@@ -23,7 +29,7 @@ export default class RemoteThree extends BaseRemote {
     this.scenes.clear();
     if (this.scene) dispose(this.scene);
 
-    this.renderTargets.forEach((value: WebGLRenderTarget) => {
+    this.renderTargets.forEach((value: RenderTarget) => {
       value.dispose();
     });
     this.renderTargets.clear();
@@ -147,12 +153,13 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
-  setRenderer(value: WebGLRenderer, inputElement: any = null) {
+  setRenderer(value: any, inputElement: any = null) {
     this.renderer = value;
     this.canvas = value.domElement;
     this.inputElement = inputElement !== null ? inputElement : this.canvas;
 
     if (!this.app.debugEnabled) return;
+
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
     this.app.send({
       event: 'addRenderer',
@@ -169,6 +176,7 @@ export default class RemoteThree extends BaseRemote {
         colorManagement: ColorManagement.enabled,
         toneMapping: value.toneMapping,
         toneMappingExposure: value.toneMappingExposure,
+        type: value.isWebGLRenderer ? 'WebGLRenderer' : 'WebGPURenderer',
       },
     });
   }
@@ -358,14 +366,14 @@ export default class RemoteThree extends BaseRemote {
   // Renderer
 
   addRT(name: string, params?: RenderTargetOptions) {
-    const rt = new WebGLRenderTarget(32, 32, params);
+    const rt = new RenderTarget(32, 32, params);
     rt.texture.name = name;
     this.renderTargets.set(name, rt);
   }
 
   resize(width: number, height: number) {
     const dpr = this.dpr;
-    this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
+    this.renderTargets.forEach((renderTarget: RenderTarget) => {
       renderTarget.setSize(width * dpr, height * dpr);
     });
     const update = !(this.renderer?.domElement instanceof OffscreenCanvas);
