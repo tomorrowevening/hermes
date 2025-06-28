@@ -3266,7 +3266,7 @@ util@^0.10.3:
   dependencies:
     inherits "2.0.3"
 
-vite-plugin-glsl@^1.5.0:
+vite-plugin-glsl@^1.2.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/vite-plugin-glsl/-/vite-plugin-glsl-1.5.1.tgz#ca082eef4cfca27abb014f46d7b20ccab2c0e115"
   integrity sha512-kFI8rUItruG2Dfltyhr6tP3jlgCBGda2TnIvUodBHbpdQ7KT0NWyKpS1EqV47DoAl4woKzer7GWd1fiEvzf4nQ==
