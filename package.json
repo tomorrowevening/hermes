@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.0.142",
+  "version": "0.0.143",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"

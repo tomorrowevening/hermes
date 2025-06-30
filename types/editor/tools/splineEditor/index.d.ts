@@ -26,9 +26,13 @@ export default class SplineEditor extends Object3D {
     createSplineFromJSON: (data: SplineJSON) => Spline;
     showPoints: (visible?: boolean) => void;
     private onAddSpline;
+    private isMouseDown;
     private enableClickToDraw;
     private disableClickToDraw;
     private onClickCanvas;
+    private onMouseMove;
+    private onMouseUp;
+    private mouseToSplinePos;
     get camera(): Camera;
     set camera(value: Camera);
 }

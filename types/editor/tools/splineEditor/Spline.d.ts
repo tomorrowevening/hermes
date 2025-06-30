@@ -33,10 +33,10 @@ export default class Spline extends Object3D {
     removePoint: (child: Object3D) => void;
     removePointAt: (index: number) => void;
     removeSelectedPt: () => void;
+    updateLastPoint(value: Vector3): void;
     updateSpline: () => void;
     private onMouseClick;
     getPointAt(percentage: number): Vector3;
-    getPoints(): Vector3[];
     getTangentAt(percentage: number): Vector3;
     get points(): Array<Vector3>;
     get total(): number;
