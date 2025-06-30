@@ -1,9 +1,10 @@
-import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
+import { Camera, CatmullRomCurve3, CircleGeometry, Mesh, MeshBasicMaterial, MeshNormalMaterial, Object3D, OrthographicCamera, Raycaster, SphereGeometry, Vector2, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
 import { Application, ToolEvents } from '@/core/Application';
 import DebugData from '@/editor/sidePanel/DebugData';
 import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
+import MultiView from '@/editor/multiView/MultiView';
 
 let splinesCreated = 0;
 
@@ -18,9 +19,11 @@ export type SplineJSON = {
 
 export default class SplineEditor extends Object3D {
   public defaultScale = 10;
+  currentSpline: Spline | null = null;
   private _camera: Camera;
   private group: RefObject<InspectorGroup> | null = null;
   private app: Application;
+  private splineDataText = '';
 
   constructor(camera: Camera, app: Application) {
     super();
@@ -39,9 +42,24 @@ export default class SplineEditor extends Object3D {
           prop: 'New Spline',
         },
         {
+          type: 'field',
+          prop: 'Spline Data',
+          value: '',
+          disabled: false,
+        },
+        {
+          type: 'button',
+          prop: 'Import Spline',
+        },
+        {
           type: 'boolean',
           prop: 'Show Points',
           value: true,
+        },
+        {
+          type: 'boolean',
+          prop: 'Draw Mode',
+          value: false,
         },
         {
           type: 'boolean',
@@ -62,6 +80,12 @@ export default class SplineEditor extends Object3D {
           case 'New Spline':
             this.createSpline();
             break;
+          case 'Spline Data':
+            this.splineDataText = value;
+            break;
+          case 'Import Spline':
+            this.createSplineFromJSON(JSON.parse(this.splineDataText));
+            break;
           case 'Show Points':
             this.showPoints(value);
             break;
@@ -70,6 +94,9 @@ export default class SplineEditor extends Object3D {
             break;
           case 'Default Scale':
             this.defaultScale = value;
+            break;
+          case 'Draw Mode':
+            value ? this.enableClickToDraw() : this.disableClickToDraw();
             break;
         }
       },
@@ -86,6 +113,7 @@ export default class SplineEditor extends Object3D {
     spline.hideTransform();
     if (this.group?.current !== null) spline.initDebug(this.group!.current);
     this.add(spline);
+    this.currentSpline = spline;
   }
 
   createSpline = (defaultPoints: Array<Vector3> = []): Spline => {
@@ -110,14 +138,20 @@ export default class SplineEditor extends Object3D {
   };
 
   createSplineFromJSON = (data: SplineJSON): Spline => {
-    const spline = this.createSplineFromArray(data.points);
-    spline.name = data.name;
+    const vectors: Array<Vector3> = [];
+    data.points.forEach((pos: number[]) => {
+      vectors.push(new Vector3(pos[0], pos[1], pos[2]));
+    });
+
+    const spline = new Spline(data.name, this._camera);
     spline.closed = data.closed;
     spline.subdivide = data.subdivide;
     spline.tension = data.tension;
     // @ts-ignore
     spline.type = data.type;
+    spline.addPoints(vectors);
     spline.updateSpline();
+    this.addSpline(spline);
     return spline;
   };
 
@@ -139,6 +173,96 @@ export default class SplineEditor extends Object3D {
     spline.addPoints(pts);
     this.addSpline(spline);
     splinesCreated++;
+  };
+
+  private enableClickToDraw() {
+    document.querySelectorAll('.clickable').forEach((element) => {
+      (element as HTMLDivElement).addEventListener('mousedown', this.onClickCanvas);
+    });
+  }
+
+  private disableClickToDraw() {
+    document.querySelectorAll('.clickable').forEach((element) => {
+      (element as HTMLDivElement).removeEventListener('mousedown', this.onClickCanvas);
+    });
+  }
+
+  private onClickCanvas = (event: MouseEvent) => {
+    if (event.button !== 0) return;
+    if (this._camera.type !== 'OrthographicCamera') {
+      console.warn('Spline Editor - 3D Camera not supported in Draw Mode');
+      return;
+    }
+
+    const ortho = this._camera as OrthographicCamera;
+    const zoom = ortho.zoom;
+    const clickable = event.target as HTMLDivElement;
+    const rect = clickable.getBoundingClientRect();
+    // event.clientX/Y are relative to the viewport
+    let x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    let y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    // Ensure we don't collide with the Transform tools:
+    if (MultiView.instance) {
+      const raycaster = new Raycaster();
+      raycaster.setFromCamera(new Vector2(x, y), ortho!);
+      const intersects = raycaster.intersectObjects(MultiView.instance.helpersContainer.children, true);
+      for (let i = 0; i < intersects.length; i++) {
+        const intersect = intersects[i];
+        // @ts-ignore
+        if (intersect.object.isLine || intersect.object.isTransformControlsPlane) {
+          continue;
+        } else {
+          // @ts-ignore
+          if (intersect.object.isObject3D) return;
+        }
+      }
+    }
+
+    const HALF_PI = Math.PI / 2;
+    const frontCamera = ortho.rotation.x === -6.123233995736766e-17 && ortho.rotation.y === 0 && ortho.rotation.z === 0;
+    const backCamera = ortho.rotation.x === -Math.PI && ortho.rotation.y === 1.2246467991473532e-16 && ortho.rotation.z === Math.PI;
+    const leftCamera = ortho.rotation.x === -6.162975822039155e-33 && ortho.rotation.y === -HALF_PI && ortho.rotation.z === 0;
+    const rightCamera = ortho.rotation.x === -6.162975822039155e-33 && ortho.rotation.y === HALF_PI && ortho.rotation.z === 0;
+    const topCamera = ortho.rotation.x === -1.5707953264174506 && ortho.rotation.y === 0 && ortho.rotation.z === 0;
+    const bottomCamera = ortho.rotation.x === 1.5707953264174506 && ortho.rotation.y === 0 && ortho.rotation.z === 0;
+    
+    // Invert coordinates if-needed
+    if (frontCamera) {
+      // Nothing
+    } else if (backCamera) {
+      x *= -1;
+    } else if (leftCamera) {
+      // Nothing
+    } else if (rightCamera) {
+      x *= -1;
+    } else if (topCamera) {
+      y *= -1;
+    } else if (bottomCamera) {
+      // Nothing
+    } else {
+      console.warn('Spline Editor - Camera not supported (try 2D-cameras):', this._camera.name);
+      return;
+    }
+
+    const width = rect.width / 2 / zoom;
+    const height = rect.height / 2 / zoom;
+    
+    // Not add to Spline
+    if (this.currentSpline === null) this.currentSpline = this.createSpline();
+    if (frontCamera || backCamera) {
+      const posX = x * width + ortho.position.x;
+      const posY = y * height + ortho.position.y;
+      this.currentSpline?.addPoint(new Vector3(posX, posY, 0));
+    } else if (leftCamera || rightCamera) {
+      const posZ = x * width + ortho.position.z;
+      const posY = y * height + ortho.position.y;
+      this.currentSpline?.addPoint(new Vector3(0, posY, posZ));
+    } else if (topCamera || bottomCamera) {
+      const posX = x * width + ortho.position.x;
+      const posZ = y * height + ortho.position.z;
+      this.currentSpline?.addPoint(new Vector3(posX, 0, posZ));
+    }
   };
 
   get camera(): Camera {

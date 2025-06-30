@@ -10,6 +10,7 @@ import { Color, LinearSRGBColorSpace } from 'three';
 import { OptionInfo } from '@/core/types';
 
 export type InspectorFieldType = 'string' |
+  'field' |
   'number' |
   'boolean' |
   'range' |
@@ -80,7 +81,7 @@ export default function InspectorField(props: InspectorFieldProps) {
     style['opacity'] = 0.8;
   }
 
-  const textfield = props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1);
+  const textfield = props.type === 'field' ||  (props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1));
   const block = textfield || props.type === 'image' || props.type === 'vector2';
 
   return (
@@ -98,7 +99,7 @@ export default function InspectorField(props: InspectorFieldProps) {
         />
       )}
 
-      {props.type === 'string' && textfield && (
+      {(props.type === 'field' || (props.type === 'string' && textfield)) && (
         <textarea
           cols={50}
           rows={10}

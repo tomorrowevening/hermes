@@ -305,10 +305,10 @@ export default class RemoteThree extends BaseRemote {
         break;
       case 'updateRenderer':
         if (this.renderer) {
-          this.renderer.autoClear = msg.data.autoClear;
+          // this.renderer.autoClear = msg.data.autoClear;
           this.renderer.autoClearColor = msg.data.autoClearColor;
-          this.renderer.autoClearDepth = msg.data.autoClearDepth;
-          this.renderer.autoClearStencil = msg.data.autoClearStencil;
+          // this.renderer.autoClearDepth = msg.data.autoClearDepth;
+          // this.renderer.autoClearStencil = msg.data.autoClearStencil;
           this.renderer.outputColorSpace = msg.data.outputColorSpace;
           this.renderer.localClippingEnabled = msg.data.localClippingEnabled;
           this.renderer.setClearColor(msg.data.clearColor, msg.data.clearAlpha);

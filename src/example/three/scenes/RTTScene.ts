@@ -77,10 +77,12 @@ export default class RTTScene extends Scene {
     // Draw
     if (renderer.isWebGLRenderer) {
       renderer.setRenderTarget(this.renderTarget);
+      renderer.clear();
       renderer.render(this, this.camera);
       renderer.setRenderTarget(null);
     } else {
       renderer.setRenderTarget(this.renderTarget);
+      renderer.clearAsync();
       renderer.renderAsync(this, this.camera);
       renderer.setRenderTarget(null);
     }

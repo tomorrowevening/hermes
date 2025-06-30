@@ -540,6 +540,7 @@ function inspectString(prop: string, value: boolean, object: RemoteObject, three
 
   const isShader = prop === 'vertexShader' || prop === 'fragmentShader';
   if (isShader) {
+    field.type = 'field';
     field['disabled'] = false;
     field['latest'] = field.value;
     field.onChange = (_: string, updatedValue: string) => {

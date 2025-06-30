@@ -105,10 +105,10 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     if (MultiView.instance) {
       const renderer = MultiView.instance.renderer;
       if (renderer) {
-        renderer.autoClear = this.autoClear;
+        // renderer.autoClear = this.autoClear;
         renderer.autoClearColor = this.autoClearColor;
-        renderer.autoClearDepth = this.autoClearDepth;
-        renderer.autoClearStencil = this.autoClearStencil;
+        // renderer.autoClearDepth = this.autoClearDepth;
+        // renderer.autoClearStencil = this.autoClearStencil;
         renderer.outputColorSpace = this.outputColorSpace;
         renderer.localClippingEnabled = this.localClippingEnabled;
         renderer.toneMapping = this.toneMapping;
@@ -125,10 +125,10 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
       if (MultiView.instance) {
         const renderer = MultiView.instance.renderer;
         if (renderer) {
-          renderer.autoClear = this.autoClear;
+          // renderer.autoClear = this.autoClear;
           renderer.autoClearColor = this.autoClearColor;
-          renderer.autoClearDepth = this.autoClearDepth;
-          renderer.autoClearStencil = this.autoClearStencil;
+          // renderer.autoClearDepth = this.autoClearDepth;
+          // renderer.autoClearStencil = this.autoClearStencil;
           renderer.outputColorSpace = this.outputColorSpace;
           renderer.localClippingEnabled = this.localClippingEnabled;
           renderer.toneMapping = this.toneMapping;

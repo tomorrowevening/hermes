@@ -26,6 +26,8 @@ import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
 import { copyToClipboard } from '../../utils';
 import { round } from '@/utils/math';
 import { dispose } from '@/utils/three';
+import SplineEditor from '.';
+import { js } from 'three/src/nodes/TSL';
 
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal';
 
@@ -63,6 +65,7 @@ export default class Spline extends Object3D {
     this.lineMaterial = new LineBasicMaterial({ color: color });
     this.line = new Line(new BufferGeometry(), this.lineMaterial);
     this.line.name = 'line';
+    this.line.visible = false;
     this.add(this.line);
 
     this._camera = camera;
@@ -137,9 +140,6 @@ export default class Spline extends Object3D {
         this.addPoint(pts[i], false);
       }
       this.addPoint(pts[total]);
-    } else {
-      this.addPoint(new Vector3(-50, 0, 0), false);
-      this.addPoint(new Vector3(50, 0, 0));
     }
   };
 
@@ -150,22 +150,21 @@ export default class Spline extends Object3D {
     mesh.position.copy(position);
     mesh.scale.setScalar(this._draggableScale);
     this.draggable.add(mesh);
+    this._transform?.attach(mesh);
 
-    if (update) this.updateSpline();
+    const enoughPts = this.points.length > 1;
+    if (enoughPts && update) this.updateSpline();
+    this.line.visible = enoughPts;
+    this.updateCurrentPoint();
 
     return mesh;
   };
 
   addNextPt = () => {
     const total = this.draggable.children.length;
-    const pos = new Vector3(
-      lerp(-this.offset, this.offset, Math.random()),
-      lerp(-this.offset, this.offset, Math.random()),
-      lerp(-this.offset, this.offset, Math.random()),
-    );
-    if (total > 0) pos.add(this.draggable.children[total - 1].position);
+    const pos = total > 1 ? this.draggable.children[total - 1].position.clone() : new Vector3();
     const mesh = this.addPoint(pos);
-    this._transform?.attach(mesh);
+    // this._transform?.attach(mesh);
 
     this.group.current?.setField('Current Point', mesh.position);
   };
@@ -191,15 +190,17 @@ export default class Spline extends Object3D {
   };
 
   updateSpline = () => {
+    if (this.points.length < 1) return;
     this.curve = new CatmullRomCurve3(this.points, this.closed, this.curveType, this.tension);
-    this.line.geometry.setFromPoints(this.getPoints());
+    const points = this.getPoints();
+    this.line.geometry.setFromPoints(points);
     this.curvePos.position.copy(this.getPointAt(this._curvePercentage));
   };
 
   // Handlers
 
   private onMouseClick = (evt: MouseEvent) => {
-    if (!MultiView.instance) return;
+    if (!MultiView.instance || !MultiView.instance.currentWindow) return;
 
     if (this._transform && !this._transform.getHelper().visible) return;
 
@@ -222,11 +223,14 @@ export default class Spline extends Object3D {
   // Getters
 
   getPointAt(percentage: number): Vector3 {
-    return this.curve.getPointAt(percentage);
+    if (this.curve.points.length > 1) return this.curve.getPointAt(percentage);
+    if (this.curve.points.length === 1) return this.curve.points[0];
+    return new Vector3();
   }
 
   getPoints(): Vector3[] {
-    return this.curve.getPoints(this.subdivide);
+    if (this.curve.points.length > 1) return this.curve.getPoints(this.subdivide);
+    return this.points;
   }
 
   getTangentAt(percentage: number): Vector3 {
@@ -275,14 +279,17 @@ export default class Spline extends Object3D {
 
   // Debug
 
-  private onUpdateTransform = () => {
+  private updateCurrentPoint() {
     if (this._transform?.object && this.group) {
       const obj = this._transform?.object;
       if (obj.name.search('point') > -1) {
         this.group.current?.setField('Current Point', obj.position);
       }
     }
+  }
 
+  private onUpdateTransform = () => {
+    this.updateCurrentPoint();
     this.updateSpline();
   };
 
@@ -293,12 +300,13 @@ export default class Spline extends Object3D {
     this._transform = Transform.instance.add(this.name);
     this._transform.camera = this._camera;
     this._transform.addEventListener('objectChange', this.onUpdateTransform);
-    this._transform.attach(pts.length > 0 ? pts[pts.length - 1] : this);
-    MultiView.instance?.scene.add(this._transform.getHelper());
+    if (pts.length > 0) this._transform.attach(pts[pts.length - 1]);
+    MultiView.instance?.helpersContainer.add(this._transform.getHelper());
 
     const currentPoint = pts.length > 0 ? pts[pts.length - 1].position : { x: 0, y: 0, z: 0 };
     this.group = parentGroup.addGroup({
       title: this.name,
+      expanded: true,
       items: [
         {
           prop: 'Closed',
@@ -463,6 +471,7 @@ export default class Spline extends Object3D {
             this.exportSpline();
             break;
           case 'Delete':
+            (this.parent as SplineEditor).currentSpline = null;
             dispose(this);
             break;
           case 'Current Point':
