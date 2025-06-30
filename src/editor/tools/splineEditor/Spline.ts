@@ -27,6 +27,7 @@ import { copyToClipboard } from '../../utils';
 import { round } from '@/utils/math';
 import { dispose } from '@/utils/three';
 import SplineEditor from '.';
+import { js } from 'three/src/nodes/TSL';
 
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal';
 
@@ -305,6 +306,7 @@ export default class Spline extends Object3D {
     const currentPoint = pts.length > 0 ? pts[pts.length - 1].position : { x: 0, y: 0, z: 0 };
     this.group = parentGroup.addGroup({
       title: this.name,
+      expanded: true,
       items: [
         {
           prop: 'Closed',

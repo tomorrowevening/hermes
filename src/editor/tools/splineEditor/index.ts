@@ -23,6 +23,7 @@ export default class SplineEditor extends Object3D {
   private _camera: Camera;
   private group: RefObject<InspectorGroup> | null = null;
   private app: Application;
+  private splineDataText = '';
 
   constructor(camera: Camera, app: Application) {
     super();
@@ -39,6 +40,16 @@ export default class SplineEditor extends Object3D {
         {
           type: 'button',
           prop: 'New Spline',
+        },
+        {
+          type: 'field',
+          prop: 'Spline Data',
+          value: '',
+          disabled: false,
+        },
+        {
+          type: 'button',
+          prop: 'Import Spline',
         },
         {
           type: 'boolean',
@@ -68,6 +79,12 @@ export default class SplineEditor extends Object3D {
         switch (prop) {
           case 'New Spline':
             this.createSpline();
+            break;
+          case 'Spline Data':
+            this.splineDataText = value;
+            break;
+          case 'Import Spline':
+            this.createSplineFromJSON(JSON.parse(this.splineDataText));
             break;
           case 'Show Points':
             this.showPoints(value);
@@ -121,14 +138,20 @@ export default class SplineEditor extends Object3D {
   };
 
   createSplineFromJSON = (data: SplineJSON): Spline => {
-    const spline = this.createSplineFromArray(data.points);
-    spline.name = data.name;
+    const vectors: Array<Vector3> = [];
+    data.points.forEach((pos: number[]) => {
+      vectors.push(new Vector3(pos[0], pos[1], pos[2]));
+    });
+
+    const spline = new Spline(data.name, this._camera);
     spline.closed = data.closed;
     spline.subdivide = data.subdivide;
     spline.tension = data.tension;
     // @ts-ignore
     spline.type = data.type;
+    spline.addPoints(vectors);
     spline.updateSpline();
+    this.addSpline(spline);
     return spline;
   };
 

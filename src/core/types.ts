@@ -27,13 +27,14 @@ export interface GroupItemData {
 
 export interface GroupData {
   title: string
-  items: GroupItemData[];
-  onUpdate: (prop: string, value: any) => void;
+  expanded?: boolean
+  items: GroupItemData[]
+  onUpdate: (prop: string, value: any) => void
 }
 
 export interface GroupCallback {
   title: string
-  onUpdate: (prop: string, value: any) => void;
+  onUpdate: (prop: string, value: any) => void
 }
 
 // Types

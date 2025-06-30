@@ -46,6 +46,7 @@ export default class Spline extends Object3D {
     set camera(value: Camera);
     get curvePercentage(): number;
     set curvePercentage(value: number);
+    private updateCurrentPoint;
     private onUpdateTransform;
     initDebug(parentGroup: InspectorGroup): void;
     private debugPoint;

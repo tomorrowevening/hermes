@@ -59,6 +59,7 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
         app={this.app}
         ref={elementRef}
         title={data.title}
+        expanded={data.expanded}
         items={items}
         key={Math.random()}
       />

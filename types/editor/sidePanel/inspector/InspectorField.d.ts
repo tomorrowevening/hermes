@@ -1,6 +1,6 @@
 import { KeyboardEvent } from 'react';
 import { OptionInfo } from '@/core/types';
-export type InspectorFieldType = 'string' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option' | 'vector2' | 'grid3' | 'grid4' | 'euler';
+export type InspectorFieldType = 'string' | 'field' | 'number' | 'boolean' | 'range' | 'color' | 'button' | 'image' | 'option' | 'vector2' | 'grid3' | 'grid4' | 'euler';
 export interface InspectorFieldProps {
     title: string;
     type: InspectorFieldType;

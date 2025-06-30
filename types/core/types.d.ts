@@ -21,6 +21,7 @@ export interface GroupItemData {
 }
 export interface GroupData {
     title: string;
+    expanded?: boolean;
     items: GroupItemData[];
     onUpdate: (prop: string, value: any) => void;
 }

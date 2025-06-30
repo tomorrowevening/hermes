@@ -11,9 +11,11 @@ export type SplineJSON = {
 };
 export default class SplineEditor extends Object3D {
     defaultScale: number;
+    currentSpline: Spline | null;
     private _camera;
     private group;
     private app;
+    private splineDataText;
     constructor(camera: Camera, app: Application);
     initDebug(): void;
     dispose(): void;
@@ -24,6 +26,9 @@ export default class SplineEditor extends Object3D {
     createSplineFromJSON: (data: SplineJSON) => Spline;
     showPoints: (visible?: boolean) => void;
     private onAddSpline;
+    private enableClickToDraw;
+    private disableClickToDraw;
+    private onClickCanvas;
     get camera(): Camera;
     set camera(value: Camera);
 }

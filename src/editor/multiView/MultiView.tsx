@@ -111,7 +111,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
-  private grid = new InfiniteGridHelper();helpers
+  private grid = new InfiniteGridHelper();
   private interactionHelper = new AxesHelper(25);
   private currentTransform?: TransformControls;
 
@@ -246,8 +246,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     Transform.instance.setApp(this.props.app, this.props.three);
     Transform.instance.activeCamera = this.debugCamera;
-
-    this.setupRenderer({ value: { type: 'WebGLRenderer' } });
   }
 
   componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void {
@@ -656,6 +654,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Playback
 
   private update() {
+    if (this.renderer) {
+      if (this.renderer instanceof WebGLRenderer) {
+        this.renderer?.clear();
+      } else if (this.renderer instanceof WebGPURenderer) {
+        this.renderer?.clearAsync();
+      }
+    }
     // Updates
     this.controls.forEach((control: OrbitControls) => control.update());
     this.cameraHelpers.forEach((helper: CameraHelper) => helper.update());
