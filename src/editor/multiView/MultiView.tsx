@@ -107,11 +107,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   controls: Map<string, OrbitControls> = new Map();
   currentCamera!: PerspectiveCamera | OrthographicCamera;
   currentWindow: any; // RefObject to one of the "windows"
+  helpersContainer = new Group();
 
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
-  private helpersContainer = new Group();
-  private grid = new InfiniteGridHelper();
+  private grid = new InfiniteGridHelper();helpers
   private interactionHelper = new AxesHelper(25);
   private currentTransform?: TransformControls;
 
@@ -246,6 +246,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     Transform.instance.setApp(this.props.app, this.props.three);
     Transform.instance.activeCamera = this.debugCamera;
+
+    this.setupRenderer({ value: { type: 'WebGLRenderer' } });
   }
 
   componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void {
@@ -542,6 +544,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
 
     const canvas = this.canvasRef.current!;
+    this.props.three.canvas = canvas;
     const data = evt.value;
     if (data.type === 'WebGLRenderer') {
       this.renderer = new WebGLRenderer({
@@ -575,7 +578,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.scene.add(this.helpersContainer);
 
     this.grid.position.y = -1;
-    this.helpersContainer.add(this.grid);
+    this.scene.add(this.grid);
 
     this.interactionHelper.name = 'interactionHelper';
     this.interactionHelper.visible = false;
@@ -628,7 +631,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private setupTools() {
     this.splineEditor = new SplineEditor(this.currentCamera, this.app);
     this.splineEditor.initDebug();
-    this.scene.add(this.splineEditor);
+    this.helpersContainer.add(this.splineEditor);
   }
 
   // Public
@@ -796,7 +799,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       const helper = new CameraHelper(camera);
       helper.visible = this.cameraVisibility;
       this.cameraHelpers.set(camera.name, helper);
-      this.scene.add(helper);
+      this.helpersContainer.add(helper);
 
       this.setState({ lastUpdate: Date.now() });
     }
@@ -805,7 +808,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private removeCamera = (evt: any) => {
     const helper = this.cameraHelpers.get(evt.value.name);
     if (helper !== undefined) {
-      this.scene.remove(helper);
+      this.helpersContainer.remove(helper);
       helper.dispose();
     }
     this.cameras.delete(evt.value.name);
@@ -857,13 +860,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     this.updateCamera(mouseX, mouseY, hw, hh);
 
-    if (this.state.interactionMode === 'Orbit') return;
+    if (this.state.interactionMode === 'Orbit' || this.currentScene === undefined) return;
     const intersects = this.raycaster.intersectObjects(this.currentScene!.children);
     if (intersects.length > 0) this.interactionHelper.position.copy(intersects[0].point);
   };
 
   private onClick = (event: MouseEvent) => {
-    if (this.state.interactionMode === 'Orbit') return;
+    if (this.state.interactionMode === 'Orbit' || this.currentScene === undefined) return;
 
     const size = new Vector2();
     this.renderer!.getSize(size);
@@ -979,7 +982,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     this.currentTransform = Transform.instance.add(evt.value.name);
     this.currentTransform.attach(this.selectedItem);
-    this.scene.add(this.currentTransform.getHelper());
+    this.helpersContainer.add(this.currentTransform.getHelper());
     this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
 
     this.updateSelectedItemHelper(true);
@@ -1094,7 +1097,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private clearCamera(camera: Camera) {
     const helper = this.cameraHelpers.get(camera.name);
     if (helper !== undefined) {
-      this.scene.remove(helper);
+      this.helpersContainer.remove(helper);
       helper.dispose();
       this.cameraHelpers.delete(camera.name);
     }
@@ -1110,7 +1113,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       value.dispose();
       const helper = this.cameraHelpers.get(key);
       if (helper !== undefined) {
-        this.scene.remove(helper);
+        this.helpersContainer.remove(helper);
         helper.dispose();
       }
       this.cameraHelpers.delete(key);
