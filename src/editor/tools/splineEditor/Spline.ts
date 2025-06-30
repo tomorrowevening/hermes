@@ -189,11 +189,19 @@ export default class Spline extends Object3D {
     if (this._transform?.object !== undefined) this.removePoint(this._transform?.object);
   };
 
+  updateLastPoint(value: Vector3) {
+    const total = this.draggable.children.length;
+    if (total > 0) {
+      this.draggable.children[total - 1].position.copy(value);
+      this.updateSpline();
+    }
+  }
+
   updateSpline = () => {
-    if (this.points.length < 1) return;
+    if (this.points.length < 2) return;
     this.curve = new CatmullRomCurve3(this.points, this.closed, this.curveType, this.tension);
-    const points = this.getPoints();
-    this.line.geometry.setFromPoints(points);
+    this.line.geometry.dispose();
+    this.line.geometry = new BufferGeometry().setFromPoints(this.curve.getPoints(this.subdivide));
     this.curvePos.position.copy(this.getPointAt(this._curvePercentage));
   };
 
@@ -226,11 +234,6 @@ export default class Spline extends Object3D {
     if (this.curve.points.length > 1) return this.curve.getPointAt(percentage);
     if (this.curve.points.length === 1) return this.curve.points[0];
     return new Vector3();
-  }
-
-  getPoints(): Vector3[] {
-    if (this.curve.points.length > 1) return this.curve.getPoints(this.subdivide);
-    return this.points;
   }
 
   getTangentAt(percentage: number): Vector3 {
@@ -363,7 +366,7 @@ export default class Spline extends Object3D {
           prop: 'Subdivide',
           type: 'range',
           min: 1,
-          max: 100,
+          max: 1000,
           step: 1,
           value: this.subdivide,
         },

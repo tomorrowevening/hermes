@@ -70,9 +70,10 @@ export default function InspectNumber(props: InspectNumberProps) {
             className='min'
             onChange={(evt: any) => {
               if (evt.target.value.length === 0) return;
-              const value = Number(evt.target.value);
-              if (isNaN(value)) return;
-              if (props.onChange !== undefined) props.onChange(props.prop, value);
+              const updatedValue = Number(evt.target.value);
+              if (isNaN(updatedValue)) return;
+              setValue(updatedValue);
+              if (props.onChange !== undefined) props.onChange(props.prop, updatedValue);
             }}
           />
           <input
