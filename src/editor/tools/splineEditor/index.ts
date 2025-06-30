@@ -38,10 +38,6 @@ export default class SplineEditor extends Object3D {
       title: this.name,
       items: [
         {
-          type: 'button',
-          prop: 'New Spline',
-        },
-        {
           type: 'field',
           prop: 'Spline Data',
           value: '',
@@ -50,6 +46,10 @@ export default class SplineEditor extends Object3D {
         {
           type: 'button',
           prop: 'Import Spline',
+        },
+        {
+          type: 'button',
+          prop: 'New Spline',
         },
         {
           type: 'boolean',
@@ -175,15 +175,21 @@ export default class SplineEditor extends Object3D {
     splinesCreated++;
   };
 
+  private isMouseDown = false;
+
   private enableClickToDraw() {
     document.querySelectorAll('.clickable').forEach((element) => {
       (element as HTMLDivElement).addEventListener('mousedown', this.onClickCanvas);
+      (element as HTMLDivElement).addEventListener('mousemove', this.onMouseMove);
+      (element as HTMLDivElement).addEventListener('mouseup', this.onMouseUp);
     });
   }
 
   private disableClickToDraw() {
     document.querySelectorAll('.clickable').forEach((element) => {
       (element as HTMLDivElement).removeEventListener('mousedown', this.onClickCanvas);
+      (element as HTMLDivElement).removeEventListener('mousemove', this.onMouseMove);
+      (element as HTMLDivElement).removeEventListener('mouseup', this.onMouseUp);
     });
   }
 
@@ -194,18 +200,15 @@ export default class SplineEditor extends Object3D {
       return;
     }
 
-    const ortho = this._camera as OrthographicCamera;
-    const zoom = ortho.zoom;
     const clickable = event.target as HTMLDivElement;
     const rect = clickable.getBoundingClientRect();
-    // event.clientX/Y are relative to the viewport
-    let x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    let y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
     // Ensure we don't collide with the Transform tools:
     if (MultiView.instance) {
       const raycaster = new Raycaster();
-      raycaster.setFromCamera(new Vector2(x, y), ortho!);
+      raycaster.setFromCamera(new Vector2(x, y), this._camera);
       const intersects = raycaster.intersectObjects(MultiView.instance.helpersContainer.children, true);
       for (let i = 0; i < intersects.length; i++) {
         const intersect = intersects[i];
@@ -218,8 +221,37 @@ export default class SplineEditor extends Object3D {
         }
       }
     }
+    
+    // Not add to Spline
+    if (this.currentSpline === null) this.currentSpline = this.createSpline();
 
+    // Add point
+    const pos = this.mouseToSplinePos(x, y, rect.width, rect.height);
+    this.currentSpline?.addPoint(pos);
+    this.isMouseDown = true;
+  };
+
+  private onMouseMove = (event: MouseEvent) => {
+    if (!this.isMouseDown) return;
+
+    // Move dragged item
+    const clickable = event.target as HTMLDivElement;
+    const rect = clickable.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const pos = this.mouseToSplinePos(x, y, rect.width, rect.height);
+    this.currentSpline?.updateLastPoint(pos);
+  };
+
+  private onMouseUp = () => {
+    this.isMouseDown = false;
+  };
+
+  private mouseToSplinePos(normX: number, normY: number, elementWidth: number, elementHeight: number): Vector3 {
+    const pos = new Vector3();
     const HALF_PI = Math.PI / 2;
+    const ortho = this._camera as OrthographicCamera;
+    const zoom = ortho.zoom;
     const frontCamera = ortho.rotation.x === -6.123233995736766e-17 && ortho.rotation.y === 0 && ortho.rotation.z === 0;
     const backCamera = ortho.rotation.x === -Math.PI && ortho.rotation.y === 1.2246467991473532e-16 && ortho.rotation.z === Math.PI;
     const leftCamera = ortho.rotation.x === -6.162975822039155e-33 && ortho.rotation.y === -HALF_PI && ortho.rotation.z === 0;
@@ -228,42 +260,37 @@ export default class SplineEditor extends Object3D {
     const bottomCamera = ortho.rotation.x === 1.5707953264174506 && ortho.rotation.y === 0 && ortho.rotation.z === 0;
     
     // Invert coordinates if-needed
-    if (frontCamera) {
-      // Nothing
-    } else if (backCamera) {
+    let x = normX;
+    let y = normY;
+    if (backCamera) {
       x *= -1;
-    } else if (leftCamera) {
-      // Nothing
     } else if (rightCamera) {
       x *= -1;
     } else if (topCamera) {
       y *= -1;
-    } else if (bottomCamera) {
-      // Nothing
-    } else {
-      console.warn('Spline Editor - Camera not supported (try 2D-cameras):', this._camera.name);
-      return;
     }
 
-    const width = rect.width / 2 / zoom;
-    const height = rect.height / 2 / zoom;
+    const width = elementWidth / 2 / zoom;
+    const height = elementHeight / 2 / zoom;
     
     // Not add to Spline
     if (this.currentSpline === null) this.currentSpline = this.createSpline();
     if (frontCamera || backCamera) {
       const posX = x * width + ortho.position.x;
       const posY = y * height + ortho.position.y;
-      this.currentSpline?.addPoint(new Vector3(posX, posY, 0));
+      pos.set(posX, posY, 0);
     } else if (leftCamera || rightCamera) {
       const posZ = x * width + ortho.position.z;
       const posY = y * height + ortho.position.y;
-      this.currentSpline?.addPoint(new Vector3(0, posY, posZ));
+      pos.set(0, posY, posZ);
     } else if (topCamera || bottomCamera) {
       const posX = x * width + ortho.position.x;
       const posZ = y * height + ortho.position.z;
-      this.currentSpline?.addPoint(new Vector3(posX, 0, posZ));
+      pos.set(posX, 0, posZ);
     }
-  };
+
+    return pos;
+  }
 
   get camera(): Camera {
     return this._camera;
