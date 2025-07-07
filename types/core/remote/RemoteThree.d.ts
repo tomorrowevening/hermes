@@ -1,4 +1,4 @@
-import { Camera, Curve, RenderTargetOptions, Scene, RenderTarget } from 'three';
+import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
 import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
@@ -8,7 +8,7 @@ export default class RemoteThree extends BaseRemote {
     scene?: Scene;
     scenes: Map<string, Scene>;
     renderer?: any;
-    renderTargets: Map<string, RenderTarget>;
+    renderTargets: Map<string, WebGLRenderTarget>;
     private groups;
     constructor(app: Application);
     dispose(): void;
