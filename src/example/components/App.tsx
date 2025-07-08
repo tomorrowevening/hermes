@@ -18,6 +18,7 @@ import Scene2 from '../three/scenes/Scene2';
 // Utils
 import { detectSettings } from '../../utils/detectSettings';
 import { dispose } from '../../utils/three';
+import { clearComposerGroups } from '../../utils/post';
 
 let renderer: WebGLRenderer | WebGPURenderer;
 let currentScene: BaseScene;
@@ -144,6 +145,7 @@ function App(props: AppProps) {
       if (currentScene.camera !== undefined) three.removeCamera(currentScene.camera);
       three.removeScene(currentScene);
       dispose(currentScene);
+      clearComposerGroups(three);
     }
     if (sceneName === 'scene1') {
       currentScene = new Scene1();

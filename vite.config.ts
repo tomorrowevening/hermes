@@ -19,6 +19,7 @@ export default defineConfig({
         'framer-motion',
         '@theatre/core',
         '@theatre/studio',
+        'postprocessing',
       ],
       output: {
         globals: {
