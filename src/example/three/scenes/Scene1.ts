@@ -1,6 +1,7 @@
 import {
   CircleGeometry,
   DirectionalLight,
+  HalfFloatType,
   HemisphereLight,
   Mesh,
   MeshBasicMaterial,
@@ -11,6 +12,7 @@ import {
   SphereGeometry,
   SpotLight,
 } from 'three';
+import { BloomEffect, CopyMaterial, EffectComposer, EffectPass, FXAAEffect, RenderPass, ShaderPass, VignetteEffect } from 'postprocessing';
 import CustomShaderMaterial from '../CustomShaderMaterial';
 import { hierarchyUUID } from '../../../utils/three';
 import { IS_DEV } from '../../constants';
@@ -19,9 +21,11 @@ import { cubeTextures, textures } from '../loader';
 import BaseScene from './BaseScene';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 import RemoteThree from '../../../core/remote/RemoteThree';
+import { inspectComposer } from '../../../utils/post';
 
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
+  composer!: EffectComposer;
 
   private customMat?: CustomShaderMaterial;
 
@@ -39,7 +43,7 @@ export default class Scene1 extends BaseScene {
 
     this.createLights();
     this.createWorld();
-    // if (!this.app.editor) this.createPost();
+    if (!this.app.editor) this.createPost();
     this.createAnimation();
     if (IS_DEV) hierarchyUUID(this);
 
@@ -210,14 +214,36 @@ export default class Scene1 extends BaseScene {
     theatre.playSheet(this.name, { iterationCount: Infinity });
   }
 
+  private createPost() {
+    const three = this.app.components.get('three') as RemoteThree;
+    this.composer = new EffectComposer(three.renderer!, { frameBufferType: HalfFloatType });
+    this.composer.addPass(new RenderPass(this, this.camera));
+
+    const pass = new EffectPass(this.camera, new FXAAEffect(), new BloomEffect(), new VignetteEffect());
+    pass.name = 'FXAA/Bloom/Vignette';
+    this.composer.addPass(pass);
+
+    const displayPass = new ShaderPass(new CopyMaterial());
+    displayPass.name = 'Display';
+    this.composer.addPass(displayPass);
+
+    inspectComposer(this.composer, three);
+  }
+
   override update() {
     const delta = this.clock.getDelta();
     this.customMat?.update(delta);
     this.dance.update(delta);
   }
 
+  override draw() {
+    this.composer.render();
+  }
+
   override resize(width: number, height: number): void {
     super.resize(width, height);
-    this.renderer?.setSize(width, height);
+    // this.renderer?.setSize(width, height);
+    this.composer.setSize(width, height);
+    
   }
 }

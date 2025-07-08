@@ -2633,6 +2633,11 @@ postcss@^8.5.3:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
+postprocessing@^6.37.6:
+  version "6.37.6"
+  resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-6.37.6.tgz#5b0766faeab86a73e6f3750f25a3e6ecd522928a"
+  integrity sha512-KrdKLf1257RkoIk3z3nhRS0aToKrX2xJgtR0lbnOQUjd+1I4GVNv1gQYsQlfRglvEXjpzrwqOA5fXfoDBimadg==
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"

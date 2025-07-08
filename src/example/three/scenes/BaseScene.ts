@@ -1,6 +1,7 @@
 import { Clock, Object3D, PerspectiveCamera, Scene } from 'three';
 import { Application } from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
+import { ExportTexture } from '../../../utils/three';
 
 export default class BaseScene extends Scene {
   app: Application;

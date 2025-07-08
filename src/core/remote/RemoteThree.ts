@@ -17,10 +17,10 @@ export default class RemoteThree extends BaseRemote {
   private groups = new Map<string, GroupCallback>();
 
   constructor(app: Application) {
-      super(app);
-      // @ts-ignore
-      window.RemoteThree = this;
-    }
+    super(app);
+    // @ts-ignore
+    window.RemoteThree = this;
+  }
 
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
