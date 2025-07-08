@@ -3,6 +3,7 @@ export * from './editor/utils';
 export * from './utils/detectSettings';
 export * from './utils/math';
 export * from './utils/three';
+export * from './utils/post';
 export * from './webworkers/types';
 export * from './webworkers/EventHandling';
 export * from './webworkers/ProxyManager';
