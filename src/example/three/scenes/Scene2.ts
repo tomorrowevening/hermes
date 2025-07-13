@@ -21,7 +21,7 @@ import {
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
 import { IS_DEV } from '../../constants';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
-import { hierarchyUUID } from '../../../utils/three';
+import { dispose, hierarchyUUID } from '../../../utils/three';
 import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
@@ -61,7 +61,10 @@ export default class Scene2 extends BaseScene {
   override dispose(): void {
     const three = this.app.components.get('three') as RemoteThree;
     three.removeGroup(customGroupName);
-    if (this.rttScene) three.removeScene(this.rttScene);
+    if (this.rttScene) {
+      three.removeScene(this.rttScene);
+      dispose(this.rttScene);
+    }
     super.dispose();
   }
 
