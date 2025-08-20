@@ -1,7 +1,7 @@
 // Libs
 import { useEffect, useState } from 'react';
 // Models
-import { Application, ToolEvents } from '@/core/Application';
+import { ToolEvents } from '@/core/Application';
 import { RemoteObject, SidePanelState } from './types';
 // Components
 import '../scss/sidePanel.scss';

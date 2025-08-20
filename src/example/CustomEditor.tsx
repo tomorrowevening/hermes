@@ -11,6 +11,7 @@ import Scene2 from './three/scenes/Scene2';
 import RTTScene from './three/scenes/RTTScene';
 // Utils
 import { customizeTheatreElements } from '../editor/theatreUtils';
+import MultiView from '../editor/multiView/MultiView';
 
 type CustomEditorProps = {
   app: Application
@@ -41,7 +42,7 @@ export default function CustomEditor(props: CustomEditorProps) {
           three={props.app.components.get('three') as RemoteThree}
           scenes={scenes}
           onSceneSet={(scene: any) => {
-            scene.setup(props.app);
+            scene.setup(props.app, MultiView.instance?.renderer);
             scene.init();
           }}
           onSceneUpdate={(scene: any) => {

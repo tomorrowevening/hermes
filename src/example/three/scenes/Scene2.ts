@@ -28,20 +28,30 @@ import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
 import CustomShaderMaterial from '../CustomShaderMaterial';
 import RTTScene from './RTTScene';
+import { Application } from '../../../core/Application';
 
 const customGroupName = 'Custom Group';
 
 export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
-  rttScene?: RTTScene;
+  rttScene: RTTScene;
   speed = 1;
 
   constructor() {
     super();
     this.name = 'Scene2';
+
+    this.rttScene = new RTTScene();
+  }
+
+  override setup(app: Application, renderer?: any): void {
+    super.setup(app, renderer);
+    this.rttScene.setup(app, renderer);
   }
 
   override init(): void {
+    this.rttScene.init();
+
     const three = this.app.components.get('three') as RemoteThree;
 
     this.camera.position.set(0, 100, 125);
@@ -53,18 +63,16 @@ export default class Scene2 extends BaseScene {
     if (IS_DEV) hierarchyUUID(this);
 
     three.addScene(this);
-    three.setScene(this);
     three.addCamera(this.camera);
+    three.setScene(this);
+
     if (three.renderer) this.renderer = three.renderer;
   }
 
   override dispose(): void {
     const three = this.app.components.get('three') as RemoteThree;
     three.removeGroup(customGroupName);
-    if (this.rttScene) {
-      three.removeScene(this.rttScene);
-      dispose(this.rttScene);
-    }
+    dispose(this.rttScene);
     super.dispose();
   }
 
@@ -126,9 +134,6 @@ export default class Scene2 extends BaseScene {
     lines.name = 'lines';
     lines.position.set(100, 50, 0);
     world.add(lines);
-
-    this.rttScene = new RTTScene();
-    three.addScene(this.rttScene);
 
     const rttMat = new MeshBasicMaterial();
     rttMat.map = this.rttScene.renderTarget.texture;
@@ -249,6 +254,12 @@ export default class Scene2 extends BaseScene {
   override update(): void {
     const delta = this.clock.getDelta();
     this.dance.update(delta * this.speed);
-    if (this.renderer) this.rttScene?.draw(this.clock.getElapsedTime(), this.renderer);
+    this.rttScene.update();
+    this.rttScene.draw();
+  }
+
+  override resize(width: number, height: number): void {
+    super.resize(width, height);
+    this.rttScene.resize(width, height);
   }
 }

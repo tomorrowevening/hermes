@@ -7,7 +7,6 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   RenderTarget,
-  Scene,
   SphereGeometry,
   TorusKnotGeometry,
   Vector3,
@@ -15,24 +14,25 @@ import {
 import { IS_DEV } from '../../constants';
 import { hierarchyUUID } from '../../../utils/three';
 import { cubeTextures } from '../loader';
+import BaseScene from './BaseScene';
+import RemoteThree from '../../../core/remote/RemoteThree';
 
 const zero3 = new Vector3();
 
-export default class RTTScene extends Scene {
+export default class RTTScene extends BaseScene {
   renderTarget: RenderTarget;
-  camera: PerspectiveCamera;
   mesh: Mesh;
 
   constructor() {
     super();
     this.name = 'RTTScene';
-
-    const envMap = cubeTextures.get('environment')!.clone();
-    this.background = envMap;
-
-    this.camera = new PerspectiveCamera(60, 1, 10, 2000);
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(zero3);
+  }
+
+  override init(): void {
+    const envMap = cubeTextures.get('environment')!.clone();
+    this.background = envMap;
 
     const light = new DirectionalLight(new Color(0xffffff), 1);
     light.name = 'sun';
@@ -64,9 +64,21 @@ export default class RTTScene extends Scene {
     this.renderTarget = new RenderTarget(512, 512);
 
     if (IS_DEV) hierarchyUUID(this);
+
+    const three = this.app.components.get('three') as RemoteThree;
+    three.addScene(this);
+    three.addCamera(this.camera);
   }
 
-  draw(time: number, renderer: any) {
+  override dispose(): void {
+    const three = this.app.components.get('three') as RemoteThree;
+    three.removeCamera(this.camera);
+    three.removeScene(this);
+    super.dispose();
+  }
+
+  override draw() {
+    const time = this.clock.getElapsedTime();
     const radius = 100;
     const angle = time * 0.05 * Math.PI * 2;
     const x = Math.cos(angle) * radius;
@@ -75,16 +87,18 @@ export default class RTTScene extends Scene {
     this.camera.lookAt(zero3);
 
     // Draw
-    if (renderer.isWebGLRenderer) {
-      renderer.setRenderTarget(this.renderTarget);
-      renderer.clear();
-      renderer.render(this, this.camera);
-      renderer.setRenderTarget(null);
-    } else {
-      renderer.setRenderTarget(this.renderTarget);
-      renderer.clearAsync();
-      renderer.renderAsync(this, this.camera);
-      renderer.setRenderTarget(null);
+    if (this.renderer) {
+      if (this.renderer.isWebGLRenderer) {
+        this.renderer.setRenderTarget(this.renderTarget);
+        this.renderer.clear();
+        this.renderer.render(this, this.camera);
+        this.renderer.setRenderTarget(null);
+      } else {
+        this.renderer.setRenderTarget(this.renderTarget);
+        this.renderer.clearAsync();
+        this.renderer.renderAsync(this, this.camera);
+        this.renderer.setRenderTarget(null);
+      }
     }
   }
 }
