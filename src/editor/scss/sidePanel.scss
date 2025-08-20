@@ -149,7 +149,7 @@ $font: Arial;
     }
   }
 
-  .status, .refresh, .remove {
+  .status, .refresh, .remove, .visibility {
     display: inline-block;
     margin: 0;
     padding: 0;
@@ -188,6 +188,16 @@ $font: Arial;
     background-size: 16px 16px;
     position: absolute;
     right: 5px;
+  }
+
+  .visibility {
+    background-color: transparent;
+    background-image: $icon_eye;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    position: absolute;
+    right: 45px;
   }
 
   .childObject {
@@ -239,6 +249,7 @@ $font: Arial;
     .visibility {
       background-color: transparent;
       background-image: $icon_eye;
+      background-position: 0;
       background-size: contain;
       height: 16px;
       overflow: hidden;

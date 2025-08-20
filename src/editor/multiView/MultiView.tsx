@@ -103,6 +103,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   scene: Scene;
   renderer?: WebGLRenderer | WebGPURenderer | null;
   currentScene?: Scene;
+  scenes: Map<string, Scene> = new Map();
   cameras: Map<string, Camera> = new Map();
   controls: Map<string, OrbitControls> = new Map();
   currentCamera!: PerspectiveCamera | OrthographicCamera;
@@ -136,7 +137,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private height = 0;
 
   // Windows
-  private sceneSet = false;
   private tlCam: any = null;
   private trCam: any = null;
   private blCam: any = null;
@@ -667,7 +667,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.lightHelpers.forEach((helper: LightHelper) => {
       if (helper['update'] !== undefined) helper['update']();
     });
-    if (this.props.onSceneUpdate !== undefined && this.sceneSet) this.props.onSceneUpdate(this.currentScene!);
+    if (this.props.onSceneUpdate !== undefined && this.currentScene !== undefined) {
+      this.props.onSceneUpdate(this.currentScene);
+    }
   }
 
   private draw() {
@@ -707,6 +709,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.addEventListener('click', this.onClick);
     window.addEventListener('keydown', this.onKey);
     window.addEventListener('resize', this.resize);
+    this.app.addEventListener(ToolEvents.ADD_SCENE, this.addScene);
     this.app.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
     this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
@@ -719,6 +722,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.removeEventListener('click', this.onClick);
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('resize', this.resize);
+    this.app.removeEventListener(ToolEvents.ADD_SCENE, this.addScene);
     this.app.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
     this.app.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
@@ -734,7 +738,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     const bh = Math.floor(this.height / 2);
     this.props.three.resize(this.width, this.height);
 
-    if (this.props.onSceneResize !== undefined && this.sceneSet && this.currentScene !== undefined) {
+    if (this.props.onSceneResize !== undefined && this.currentScene !== undefined) {
       this.props.onSceneResize(this.currentScene, this.width, this.height);
     }
 
@@ -776,34 +780,45 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     });
   };
 
-  private sceneUpdate = (evt: any) => {
-    // return;
-    this.clearLightHelpers();
-    this.scene.remove(this.currentScene!);
-    dispose(this.currentScene!);
-
+  private addScene = (evt: any) => {
     const sceneClass = this.props.scenes.get(evt.value.name);
     if (sceneClass !== undefined) {
       const sceneInstance = new sceneClass();
+      sceneInstance.visible = false;
       if (this.props.onSceneSet !== undefined) this.props.onSceneSet(sceneInstance);
-      this.currentScene = sceneInstance;
-      this.props.three.scene = this.currentScene;
-      this.scene.add(this.currentScene!);
-      this.sceneSet = true;
-      this.addLightHelpers();
+      this.props.three.scene = sceneInstance;
+      this.scenes.set(evt.value.name, sceneInstance);
+      this.scene.add(sceneInstance);
+    }
+  };
+
+  private sceneUpdate = (evt: any) => {
+    // Previous scene
+    if (this.currentScene !== undefined) {
+      this.currentScene.visible = false;
+      this.clearLightHelpers();
+    }
+
+    // New scene
+    const scene = this.scene.getObjectByName(evt.value.name);
+    if (scene !== undefined) {
+      this.currentScene = scene as Scene;
+      this.currentScene.visible = true;
+      this.addLightHelpers(this.currentScene);
     }
   };
 
   private addCamera = (evt: any) => {
     const data = evt.value;
+    const cameraName = `${this.props.three.scene?.name}_${data.name}`;
     const child = this.props.three.scene?.getObjectByProperty('uuid', data.uuid);
     if (child !== undefined) {
       const camera = child as Camera;
-      this.cameras.set(data.name, camera);
+      this.cameras.set(cameraName, camera);
 
       const helper = new CameraHelper(camera);
       helper.visible = this.cameraVisibility;
-      this.cameraHelpers.set(camera.name, helper);
+      this.cameraHelpers.set(cameraName, helper);
       this.helpersContainer.add(helper);
 
       this.setState({ lastUpdate: Date.now() });
@@ -1027,10 +1042,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.lightHelpers.clear();
   };
 
-  private addLightHelpers = () => {
-    if (this.currentScene === undefined) return;
-
-    this.currentScene.traverse((obj: Object3D) => {
+  private addLightHelpers = (scene: Scene) => {
+    scene.traverse((obj: Object3D) => {
       if (obj.type.search('Light') > -1) {
         let helper;
         switch (obj.type) {

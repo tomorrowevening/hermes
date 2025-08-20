@@ -28,6 +28,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     scene: Scene;
     renderer?: WebGLRenderer | WebGPURenderer | null;
     currentScene?: Scene;
+    scenes: Map<string, Scene>;
     cameras: Map<string, Camera>;
     controls: Map<string, OrbitControls>;
     currentCamera: PerspectiveCamera | OrthographicCamera;
@@ -48,7 +49,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private cameraControlsRafID;
     private width;
     private height;
-    private sceneSet;
     private tlCam;
     private trCam;
     private blCam;
@@ -88,6 +88,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private enable;
     private disable;
     private resize;
+    private addScene;
     private sceneUpdate;
     private addCamera;
     private removeCamera;
