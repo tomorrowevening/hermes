@@ -64,12 +64,6 @@ export default class RemoteTheatre extends BaseRemote {
   activeSheet: ISheet | undefined;
   studio: any = undefined;
 
-  constructor(app: Application) {
-    super(app);
-    // @ts-ignore
-    window.RemoteTheatre = this;
-  }
-
   override dispose(): void {
     this.project = undefined;
     this.sheets = new Map();
