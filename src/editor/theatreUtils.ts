@@ -85,15 +85,10 @@ export async function customizeTheatreElements() {
   const theatreEl = pointerRoot.children[0];
   if (theatreEl === null) return;
 
-  const headerEl = theatreEl.children[1] as HTMLDivElement;
-  headerEl.style.justifyContent = 'left';
-
   try {
+    const headerEl = theatreEl.children[1] as HTMLDivElement;
     const rightBtns = headerEl.children[1] as HTMLDivElement;
-    rightBtns.style.transform = 'translateX(10px)';
-    while (rightBtns.children.length > 1) {
-      rightBtns.removeChild(rightBtns.children[0]);
-    }
+    rightBtns.parentElement?.removeChild(rightBtns);
   } catch (_) {
     //
   }

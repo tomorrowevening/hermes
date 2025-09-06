@@ -1048,25 +1048,23 @@ function TP(a, e, t) {
 }
 async function SP() {
   for (; !document.getElementById("theatrejs-studio-root"); )
-    await new Promise((i) => setTimeout(i, 100));
+    await new Promise((s) => setTimeout(s, 100));
   const a = document.getElementById("theatrejs-studio-root");
   if (a === null || a.shadowRoot === null) return;
   const e = a.shadowRoot.getElementById("pointer-root");
   if (e === null) return;
   const t = e.children[0];
-  if (t === null) return;
-  const s = t.children[1];
-  s.style.justifyContent = "left";
-  try {
-    const i = s.children[1];
-    for (i.style.transform = "translateX(10px)"; i.children.length > 1; )
-      i.removeChild(i.children[0]);
-  } catch {
-  }
-  try {
-    const i = t.children[3];
-    i.style.top = "0", i.style.right = "300px";
-  } catch {
+  if (t !== null) {
+    try {
+      const i = t.children[1].children[1];
+      i.parentElement?.removeChild(i);
+    } catch {
+    }
+    try {
+      const s = t.children[3];
+      s.style.top = "0", s.style.right = "300px";
+    } catch {
+    }
   }
 }
 function T_(a, e, t, s, i) {
@@ -1093,9 +1091,6 @@ class vP extends Su {
   sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
   activeSheet;
   studio = void 0;
-  constructor(e) {
-    super(e), window.RemoteTheatre = this;
-  }
   dispose() {
     this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
   }
@@ -1529,10 +1524,8 @@ class wP extends Su {
   scenes = /* @__PURE__ */ new Map();
   renderer = void 0;
   renderTargets = /* @__PURE__ */ new Map();
+  renderTargetsResize = /* @__PURE__ */ new Map();
   groups = /* @__PURE__ */ new Map();
-  constructor(e) {
-    super(e), window.RemoteThree = this;
-  }
   dispose() {
     this.scenes.forEach((e) => {
       Li(e);
@@ -1801,14 +1794,17 @@ class wP extends Su {
     }
   }
   // Renderer
-  addRT(e, t) {
-    const s = new Fm(32, 32, t);
-    s.texture.name = e, this.renderTargets.set(e, s);
+  addRT(e, t = !0, s) {
+    const i = new Fm(32, 32, s);
+    i.texture.name = e, this.renderTargets.set(e, i), this.renderTargetsResize.set(e, t);
+  }
+  removeRT(e) {
+    this.renderTargets.delete(e), this.renderTargetsResize.delete(e);
   }
   resize(e, t) {
     const s = this.dpr;
-    this.renderTargets.forEach((n) => {
-      n.setSize(e * s, t * s);
+    this.renderTargets.forEach((n, r) => {
+      this.renderTargetsResize.get(r) && n.setSize(e * s, t * s);
     });
     const i = !(this.renderer?.domElement instanceof OffscreenCanvas);
     this.renderer?.setSize(e, t, i);
