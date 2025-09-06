@@ -1,5 +1,5 @@
 import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
-import { Application, ToolEvents } from '../Application';
+import { ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
@@ -13,14 +13,8 @@ export default class RemoteThree extends BaseRemote {
   scenes: Map<string, Scene> = new Map();
   renderer?: any = undefined;
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
-
+  private renderTargetsResize: Map<string, boolean> = new Map();
   private groups = new Map<string, GroupCallback>();
-
-  constructor(app: Application) {
-    super(app);
-    // @ts-ignore
-    window.RemoteThree = this;
-  }
 
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
@@ -365,16 +359,23 @@ export default class RemoteThree extends BaseRemote {
 
   // Renderer
 
-  addRT(name: string, params?: RenderTargetOptions) {
+  addRT(name: string, resize = true, params?: RenderTargetOptions) {
     const rt = new WebGLRenderTarget(32, 32, params);
     rt.texture.name = name;
     this.renderTargets.set(name, rt);
+    this.renderTargetsResize.set(name, resize);
+  }
+
+  removeRT(name: string) {
+    this.renderTargets.delete(name);
+    this.renderTargetsResize.delete(name);
   }
 
   resize(width: number, height: number) {
     const dpr = this.dpr;
-    this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
-      renderTarget.setSize(width * dpr, height * dpr);
+    this.renderTargets.forEach((renderTarget: WebGLRenderTarget, key: string) => {
+      const resize = this.renderTargetsResize.get(key);
+      if (resize) renderTarget.setSize(width * dpr, height * dpr);
     });
     const update = !(this.renderer?.domElement instanceof OffscreenCanvas);
     this.renderer?.setSize(width, height, update);
