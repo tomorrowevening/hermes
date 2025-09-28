@@ -1,6 +1,7 @@
 import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
 import { ApplicationMode, BroadcastData } from './types';
+import { AppSettings } from '@/utils/detectSettings';
 export declare enum ToolEvents {
     CUSTOM = "ToolEvents::custom",
     SELECT_DROPDOWN = "ToolEvents::selectDropdown",
@@ -33,19 +34,34 @@ export interface RemoteCall {
     callback: RemoteCallback;
 }
 export declare class Application extends EventDispatcher<ToolEvent> {
+    assets: {
+        audio: Map<string, any>;
+        image: Map<string, ImageBitmap>;
+        json: Map<string, any>;
+        model: Map<string, any>;
+        video: Map<string, any>;
+    };
     components: Map<string, any>;
+    settings: AppSettings;
     appHandlers: RemoteCall[];
     editorHandlers: RemoteCall[];
+    onUpdateCallback?: () => void;
     protected _appID: string;
-    protected _debugEnabled: boolean;
+    protected _mode: ApplicationMode;
     protected _broadcastChannel?: BroadcastChannel | undefined;
     protected _webSocket?: WebSocket | undefined;
-    protected _mode: ApplicationMode;
     protected _connected: boolean;
     protected _useBC: boolean;
-    constructor(id: string, debugEnabled: boolean, editor: boolean, useBC?: boolean);
-    addComponent(name: string, component: BaseRemote): void;
+    protected playing: boolean;
+    protected rafID: number;
+    constructor(id: string, settings: AppSettings, useBC?: boolean);
     dispose(): void;
+    update(): void;
+    draw(): void;
+    play: () => void;
+    pause: () => void;
+    private onUpdate;
+    addComponent(name: string, component: BaseRemote): void;
     send(data: BroadcastData): void;
     private messageHandler;
     private handleAppBroadcast;
@@ -58,5 +74,4 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     get mode(): ApplicationMode;
     get isApp(): boolean;
     get editor(): boolean;
-    set editor(value: boolean);
 }

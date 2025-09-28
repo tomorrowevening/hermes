@@ -773,29 +773,53 @@ class gP {
 }
 var K = /* @__PURE__ */ ((a) => (a.CUSTOM = "ToolEvents::custom", a.SELECT_DROPDOWN = "ToolEvents::selectDropdown", a.DRAG_UPDATE = "ToolEvents::dragUpdate", a.ADD_SCENE = "ToolEvents::addScene", a.REFRESH_SCENE = "ToolEvents::refreshScene", a.REMOVE_SCENE = "ToolEvents::removeScene", a.SET_SCENE = "ToolEvents::setScene", a.GET_OBJECT = "ToolEvents::getObject", a.SET_OBJECT = "ToolEvents::setObject", a.UPDATE_OBJECT = "ToolEvents::updateObject", a.CREATE_TEXTURE = "ToolEvents::createTexture", a.REQUEST_METHOD = "ToolEvents::requestMethod", a.ADD_CAMERA = "ToolEvents::addCamera", a.REMOVE_CAMERA = "ToolEvents::removeCamera", a.ADD_GROUP = "ToolEvents::addGroup", a.REMOVE_GROUP = "ToolEvents::removeGroup", a.ADD_SPLINE = "ToolEvents::addSpline", a.ADD_RENDERER = "ToolEvents::addRenderer", a.UPDATE_RENDERER = "ToolEvents::updateRenderer", a))(K || {});
 class yP extends xu {
+  assets = {
+    audio: /* @__PURE__ */ new Map(),
+    image: /* @__PURE__ */ new Map(),
+    json: /* @__PURE__ */ new Map(),
+    model: /* @__PURE__ */ new Map(),
+    video: /* @__PURE__ */ new Map()
+  };
   components = /* @__PURE__ */ new Map();
+  settings;
   appHandlers = [];
   editorHandlers = [];
+  onUpdateCallback;
   // Protected
   _appID = "";
-  _debugEnabled;
+  _mode = "app";
   _broadcastChannel = void 0;
   _webSocket = void 0;
-  _mode = "app";
   _connected = !1;
   _useBC = !1;
-  constructor(e, t, s, i = !0) {
-    super(), this._appID = e, this._debugEnabled = t, this.editor = s, t && (this._useBC = i, i ? (this._broadcastChannel = new BroadcastChannel(e), this._broadcastChannel.addEventListener("message", this.messageHandler)) : (this._webSocket = new WebSocket(e), this._webSocket.addEventListener("open", this.openHandler), this._webSocket.addEventListener("close", this.closeHandler), this._webSocket.addEventListener("message", this.messageHandler)));
-  }
-  addComponent(e, t) {
-    this.components.set(e, t);
+  playing = !1;
+  rafID = -1;
+  constructor(e, t, s = !0) {
+    super(), this._appID = e, this.settings = t, t.dev && (this._useBC = s, s ? (this._broadcastChannel = new BroadcastChannel(e), this._broadcastChannel.addEventListener("message", this.messageHandler)) : (this._webSocket = new WebSocket(e), this._webSocket.addEventListener("open", this.openHandler), this._webSocket.addEventListener("close", this.closeHandler), this._webSocket.addEventListener("message", this.messageHandler)));
   }
   dispose() {
     this._broadcastChannel !== void 0 && this._broadcastChannel.removeEventListener("message", this.messageHandler), this._webSocket !== void 0 && (this._webSocket.removeEventListener("open", this.openHandler), this._webSocket.removeEventListener("close", this.closeHandler), this._webSocket.removeEventListener("message", this.messageHandler)), this.components.forEach((e) => {
       e.dispose();
     }), this.components.clear();
   }
-  // Remote
+  // Playback
+  update() {
+  }
+  draw() {
+  }
+  play = () => {
+    this.playing || (this.playing = !0, this.onUpdate());
+  };
+  pause = () => {
+    this.playing && (this.playing = !1, cancelAnimationFrame(this.rafID), this.rafID = -1);
+  };
+  onUpdate = () => {
+    this.update(), this.isApp && this.draw(), this.onUpdateCallback && this.onUpdateCallback(), this.rafID = requestAnimationFrame(this.onUpdate);
+  };
+  // Remote Components
+  addComponent(e, t) {
+    this.components.set(e, t);
+  }
   send(e) {
     this._mode !== e.target && (this._useBC ? this._broadcastChannel?.postMessage(e) : this._connected && this._webSocket?.send(JSON.stringify(e)));
   }
@@ -827,7 +851,7 @@ class yP extends xu {
   closeHandler = () => {
     this._connected = !1;
   };
-  // Getters / Setters
+  // Getters
   get appID() {
     return this._appID;
   }
@@ -835,7 +859,7 @@ class yP extends xu {
     return this._connected;
   }
   get debugEnabled() {
-    return this._debugEnabled;
+    return this.settings.dev;
   }
   get mode() {
     return this._mode;
@@ -844,10 +868,7 @@ class yP extends xu {
     return this._mode === "app";
   }
   get editor() {
-    return this._mode === "editor";
-  }
-  set editor(e) {
-    e && (this._mode = "editor");
+    return this.settings.editor;
   }
 }
 class xP {
