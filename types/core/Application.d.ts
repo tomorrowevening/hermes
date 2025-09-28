@@ -54,14 +54,15 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     protected _useBC: boolean;
     protected playing: boolean;
     protected rafID: number;
-    constructor(id: string, settings: AppSettings, useBC?: boolean);
+    constructor(id: string);
     dispose(): void;
-    static detectSettings(dev?: boolean, editor?: boolean): Promise<AppSettings>;
+    detectSettings(dev?: boolean, editor?: boolean): Promise<void>;
     update(): void;
     draw(): void;
     play: () => void;
     pause: () => void;
     private onUpdate;
+    setupRemote(useBC?: boolean): void;
     addComponent(name: string, component: BaseRemote): void;
     send(data: BroadcastData): void;
     private messageHandler;
@@ -74,5 +75,7 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     get debugEnabled(): boolean;
     get mode(): ApplicationMode;
     get isApp(): boolean;
+    set isApp(value: boolean);
     get editor(): boolean;
+    set editor(value: boolean);
 }

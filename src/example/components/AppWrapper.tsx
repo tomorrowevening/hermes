@@ -6,14 +6,14 @@ import RemoteThree from '../../core/remote/RemoteThree';
 import RemoteSetup from './RemoteSetup';
 import CustomEditor from '../CustomEditor';
 import Wrapper from './Wrapper';
-import { AppSettings } from '../../utils/detectSettings';
 
 export default function AppWrapper() {
   const [app, setApp] = useState<Application | null>(null);
 
   useEffect(() => {
-    Application.detectSettings(IS_DEV, IS_EDITOR).then((settings: AppSettings) => {
-      const instance = new Application('ws://localhost:8080', settings);
+    const instance = new Application('ws://localhost:8080');
+    instance.detectSettings(IS_DEV, IS_EDITOR).then(() => {
+      if (IS_DEV) instance.setupRemote();
       instance.addComponent('theatre', new RemoteTheatre(instance));
       instance.addComponent('three', new RemoteThree(instance));
       setApp(instance);
