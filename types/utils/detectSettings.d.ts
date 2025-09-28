@@ -15,4 +15,4 @@ export type AppSettings = {
     editor: boolean;
 };
 export declare function detectMaxFrameRate(callback: (fps: number) => void): void;
-export declare function detectSettings(canvas: HTMLCanvasElement, dev: boolean, editor: boolean): Promise<AppSettings>;
+export declare function detectSettings(dev?: boolean, editor?: boolean): Promise<AppSettings>;

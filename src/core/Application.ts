@@ -1,6 +1,7 @@
 import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
 import { ApplicationMode, BroadcastData } from './types';
+import { AppSettings, detectSettings } from '@/utils/detectSettings';
 
 export enum ToolEvents {
   CUSTOM = 'ToolEvents::custom',
@@ -39,26 +40,35 @@ export interface RemoteCall {
 }
 
 export class Application extends EventDispatcher<ToolEvent> {
+  assets =  {
+    audio: new Map<string, any>(),
+    image: new Map<string, ImageBitmap>(),
+    json: new Map<string, any>(),
+    model: new Map<string, any>(),
+    video: new Map<string, any>(),
+  };
   components: Map<string, any> = new Map();
+  settings: AppSettings;
   appHandlers: RemoteCall[] = [];
   editorHandlers: RemoteCall[] = [];
+  onUpdateCallback?: () => void;
   
   // Protected
   protected _appID = '';
-  protected _debugEnabled: boolean;
+  protected _mode: ApplicationMode = 'app';
   protected _broadcastChannel?: BroadcastChannel | undefined = undefined;
   protected _webSocket?: WebSocket | undefined = undefined;
-  protected _mode: ApplicationMode = 'app';
   protected _connected = false;
   protected _useBC = false;
+  protected playing = false;
+  protected rafID = -1;
 
-  constructor(id: string, debugEnabled: boolean, editor: boolean, useBC:boolean = true) {
+  constructor(id: string, settings: AppSettings, useBC:boolean = true) {
     super();
     this._appID = id;
-    this._debugEnabled = debugEnabled;
-    this.editor = editor;
+    this.settings = settings;
 
-    if (debugEnabled) {
+    if (settings.dev) {
       this._useBC = useBC;
       if (useBC) {
         this._broadcastChannel = new BroadcastChannel(id);
@@ -70,10 +80,6 @@ export class Application extends EventDispatcher<ToolEvent> {
         this._webSocket.addEventListener('message', this.messageHandler);
       }
     }
-  }
-
-  addComponent(name: string, component: BaseRemote) {
-    this.components.set(name, component);
   }
 
   dispose() {
@@ -91,7 +97,45 @@ export class Application extends EventDispatcher<ToolEvent> {
     this.components.clear();
   }
 
-  // Remote
+  static detectSettings(dev: boolean = false, editor: boolean = false): Promise<AppSettings> {
+    return detectSettings(dev, editor);
+  }
+
+  // Playback
+
+  update() {
+    // 
+  }
+
+  draw() {
+    // 
+  }
+
+  play = () => {
+    if (this.playing) return;
+    this.playing = true;
+    this.onUpdate();
+  };
+
+  pause = () => {
+    if (!this.playing) return;
+    this.playing = false;
+    cancelAnimationFrame(this.rafID);
+    this.rafID = -1;
+  };
+
+  private onUpdate = () => {
+    this.update();
+    if (this.isApp) this.draw();
+    if (this.onUpdateCallback) this.onUpdateCallback();
+    this.rafID = requestAnimationFrame(this.onUpdate);
+  };
+
+  // Remote Components
+
+  addComponent(name: string, component: BaseRemote) {
+    this.components.set(name, component);
+  }
 
   send(data: BroadcastData) {
     if (this._mode !== data.target) {
@@ -146,7 +190,7 @@ export class Application extends EventDispatcher<ToolEvent> {
     this._connected = false;
   };
 
-  // Getters / Setters
+  // Getters
 
   get appID(): string {
     return this._appID;
@@ -157,7 +201,7 @@ export class Application extends EventDispatcher<ToolEvent> {
   }
 
   get debugEnabled(): boolean {
-    return this._debugEnabled;
+    return this.settings.dev;
   }
 
   get mode(): ApplicationMode {
@@ -169,12 +213,6 @@ export class Application extends EventDispatcher<ToolEvent> {
   }
 
   get editor(): boolean {
-    return this._mode === 'editor';
-  }
-
-  set editor(value: boolean) {
-    if (value) {
-      this._mode = 'editor';
-    }
+    return this.settings.editor;
   }
 }

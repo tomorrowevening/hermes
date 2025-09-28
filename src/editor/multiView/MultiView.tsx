@@ -603,7 +603,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     createOrtho('Orthographic', new Vector3(dist, dist, dist));
     createOrtho('UI', new Vector3());
 
-    this.debugCamera = new PerspectiveCamera(60, 1, 50, 5000);
+    this.debugCamera = new PerspectiveCamera(60, 1, 0.01, 5000);
     this.debugCamera.name = 'Debug';
     this.debugCamera.position.set(500, 500, 500);
     this.debugCamera.lookAt(0, 0, 0);
