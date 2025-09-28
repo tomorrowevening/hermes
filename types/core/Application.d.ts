@@ -56,6 +56,7 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     protected rafID: number;
     constructor(id: string, settings: AppSettings, useBC?: boolean);
     dispose(): void;
+    static detectSettings(dev?: boolean, editor?: boolean): Promise<AppSettings>;
     update(): void;
     draw(): void;
     play: () => void;

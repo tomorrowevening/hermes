@@ -1,7 +1,7 @@
 import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
 import { ApplicationMode, BroadcastData } from './types';
-import { AppSettings } from '@/utils/detectSettings';
+import { AppSettings, detectSettings } from '@/utils/detectSettings';
 
 export enum ToolEvents {
   CUSTOM = 'ToolEvents::custom',
@@ -95,6 +95,10 @@ export class Application extends EventDispatcher<ToolEvent> {
       value.dispose();
     });
     this.components.clear();
+  }
+
+  static detectSettings(dev: boolean = false, editor: boolean = false): Promise<AppSettings> {
+    return detectSettings(dev, editor);
   }
 
   // Playback

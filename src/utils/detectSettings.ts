@@ -37,10 +37,11 @@ export function detectMaxFrameRate(callback: (fps: number) => void) {
   requestAnimationFrame(measureFrameRate);
 }
 
-export function detectSettings(canvas: HTMLCanvasElement, dev: boolean, editor: boolean): Promise<AppSettings> {
+export function detectSettings(dev: boolean = false, editor: boolean = false): Promise<AppSettings> {
   return new Promise((resolve) => {
     getGPUTier().then((gpuTier: TierResult) => {
       let supportOffScreenWebGL = false;
+      const canvas = document.createElement('canvas');
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       supportOffScreenWebGL = 'transferControlToOffscreen' in canvas;
   
