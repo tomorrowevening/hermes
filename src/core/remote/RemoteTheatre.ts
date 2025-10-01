@@ -1,11 +1,11 @@
 // Libs
-import { IProject, ISheet, ISheetObject } from '@theatre/core';
+import { createRafDriver, IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
 // Core
+import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
-import { Application } from '../Application';
 
 type KeyframeData = {
   position: number
@@ -63,6 +63,12 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
+  rafDriver?: IRafDriver = undefined;
+
+  constructor(app: Application, createRaf = false) {
+    super(app);
+    if (createRaf) this.rafDriver = createRafDriver();
+  }
 
   override dispose(): void {
     this.project = undefined;
@@ -70,6 +76,10 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjects = new Map();
     this.sheetObjectCBs = new Map();
     this.sheetObjectUnsubscribe = new Map();
+  }
+
+  update() {
+    this.rafDriver?.tick(performance.now());
   }
 
   getSheetInstance(name: string, instanceId?: string): string {
@@ -97,6 +107,7 @@ export default class RemoteTheatre extends BaseRemote {
     return new Promise((resolve) => {
       // Play locally
       const rafParams = params !== undefined ? {...params} : {};
+      rafParams.rafDriver = this.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
 
       // Remotely
@@ -188,7 +199,7 @@ export default class RemoteTheatre extends BaseRemote {
 
       const callback = this.sheetObjectCBs.get(objName);
       if (callback !== undefined) callback(values);
-    });
+    }, this.rafDriver);
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
 
     return obj;
