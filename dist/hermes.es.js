@@ -1146,8 +1146,8 @@ class EP extends Su {
   dispose() {
     this.project = void 0, this.sheets = /* @__PURE__ */ new Map(), this.sheetObjects = /* @__PURE__ */ new Map(), this.sheetObjectCBs = /* @__PURE__ */ new Map(), this.sheetObjectUnsubscribe = /* @__PURE__ */ new Map();
   }
-  update() {
-    this.rafDriver?.tick(performance.now());
+  update(e) {
+    this.rafDriver?.tick(e);
   }
   getSheetInstance(e, t) {
     return t !== void 0 ? `${e}-${t}` : e;
@@ -1287,7 +1287,10 @@ class EP extends Su {
     if (this.app.editor)
       switch (e.event) {
         case "playSheet":
-          this.sheet(e.data.sheet, e.data.instance)?.sequence.play(e.data.value);
+          this.sheet(e.data.sheet, e.data.instance)?.sequence.play({
+            ...e.data.value,
+            rafDriver: this.rafDriver
+          });
           break;
         case "pauseSheet":
           this.sheet(e.data.sheet, e.data.instance)?.sequence.pause();

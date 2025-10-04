@@ -19,7 +19,7 @@ export default class RemoteTheatre extends BaseRemote {
     rafDriver?: IRafDriver;
     constructor(app: Application, createRaf?: boolean);
     dispose(): void;
-    update(): void;
+    update(now: number): void;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
     playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;
