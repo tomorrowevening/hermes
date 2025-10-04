@@ -78,8 +78,8 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe = new Map();
   }
 
-  update() {
-    this.rafDriver?.tick(performance.now());
+  update(now: number) {
+    this.rafDriver?.tick(now);
   }
 
   getSheetInstance(name: string, instanceId?: string): string {
@@ -327,7 +327,10 @@ export default class RemoteTheatre extends BaseRemote {
     if (this.app.editor) {
       switch (msg.event) {
         case 'playSheet':
-          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
+          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play({
+            ...msg.data.value,
+            ...{ rafDriver: this.rafDriver }
+          });
           break;
         case 'pauseSheet':
           this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
