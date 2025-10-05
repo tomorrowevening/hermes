@@ -1,6 +1,5 @@
 // Libs
 import { useEffect, useRef } from 'react';
-import { types } from '@theatre/core';
 import { WebGLRenderer } from 'three';
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
@@ -9,7 +8,6 @@ import { Application, ToolEvents } from '../../core/Application';
 import { IS_DEV, IS_EDITOR } from '../constants';
 // Components
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three
 import BaseScene from '../three/scenes/BaseScene';
@@ -29,43 +27,12 @@ type AppProps = {
 }
 
 function App(props: AppProps) {
-  const elementRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const theatre = props.app.components.get('theatre') as RemoteTheatre;
   const three = props.app.components.get('three') as RemoteThree;
-
-  // Theatre
-  useEffect(() => {
-    const container = elementRef.current!;
-    container.style.visibility = props.app.editor ? 'hidden' : 'inherit';
-
-    // Theatre Example
-    theatre.sheet('App');
-    const sheetObj = theatre?.sheetObject(
-      'App',
-      'Box',
-      {
-        x: types.number(100, {range: [0, window.innerWidth]}),
-        y: types.number(100, {range: [0, window.innerHeight]}),
-      },
-      (values: any) => {
-        container.style.left = `${values.x}px`;
-        container.style.top = `${values.y}px`;
-      },
-    );
-
-    return () => {
-      if (sheetObj !== undefined) theatre?.unsubscribe(sheetObj);
-      props.app.dispose();
-    };
-  }, []);
 
   // Detect settings
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas !== null) {
-      detectSettings(canvas, IS_DEV, IS_EDITOR).then((settings) => console.log('Settings', settings));
-    }
+    detectSettings(IS_DEV, IS_EDITOR).then((settings) => console.log('Settings', settings));
   }, []);
 
   // Renderer setup
@@ -172,9 +139,6 @@ function App(props: AppProps) {
   // Debug Components
   if (IS_DEV) {
     useEffect(() => {
-      const container = elementRef.current!;
-      container.style.visibility = props.app.editor ? 'hidden' : 'inherit';
-
       // Components Example
       const onCustom = (evt: any) => {
         console.log('Custom:', evt.value);
@@ -198,28 +162,18 @@ function App(props: AppProps) {
 
   return (
     <>
-      {props.app.isApp && <canvas ref={canvasRef} />}
-
-      <div id='box' ref={elementRef}>
-        <button onClick={() => {
-          props.app.send({
-            target: 'editor',
-            event: 'custom',
-            data: 'hello editor!'
-          });
-          theatre.playSheet('App');
-        }}>Click</button>
-      </div>
-
       {props.app.isApp && (
-        <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: '20px',
-        }}>
-          <button onClick={createScene1}>Scene 1</button>
-          <button onClick={createScene2}>Scene 2</button>
-        </div>
+        <>
+          <canvas ref={canvasRef} />
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '20px',
+          }}>
+            <button onClick={createScene1}>Scene 1</button>
+            <button onClick={createScene2}>Scene 2</button>
+          </div>
+        </>
       )}
 
       {IS_DEV && <SceneInspector app={props.app} three={three} />}
