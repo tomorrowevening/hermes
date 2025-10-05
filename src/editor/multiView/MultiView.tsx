@@ -603,9 +603,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     createOrtho('Orthographic', new Vector3(dist, dist, dist));
     createOrtho('UI', new Vector3());
 
-    this.debugCamera = new PerspectiveCamera(60, 1, 0.01, 5000);
+    this.debugCamera = new PerspectiveCamera(60, 1, 0.01, 3000);
     this.debugCamera.name = 'Debug';
-    this.debugCamera.position.set(500, 500, 500);
+    this.debugCamera.position.set(300, 300, 300);
     this.debugCamera.lookAt(0, 0, 0);
     this.cameras.set('Debug', this.debugCamera);
 
@@ -1098,7 +1098,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     // New items
     const control = new OrbitControls(camera, element);
     control.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    control.dampingFactor = 0.05;
+    control.dampingFactor = 0.2;
     switch (camera.name) {
       case 'Top':
       case 'Bottom':
