@@ -20,6 +20,8 @@ uniform float uDistance;
 uniform float uGridOpacity;
 uniform float uSubgridOpacity;
 
+#define minAlpha 0.00784313725490196
+
 float getGrid(float gapSize) {
   vec2 worldPositionByDivision = worldPosition.xz / gapSize;
 
@@ -76,7 +78,7 @@ void main() {
   // Shade the next grid
   fragColor.a = mix(fragColor.a, baseOpacity * uGridOpacity, nextGrid);
 
-  if (fragColor.a <= 0.0) discard;
+  if (fragColor.a <= minAlpha) discard;
 }`;
 
 export type InfiniteGridProps = {

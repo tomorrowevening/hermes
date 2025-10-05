@@ -13,6 +13,7 @@ export type AppSettings = {
   height: number;
   mobile: boolean;
   supportOffScreenCanvas: boolean;
+  supportWebGPU: boolean;
   quality: QualityType;
   dev: boolean;
   editor: boolean;
@@ -59,6 +60,7 @@ export function detectSettings(dev: boolean = false, editor: boolean = false): P
         height: innerHeight,
         mobile: gpuTier.isMobile !== undefined ? gpuTier.isMobile : false,
         supportOffScreenCanvas: supportOffScreenWebGL,
+        supportWebGPU: !!navigator.gpu,
         quality: QualityType.Low,
         dev,
         editor,
@@ -70,8 +72,6 @@ export function detectSettings(dev: boolean = false, editor: boolean = false): P
         settings.fps = fps;
         resolve(settings);
       });
-
-      resolve(settings);
     });
   });
 }

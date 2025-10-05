@@ -122,6 +122,7 @@ export default class Scene2 extends BaseScene {
     const floor = new Mesh(new CircleGeometry(250, 36), floorMaterial);
     floor.name = 'floor';
     floor.receiveShadow = true;
+    floor.position.y = -2;
     floor.rotateX(-Math.PI / 2);
     world.add(floor);
 

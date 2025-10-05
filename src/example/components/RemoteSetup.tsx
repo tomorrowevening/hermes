@@ -2,21 +2,28 @@ import studio from '@theatre/studio';
 import { Application } from '../../core/Application';
 import RemoteComponents from '../../core/remote/RemoteComponents';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
-import { Events, threeDispatcher } from '../constants';
+import RemoteThree from '../../core/remote/RemoteThree';
+import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 
 type RemoteProps = {
   app: Application
 }
 
 export default function RemoteSetup(props: RemoteProps) {
-  props.app.addComponent('components', new RemoteComponents(props.app));
-  const theatre = props.app.components.get('theatre') as RemoteTheatre;
-  theatre.studio = studio;
-  const onLoad = () => {
-    threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad);
-    theatre.handleEditorApp();
-  };
-  threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad);
+  const app = props.app;
+  const three = app.components.get('three') as RemoteThree;
 
-  return null;
+  // Remote Theatre setup
+  const theatre = app.components.get('theatre') as RemoteTheatre;
+  theatre.studio = studio;
+  theatre.handleEditorApp();
+
+  // Custom component support (optional)
+  app.addComponent('components', new RemoteComponents(app));
+
+  return (
+    <>
+      {app.debugEnabled ? <SceneInspector app={app} three={three} /> : null}
+    </>
+  );
 }

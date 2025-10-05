@@ -10,6 +10,7 @@ export type AppSettings = {
     height: number;
     mobile: boolean;
     supportOffScreenCanvas: boolean;
+    supportWebGPU: boolean;
     quality: QualityType;
     dev: boolean;
     editor: boolean;

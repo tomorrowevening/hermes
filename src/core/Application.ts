@@ -55,6 +55,7 @@ export class Application extends EventDispatcher<ToolEvent> {
     height: 0,
     mobile: false,
     supportOffScreenCanvas: false,
+    supportWebGPU: false,
     quality: QualityType.Low,
     dev: false,
     editor: false,
