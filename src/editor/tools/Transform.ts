@@ -44,7 +44,7 @@ export default class Transform extends EventDispatcher {
       const element = document.querySelector('.clickable') as HTMLDivElement;
       controls = new TransformControls(this.activeCamera, element);
       controls.getHelper().name = name;
-      controls.setSize(0.25);
+      controls.setSize(0.5);
       controls.setSpace('local');
       this.controls.set(name, controls);
       this.visibility.set(name, true);
