@@ -220,13 +220,14 @@ function c_(a = !1, e = !1) {
         height: innerHeight,
         mobile: s.isMobile !== void 0 ? s.isMobile : !1,
         supportOffScreenCanvas: i,
+        supportWebGPU: !!navigator.gpu,
         quality: 2,
         dev: a,
         editor: e
       };
       s.tier === 3 ? o.quality = 0 : s.tier === 2 && (o.quality = 1), l_((l) => {
         o.fps = l, t(o);
-      }), t(o);
+      });
     });
   });
 }
@@ -789,6 +790,7 @@ class _P extends xu {
     height: 0,
     mobile: !1,
     supportOffScreenCanvas: !1,
+    supportWebGPU: !1,
     quality: sg.Low,
     dev: !1,
     editor: !1
@@ -41667,6 +41669,8 @@ uniform float uDistance;
 uniform float uGridOpacity;
 uniform float uSubgridOpacity;
 
+#define minAlpha 0.00784313725490196
+
 float getGrid(float gapSize) {
   vec2 worldPositionByDivision = worldPosition.xz / gapSize;
 
@@ -41723,7 +41727,7 @@ void main() {
   // Shade the next grid
   fragColor.a = mix(fragColor.a, baseOpacity * uGridOpacity, nextGrid);
 
-  if (fragColor.a <= 0.0) discard;
+  if (fragColor.a <= minAlpha) discard;
 }`;
 class PN extends Zm {
   constructor(e) {
@@ -42409,7 +42413,7 @@ class Pt extends xu {
     let t = this.controls.get(e);
     if (t === void 0) {
       const s = document.querySelector(".clickable");
-      t = new BN(this.activeCamera, s), t.getHelper().name = e, t.setSize(0.25), t.setSpace("local"), this.controls.set(e, t), this.visibility.set(e, !0), t.addEventListener("mouseDown", () => {
+      t = new BN(this.activeCamera, s), t.getHelper().name = e, t.setSize(0.5), t.setSpace("local"), this.controls.set(e, t), this.visibility.set(e, !0), t.addEventListener("mouseDown", () => {
         this.dispatchEvent({ type: Pt.DRAG_START });
       }), t.addEventListener("mouseUp", () => {
         this.dispatchEvent({ type: Pt.DRAG_END });
@@ -43321,7 +43325,7 @@ class ht extends Va {
       const o = new Nh(-100, 100, 100, -100, 0, 3e3);
       return o.name = n, o.position.copy(r), o.lookAt(0, 0, 0), this.cameras.set(n, o), o;
     }, t = 1e3;
-    e("Top", new Z(0, t, 0)), e("Bottom", new Z(0, -t, 0)), e("Left", new Z(-t, 0, 0)), e("Right", new Z(t, 0, 0)), e("Front", new Z(0, 0, t)), e("Back", new Z(0, 0, -t)), e("Orthographic", new Z(t, t, t)), e("UI", new Z()), this.debugCamera = new Vd(60, 1, 0.01, 5e3), this.debugCamera.name = "Debug", this.debugCamera.position.set(500, 500, 500), this.debugCamera.lookAt(0, 0, 0), this.cameras.set("Debug", this.debugCamera), this.currentCamera = this.debugCamera;
+    e("Top", new Z(0, t, 0)), e("Bottom", new Z(0, -t, 0)), e("Left", new Z(-t, 0, 0)), e("Right", new Z(t, 0, 0)), e("Front", new Z(0, 0, t)), e("Back", new Z(0, 0, -t)), e("Orthographic", new Z(t, t, t)), e("UI", new Z()), this.debugCamera = new Vd(60, 1, 0.01, 3e3), this.debugCamera.name = "Debug", this.debugCamera.position.set(300, 300, 300), this.debugCamera.lookAt(0, 0, 0), this.cameras.set("Debug", this.debugCamera), this.currentCamera = this.debugCamera;
     const s = localStorage, i = this.props.three.app.appID;
     this.tlCam = this.cameras.get(s.getItem(`${i}_tlCam`)), this.trCam = this.cameras.get(s.getItem(`${i}_trCam`)), this.blCam = this.cameras.get(s.getItem(`${i}_blCam`)), this.brCam = this.cameras.get(s.getItem(`${i}_brCam`)), this.tlCam === void 0 && (this.tlCam = this.cameras.get("Debug")), this.trCam === void 0 && (this.trCam = this.cameras.get("Orthographic")), this.blCam === void 0 && (this.blCam = this.cameras.get("Front")), this.brCam === void 0 && (this.brCam = this.cameras.get("Top"));
   }
@@ -43530,7 +43534,7 @@ class ht extends Va {
     const s = this.controls.get(e.name);
     if (s !== void 0 && s.dispose(), this.controls.delete(e.name), e.name === "UI") return;
     const i = new pN(e, t);
-    switch (i.enableDamping = !0, i.dampingFactor = 0.05, e.name) {
+    switch (i.enableDamping = !0, i.dampingFactor = 0.2, e.name) {
       case "Top":
       case "Bottom":
       case "Left":
