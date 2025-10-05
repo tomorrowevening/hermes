@@ -72,8 +72,6 @@ export function detectSettings(dev: boolean = false, editor: boolean = false): P
         settings.fps = fps;
         resolve(settings);
       });
-
-      resolve(settings);
     });
   });
 }
