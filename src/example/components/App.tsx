@@ -5,18 +5,15 @@ import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
 import { Application, ToolEvents } from '../../core/Application';
-import { IS_DEV, IS_EDITOR } from '../constants';
 // Components
-import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 // Utils
-import { detectSettings } from '../../utils/detectSettings';
-import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
+import { dispose } from '../../utils/three';
 
 let renderer: WebGLRenderer | WebGPURenderer;
 let currentScene: BaseScene;
@@ -27,20 +24,18 @@ type AppProps = {
 }
 
 function App(props: AppProps) {
+  const app = props.app;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const three = props.app.components.get('three') as RemoteThree;
 
-  // Detect settings
-  useEffect(() => {
-    detectSettings(IS_DEV, IS_EDITOR).then((settings) => console.log('Settings', settings));
-  }, []);
+  console.log('Settings', app.settings);
 
   // Renderer setup
-  if (props.app.isApp) {
+  if (app.isApp) {
     useEffect(() => {
       const canvas = canvasRef.current!;
+      // TODO - Add WebGPU support
       const useWebGPU = false;
-      console.log('WebGPU:', useWebGPU);
       if (useWebGPU) {
         renderer = new WebGPURenderer({
           canvas,
@@ -63,7 +58,7 @@ function App(props: AppProps) {
   }
 
   // ThreeJS
-  if (props.app.isApp) {
+  if (app.isApp) {
     useEffect(() => {
       const stats = new Stats();
       stats.init(renderer);
@@ -119,7 +114,7 @@ function App(props: AppProps) {
     } else {
       currentScene = new Scene2();
     }
-    currentScene.setup(props.app, renderer);
+    currentScene.setup(app, renderer);
     currentScene.init();
     currentScene.resize(window.innerWidth, window.innerHeight);
   };
@@ -137,7 +132,7 @@ function App(props: AppProps) {
   };
 
   // Debug Components
-  if (IS_DEV) {
+  if (app.debugEnabled) {
     useEffect(() => {
       // Components Example
       const onCustom = (evt: any) => {
@@ -151,18 +146,18 @@ function App(props: AppProps) {
           createScene2();
         }
       };
-      props.app.addEventListener(ToolEvents.CUSTOM, onCustom);
-      props.app.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
+      app.addEventListener(ToolEvents.CUSTOM, onCustom);
+      app.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
       return () => {
-        props.app.removeEventListener(ToolEvents.CUSTOM, onCustom);
-        props.app.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
+        app.removeEventListener(ToolEvents.CUSTOM, onCustom);
+        app.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
       };
     }, []);
   }
 
   return (
     <>
-      {props.app.isApp && (
+      {app.isApp && (
         <>
           <canvas ref={canvasRef} />
           <div style={{
@@ -176,7 +171,7 @@ function App(props: AppProps) {
         </>
       )}
 
-      {IS_DEV && <SceneInspector app={props.app} three={three} />}
+      
     </>
   );
 }

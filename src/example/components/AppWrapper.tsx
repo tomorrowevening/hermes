@@ -24,8 +24,8 @@ export default function AppWrapper() {
     <>
       {app !== null && (
         <>
-          {IS_DEV && <RemoteSetup app={app} />}
-          {IS_EDITOR && <CustomEditor app={app} />}
+          {app.debugEnabled && <RemoteSetup app={app} />}
+          {app.editor && <CustomEditor app={app} />}
           <Wrapper app={app} />
         </>
       )}
