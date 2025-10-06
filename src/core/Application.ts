@@ -40,7 +40,7 @@ export interface RemoteCall {
 }
 
 export class Application extends EventDispatcher<ToolEvent> {
-  assets =  {
+  assets = {
     audio: new Map<string, any>(),
     image: new Map<string, ImageBitmap>(),
     json: new Map<string, any>(),
@@ -56,7 +56,7 @@ export class Application extends EventDispatcher<ToolEvent> {
     mobile: false,
     supportOffScreenCanvas: false,
     supportWebGPU: false,
-    quality: QualityType.Low,
+    quality: 'Low',
     dev: false,
     editor: false,
   };

@@ -1,10 +1,6 @@
 import { getGPUTier, TierResult } from 'detect-gpu';
 
-export enum QualityType {
-  'High',
-  'Medium',
-  'Low',
-}
+export type QualityType = 'High' | 'Medium' | 'Low'
 
 export type AppSettings = {
   dpr: number;
@@ -61,12 +57,12 @@ export function detectSettings(dev: boolean = false, editor: boolean = false): P
         mobile: gpuTier.isMobile !== undefined ? gpuTier.isMobile : false,
         supportOffScreenCanvas: supportOffScreenWebGL,
         supportWebGPU: !!navigator.gpu,
-        quality: QualityType.Low,
+        quality: 'Low',
         dev,
         editor,
       };
-      if (gpuTier.tier === 3) settings.quality = QualityType.High;
-      else if (gpuTier.tier === 2) settings.quality = QualityType.Medium;
+      if (gpuTier.tier === 3) settings.quality = 'High';
+      else if (gpuTier.tier === 2) settings.quality = 'Medium';
 
       detectMaxFrameRate((fps: number) => {
         settings.fps = fps;
