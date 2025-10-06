@@ -22,7 +22,12 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const onGetObject = (evt: any) => {
       const uuid = evt.value;
       const scene = getScene(uuid);
-      const child = scene?.getObjectByProperty('uuid', uuid);
+      if (!scene) {
+        console.log(`Hermes - can't find scene for object: ${uuid}`, props.three.scenes);
+        return;
+      }
+
+      const child = scene.getObjectByProperty('uuid', uuid);
       if (child !== undefined) {
         props.three.setObject(child);
       } else {
@@ -32,6 +37,11 @@ export default function SceneInspector(props: SceneInspectorProps) {
   
     const setChildProps = (uuid: string, key: string, value: any) => {
       const scene = getScene(uuid);
+      if (!scene) {
+        console.log(`Hermes - can't find scene to set object: ${uuid}, ${key}`, props.three.scenes);
+        return;
+      }
+
       const child = scene?.getObjectByProperty('uuid', uuid);
       if (child !== undefined) {
         setItemProps(child, key, value);
@@ -49,6 +59,10 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const onCreateTexture = (evt: any) => {
       const data = evt.value;
       const scene = getScene(data.uuid);
+      if (!scene) {
+        console.log(`Hermes - can't create texture, can't find scene: ${data.uuid}`);
+        return;
+      }
       const child = scene?.getObjectByProperty('uuid', data.uuid);
       if (child !== undefined) {
         const onComplete = (value: Texture | null) => {
