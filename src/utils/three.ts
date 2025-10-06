@@ -107,6 +107,7 @@ export const hierarchyUUID = (object: Object3D): void => {
   if (object.parent !== null && object.parent.uuid.length > 0) {
     uuid = `${object.parent.uuid}.${uuid}`;
   }
+  uuid = uuid.replace('Debug Scene.', '');
   object.uuid = uuid;
 
   // Update material UUIDs
