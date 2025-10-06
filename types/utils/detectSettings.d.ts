@@ -1,8 +1,4 @@
-export declare enum QualityType {
-    'High' = 0,
-    'Medium' = 1,
-    'Low' = 2
-}
+export type QualityType = 'High' | 'Medium' | 'Low';
 export type AppSettings = {
     dpr: number;
     fps: number;
