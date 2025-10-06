@@ -43045,7 +43045,7 @@ class ht extends Va {
   blWindow;
   brWindow;
   constructor(e) {
-    super(e), this.app = e.app, this.app.addEventListener(K.ADD_RENDERER, this.setupRenderer), this.scene = new yu(), this.scene.name = this.scene.uuid = "Debug Scene", this.canvasRef = Mi(), this.containerRef = Mi(), this.tlWindow = Mi(), this.trWindow = Mi(), this.blWindow = Mi(), this.brWindow = Mi();
+    super(e), this.app = e.app, this.app.addEventListener(K.ADD_RENDERER, this.setupRenderer), this.scene = new yu(), this.scene.name = this.scene.uuid = "", this.canvasRef = Mi(), this.containerRef = Mi(), this.tlWindow = Mi(), this.trWindow = Mi(), this.blWindow = Mi(), this.brWindow = Mi();
     const t = e.three.app.appID, s = localStorage, i = s.getItem(`${t}_mode`);
     this.state = {
       mode: i !== null ? i : "Single",
@@ -43323,7 +43323,7 @@ class ht extends Va {
     }), this.grid.visible = !1), this.renderer && (this.renderer.autoClear = !1, this.renderer.shadowMap.enabled = !0, this.renderer.setPixelRatio(devicePixelRatio), this.renderer.setClearColor(0), this.resize(), this.props.three.renderer = this.renderer);
   };
   setupScene() {
-    this.scene.name = "Debug Scene", this.scene.uuid = "Debug Scene", this.helpersContainer.name = "helpers", this.scene.add(this.helpersContainer), this.grid.position.y = -1, this.scene.add(this.grid), this.interactionHelper.name = "interactionHelper", this.interactionHelper.visible = !1, this.helpersContainer.add(this.interactionHelper);
+    this.helpersContainer.name = "helpers", this.scene.add(this.helpersContainer), this.grid.position.y = -1, this.scene.add(this.grid), this.interactionHelper.name = "interactionHelper", this.interactionHelper.visible = !1, this.helpersContainer.add(this.interactionHelper);
     const e = (n, r) => {
       const o = new Nh(-100, 100, 100, -100, 0, 3e3);
       return o.name = n, o.position.copy(r), o.lookAt(0, 0, 0), this.cameras.set(n, o), o;
