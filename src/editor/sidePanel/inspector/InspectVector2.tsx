@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { clamp, mix, normalize, round } from '@/utils/math';
 import DragNumber from './utils/DragNumber';
+import { randomID } from '@/editor/utils';
 
 interface InspectVector2Props {
   min: number
@@ -148,6 +149,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             min={bounds.min}
             max={bounds.max}
             step={step}
+            name={randomID()}
             onChange={(evt: any) => {
               setX(evt.target.value);
               if (evt.target.value.length === 0) return;
@@ -167,6 +169,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             min={bounds.min}
             max={bounds.max}
             step={step}
+            name={randomID()}
             onChange={(evt: any) => {
               setY(evt.target.value);
               if (evt.target.value.length === 0) return;
@@ -184,6 +187,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             type='number'
             value={bounds.min}
             step={step}
+            name={randomID()}
             onChange={changeMin}
           />
         </div>
@@ -194,6 +198,7 @@ export default function InspectVector2(props: InspectVector2Props) {
             type='number'
             value={bounds.max}
             step={step}
+            name={randomID()}
             onChange={changeMax}
           />
         </div>

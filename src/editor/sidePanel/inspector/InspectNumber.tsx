@@ -2,6 +2,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 import { InspectorFieldType } from './InspectorField';
 import DragNumber from './utils/DragNumber';
 import { noop } from '@/core/types';
+import { randomID } from '@/editor/utils';
 
 export interface InspectNumberProps {
   alt?: string
@@ -50,6 +51,7 @@ export default function InspectNumber(props: InspectNumberProps) {
           max={props.max}
           step={props.step}
           disabled={props.disabled}
+          name={randomID()}
           onChange={(evt: any) => {
             setValue(evt.target.value);
             if (evt.target.value.length === 0) return;
@@ -68,6 +70,7 @@ export default function InspectNumber(props: InspectNumberProps) {
             disabled={props.disabled}
             ref={inputRef}
             className='min'
+            name={randomID()}
             onChange={(evt: any) => {
               if (evt.target.value.length === 0) return;
               const updatedValue = Number(evt.target.value);
@@ -84,6 +87,7 @@ export default function InspectNumber(props: InspectNumberProps) {
             max={props.max}
             step={props.step}
             ref={sliderRef}
+            name={randomID()}
             onChange={noop}
           />
         </>

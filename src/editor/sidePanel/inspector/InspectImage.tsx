@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { uploadLocalImage } from './utils/InspectMaterial';
 import { noImage } from '@/editor/components/content';
+import { randomID } from '@/editor/utils';
 
 type InspectImageProps = {
   title: string;
@@ -77,6 +78,7 @@ export default function InspectImage(props: InspectImageProps) {
             type='number'
             value={offsetX}
             step={step}
+            name={randomID()}
             onChange={changeInput}
           />
           <input
@@ -84,6 +86,7 @@ export default function InspectImage(props: InspectImageProps) {
             type='number'
             value={offsetY}
             step={step}
+            name={randomID()}
             onChange={changeInput}
           />
         </div>
@@ -94,6 +97,7 @@ export default function InspectImage(props: InspectImageProps) {
             type='number'
             value={repeatX}
             step={step}
+            name={randomID()}
             onChange={changeInput}
           />
           <input
@@ -101,6 +105,7 @@ export default function InspectImage(props: InspectImageProps) {
             type='number'
             value={repeatY}
             step={step}
+            name={randomID()}
             onChange={changeInput}
           />
         </div>

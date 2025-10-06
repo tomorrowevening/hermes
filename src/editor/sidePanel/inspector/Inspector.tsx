@@ -26,21 +26,17 @@ const defaultObject: RemoteObject = {
   lightInfo: undefined,
   children: [],
 };
-let currentObject = {...defaultObject};
 
 export default function Inspector(props: CoreComponentProps) {
-  const [lastUpdated, setLastUpdated] = useState<number>(-1);
+  const [currentObject, setCurrentObject] = useState<RemoteObject>(defaultObject);
 
   useEffect(() => {
     function onSelectItem(evt: any) {
-      const obj = evt.value as RemoteObject;
-      currentObject = {...obj};
-      setLastUpdated(Date.now());
+      setCurrentObject(evt.value as RemoteObject);
     }
 
     function setScene() {
-      currentObject = {...defaultObject};
-      setLastUpdated(Date.now());
+      setCurrentObject(defaultObject);
     }
 
     props.app.addEventListener(ToolEvents.SET_SCENE, setScene);
@@ -67,13 +63,12 @@ export default function Inspector(props: CoreComponentProps) {
         currentObject.uuid.length > 0 ? (
           <button className='remove' onClick={() => {
             Transform.instance.remove(currentObject.name);
-            currentObject = {...defaultObject};
-            setLastUpdated(Date.now());
+            setCurrentObject(defaultObject);
           }}></button>
         ) : undefined
       }
     >
-      <div id='Inspector' className={props.class} key={lastUpdated}>
+      <div id='Inspector' className={props.class}>
         {currentObject.uuid.length > 0 && (
           <>
             {/* Core */}

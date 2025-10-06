@@ -1,4 +1,4 @@
-import { colorToHex } from '@/editor/utils';
+import { colorToHex, randomID } from '@/editor/utils';
 import { KeyboardEvent, useRef, useState } from 'react';
 import { capitalize } from '@/editor/utils';
 import InspectNumber from './InspectNumber';
@@ -96,6 +96,7 @@ export default function InspectorField(props: InspectorFieldProps) {
           disabled={props.disabled}
           onChange={onChange}
           value={fieldValue}
+          name={randomID()}
         />
       )}
 
@@ -109,6 +110,7 @@ export default function InspectorField(props: InspectorFieldProps) {
             if (props.onKeyDown !== undefined) props.onKeyDown(evt);
           }}
           value={fieldValue}
+          name={randomID()}
         />
       )}
 
@@ -118,6 +120,7 @@ export default function InspectorField(props: InspectorFieldProps) {
           disabled={props.disabled}
           onChange={onChange}
           checked={fieldValue}
+          name={randomID()}
         />
       )}
 
@@ -151,8 +154,8 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'color' && (
         <>
-          <input type='text' value={fieldValue.toString()} onChange={onChange} disabled={props.disabled} className='color' />
-          <input type='color' value={fieldValue} onChange={onChange} disabled={props.disabled} />
+          <input type='text' value={fieldValue.toString()} onChange={onChange} disabled={props.disabled} className='color' name={randomID()} />
+          <input type='color' value={fieldValue} onChange={onChange} disabled={props.disabled} name={randomID()} />
         </>
       )}
 
