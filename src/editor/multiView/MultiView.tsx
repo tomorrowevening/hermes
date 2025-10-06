@@ -1098,7 +1098,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     // New items
     const control = new OrbitControls(camera, element);
     control.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    control.dampingFactor = 0.2;
+    control.dampingFactor = 0.1;
     switch (camera.name) {
       case 'Top':
       case 'Bottom':
