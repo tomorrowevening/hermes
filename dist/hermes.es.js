@@ -2695,7 +2695,8 @@ function ag(a) {
       if (r !== null) {
         const o = r.getObjectByProperty("uuid", a.child.uuid);
         o !== void 0 && (e.current.style.opacity = o.visible ? "1" : "0.25");
-      }
+      } else
+        console.log(`Hermes - Can't find Scene: ${a.child.uuid}`);
     }
   }, [t]), /* @__PURE__ */ C.jsx(C.Fragment, { children: a.child !== void 0 && /* @__PURE__ */ C.jsxs("div", { className: "childObject", children: [
     /* @__PURE__ */ C.jsxs("div", { className: "child", children: [
@@ -2737,8 +2738,10 @@ function ag(a) {
                 if (o !== void 0) {
                   const l = "visible", c = !o.visible;
                   e.current.style.opacity = c ? "1" : "0.25", a.three.updateObject(a.child.uuid, l, c), Xe(o, l, c);
-                }
-              }
+                } else
+                  console.log(`Hermes - Couldn't find object: ${a.child.uuid}`, r);
+              } else
+                console.log(`Hermes - Couldn't find object in scene: ${a.child.uuid}, ${a.child.name}`);
             }
           }
         }
@@ -44304,16 +44307,31 @@ function RP(a) {
       }), l;
     }
     const t = (o) => {
-      const l = o.value, c = e(l), h = c?.getObjectByProperty("uuid", l);
+      const l = o.value, c = e(l);
+      if (!c) {
+        console.log(`Hermes - can't find scene for object: ${l}`, a.three.scenes);
+        return;
+      }
+      const h = c.getObjectByProperty("uuid", l);
       h !== void 0 ? a.three.setObject(h) : console.log(`Hermes - can't find object: ${l}`, c);
     }, s = (o, l, c) => {
-      const h = e(o), u = h?.getObjectByProperty("uuid", o);
+      const h = e(o);
+      if (!h) {
+        console.log(`Hermes - can't find scene to set object: ${o}, ${l}`, a.three.scenes);
+        return;
+      }
+      const u = h?.getObjectByProperty("uuid", o);
       u !== void 0 ? Xe(u, l, c) : console.log(`Hermes - can't set object: ${o}`, h);
     }, i = (o) => {
       const l = o.value, { key: c, value: h, uuid: u } = l;
       s(u, c, h);
     }, n = (o) => {
-      const l = o.value, h = e(l.uuid)?.getObjectByProperty("uuid", l.uuid);
+      const l = o.value, c = e(l.uuid);
+      if (!c) {
+        console.log(`Hermes - can't create texture, can't find scene: ${l.uuid}`);
+        return;
+      }
+      const h = c?.getObjectByProperty("uuid", l.uuid);
       if (h !== void 0) {
         const u = (d) => {
           const p = l.key.split(".");

@@ -25,7 +25,7 @@ export default function Wrapper(props: WrapperProps) {
   return (
     <>
       {!loaded && <p>Loading...</p>}
-      {loaded && <App app={props.app} />}
+      {loaded && props.app.isApp && <App app={props.app} />}
     </>
   );
 }

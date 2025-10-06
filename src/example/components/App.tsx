@@ -131,30 +131,6 @@ function App(props: AppProps) {
     createScene();
   };
 
-  // Debug Components
-  if (app.debugEnabled) {
-    useEffect(() => {
-      // Components Example
-      const onCustom = (evt: any) => {
-        console.log('Custom:', evt.value);
-      };
-      const selectDropdown = (evt: any) => {
-        const scene = evt.value.value;
-        if (scene === 'scene1') {
-          createScene1();
-        } else if (scene === 'scene2') {
-          createScene2();
-        }
-      };
-      app.addEventListener(ToolEvents.CUSTOM, onCustom);
-      app.addEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
-      return () => {
-        app.removeEventListener(ToolEvents.CUSTOM, onCustom);
-        app.removeEventListener(ToolEvents.SELECT_DROPDOWN, selectDropdown);
-      };
-    }, []);
-  }
-
   return (
     <>
       {app.isApp && (

@@ -3,7 +3,7 @@ import { Application } from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 
 export default class BaseScene extends Scene {
-  app: Application;
+  app!: Application;
   camera: PerspectiveCamera;
   renderer?: any;
   clock: Clock;
