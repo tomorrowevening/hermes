@@ -59,7 +59,6 @@ import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
 import { mix } from '@/utils/math';
-import { dispose } from '@/utils/three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
@@ -80,6 +79,7 @@ type MultiViewState = {
   interactionMode: InteractionMode;
   interactionModeOpen: boolean;
   lastUpdate: number;
+  connected: boolean;
 }
 
 const ModeOptions: MultiViewMode[] = [
@@ -193,6 +193,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       interactionMode: 'Orbit',
       interactionModeOpen: false,
       lastUpdate: Date.now(),
+      connected: false,
     };
 
     // Save Local Storage
@@ -530,6 +531,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           />
 
         </div>
+
+        {!this.state.connected && <div className='connectionStatus'>Disconnected</div>}
       </div>
     );
   }
@@ -711,6 +714,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.app.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.app.addEventListener(ToolEvents.REMOTE_CONNECTED, this.onRemoteConnected);
+    this.app.addEventListener(ToolEvents.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
 
   private disable() {
@@ -724,6 +729,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.app.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.app.removeEventListener(ToolEvents.REMOTE_CONNECTED, this.onRemoteConnected);
+    this.app.removeEventListener(ToolEvents.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
 
   private resize = () => {
@@ -1030,6 +1037,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     });
     this.props.three.updateObject(this.selectedItem.uuid, 'scale', this.selectedItem.scale);
     InspectTransform.instance.update();
+  };
+
+  private onRemoteConnected = () => {
+    this.setState({ connected: true });
+  };
+
+  private onRemoteDisconnected = () => {
+    this.setState({ connected: false });
   };
 
   // Utils

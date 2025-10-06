@@ -47,6 +47,7 @@ export type DataUpdateCallback = (data: any) => void
 
 export type EditorEvent =
   | 'custom'
+  | 'ping'
 // Theatre
   | 'setSheet'
   | 'setSheetObject'

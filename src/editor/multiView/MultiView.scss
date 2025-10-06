@@ -136,4 +136,16 @@ $padding: 2px;
       }
     }
   }
+
+  .connectionStatus {
+    background-color: red;
+    font-weight: bold;
+    line-height: 30px;
+    padding: 0 10px;
+    text-transform: uppercase;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+  }
 }
