@@ -19,7 +19,6 @@ import {
 } from 'three';
 // @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
-import { IS_DEV } from '../../constants';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 import { dispose, hierarchyUUID } from '../../../utils/three';
 import BaseScene from './BaseScene';
@@ -60,7 +59,7 @@ export default class Scene2 extends BaseScene {
     this.createLights();
     this.createWorld();
     this.createAnimation();
-    if (IS_DEV) hierarchyUUID(this);
+    hierarchyUUID(this);
 
     three.addScene(this);
     three.addCamera(this.camera);

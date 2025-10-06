@@ -15,7 +15,6 @@ import {
 import { BloomEffect, CopyMaterial, EffectComposer, EffectPass, FXAAEffect, RenderPass, ShaderPass, VignetteEffect } from 'postprocessing';
 import CustomShaderMaterial from '../CustomShaderMaterial';
 import { hierarchyUUID } from '../../../utils/three';
-import { IS_DEV } from '../../constants';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
 import BaseScene from './BaseScene';
@@ -45,7 +44,7 @@ export default class Scene1 extends BaseScene {
     this.createWorld();
     if (!this.app.editor) this.createPost();
     this.createAnimation();
-    if (IS_DEV) hierarchyUUID(this);
+    hierarchyUUID(this);
 
     const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this);

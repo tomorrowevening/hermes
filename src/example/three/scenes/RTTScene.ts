@@ -4,14 +4,12 @@ import {
   Mesh,
   MeshNormalMaterial,
   MeshPhysicalMaterial,
-  PerspectiveCamera,
   PlaneGeometry,
   RenderTarget,
   SphereGeometry,
   TorusKnotGeometry,
   Vector3,
 } from 'three';
-import { IS_DEV } from '../../constants';
 import { hierarchyUUID } from '../../../utils/three';
 import { cubeTextures } from '../loader';
 import BaseScene from './BaseScene';
@@ -20,8 +18,8 @@ import RemoteThree from '../../../core/remote/RemoteThree';
 const zero3 = new Vector3();
 
 export default class RTTScene extends BaseScene {
-  renderTarget: RenderTarget;
-  mesh: Mesh;
+  renderTarget!: RenderTarget;
+  mesh!: Mesh;
 
   constructor() {
     super();
@@ -63,7 +61,7 @@ export default class RTTScene extends BaseScene {
 
     this.renderTarget = new RenderTarget(512, 512);
 
-    if (IS_DEV) hierarchyUUID(this);
+    hierarchyUUID(this);
 
     const three = this.app.components.get('three') as RemoteThree;
     three.addScene(this);

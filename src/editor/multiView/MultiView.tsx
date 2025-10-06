@@ -171,7 +171,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
 
     this.scene = new Scene();
-    this.scene.name = this.scene.uuid = 'Debug Scene';
+    this.scene.name = this.scene.uuid = '';
 
     // Refs
     this.canvasRef = createRef<HTMLCanvasElement>();
@@ -569,9 +569,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private setupScene() {
-    this.scene.name = 'Debug Scene';
-    this.scene.uuid = 'Debug Scene';
-
     this.helpersContainer.name = 'helpers';
     this.scene.add(this.helpersContainer);
 
