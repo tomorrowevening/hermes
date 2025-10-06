@@ -1,4 +1,4 @@
-import { Texture as Nh, OrthographicCamera as Ph, Scene as yu, MeshBasicMaterial as bn, BufferGeometry as Tn, Float32BufferAttribute as gn, Mesh as Y, LinearSRGBColorSpace as Pa, ObjectLoader as ox, AnimationMixer as lx, AnimationClip as cx, WebGLRenderTarget as Fm, RGBAFormat as hx, EventDispatcher as xu, Clock as Dm, Group as jo, RepeatWrapping as zd, Color as vn, ColorManagement as ir, FrontSide as ux, BackSide as Om, DoubleSide as _u, ZeroFactor as Im, OneFactor as Bm, SrcColorFactor as Lm, OneMinusSrcColorFactor as Um, SrcAlphaFactor as km, OneMinusSrcAlphaFactor as zm, DstAlphaFactor as Gm, OneMinusDstAlphaFactor as Vm, DstColorFactor as Hm, OneMinusDstColorFactor as Wm, SrcAlphaSaturateFactor as dx, ConstantColorFactor as $m, OneMinusConstantColorFactor as jm, ConstantAlphaFactor as qm, OneMinusConstantAlphaFactor as Ym, AddEquation as px, SubtractEquation as fx, ReverseSubtractEquation as mx, MinEquation as gx, MaxEquation as yx, NoBlending as xx, NormalBlending as _x, AdditiveBlending as bx, SubtractiveBlending as Tx, MultiplyBlending as Sx, CustomBlending as vx, Line as Ls, LineBasicMaterial as bu, Controls as Xm, Vector3 as Z, MOUSE as ur, TOUCH as nr, Quaternion as Jt, Spherical as Fh, Vector2 as gt, Ray as wx, Plane as Ex, MathUtils as Cx, ShaderMaterial as Zm, GLSL3 as Mx, PlaneGeometry as Km, Raycaster as Fa, Object3D as Tr, CylinderGeometry as kt, BoxGeometry as bt, OctahedronGeometry as Qa, TorusGeometry as Lr, SphereGeometry as Qm, Euler as Jm, Matrix4 as Rl, CatmullRomCurve3 as Gd, AxesHelper as Ax, MeshDepthMaterial as Rx, MeshNormalMaterial as Nx, Sphere as Px, Box3 as Fx, Vector4 as Dx, WebGLRenderer as da, PerspectiveCamera as Vd, CameraHelper as Ox, SkinnedMesh as Ix, SpotLightHelper as Bx, PointLightHelper as Lx, HemisphereLightHelper as Ux, DirectionalLightHelper as kx, SkeletonHelper as zx, SRGBColorSpace as Hd, NoToneMapping as Wd, NoColorSpace as Gx, LinearToneMapping as Vx, ReinhardToneMapping as Hx, CineonToneMapping as Wx, ACESFilmicToneMapping as $x, AgXToneMapping as jx, NeutralToneMapping as qx, CustomToneMapping as Yx } from "three";
+import { Texture as Nh, OrthographicCamera as Ph, Scene as yu, MeshBasicMaterial as bn, BufferGeometry as Tn, Float32BufferAttribute as gn, Mesh as Y, LinearSRGBColorSpace as Pa, ObjectLoader as ox, AnimationMixer as lx, AnimationClip as cx, WebGLRenderTarget as Fm, RGBAFormat as hx, EventDispatcher as xu, Clock as Dm, Group as jo, RepeatWrapping as zd, Color as vn, ColorManagement as ir, FrontSide as ux, BackSide as Om, DoubleSide as _u, ZeroFactor as Im, OneFactor as Bm, SrcColorFactor as Lm, OneMinusSrcColorFactor as Um, SrcAlphaFactor as km, OneMinusSrcAlphaFactor as zm, DstAlphaFactor as Gm, OneMinusDstAlphaFactor as Vm, DstColorFactor as Hm, OneMinusDstColorFactor as Wm, SrcAlphaSaturateFactor as dx, ConstantColorFactor as $m, OneMinusConstantColorFactor as jm, ConstantAlphaFactor as qm, OneMinusConstantAlphaFactor as Ym, AddEquation as px, SubtractEquation as fx, ReverseSubtractEquation as mx, MinEquation as gx, MaxEquation as yx, NoBlending as xx, NormalBlending as _x, AdditiveBlending as bx, SubtractiveBlending as Tx, MultiplyBlending as Sx, CustomBlending as vx, Line as Ls, LineBasicMaterial as bu, Controls as Xm, Vector3 as Z, MOUSE as ur, TOUCH as nr, Quaternion as Jt, Spherical as Fh, Vector2 as yt, Ray as wx, Plane as Ex, MathUtils as Cx, ShaderMaterial as Zm, GLSL3 as Mx, PlaneGeometry as Km, Raycaster as Fa, Object3D as Tr, CylinderGeometry as kt, BoxGeometry as bt, OctahedronGeometry as Qa, TorusGeometry as Lr, SphereGeometry as Qm, Euler as Jm, Matrix4 as Rl, CatmullRomCurve3 as Gd, AxesHelper as Ax, MeshDepthMaterial as Rx, MeshNormalMaterial as Nx, Sphere as Px, Box3 as Fx, Vector4 as Dx, WebGLRenderer as da, PerspectiveCamera as Vd, CameraHelper as Ox, SkinnedMesh as Ix, SpotLightHelper as Bx, PointLightHelper as Lx, HemisphereLightHelper as Ux, DirectionalLightHelper as kx, SkeletonHelper as zx, SRGBColorSpace as Hd, NoToneMapping as Wd, NoColorSpace as Gx, LinearToneMapping as Vx, ReinhardToneMapping as Hx, CineonToneMapping as Wx, ACESFilmicToneMapping as $x, AgXToneMapping as jx, NeutralToneMapping as qx, CustomToneMapping as Yx } from "three";
 import { EffectPass as Xx, ShaderPass as Zx } from "postprocessing";
 import { createRafDriver as Kx } from "@theatre/core";
 import eg, { useState as Re, useRef as Ge, useEffect as wn, useMemo as Sa, Component as Va, createRef as Mi, forwardRef as Qx } from "react";
@@ -12,7 +12,7 @@ function Jx(a) {
   const e = JSON.stringify(a);
   return navigator.clipboard.writeText(e), e;
 }
-function yt() {
+function mt() {
   return Math.round(Math.random() * 1e6).toString();
 }
 function e_(a) {
@@ -2642,7 +2642,7 @@ function B_(a) {
       );
       break;
   }
-  return /* @__PURE__ */ C.jsx("li", { className: t === e.title ? "selected" : "", children: i }, yt());
+  return /* @__PURE__ */ C.jsx("li", { className: t === e.title ? "selected" : "", children: i }, mt());
 }
 function ol(a) {
   const [e, t] = Re(a.open !== void 0 ? a.open : !0), s = !e || a.children === void 0, i = Ge(null), n = () => {
@@ -2807,7 +2807,7 @@ function xn(a) {
         max: a.max,
         step: a.step,
         disabled: a.disabled,
-        name: yt(),
+        name: mt(),
         onChange: (n) => {
           if (i(n.target.value), n.target.value.length === 0) return;
           const r = Number(n.target.value);
@@ -2824,7 +2824,7 @@ function xn(a) {
           disabled: a.disabled,
           ref: e,
           className: "min",
-          name: yt(),
+          name: mt(),
           onChange: (n) => {
             if (n.target.value.length === 0) return;
             const r = Number(n.target.value);
@@ -2842,7 +2842,7 @@ function xn(a) {
           max: a.max,
           step: a.step,
           ref: t,
-          name: yt(),
+          name: mt(),
           onChange: rl
         }
       )
@@ -2920,7 +2920,7 @@ function L_(a) {
   return /* @__PURE__ */ C.jsxs("div", { className: "vector2", children: [
     /* @__PURE__ */ C.jsxs("div", { className: "fields", children: [
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { ref: o, children: "X" }),
+        /* @__PURE__ */ C.jsx("span", { ref: o, children: "X" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -2930,7 +2930,7 @@ function L_(a) {
             min: m.min,
             max: m.max,
             step: A,
-            name: yt(),
+            name: mt(),
             onChange: (N) => {
               if (d(N.target.value), N.target.value.length === 0) return;
               const k = Number(N.target.value);
@@ -2940,7 +2940,7 @@ function L_(a) {
         )
       ] }),
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { ref: l, children: "Y" }),
+        /* @__PURE__ */ C.jsx("span", { ref: l, children: "Y" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -2950,7 +2950,7 @@ function L_(a) {
             min: m.min,
             max: m.max,
             step: A,
-            name: yt(),
+            name: mt(),
             onChange: (N) => {
               if (f(N.target.value), N.target.value.length === 0) return;
               const k = Number(N.target.value);
@@ -2960,7 +2960,7 @@ function L_(a) {
         )
       ] }),
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { ref: c, children: "Min" }),
+        /* @__PURE__ */ C.jsx("span", { ref: c, children: "Min" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -2968,13 +2968,13 @@ function L_(a) {
             type: "number",
             value: m.min,
             step: A,
-            name: yt(),
+            name: mt(),
             onChange: E
           }
         )
       ] }),
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { ref: h, children: "Max" }),
+        /* @__PURE__ */ C.jsx("span", { ref: h, children: "Max" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -2982,7 +2982,7 @@ function L_(a) {
             type: "number",
             value: m.max,
             step: A,
-            name: yt(),
+            name: mt(),
             onChange: v
           }
         )
@@ -3375,7 +3375,7 @@ function sp(a) {
       const c = Ge(null);
       n.push(
         /* @__PURE__ */ C.jsxs("div", { children: [
-          /* @__PURE__ */ C.jsx("label", { ref: c, children: l.substring(1).toUpperCase() }),
+          /* @__PURE__ */ C.jsx("span", { ref: c, children: l.substring(1).toUpperCase() }),
           /* @__PURE__ */ C.jsx(
             xn,
             {
@@ -3476,7 +3476,7 @@ function Q_(a) {
       const o = Ge(null);
       s.push(
         /* @__PURE__ */ C.jsxs("div", { children: [
-          /* @__PURE__ */ C.jsx("label", { ref: o, children: r + 1 }),
+          /* @__PURE__ */ C.jsx("span", { ref: o, children: r + 1 }),
           /* @__PURE__ */ C.jsx(
             xn,
             {
@@ -4376,7 +4376,7 @@ function fb(a) {
     }, src: o.src.length > 0 ? o.src : np }),
     /* @__PURE__ */ C.jsxs("div", { className: "fields", children: [
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { children: "Offset:" }),
+        /* @__PURE__ */ C.jsx("span", { children: "Offset:" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -4384,7 +4384,7 @@ function fb(a) {
             type: "number",
             value: l,
             step: e,
-            name: yt(),
+            name: mt(),
             onChange: g
           }
         ),
@@ -4395,13 +4395,13 @@ function fb(a) {
             type: "number",
             value: h,
             step: e,
-            name: yt(),
+            name: mt(),
             onChange: g
           }
         )
       ] }),
       /* @__PURE__ */ C.jsxs("div", { children: [
-        /* @__PURE__ */ C.jsx("label", { children: "Repeat:" }),
+        /* @__PURE__ */ C.jsx("span", { children: "Repeat:" }),
         /* @__PURE__ */ C.jsx(
           "input",
           {
@@ -4409,7 +4409,7 @@ function fb(a) {
             type: "number",
             value: d,
             step: e,
-            name: yt(),
+            name: mt(),
             onChange: g
           }
         ),
@@ -4420,7 +4420,7 @@ function fb(a) {
             type: "number",
             value: f,
             step: e,
-            name: yt(),
+            name: mt(),
             onChange: g
           }
         )
@@ -4449,7 +4449,7 @@ function qo(a) {
   const o = a.type === "field" || a.type === "string" && (t.length > 100 || t.search(`
 `) > -1), l = o || a.type === "image" || a.type === "vector2";
   return /* @__PURE__ */ C.jsxs("div", { className: `field ${l ? "block" : ""}`, style: r, children: [
-    a.type !== "button" && /* @__PURE__ */ C.jsx("label", { ref: i, children: al(a.title) }, "fieldLabel"),
+    a.type !== "button" && /* @__PURE__ */ C.jsx("span", { ref: i, children: al(a.title) }, "fieldLabel"),
     a.type === "string" && !o && /* @__PURE__ */ C.jsx(
       "input",
       {
@@ -4457,7 +4457,7 @@ function qo(a) {
         disabled: a.disabled,
         onChange: n,
         value: t,
-        name: yt()
+        name: mt()
       }
     ),
     (a.type === "field" || a.type === "string" && o) && /* @__PURE__ */ C.jsx(
@@ -4471,7 +4471,7 @@ function qo(a) {
           a.onKeyDown !== void 0 && a.onKeyDown(c);
         },
         value: t,
-        name: yt()
+        name: mt()
       }
     ),
     a.type === "boolean" && /* @__PURE__ */ C.jsx(
@@ -4481,7 +4481,7 @@ function qo(a) {
         disabled: a.disabled,
         onChange: n,
         checked: t,
-        name: yt()
+        name: mt()
       }
     ),
     a.type === "number" && /* @__PURE__ */ C.jsx(
@@ -4513,8 +4513,8 @@ function qo(a) {
       }
     ),
     a.type === "color" && /* @__PURE__ */ C.jsxs(C.Fragment, { children: [
-      /* @__PURE__ */ C.jsx("input", { type: "text", value: t.toString(), onChange: n, disabled: a.disabled, className: "color", name: yt() }),
-      /* @__PURE__ */ C.jsx("input", { type: "color", value: t, onChange: n, disabled: a.disabled, name: yt() })
+      /* @__PURE__ */ C.jsx("input", { type: "text", value: t.toString(), onChange: n, disabled: a.disabled, className: "color", name: mt() }),
+      /* @__PURE__ */ C.jsx("input", { type: "color", value: t, onChange: n, disabled: a.disabled, name: mt() })
     ] }),
     a.type === "button" && /* @__PURE__ */ C.jsx(
       "button",
@@ -4527,7 +4527,16 @@ function qo(a) {
       }
     ),
     a.type === "image" && /* @__PURE__ */ C.jsx(fb, { title: a.title, prop: a.prop, value: a.value, onChange: a.onChange }),
-    a.type === "option" && /* @__PURE__ */ C.jsx(C.Fragment, { children: /* @__PURE__ */ C.jsx("select", { onChange: n, disabled: a.disabled, defaultValue: a.value, children: a.options?.map((c, h) => /* @__PURE__ */ C.jsx("option", { value: c.value, children: al(c.title) }, h)) }) }),
+    a.type === "option" && /* @__PURE__ */ C.jsx(C.Fragment, { children: /* @__PURE__ */ C.jsx(
+      "select",
+      {
+        onChange: n,
+        disabled: a.disabled,
+        defaultValue: a.value,
+        name: mt(),
+        children: a.options?.map((c, h) => /* @__PURE__ */ C.jsx("option", { value: c.value, children: al(c.title) }, h))
+      }
+    ) }),
     a.type === "vector2" && /* @__PURE__ */ C.jsx(L_, { step: a.step, value: t, min: 0, max: 1, onChange: n }),
     a.type === "grid3" && /* @__PURE__ */ C.jsx(sp, { step: a.step, value: t, onChange: n }),
     a.type === "grid4" && /* @__PURE__ */ C.jsx(Q_, { step: a.step, value: t, onChange: n }),
@@ -33533,7 +33542,7 @@ const hr = {
   LineStrip: "line-strip",
   TriangleList: "triangle-list",
   TriangleStrip: "triangle-strip"
-}, mt = {
+}, gt = {
   Never: "never",
   Less: "less",
   Equal: "equal",
@@ -36865,28 +36874,28 @@ class c1 {
     const s = e.stencilFunc;
     switch (s) {
       case jb:
-        t = mt.Never;
+        t = gt.Never;
         break;
       case su:
-        t = mt.Always;
+        t = gt.Always;
         break;
       case qb:
-        t = mt.Less;
+        t = gt.Less;
         break;
       case Xb:
-        t = mt.LessEqual;
+        t = gt.LessEqual;
         break;
       case Yb:
-        t = mt.Equal;
+        t = gt.Equal;
         break;
       case Qb:
-        t = mt.GreaterEqual;
+        t = gt.GreaterEqual;
         break;
       case Zb:
-        t = mt.Greater;
+        t = gt.Greater;
         break;
       case Kb:
-        t = mt.NotEqual;
+        t = gt.NotEqual;
         break;
       default:
         console.error("THREE.WebGPURenderer: Invalid stencil function.", s);
@@ -37010,33 +37019,33 @@ class c1 {
   _getDepthCompare(e) {
     let t;
     if (e.depthTest === !1)
-      t = mt.Always;
+      t = gt.Always;
     else {
       const s = e.depthFunc;
       switch (s) {
         case _g:
-          t = mt.Never;
+          t = gt.Never;
           break;
         case bg:
-          t = mt.Always;
+          t = gt.Always;
           break;
         case Tg:
-          t = mt.Less;
+          t = gt.Less;
           break;
         case fl:
-          t = mt.LessEqual;
+          t = gt.LessEqual;
           break;
         case Sg:
-          t = mt.Equal;
+          t = gt.Equal;
           break;
         case vg:
-          t = mt.GreaterEqual;
+          t = gt.GreaterEqual;
           break;
         case wg:
-          t = mt.Greater;
+          t = gt.Greater;
           break;
         case Eg:
-          t = mt.NotEqual;
+          t = gt.NotEqual;
           break;
         default:
           console.error("THREE.WebGPUPipelineUtils: Invalid depth function.", s);
@@ -39806,7 +39815,7 @@ class uN extends Xm {
    * @param {?HTMLDOMElement} domElement - The HTML element used for event listeners.
    */
   constructor(e, t = null) {
-    super(e, t), this.state = Fe.NONE, this.target = new Z(), this.cursor = new Z(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: ur.ROTATE, MIDDLE: ur.DOLLY, RIGHT: ur.PAN }, this.touches = { ONE: nr.ROTATE, TWO: nr.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this._lastPosition = new Z(), this._lastQuaternion = new Jt(), this._lastTargetPosition = new Z(), this._quat = new Jt().setFromUnitVectors(e.up, new Z(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Fh(), this._sphericalDelta = new Fh(), this._scale = 1, this._panOffset = new Z(), this._rotateStart = new gt(), this._rotateEnd = new gt(), this._rotateDelta = new gt(), this._panStart = new gt(), this._panEnd = new gt(), this._panDelta = new gt(), this._dollyStart = new gt(), this._dollyEnd = new gt(), this._dollyDelta = new gt(), this._dollyDirection = new Z(), this._mouse = new gt(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = pN.bind(this), this._onPointerDown = dN.bind(this), this._onPointerUp = fN.bind(this), this._onContextMenu = TN.bind(this), this._onMouseWheel = yN.bind(this), this._onKeyDown = xN.bind(this), this._onTouchStart = _N.bind(this), this._onTouchMove = bN.bind(this), this._onMouseDown = mN.bind(this), this._onMouseMove = gN.bind(this), this._interceptControlDown = SN.bind(this), this._interceptControlUp = vN.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
+    super(e, t), this.state = Fe.NONE, this.target = new Z(), this.cursor = new Z(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: ur.ROTATE, MIDDLE: ur.DOLLY, RIGHT: ur.PAN }, this.touches = { ONE: nr.ROTATE, TWO: nr.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this._lastPosition = new Z(), this._lastQuaternion = new Jt(), this._lastTargetPosition = new Z(), this._quat = new Jt().setFromUnitVectors(e.up, new Z(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Fh(), this._sphericalDelta = new Fh(), this._scale = 1, this._panOffset = new Z(), this._rotateStart = new yt(), this._rotateEnd = new yt(), this._rotateDelta = new yt(), this._panStart = new yt(), this._panEnd = new yt(), this._panDelta = new yt(), this._dollyStart = new yt(), this._dollyEnd = new yt(), this._dollyDelta = new yt(), this._dollyDirection = new Z(), this._mouse = new yt(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = pN.bind(this), this._onPointerDown = dN.bind(this), this._onPointerUp = fN.bind(this), this._onContextMenu = TN.bind(this), this._onMouseWheel = yN.bind(this), this._onKeyDown = xN.bind(this), this._onTouchStart = _N.bind(this), this._onTouchMove = bN.bind(this), this._onMouseDown = mN.bind(this), this._onMouseMove = gN.bind(this), this._interceptControlDown = SN.bind(this), this._interceptControlUp = vN.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
   }
   connect(e) {
     super.connect(e), this.domElement.addEventListener("pointerdown", this._onPointerDown), this.domElement.addEventListener("pointercancel", this._onPointerUp), this.domElement.addEventListener("contextmenu", this._onContextMenu), this.domElement.addEventListener("wheel", this._onMouseWheel, { passive: !1 }), this.domElement.getRootNode().addEventListener("keydown", this._interceptControlDown, { passive: !0, capture: !0 }), this.domElement.style.touchAction = "none";
@@ -40070,7 +40079,7 @@ class uN extends Xm {
   }
   _trackPointer(e) {
     let t = this._pointerPositions[e.pointerId];
-    t === void 0 && (t = new gt(), this._pointerPositions[e.pointerId] = t), t.set(e.pageX, e.pageY);
+    t === void 0 && (t = new yt(), this._pointerPositions[e.pointerId] = t), t.set(e.pageX, e.pageY);
   }
   _getSecondPointerPosition(e) {
     const t = e.pointerId === this._pointers[0] ? this._pointers[1] : this._pointers[0];
@@ -42477,7 +42486,7 @@ class Pt extends xu {
     return Pt._instance || (Pt._instance = new Pt()), Pt._instance;
   }
 }
-const HN = new bt(), Mh = new gt();
+const HN = new bt(), Mh = new yt();
 class Ah extends Tr {
   curve = new Gd();
   line;
@@ -42946,7 +42955,7 @@ class WN extends Tr {
     const s = e.target.getBoundingClientRect(), i = (e.clientX - s.left) / s.width * 2 - 1, n = -((e.clientY - s.top) / s.height) * 2 + 1;
     if (ht.instance) {
       const o = new Fa();
-      o.setFromCamera(new gt(i, n), this._camera);
+      o.setFromCamera(new yt(i, n), this._camera);
       const l = o.intersectObjects(ht.instance.helpersContainer.children, !0);
       for (let c = 0; c < l.length; c++) {
         const h = l[c];
@@ -43050,7 +43059,7 @@ class ht extends Va {
   selectedItem = void 0;
   debugCamera;
   raycaster = new Fa();
-  pointer = new gt();
+  pointer = new yt();
   cameraControls = void 0;
   // References
   canvasRef;
@@ -43071,7 +43080,7 @@ class ht extends Va {
       lastUpdate: Date.now()
     }, s.setItem(`${t}_mode`, this.state.mode), s.setItem(`${t}_tlCam`, s.getItem(`${t}_tlCam`) !== null ? s.getItem(`${t}_tlCam`) : "Debug"), s.setItem(`${t}_trCam`, s.getItem(`${t}_trCam`) !== null ? s.getItem(`${t}_trCam`) : "Orthographic"), s.setItem(`${t}_blCam`, s.getItem(`${t}_blCam`) !== null ? s.getItem(`${t}_blCam`) : "Front"), s.setItem(`${t}_brCam`, s.getItem(`${t}_brCam`) !== null ? s.getItem(`${t}_brCam`) : "Top"), s.setItem(`${t}_tlRender`, s.getItem(`${t}_tlRender`) !== null ? s.getItem(`${t}_tlRender`) : "Renderer"), s.setItem(`${t}_trRender`, s.getItem(`${t}_trRender`) !== null ? s.getItem(`${t}_trRender`) : "Renderer"), s.setItem(`${t}_blRender`, s.getItem(`${t}_blRender`) !== null ? s.getItem(`${t}_blRender`) : "Renderer"), s.setItem(`${t}_brRender`, s.getItem(`${t}_brRender`) !== null ? s.getItem(`${t}_brRender`) : "Renderer");
     const n = {
-      Vector2: gt,
+      Vector2: yt,
       Vector3: Z,
       Vector4: Dx,
       Quaternion: Jt,
@@ -43441,7 +43450,7 @@ class ht extends Va {
     t !== void 0 && (this.helpersContainer.remove(t), t.dispose()), this.cameras.delete(e.value.name), this.setState({ lastUpdate: Date.now() });
   };
   onMouseMove = (e) => {
-    const t = new gt();
+    const t = new yt();
     this.renderer?.getSize(t);
     const s = Math.min(e.clientX, t.x), i = Math.min(e.clientY, t.y);
     this.pointer.x = an(s, 0, t.x, -1, 1), this.pointer.y = an(i, 0, t.y, 1, -1);
@@ -43467,7 +43476,7 @@ class ht extends Va {
   };
   onClick = (e) => {
     if (this.state.interactionMode === "Orbit" || this.currentScene === void 0) return;
-    const t = new gt();
+    const t = new yt();
     if (this.renderer.getSize(t), e.clientX >= t.x) return;
     this.onMouseMove(e);
     const s = this.raycaster.intersectObjects(this.currentScene.children);
@@ -43556,7 +43565,7 @@ class ht extends Va {
     const s = this.controls.get(e.name);
     if (s !== void 0 && s.dispose(), this.controls.delete(e.name), e.name === "UI") return;
     const i = new uN(e, t);
-    switch (i.enableDamping = !0, i.dampingFactor = 0.2, e.name) {
+    switch (i.enableDamping = !0, i.dampingFactor = 0.1, e.name) {
       case "Top":
       case "Bottom":
       case "Left":
@@ -44468,7 +44477,7 @@ export {
   rl as noop,
   Dh as normalize,
   hP as parseModelLite,
-  yt as randomID,
+  mt as randomID,
   Zd as resetThreeObjects,
   vs as round,
   lP as roundTo,

@@ -10,7 +10,7 @@ export interface InspectNumberProps {
     step?: number;
     disabled?: boolean;
     className?: string;
-    labelRef: RefObject<HTMLLabelElement>;
+    labelRef: RefObject<HTMLElement>;
     onChange?: (prop: string, value: number) => void;
 }
 export default function InspectNumber(props: InspectNumberProps): import("react/jsx-runtime").JSX.Element;

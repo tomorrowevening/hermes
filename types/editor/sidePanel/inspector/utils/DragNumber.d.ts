@@ -1,6 +1,6 @@
 import { RefObject } from 'react';
 interface DragProps {
-    label: RefObject<HTMLLabelElement>;
+    label: RefObject<HTMLElement>;
     input: RefObject<HTMLInputElement>;
     sliderRef?: RefObject<HTMLInputElement>;
     defaultValue: number;
