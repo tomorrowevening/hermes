@@ -990,7 +990,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
 
     this.selectedItem = this.currentScene!.getObjectByProperty('uuid', evt.value.uuid);
-    if (this.selectedItem === undefined) return;
+    if (this.selectedItem === undefined) {
+      console.log(`Hermes - Can't find selected item: ${evt.value.uuid}, ${evt.value.name}`);
+      return;
+    }
 
     if (this.currentTransform !== undefined) {
       this.currentTransform.removeEventListener('objectChange', this.onUpdateTransform);

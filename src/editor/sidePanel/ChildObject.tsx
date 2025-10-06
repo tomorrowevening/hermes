@@ -6,12 +6,17 @@ import { ChildObjectProps, RemoteObject } from './types';
 import { determineIcon, setItemProps } from './utils';
 
 export default function ChildObject(props: ChildObjectProps) {
+  if (props.child === undefined) {
+    console.log(`Hermes - No child attached`);
+    return null;
+  }
+
   const visibleRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
 
-  const hasChildren = props.child !== undefined && props.child.children.length > 0;
+  const hasChildren = props.child.children.length > 0;
   const children: Array<any> = [];
-  if (props.child !== undefined && props.child.children.length > 0) {
+  if (props.child.children.length > 0) {
     props.child.children.map((child: RemoteObject, index: number) => {
       children.push(<ChildObject app={props.app} child={child} key={index} three={props.three} />);
     });
@@ -32,69 +37,67 @@ export default function ChildObject(props: ChildObjectProps) {
   }, [open]);
 
   return (
-    <>
-      {props.child !== undefined && (
-        <div className='childObject' key={Math.random()}>
-          <div className='child'>
-            {hasChildren ? (
-              <button
-                className='status'
-                style={{
-                  backgroundPositionX: open ? '-14px' : '2px',
-                }}
-                onClick={() => {
-                  setOpen(!open);
-                }}
-              ></button>
-            ) : null}
-            <button
-              className='name'
-              style={{
-                left: hasChildren ? '20px' : '5px',
-              }}
-              onClick={() => {
-                if (props.child !== undefined) {
-                  props.three.getObject(props.child.uuid);
-                  if (!open) setOpen(true);
+    <div className='childObject' key={Math.random()}>
+      <div className='child'>
+        {hasChildren ? (
+          <button
+            className='status'
+            style={{
+              backgroundPositionX: open ? '-14px' : '2px',
+            }}
+            onClick={() => {
+              setOpen(!open);
+            }}
+          ></button>
+        ) : null}
+        <button
+          className='name'
+          style={{
+            left: hasChildren ? '20px' : '5px',
+          }}
+          onClick={() => {
+            if (props.child !== undefined) {
+              props.three.getObject(props.child.uuid);
+              if (!open && hasChildren) setOpen(true);
+            } else {
+              console.log(`Hermes - No child attached...`);
+            }
+          }}
+        >
+          {props.child.name.length > 0
+            ? `${props.child.name} (${props.child.type})`
+            : `${props.child.type}::${props.child.uuid}`}
+        </button>
+        <button
+          className='visibility'
+          ref={visibleRef}
+          onClick={() => {
+            if (props.child) {
+              const scene = props.three.getScene(props.child.uuid);
+              if (scene !== null) {
+                const child = scene.getObjectByProperty('uuid', props.child.uuid);
+                if (child !== undefined) {
+                  const key = 'visible';
+                  const value = !child.visible;
+                  visibleRef.current!.style.opacity = value ? '1' : '0.25';
+                  props.three.updateObject(props.child.uuid, key, value);
+                  setItemProps(child, key, value);
+                } else {
+                  console.log(`Hermes - Couldn't find object: ${props.child.uuid}`, scene);
                 }
-              }}
-            >
-              {props.child.name.length > 0
-                ? `${props.child.name} (${props.child.type})`
-                : `${props.child.type}::${props.child.uuid}`}
-            </button>
-            <button
-              className='visibility'
-              ref={visibleRef}
-              onClick={() => {
-                if (props.child) {
-                  const scene = props.three.getScene(props.child.uuid);
-                  if (scene !== null) {
-                    const child = scene.getObjectByProperty('uuid', props.child.uuid);
-                    if (child !== undefined) {
-                      const key = 'visible';
-                      const value = !child.visible;
-                      visibleRef.current!.style.opacity = value ? '1' : '0.25';
-                      props.three.updateObject(props.child.uuid, key, value);
-                      setItemProps(child, key, value);
-                    } else {
-                      console.log(`Hermes - Couldn't find object: ${props.child.uuid}`, scene);
-                    }
-                  } else {
-                    console.log(`Hermes - Couldn't find object in scene: ${props.child.uuid}, ${props.child.name}`);
-                  }
-                }
-              }}
-            ></button>
-            <div className={`icon ${determineIcon(props.child)}`}></div>
-          </div>
-          <div className={open ? 'open' : ''}>
-            <div className='container'>
-              {children}
-            </div>
-          </div>
+              } else {
+                console.log(`Hermes - Couldn't find object in scene: ${props.child.uuid}, ${props.child.name}`);
+              }
+            }
+          }}
+        ></button>
+        <div className={`icon ${determineIcon(props.child)}`}></div>
+      </div>
+      <div className={open ? 'open' : ''}>
+        <div className='container'>
+          {children}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
