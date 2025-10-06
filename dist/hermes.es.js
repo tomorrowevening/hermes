@@ -2686,8 +2686,10 @@ function ol(a) {
   ] });
 }
 function ag(a) {
-  const e = Ge(null), [t, s] = Re(!1), i = a.child !== void 0 && a.child.children.length > 0, n = [];
-  return a.child !== void 0 && a.child.children.length > 0 && a.child.children.map((r, o) => {
+  if (a.child === void 0)
+    return console.log("Hermes - No child attached"), null;
+  const e = Ge(null), [t, s] = Re(!1), i = a.child.children.length > 0, n = [];
+  return a.child.children.length > 0 && a.child.children.map((r, o) => {
     n.push(/* @__PURE__ */ C.jsx(ag, { app: a.app, child: r, three: a.three }, o));
   }), wn(() => {
     if (a.child) {
@@ -2698,7 +2700,7 @@ function ag(a) {
       } else
         console.log(`Hermes - Can't find Scene: ${a.child.uuid}`);
     }
-  }, [t]), /* @__PURE__ */ C.jsx(C.Fragment, { children: a.child !== void 0 && /* @__PURE__ */ C.jsxs("div", { className: "childObject", children: [
+  }, [t]), /* @__PURE__ */ C.jsxs("div", { className: "childObject", children: [
     /* @__PURE__ */ C.jsxs("div", { className: "child", children: [
       i ? /* @__PURE__ */ C.jsx(
         "button",
@@ -2720,7 +2722,7 @@ function ag(a) {
             left: i ? "20px" : "5px"
           },
           onClick: () => {
-            a.child !== void 0 && (a.three.getObject(a.child.uuid), t || s(!0));
+            a.child !== void 0 ? (a.three.getObject(a.child.uuid), !t && i && s(!0)) : console.log("Hermes - No child attached...");
           },
           children: a.child.name.length > 0 ? `${a.child.name} (${a.child.type})` : `${a.child.type}::${a.child.uuid}`
         }
@@ -2749,7 +2751,7 @@ function ag(a) {
       /* @__PURE__ */ C.jsx("div", { className: `icon ${E_(a.child)}` })
     ] }),
     /* @__PURE__ */ C.jsx("div", { className: t ? "open" : "", children: /* @__PURE__ */ C.jsx("div", { className: "container", children: n }) })
-  ] }, Math.random()) });
+  ] }, Math.random());
 }
 function ep(a) {
   const e = [];
@@ -43482,7 +43484,11 @@ class ht extends Va {
     }
   };
   onSetSelectedItem = (e) => {
-    this.selectedItem !== void 0 && this.updateSelectedItemHelper(!1), this.selectedItem = this.currentScene.getObjectByProperty("uuid", e.value.uuid), this.selectedItem !== void 0 && (this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), Pt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = Pt.instance.add(e.value.name), this.currentTransform.attach(this.selectedItem), this.helpersContainer.add(this.currentTransform.getHelper()), this.currentTransform.addEventListener("objectChange", this.onUpdateTransform), this.updateSelectedItemHelper(!0));
+    if (this.selectedItem !== void 0 && this.updateSelectedItemHelper(!1), this.selectedItem = this.currentScene.getObjectByProperty("uuid", e.value.uuid), this.selectedItem === void 0) {
+      console.log(`Hermes - Can't find selected item: ${e.value.uuid}, ${e.value.name}`);
+      return;
+    }
+    this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), Pt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = Pt.instance.add(e.value.name), this.currentTransform.attach(this.selectedItem), this.helpersContainer.add(this.currentTransform.getHelper()), this.currentTransform.addEventListener("objectChange", this.onUpdateTransform), this.updateSelectedItemHelper(!0);
   };
   updateSelectedItemHelper(e) {
     if (this.selectedItem !== void 0)
