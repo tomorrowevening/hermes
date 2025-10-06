@@ -14,7 +14,7 @@ export interface InspectNumberProps {
   step?: number
   disabled?: boolean
   className?: string
-  labelRef: RefObject<HTMLLabelElement>
+  labelRef: RefObject<HTMLElement>
   onChange?: (prop: string, value: number) => void
 }
 

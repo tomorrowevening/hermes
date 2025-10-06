@@ -141,7 +141,7 @@ export default function InspectVector2(props: InspectVector2Props) {
     <div className='vector2'>
       <div className='fields'>
         <div>
-          <label ref={xLabelRef}>X</label>
+          <span ref={xLabelRef}>X</span>
           <input
             ref={xRef}
             type='number'
@@ -161,7 +161,7 @@ export default function InspectVector2(props: InspectVector2Props) {
           />
         </div>
         <div>
-          <label ref={yLabelRef}>Y</label>
+          <span ref={yLabelRef}>Y</span>
           <input
             ref={yRef}
             type='number'
@@ -181,7 +181,7 @@ export default function InspectVector2(props: InspectVector2Props) {
           />
         </div>
         <div>
-          <label ref={minLabelRef}>Min</label>
+          <span ref={minLabelRef}>Min</span>
           <input
             ref={minRef}
             type='number'
@@ -192,7 +192,7 @@ export default function InspectVector2(props: InspectVector2Props) {
           />
         </div>
         <div>
-          <label ref={maxLabelRef}>Max</label>
+          <span ref={maxLabelRef}>Max</span>
           <input
             ref={maxRef}
             type='number'

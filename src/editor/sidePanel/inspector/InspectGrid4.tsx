@@ -49,7 +49,7 @@ export default function InspectGrid4(props: InspectGrid4Props) {
       const labelRef = useRef<HTMLLabelElement>(null);
       children.push(
         <div key={i.toString()}>
-          <label ref={labelRef}>{i + 1}</label>
+          <span ref={labelRef}>{i + 1}</span>
           <InspectNumber
             value={matrix.elements[i]}
             type='number'

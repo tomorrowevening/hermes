@@ -23,7 +23,7 @@ export default function InspectGrid3(props: InspectGrid3Props) {
       const labelRef = useRef<HTMLLabelElement>(null);
       children.push(
         <div key={param}>
-          <label ref={labelRef}>{param.substring(1).toUpperCase()}</label>
+          <span ref={labelRef}>{param.substring(1).toUpperCase()}</span>
           <InspectNumber
             value={radToDeg(euler[param])}
             type='number'

@@ -48,7 +48,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   }
 
   const [fieldValue, setFieldValue] = useState(propsValue);
-  const labelRef = useRef<HTMLLabelElement>(null);
+  const labelRef = useRef<HTMLElement>(null);
 
   const onChange = (evt: any) => {
     let value = evt.target.value;
@@ -87,7 +87,7 @@ export default function InspectorField(props: InspectorFieldProps) {
   return (
     <div className={`field ${block ? 'block' : ''}`} style={style}>
       {props.type !== 'button' && (
-        <label key='fieldLabel' ref={labelRef}>{capitalize(props.title)}</label>
+        <span key='fieldLabel' ref={labelRef}>{capitalize(props.title)}</span>
       )}
 
       {props.type === 'string' && !textfield && (
@@ -176,7 +176,12 @@ export default function InspectorField(props: InspectorFieldProps) {
 
       {props.type === 'option' && (
         <>
-          <select onChange={onChange} disabled={props.disabled} defaultValue={props.value}>
+          <select
+            onChange={onChange}
+            disabled={props.disabled}
+            defaultValue={props.value}
+            name={randomID()}
+          >
             {props.options?.map((option, index) => (
               <option key={index} value={option.value}>{capitalize(option.title)}</option>
             ))}

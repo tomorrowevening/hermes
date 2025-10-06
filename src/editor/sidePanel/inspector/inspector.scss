@@ -15,7 +15,7 @@ $font: Arial;
     padding: 1px;
     position: relative;
     
-    label {
+    span {
       font-family: $font;
       font-weight: bold;
       line-height: $barHeight;
@@ -233,6 +233,7 @@ $font: Arial;
         overflow: hidden;
 
         label {
+          padding: 0 10px;
           line-height: calc($barHeight + 10px);
           min-width: inherit;
         }

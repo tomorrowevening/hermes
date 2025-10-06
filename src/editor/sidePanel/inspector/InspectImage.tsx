@@ -72,7 +72,7 @@ export default function InspectImage(props: InspectImageProps) {
         }} src={fieldValue.src.length > 0 ? fieldValue.src : noImage} />
       <div className='fields'>
         <div>
-          <label>Offset:</label>
+          <span>Offset:</span>
           <input
             ref={offXRef}
             type='number'
@@ -91,7 +91,7 @@ export default function InspectImage(props: InspectImageProps) {
           />
         </div>
         <div>
-          <label>Repeat:</label>
+          <span>Repeat:</span>
           <input
             ref={repeatXRef}
             type='number'
