@@ -37,12 +37,14 @@ $padding: 2px;
     .dropdown-menu {
       position: absolute;
       top: 20px;
-      left: 0;
+      left: 50%;
       z-index: 1;
       list-style: none;
       padding: 0;
       margin: 0;
-      width: 100%;
+      min-width: 100%;
+      width: auto;
+      transform: translateX(-50%);
   
       li {
         background-color: #222;
@@ -50,8 +52,7 @@ $padding: 2px;
         cursor: pointer;
         height: 30px;
         line-height: 30px;
-        overflow: hidden;
-        padding: 0px;
+        padding: 0px 10px;
         transition: 0.2s linear background-color;
         &:hover {
           background-color: #333;
@@ -135,5 +136,17 @@ $padding: 2px;
         background-blend-mode: normal;
       }
     }
+  }
+
+  .connectionStatus {
+    background-color: red;
+    font-weight: bold;
+    line-height: 30px;
+    padding: 0 10px;
+    text-transform: uppercase;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
   }
 }

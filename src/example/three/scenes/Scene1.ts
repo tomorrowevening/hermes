@@ -24,7 +24,7 @@ import { inspectComposer } from '../../../utils/post';
 
 export default class Scene1 extends BaseScene {
   dance!: FBXAnimation;
-  composer!: EffectComposer;
+  composer?: EffectComposer;
 
   private customMat?: CustomShaderMaterial;
 
@@ -50,6 +50,13 @@ export default class Scene1 extends BaseScene {
     three.addScene(this);
     three.setScene(this);
     three.addCamera(this.camera);
+  }
+
+  override dispose(): void {
+    const three = this.app.components.get('three') as RemoteThree;
+    this.composer?.dispose();
+    three.removeCamera(this.camera);
+    super.dispose();
   }
 
   private createLights() {
@@ -216,15 +223,15 @@ export default class Scene1 extends BaseScene {
   private createPost() {
     const three = this.app.components.get('three') as RemoteThree;
     this.composer = new EffectComposer(three.renderer!, { frameBufferType: HalfFloatType });
-    this.composer.addPass(new RenderPass(this, this.camera));
+    this.composer?.addPass(new RenderPass(this, this.camera));
 
     const pass = new EffectPass(this.camera, new FXAAEffect(), new BloomEffect(), new VignetteEffect());
     pass.name = 'FXAA/Bloom/Vignette';
-    this.composer.addPass(pass);
+    this.composer?.addPass(pass);
 
     const displayPass = new ShaderPass(new CopyMaterial());
     displayPass.name = 'Display';
-    this.composer.addPass(displayPass);
+    this.composer?.addPass(displayPass);
 
     inspectComposer(this.composer, three);
   }
@@ -236,13 +243,13 @@ export default class Scene1 extends BaseScene {
   }
 
   override draw() {
-    this.composer.render();
+    this.composer?.render();
   }
 
   override resize(width: number, height: number): void {
     super.resize(width, height);
     // this.renderer?.setSize(width, height);
-    this.composer.setSize(width, height);
+    this.composer?.setSize(width, height);
     
   }
 }

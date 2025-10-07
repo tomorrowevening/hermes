@@ -23,5 +23,6 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     private removeGroup;
     static addEditorGroup(data: GroupData): RefObject<InspectorGroup> | null;
     static removeEditorGroup(name: string): void;
+    static removeAllGroups(): void;
 }
 export {};

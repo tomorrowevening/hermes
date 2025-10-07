@@ -1,10 +1,12 @@
 import { EventDispatcher } from 'three';
 import BaseRemote from './remote/BaseRemote';
 import { ApplicationMode, BroadcastData } from './types';
-import { AppSettings, detectSettings, QualityType } from '@/utils/detectSettings';
+import { AppSettings, detectSettings } from '@/utils/detectSettings';
 
 export enum ToolEvents {
   CUSTOM = 'ToolEvents::custom',
+  REMOTE_CONNECTED = 'ToolEvents::remoteConnected',
+  REMOTE_DISCONNECTED = 'ToolEvents::remoteDisconnected',
   // Components
   SELECT_DROPDOWN = 'ToolEvents::selectDropdown',
   DRAG_UPDATE = 'ToolEvents::dragUpdate',
@@ -15,6 +17,7 @@ export enum ToolEvents {
   SET_SCENE = 'ToolEvents::setScene',
   GET_OBJECT = 'ToolEvents::getObject',
   SET_OBJECT = 'ToolEvents::setObject',
+  CLEAR_OBJECT = 'ToolEvents::clearObject',
   UPDATE_OBJECT = 'ToolEvents::updateObject',
   CREATE_TEXTURE = 'ToolEvents::createTexture',
   REQUEST_METHOD = 'ToolEvents::requestMethod',
@@ -73,6 +76,10 @@ export class Application extends EventDispatcher<ToolEvent> {
   protected _useBC = false;
   protected playing = false;
   protected rafID = -1;
+  protected _pingInterval?: number;
+  protected _lastPingTime = 0;
+  protected _pingTimeout = 3000; // 5 seconds timeout
+  protected _peerConnected = false;
 
   constructor(id: string) {
     super();
@@ -80,6 +87,7 @@ export class Application extends EventDispatcher<ToolEvent> {
   }
 
   dispose() {
+    this.stopPing();
     if (this._broadcastChannel !== undefined) {
       this._broadcastChannel.removeEventListener('message', this.messageHandler);
     }
@@ -143,6 +151,7 @@ export class Application extends EventDispatcher<ToolEvent> {
     if (useBC) {
       this._broadcastChannel = new BroadcastChannel(this._appID);
       this._broadcastChannel.addEventListener('message', this.messageHandler);
+      this.startPing();
     } else {
       this._webSocket = new WebSocket(this._appID);
       this._webSocket.addEventListener('open', this.openHandler);
@@ -182,6 +191,9 @@ export class Application extends EventDispatcher<ToolEvent> {
     });
 
     switch (msg.event) {
+      case 'ping':
+        this.handlePing(msg);
+        break;
       case 'custom':
         this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
@@ -194,6 +206,9 @@ export class Application extends EventDispatcher<ToolEvent> {
     });
 
     switch (msg.event) {
+      case 'ping':
+        this.handlePing(msg);
+        break;
       case 'custom':
         this.dispatchEvent({ type: ToolEvents.CUSTOM, value: msg.data });
         break;
@@ -202,10 +217,13 @@ export class Application extends EventDispatcher<ToolEvent> {
 
   private openHandler = () => {
     this._connected = true;
+    this.startPing();
   };
 
   private closeHandler = () => {
     this._connected = false;
+    this._peerConnected = false;
+    this.stopPing();
   };
 
   // Getters
@@ -241,5 +259,67 @@ export class Application extends EventDispatcher<ToolEvent> {
   set editor(value: boolean) {
     this.settings.editor = value;
     this._mode = value ? 'editor' : 'app';
+  }
+
+  get peerConnected(): boolean {
+    return this._peerConnected;
+  }
+
+  // Ping system methods
+
+  private startPing() {
+    this.stopPing();
+    this._pingInterval = setInterval(() => {
+      // Only the app side sends pings to prevent infinite loops
+      if (this._mode === 'app') this.sendPing();
+      this.checkPingTimeout();
+    }, 1000); // Send ping every second
+  }
+
+  private stopPing() {
+    if (this._pingInterval !== undefined) {
+      clearInterval(this._pingInterval);
+      this._pingInterval = undefined;
+    }
+  }
+
+  private sendPing() {
+    const target: ApplicationMode = this._mode === 'app' ? 'editor' : 'app';
+    this.send({
+      target,
+      event: 'ping',
+      data: Date.now()
+    });
+  }
+
+  private handlePing(msg: BroadcastData) {
+    this._lastPingTime = Date.now();
+    if (!this._peerConnected) {
+      this.dispatchEvent({ type: ToolEvents.REMOTE_CONNECTED });
+    }
+    this._peerConnected = true;
+    const target: ApplicationMode = this._mode === 'app' ? 'editor' : 'app';
+    
+    // Only send pong if this is a ping request (not a pong response)
+    // We'll use the data field to distinguish: ping sends timestamp, pong sends 'pong'
+    if (msg.data !== 'pong') {
+      this.send({
+        target,
+        event: 'ping',
+        data: 'pong'
+      });
+    }
+  }
+
+  private checkPingTimeout() {
+    const now = Date.now();
+    if (this._peerConnected && (now - this._lastPingTime) > this._pingTimeout) {
+      const wasConnected = this._peerConnected;
+      this._peerConnected = false;
+      if (wasConnected) {
+        // console.log(`>>> Connection lost to ${this._mode === 'app' ? 'editor' : 'app'}`);
+        this.dispatchEvent({ type: ToolEvents.REMOTE_DISCONNECTED });
+      }
+    }
   }
 }

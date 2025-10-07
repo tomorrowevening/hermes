@@ -39,9 +39,11 @@ export default function Inspector(props: CoreComponentProps) {
       setCurrentObject(defaultObject);
     }
 
+    props.app.addEventListener(ToolEvents.CLEAR_OBJECT, setScene);
     props.app.addEventListener(ToolEvents.SET_SCENE, setScene);
     props.app.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     return () => {
+      props.app.removeEventListener(ToolEvents.CLEAR_OBJECT, setScene);
       props.app.removeEventListener(ToolEvents.SET_SCENE, setScene);
       props.app.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };

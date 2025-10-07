@@ -122,19 +122,6 @@ export default class RemoteThree extends BaseRemote {
     });
   }
 
-  removeAllGroups() {
-    this.groups.forEach((value: GroupCallback) => {
-      const name = value.title;
-      this.groups.delete(name);
-      this.app.send({
-        event: 'removeGroup',
-        target: 'editor',
-        data: name,
-      });
-    });
-    this.groups.clear();
-  }
-
   addSpline(spline: Curve<any>) {
     setTimeout(() => {
       this.app.send({

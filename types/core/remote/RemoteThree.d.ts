@@ -19,7 +19,6 @@ export default class RemoteThree extends BaseRemote {
     addGroup(data: GroupData): void;
     removeGroup(name: string): void;
     updateGroup(group: string, prop: string, value: any): void;
-    removeAllGroups(): void;
     addSpline(spline: Curve<any>): void;
     setRenderer(value: any, inputElement?: any): void;
     updateRenderer(data: any): void;

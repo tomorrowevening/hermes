@@ -83,6 +83,7 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
             options={props.options}
             onSelect={props.onSelectCamera}
             onToggle={(value: boolean) => {
+              if (value && renderModeOpen) setRenderModeOpen(false);
               setOpen(value);
             }}
             up={true}
@@ -100,6 +101,7 @@ const CameraWindow = forwardRef(function CameraWindow(props: CameraWindowProps, 
             setCurrentRenderMode(newRenderMode);
           }}
           onToggle={(value: boolean) => {
+            if (value && open) setOpen(false);
             if (modeOpen) setModeOpen(false);
             setRenderModeOpen(value);
           }}

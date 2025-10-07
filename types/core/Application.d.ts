@@ -4,6 +4,8 @@ import { ApplicationMode, BroadcastData } from './types';
 import { AppSettings } from '@/utils/detectSettings';
 export declare enum ToolEvents {
     CUSTOM = "ToolEvents::custom",
+    REMOTE_CONNECTED = "ToolEvents::remoteConnected",
+    REMOTE_DISCONNECTED = "ToolEvents::remoteDisconnected",
     SELECT_DROPDOWN = "ToolEvents::selectDropdown",
     DRAG_UPDATE = "ToolEvents::dragUpdate",
     ADD_SCENE = "ToolEvents::addScene",
@@ -12,6 +14,7 @@ export declare enum ToolEvents {
     SET_SCENE = "ToolEvents::setScene",
     GET_OBJECT = "ToolEvents::getObject",
     SET_OBJECT = "ToolEvents::setObject",
+    CLEAR_OBJECT = "ToolEvents::clearObject",
     UPDATE_OBJECT = "ToolEvents::updateObject",
     CREATE_TEXTURE = "ToolEvents::createTexture",
     REQUEST_METHOD = "ToolEvents::requestMethod",
@@ -54,6 +57,10 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     protected _useBC: boolean;
     protected playing: boolean;
     protected rafID: number;
+    protected _pingInterval?: number;
+    protected _lastPingTime: number;
+    protected _pingTimeout: number;
+    protected _peerConnected: boolean;
     constructor(id: string);
     dispose(): void;
     detectSettings(dev?: boolean, editor?: boolean): Promise<void>;
@@ -78,4 +85,10 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     set isApp(value: boolean);
     get editor(): boolean;
     set editor(value: boolean);
+    get peerConnected(): boolean;
+    private startPing;
+    private stopPing;
+    private sendPing;
+    private handlePing;
+    private checkPingTimeout;
 }

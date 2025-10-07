@@ -70,6 +70,7 @@ export default class Scene2 extends BaseScene {
 
   override dispose(): void {
     const three = this.app.components.get('three') as RemoteThree;
+    three.removeCamera(this.camera);
     three.removeGroup(customGroupName);
     dispose(this.rttScene);
     super.dispose();

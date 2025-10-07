@@ -21,6 +21,7 @@ type MultiViewState = {
     interactionMode: InteractionMode;
     interactionModeOpen: boolean;
     lastUpdate: number;
+    connected: boolean;
 };
 export default class MultiView extends Component<MultiViewProps, MultiViewState> {
     static instance: MultiView | null;
@@ -71,6 +72,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private trWindow;
     private blWindow;
     private brWindow;
+    private editorCameras;
     constructor(props: MultiViewProps);
     componentDidMount(): void;
     componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void;
@@ -82,6 +84,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     play(): void;
     pause(): void;
     toggleOrbitControls(value: boolean): void;
+    clear(): void;
     private update;
     private draw;
     private onUpdate;
@@ -90,6 +93,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private resize;
     private addScene;
     private sceneUpdate;
+    private removeScene;
     private addCamera;
     private removeCamera;
     private onMouseMove;
@@ -98,6 +102,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private onSetSelectedItem;
     private updateSelectedItemHelper;
     private onUpdateTransform;
+    private onRemoteConnected;
+    private onRemoteDisconnected;
     private clearLightHelpers;
     private addLightHelpers;
     private createControls;
