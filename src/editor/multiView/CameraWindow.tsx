@@ -27,20 +27,20 @@ export const Dropdown = (props: DropdownProps) => {
     props.onToggle(false);
   };
 
+  const height = props.open ? `${props.options.length * 31 - 1}px` : '0px';
+
   return (
     <div className={`dropdown ${props.up === true ? 'up' : ''}`}>
       <div className='dropdown-toggle' onClick={handleToggle}>
         {`${props.title}: ${selectedOption}`}
       </div>
-      {props.open && (
-        <ul className='dropdown-menu'>
-          {props.options.map((option) => (
-            <li key={option} onClick={() => handleSelect(option)}>
-              {option}
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className='dropdown-menu' style={{ height: height }}>
+        {props.options.map((option) => (
+          <li key={option} onClick={() => handleSelect(option)}>
+            {option}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
