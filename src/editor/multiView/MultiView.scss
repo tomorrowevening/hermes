@@ -1,6 +1,7 @@
 $padding: 2px;
 
 .editor .multiview {
+  background: url('/grid.png');
   display: grid;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 10px;
@@ -35,8 +36,9 @@ $padding: 2px;
     }
   
     .dropdown-menu {
+      overflow: hidden;
       position: absolute;
-      top: 20px;
+      top: 30px;
       left: 50%;
       z-index: 1;
       list-style: none;
@@ -45,6 +47,7 @@ $padding: 2px;
       min-width: 100%;
       width: auto;
       transform: translateX(-50%);
+      transition: all 0.33s cubic-bezier(0.750, 0, 0.25, 1.000);
   
       li {
         background-color: #222;
@@ -90,7 +93,7 @@ $padding: 2px;
         position: absolute;
         height: 30px;
         top: initial;
-        bottom: 0;
+        bottom: -1px;
         left: 50%;
         transform: translateX(-50%);
         width: max-content;
@@ -114,6 +117,7 @@ $padding: 2px;
   }
 
   .settings {
+    filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.33));
     pointer-events: visible;
     position: absolute;
     left: 50%;

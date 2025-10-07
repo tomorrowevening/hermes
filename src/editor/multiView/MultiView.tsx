@@ -455,7 +455,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             }}
             open={this.state.modeOpen}
             onToggle={(value: boolean) => {
-              
               this.setState({
                 modeOpen: value,
                 renderModeOpen: false,

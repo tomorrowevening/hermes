@@ -41672,12 +41672,12 @@ class ks extends wN {
 const Al = (a) => {
   const [e, t] = Ne(a.options[a.index]), s = () => {
     a.onToggle(!a.open);
-  }, i = (n) => {
-    n !== e && (a.onSelect(n), t(n)), a.onToggle(!1);
-  };
+  }, i = (r) => {
+    r !== e && (a.onSelect(r), t(r)), a.onToggle(!1);
+  }, n = a.open ? `${a.options.length * 31 - 1}px` : "0px";
   return /* @__PURE__ */ C.jsxs("div", { className: `dropdown ${a.up === !0 ? "up" : ""}`, children: [
     /* @__PURE__ */ C.jsx("div", { className: "dropdown-toggle", onClick: s, children: `${a.title}: ${e}` }),
-    a.open && /* @__PURE__ */ C.jsx("ul", { className: "dropdown-menu", children: a.options.map((n) => /* @__PURE__ */ C.jsx("li", { onClick: () => i(n), children: n }, n)) })
+    /* @__PURE__ */ C.jsx("ul", { className: "dropdown-menu", style: { height: n }, children: a.options.map((r) => /* @__PURE__ */ C.jsx("li", { onClick: () => i(r), children: r }, r)) })
   ] });
 }, sn = Qx(function(e, t) {
   const s = [
