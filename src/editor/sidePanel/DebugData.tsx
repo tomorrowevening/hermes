@@ -144,4 +144,12 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
       }
     }
   }
+
+  static removeAllGroups() {
+    for (let i = DebugData.groupTitles.length; i > 0; i--) {
+      DebugData.groups.splice(i, 1);
+      DebugData.groupTitles.splice(i, 1);
+    }
+    DebugData.instance.setState({ lastUpdate: Date.now() });
+  }
 }

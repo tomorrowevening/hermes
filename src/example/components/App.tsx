@@ -12,8 +12,8 @@ import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 // Utils
-import { clearComposerGroups } from '../../utils/post';
 import { dispose } from '../../utils/three';
+import { clearComposerGroups } from '../../utils/post';
 
 let renderer: WebGLRenderer | WebGPURenderer;
 let currentScene: BaseScene;

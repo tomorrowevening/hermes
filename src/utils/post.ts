@@ -9,7 +9,7 @@ let addedComposerGroups: string[] = [];
 export function inspectComposer(composer: EffectComposer, three: RemoteThree) {
   ExportTexture.renderer = three.renderer;
 
-  composer.passes.forEach((pass, passIndex) => {
+  composer.passes.forEach((pass) => {
     const groupEffects: GroupItemData[] = [];
     groupEffects.push({
       type: 'boolean',

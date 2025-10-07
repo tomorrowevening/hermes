@@ -60,6 +60,7 @@ import Transform from '../tools/Transform';
 // Utils
 import { mix } from '@/utils/math';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { dispose } from '@/utils/three';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
@@ -163,6 +164,17 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private trWindow!: RefObject<HTMLDivElement>;
   private blWindow!: RefObject<HTMLDivElement>;
   private brWindow!: RefObject<HTMLDivElement>;
+  private editorCameras = [
+    'Top',
+    'Bottom',
+    'Left',
+    'Right',
+    'Front',
+    'Back',
+    'Orthographic',
+    'UI',
+    'Debug',
+  ];
 
   constructor(props: MultiViewProps) {
     super(props);
@@ -258,6 +270,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   componentWillUnmount(): void {
     this.disable();
+    this.clear();
     DebugData.removeEditorGroup('View Settings');
   }
 
@@ -568,6 +581,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.renderer.setClearColor(0x000000);
       this.resize();
       this.props.three.renderer = this.renderer;
+      this.onRemoteConnected();
     }
   };
 
@@ -651,6 +665,45 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     });
   }
 
+  clear() {
+    this.app.dispatchEvent({ type: ToolEvents.CLEAR_OBJECT });
+    DebugData.removeAllGroups();
+
+    // Helpers
+    this.clearLightHelpers();
+    this.clearControls();
+
+    // Transforms
+    if (this.currentTransform !== undefined) {
+      this.currentTransform.removeEventListener('objectChange', this.onUpdateTransform);
+      Transform.instance.remove(this.currentTransform.getHelper().name);
+    }
+    this.currentTransform = undefined;
+    Transform.instance.clear();
+
+    // Cameras
+    this.cameras.forEach((value: Camera) => {
+      const index = this.editorCameras.indexOf(value.name);
+      if (index < 0) {
+        const helper = this.cameraHelpers.get(value.uuid);
+        if (helper) {
+          helper.parent?.remove(helper);
+          this.helpersContainer.remove(helper);
+          helper.dispose();
+        }
+        this.cameraHelpers.delete(value.uuid);
+      }
+    });
+    this.currentCamera = this.debugCamera;
+
+    // Clear Scenes
+    this.currentScene = undefined;
+    this.scenes.forEach((value: Scene) => {
+      this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: value });
+    });
+    this.scenes.clear();
+  }
+
   // Playback
 
   private update() {
@@ -711,6 +764,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     window.addEventListener('resize', this.resize);
     this.app.addEventListener(ToolEvents.ADD_SCENE, this.addScene);
     this.app.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.app.addEventListener(ToolEvents.REMOVE_SCENE, this.removeScene);
     this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.app.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
@@ -812,9 +866,22 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
   };
 
+  private removeScene = (evt: any) => {
+    const name = evt.value.name;
+    this.scenes.delete(name);
+    const child = this.scene.getObjectByName(name);
+    if (child) {
+      // Wait to delete so React has enough time to update
+      setTimeout(() => {
+        dispose(child);
+      }, 100);
+    }
+    this.clearLightHelpers();
+  };
+
   private addCamera = (evt: any) => {
     const data = evt.value;
-    const cameraName = `${this.props.three.scene?.name}_${data.name}`;
+    const cameraName = data.uuid;
     const child = this.props.three.scene?.getObjectByProperty('uuid', data.uuid);
     if (child !== undefined) {
       const camera = child as Camera;
@@ -830,12 +897,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private removeCamera = (evt: any) => {
-    const helper = this.cameraHelpers.get(evt.value.name);
+    const data = evt.value;
+    const cameraName = data.uuid;
+    const helper = this.cameraHelpers.get(cameraName);
     if (helper !== undefined) {
       this.helpersContainer.remove(helper);
       helper.dispose();
     }
-    this.cameras.delete(evt.value.name);
+    this.cameras.delete(cameraName);
     this.setState({ lastUpdate: Date.now() });
   };
 
@@ -996,7 +1065,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.updateSelectedItemHelper(false);
     }
 
-    this.selectedItem = this.currentScene!.getObjectByProperty('uuid', evt.value.uuid);
+    this.selectedItem = undefined;
+    const uuid = evt.value.uuid;
+    this.scenes.forEach((scene: Scene) => {
+      if (uuid.search(scene.uuid) > -1) {
+        this.selectedItem = scene.getObjectByProperty('uuid', uuid);
+      }
+    });
+
     if (this.selectedItem === undefined) {
       console.log(`Hermes - Can't find selected item: ${evt.value.uuid}, ${evt.value.name}`);
       return;
@@ -1044,6 +1120,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private onRemoteDisconnected = () => {
+    this.clear();
     this.setState({ connected: false });
   };
 

@@ -17,6 +17,7 @@ export enum ToolEvents {
   SET_SCENE = 'ToolEvents::setScene',
   GET_OBJECT = 'ToolEvents::getObject',
   SET_OBJECT = 'ToolEvents::setObject',
+  CLEAR_OBJECT = 'ToolEvents::clearObject',
   UPDATE_OBJECT = 'ToolEvents::updateObject',
   CREATE_TEXTURE = 'ToolEvents::createTexture',
   REQUEST_METHOD = 'ToolEvents::requestMethod',
