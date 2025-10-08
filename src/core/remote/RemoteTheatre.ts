@@ -161,6 +161,7 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop);
 
     const unsubscribe = obj.onValuesChange((values: any) => {
+      const callback = this.sheetObjectCBs.get(objName);
       if (this.app.editor) {
         for (const i in values) {
           const value = values[i];
@@ -184,11 +185,9 @@ export default class RemoteTheatre extends BaseRemote {
             values: values,
           },
         });
-      }
-
-      if (!this.app.debugEnabled) {
-        const callback = this.sheetObjectCBs.get(objName);
-        if (callback !== undefined) callback(values);
+        if (callback) callback(values);
+      } else if (!this.app.debugEnabled) {
+        if (callback) callback(values);
       }
     });
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
