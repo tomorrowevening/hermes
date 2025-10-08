@@ -544,7 +544,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
         </div>
 
-        {!this.state.connected && <div className='connectionStatus'>Disconnected</div>}
+        {!this.state.connected && <div className='connectionStatus'>Not Connected</div>}
       </div>
     );
   }
