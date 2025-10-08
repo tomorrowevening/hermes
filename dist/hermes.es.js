@@ -1328,7 +1328,7 @@ class TP extends Su {
         t = this.sheets.get(e.data.sheet), t !== void 0 && t.sequence.pause(), t = this.sheetObjectCBs.get(e.data.sheetObject), t !== void 0 ? t(e.data.values) : (console.log(`Hermes - Can't update Sheet Object: ${e.data.sheetObject}, ${e.data.sheet}`, t), console.log(this.sheetObjects));
         break;
       case "updateTimeline":
-        t = this.sheets.get(e.data.sheet), this.activeSheet !== void 0 ? this.activeSheet.sequence.position = e.data.position : (console.log(`Hermes - Can't update sheet position: ${e.data.sheet}, ${e.data.position}`, t, this.activeSheet), console.log(this.sheets));
+        this.activeSheet === void 0 && (this.activeSheet = this.sheets.get(e.data.sheet)), t = this.sheets.get(e.data.sheet), this.activeSheet !== void 0 ? this.activeSheet.sequence.position = e.data.position : (console.log(`Hermes - Can't update sheet position: ${e.data.sheet}, ${e.data.position}`, t, this.activeSheet), console.log(this.sheets));
         break;
     }
   }

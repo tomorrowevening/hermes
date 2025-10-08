@@ -314,6 +314,9 @@ export default class RemoteTheatre extends BaseRemote {
         }
         break;
       case 'updateTimeline':
+        if (this.activeSheet === undefined) {
+          this.activeSheet = this.sheets.get(msg.data.sheet);
+        }
         value = this.sheets.get(msg.data.sheet);
         if (this.activeSheet !== undefined) {
           this.activeSheet.sequence.position = msg.data.position;
