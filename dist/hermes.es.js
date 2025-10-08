@@ -1251,13 +1251,13 @@ class TP extends Su {
     c !== void 0 && (h = { ...s, ...c.value }), c = r.object(t, h), this.sheetObjects.set(l, c), this.sheetObjectCBs.set(l, i !== void 0 ? i : rl);
     const u = c.onValuesChange((d) => {
       if (this.app.editor) {
-        for (const f in d) {
-          const m = d[f];
-          typeof m == "object" && Jx(m) && (d[f] = {
-            r: m.r,
-            g: m.g,
-            b: m.b,
-            a: m.a
+        for (const p in d) {
+          const f = d[p];
+          typeof f == "object" && Jx(f) && (d[p] = {
+            r: f.r,
+            g: f.g,
+            b: f.b,
+            a: f.a
           });
         }
         this.app.send({
@@ -1270,8 +1270,10 @@ class TP extends Su {
           }
         });
       }
-      const p = this.sheetObjectCBs.get(l);
-      p !== void 0 && p(d);
+      if (!this.app.debugEnabled) {
+        const p = this.sheetObjectCBs.get(l);
+        p !== void 0 && p(d);
+      }
     });
     return this.sheetObjectUnsubscribe.set(l, u), c;
   }
