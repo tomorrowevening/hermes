@@ -275,7 +275,7 @@ function cycleObject(obj: any, value: any) {
 
 export function setItemProps(child: any, key: string, value: any) {
   if (child === undefined) {
-    // console.log(`Hermes - Can't set props: ${key}`, value);
+    console.log(`Hermes - Can't set props: ${key}`, value);
     return;
   }
 
@@ -319,8 +319,11 @@ export function setItemProps(child: any, key: string, value: any) {
         target = child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]];
         break;
     }
+
     if (target !== undefined && target !== null) {
       cycleObject(target, value);
+    } else {
+      console.log(`Hermes - Can't set props because target isn't found: ${key}`, value);
     }
   }
 }

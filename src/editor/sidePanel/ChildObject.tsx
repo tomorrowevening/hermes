@@ -29,6 +29,8 @@ export default function ChildObject(props: ChildObjectProps) {
         const child = scene.getObjectByProperty('uuid', props.child.uuid);
         if (child !== undefined) {
           visibleRef.current!.style.opacity = child.visible ? '1' : '0.25';
+        } else {
+          console.log(`Hermes - Can't find child: ${props.child.uuid}`);
         }
       } else {
         console.log(`Hermes - Can't find Scene: ${props.child.uuid}`);
