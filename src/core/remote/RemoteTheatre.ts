@@ -186,8 +186,10 @@ export default class RemoteTheatre extends BaseRemote {
         });
       }
 
-      const callback = this.sheetObjectCBs.get(objName);
-      if (callback !== undefined) callback(values);
+      if (!this.app.debugEnabled) {
+        const callback = this.sheetObjectCBs.get(objName);
+        if (callback !== undefined) callback(values);
+      }
     });
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
 
