@@ -684,13 +684,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.cameras.forEach((value: Camera) => {
       const index = this.editorCameras.indexOf(value.name);
       if (index < 0) {
-        const helper = this.cameraHelpers.get(value.uuid);
-        if (helper) {
-          helper.parent?.remove(helper);
-          this.helpersContainer.remove(helper);
-          helper.dispose();
-        }
-        this.cameraHelpers.delete(value.uuid);
+        this.app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value });
       }
     });
     this.currentCamera = this.debugCamera;
@@ -698,7 +692,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     // Clear Scenes
     this.currentScene = undefined;
     this.scenes.forEach((value: Scene) => {
-      this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: value });
+      this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value });
     });
     this.scenes.clear();
   }
