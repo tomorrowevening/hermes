@@ -4,7 +4,7 @@ import { WebGLRenderer } from 'three';
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
-import { Application, ToolEvents } from '../../core/Application';
+import { Application } from '../../core/Application';
 // Components
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three
@@ -51,15 +51,8 @@ function App(props: AppProps) {
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
       three.setRenderer(renderer, canvas);
-      return () => {
-        renderer.dispose();
-      };
-    }, []);
-  }
 
-  // ThreeJS
-  if (app.isApp) {
-    useEffect(() => {
+      // ThreeJS
       const stats = new Stats();
       stats.init(renderer);
       document.body.appendChild(stats.dom);
@@ -86,7 +79,8 @@ function App(props: AppProps) {
       window.addEventListener('resize', onResize);
       onResize();
       updateApp();
-  
+
+      // Dispose
       return () => {
         if (currentScene !== undefined) {
           three.removeCamera(currentScene.camera);
@@ -96,6 +90,7 @@ function App(props: AppProps) {
         window.removeEventListener('resize', onResize);
         cancelAnimationFrame(raf);
         raf = -1;
+        renderer.dispose();
       };
     }, []);
   }
@@ -146,8 +141,6 @@ function App(props: AppProps) {
           </div>
         </>
       )}
-
-      
     </>
   );
 }
