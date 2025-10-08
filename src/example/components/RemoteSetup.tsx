@@ -21,9 +21,5 @@ export default function RemoteSetup(props: RemoteProps) {
   // Custom component support (optional)
   app.addComponent('components', new RemoteComponents(app));
 
-  return (
-    <>
-      {app.debugEnabled ? <SceneInspector app={app} three={three} /> : null}
-    </>
-  );
+  return <SceneInspector app={app} three={three} />;
 }
