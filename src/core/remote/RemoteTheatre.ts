@@ -290,7 +290,7 @@ export default class RemoteTheatre extends BaseRemote {
           this.activeSheet = value as ISheet;
           this.studio?.setSelection([value]);
         } else {
-          console.log(`Hermes - Can't find Sheet: ${msg.data.sheet}`);
+          console.log(`Hermes - Can't set Sheet: ${msg.data.sheet}`, value);
         }
         break;
       case 'setSheetObject':
@@ -298,7 +298,8 @@ export default class RemoteTheatre extends BaseRemote {
         if (value !== undefined) {
           this.studio?.setSelection([value]);
         } else {
-          console.log(`Hermes - Can't find Sheet Object: ${msg.data.sheet}, ${msg.data.key}: ${msg.data.sheet}_${msg.data.key}`);
+          console.log(`Hermes - Can't set Sheet Object: ${msg.data.sheet}, ${msg.data.key}: ${msg.data.sheet}_${msg.data.key}`, value);
+          console.log(this.sheetObjects);
         }
         break;
       case 'updateSheetObject':
@@ -308,7 +309,8 @@ export default class RemoteTheatre extends BaseRemote {
         if (value !== undefined) {
           value(msg.data.values);
         } else {
-          console.log(`Hermes - Can't find Sheet Object: ${msg.data.sheetObject}, ${msg.data.sheet}`);
+          console.log(`Hermes - Can't update Sheet Object: ${msg.data.sheetObject}, ${msg.data.sheet}`, value);
+          console.log(this.sheetObjects);
         }
         break;
       case 'updateTimeline':
@@ -316,7 +318,8 @@ export default class RemoteTheatre extends BaseRemote {
         if (this.activeSheet !== undefined) {
           this.activeSheet.sequence.position = msg.data.position;
         } else {
-          console.log(`Hermes - Can't update Sheet: ${msg.data.sheet}, ${msg.data.position}`);
+          console.log(`Hermes - Can't update sheet position: ${msg.data.sheet}, ${msg.data.position}`, value, this.activeSheet);
+          console.log(this.sheets);
         }
         break;
     }
