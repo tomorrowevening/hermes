@@ -1319,7 +1319,7 @@ class TP extends Su {
     let t;
     switch (e.event) {
       case "setSheet":
-        t = this.sheets.get(e.data.sheet), t !== void 0 ? (this.activeSheet = t, this.studio?.setSelection([t])) : console.log(`Hermes - Can't set Sheet: ${e.data.sheet}`, t);
+        t = this.sheets.get(e.data.sheet), t !== void 0 ? this.studio?.setSelection([t]) : console.log(`Hermes - Can't set Sheet: ${e.data.sheet}`, t);
         break;
       case "setSheetObject":
         t = this.sheetObjects.get(`${e.data.sheet}_${e.data.key}`), t !== void 0 ? this.studio?.setSelection([t]) : console.log(`Hermes - Can't set Sheet Object: ${e.data.sheet}, ${e.data.key}: ${e.data.sheet}_${e.data.key}`, t);
@@ -1328,20 +1328,19 @@ class TP extends Su {
         t = this.sheets.get(e.data.sheet), t !== void 0 && t.sequence.pause(), t = this.sheetObjectCBs.get(e.data.sheetObject), t !== void 0 ? t(e.data.values) : console.log(`Hermes - Can't update Sheet Object: ${e.data.sheetObject}, ${e.data.sheet}`, t);
         break;
       case "updateTimeline":
-        this.activeSheet === void 0 && (this.activeSheet = this.sheets.get(e.data.sheet)), t = this.sheets.get(e.data.sheet), this.activeSheet !== void 0 ? this.activeSheet.sequence.position = e.data.position : console.log(`Hermes - Can't update sheet position: ${e.data.sheet}, ${e.data.position}`, t, this.activeSheet);
+        t = this.sheets.get(e.data.sheet), t !== void 0 ? t.sequence.position = e.data.position : console.log(`Hermes - Can't update sheet position: ${e.data.sheet}, ${e.data.position}`);
         break;
     }
   }
   handleEditor(e) {
-    if (this.app.editor)
-      switch (e.event) {
-        case "playSheet":
-          this.sheet(e.data.sheet, e.data.instance)?.sequence.play(e.data.value);
-          break;
-        case "pauseSheet":
-          this.sheet(e.data.sheet, e.data.instance)?.sequence.pause();
-          break;
-      }
+    switch (e.event) {
+      case "playSheet":
+        this.sheet(e.data.sheet, e.data.instance)?.sequence.play(e.data.value);
+        break;
+      case "pauseSheet":
+        this.sheet(e.data.sheet, e.data.instance)?.sequence.pause();
+        break;
+    }
   }
   handleEditorApp() {
     if (this.app.editor) {
