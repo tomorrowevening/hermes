@@ -244,6 +244,11 @@ export class Application extends EventDispatcher<ToolEvent> {
     return this._mode;
   }
 
+  set mode(value: ApplicationMode) {
+    this._mode = value;
+    this.settings.editor = value === 'editor';
+  }
+
   get isApp(): boolean {
     return !this.editor;
   }
