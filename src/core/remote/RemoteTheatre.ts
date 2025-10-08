@@ -1,7 +1,7 @@
 // Libs
-import { createRafDriver, IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, ISheet, ISheetObject } from '@theatre/core';
 // Core
-import { Application } from '../Application';
+// import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
@@ -63,12 +63,6 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
-  rafDriver?: IRafDriver = undefined;
-
-  constructor(app: Application, createRaf = false) {
-    super(app);
-    if (createRaf) this.rafDriver = createRafDriver();
-  }
 
   override dispose(): void {
     this.project = undefined;
@@ -76,10 +70,6 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjects = new Map();
     this.sheetObjectCBs = new Map();
     this.sheetObjectUnsubscribe = new Map();
-  }
-
-  update(now: number) {
-    this.rafDriver?.tick(now);
   }
 
   getSheetInstance(name: string, instanceId?: string): string {
@@ -107,7 +97,6 @@ export default class RemoteTheatre extends BaseRemote {
     return new Promise((resolve) => {
       // Play locally
       const rafParams = params !== undefined ? {...params} : {};
-      rafParams.rafDriver = this.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
 
       // Remotely
@@ -199,7 +188,7 @@ export default class RemoteTheatre extends BaseRemote {
 
       const callback = this.sheetObjectCBs.get(objName);
       if (callback !== undefined) callback(values);
-    }, this.rafDriver);
+    });
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
 
     return obj;
@@ -300,24 +289,34 @@ export default class RemoteTheatre extends BaseRemote {
         if (value !== undefined) {
           this.activeSheet = value as ISheet;
           this.studio?.setSelection([value]);
+        } else {
+          console.log(`Hermes - Can't find Sheet: ${msg.data.sheet}`);
         }
         break;
       case 'setSheetObject':
         value = this.sheetObjects.get(`${msg.data.sheet}_${msg.data.key}`);
         if (value !== undefined) {
           this.studio?.setSelection([value]);
+        } else {
+          console.log(`Hermes - Can't find Sheet Object: ${msg.data.sheet}, ${msg.data.key}: ${msg.data.sheet}_${msg.data.key}`);
         }
         break;
       case 'updateSheetObject':
         value = this.sheets.get(msg.data.sheet); // pause current animation
         if (value !== undefined) value.sequence.pause();
         value = this.sheetObjectCBs.get(msg.data.sheetObject);
-        if (value !== undefined) value(msg.data.values);
+        if (value !== undefined) {
+          value(msg.data.values);
+        } else {
+          console.log(`Hermes - Can't find Sheet Object: ${msg.data.sheetObject}, ${msg.data.sheet}`);
+        }
         break;
       case 'updateTimeline':
         value = this.sheets.get(msg.data.sheet);
         if (this.activeSheet !== undefined) {
           this.activeSheet.sequence.position = msg.data.position;
+        } else {
+          console.log(`Hermes - Can't update Sheet: ${msg.data.sheet}, ${msg.data.position}`);
         }
         break;
     }
@@ -327,10 +326,7 @@ export default class RemoteTheatre extends BaseRemote {
     if (this.app.editor) {
       switch (msg.event) {
         case 'playSheet':
-          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play({
-            ...msg.data.value,
-            ...{ rafDriver: this.rafDriver }
-          });
+          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
           break;
         case 'pauseSheet':
           this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
