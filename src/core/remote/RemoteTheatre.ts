@@ -299,7 +299,6 @@ export default class RemoteTheatre extends BaseRemote {
           this.studio?.setSelection([value]);
         } else {
           console.log(`Hermes - Can't set Sheet Object: ${msg.data.sheet}, ${msg.data.key}: ${msg.data.sheet}_${msg.data.key}`, value);
-          console.log(this.sheetObjects);
         }
         break;
       case 'updateSheetObject':
@@ -310,7 +309,6 @@ export default class RemoteTheatre extends BaseRemote {
           value(msg.data.values);
         } else {
           console.log(`Hermes - Can't update Sheet Object: ${msg.data.sheetObject}, ${msg.data.sheet}`, value);
-          console.log(this.sheetObjects);
         }
         break;
       case 'updateTimeline':
@@ -322,7 +320,6 @@ export default class RemoteTheatre extends BaseRemote {
           this.activeSheet.sequence.position = msg.data.position;
         } else {
           console.log(`Hermes - Can't update sheet position: ${msg.data.sheet}, ${msg.data.position}`, value, this.activeSheet);
-          console.log(this.sheets);
         }
         break;
     }
