@@ -81,6 +81,7 @@ export declare class Application extends EventDispatcher<ToolEvent> {
     get connected(): boolean;
     get debugEnabled(): boolean;
     get mode(): ApplicationMode;
+    set mode(value: ApplicationMode);
     get isApp(): boolean;
     set isApp(value: boolean);
     get editor(): boolean;

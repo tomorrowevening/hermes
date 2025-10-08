@@ -1,5 +1,4 @@
-import { IProject, IRafDriver, ISheet, ISheetObject } from '@theatre/core';
-import { Application } from '../Application';
+import { IProject, ISheet, ISheetObject } from '@theatre/core';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 type KeyframeVector = {
@@ -16,10 +15,7 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
     activeSheet: ISheet | undefined;
     studio: any;
-    rafDriver?: IRafDriver;
-    constructor(app: Application, createRaf?: boolean);
     dispose(): void;
-    update(now: number): void;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
     playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;
