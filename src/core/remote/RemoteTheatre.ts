@@ -287,7 +287,6 @@ export default class RemoteTheatre extends BaseRemote {
       case 'setSheet':
         value = this.sheets.get(msg.data.sheet);
         if (value !== undefined) {
-          this.activeSheet = value as ISheet;
           this.studio?.setSelection([value]);
         } else {
           console.log(`Hermes - Can't set Sheet: ${msg.data.sheet}`, value);
@@ -312,29 +311,24 @@ export default class RemoteTheatre extends BaseRemote {
         }
         break;
       case 'updateTimeline':
-        if (this.activeSheet === undefined) {
-          this.activeSheet = this.sheets.get(msg.data.sheet);
-        }
         value = this.sheets.get(msg.data.sheet);
-        if (this.activeSheet !== undefined) {
-          this.activeSheet.sequence.position = msg.data.position;
+        if (value !== undefined) {
+          value.sequence.position = msg.data.position;
         } else {
-          console.log(`Hermes - Can't update sheet position: ${msg.data.sheet}, ${msg.data.position}`, value, this.activeSheet);
+          console.log(`Hermes - Can't update sheet position: ${msg.data.sheet}, ${msg.data.position}`);
         }
         break;
     }
   }
 
   override handleEditor(msg: BroadcastData): void {
-    if (this.app.editor) {
-      switch (msg.event) {
-        case 'playSheet':
-          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
-          break;
-        case 'pauseSheet':
-          this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
-          break;
-      }
+    switch (msg.event) {
+      case 'playSheet':
+        this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
+        break;
+      case 'pauseSheet':
+        this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
+        break;
     }
   }
 
