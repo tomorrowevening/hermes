@@ -165,8 +165,8 @@ const n_ = ({ mobileTiers: a = [0, 15, 30, 60], desktopTiers: e = [0, 15, 30, 60
       W.length || (W = k.filter(([be]) => be.includes(T)));
       const $ = W.length;
       if ($ === 0) return;
-      const q = T.split(/[.,()\[\]/\s]/g).sort().filter((be, ot, Lt) => ot === 0 || be !== Lt[ot - 1]).join(" ");
-      let Z, [we, , , , ue] = $ > 1 ? W.map((be) => [be, s_(q, be[2])]).sort(([, be], [, ot]) => be - ot)[0][0] : W[0], ge = Number.MAX_VALUE;
+      const Y = T.split(/[.,()\[\]/\s]/g).sort().filter((be, ot, Lt) => ot === 0 || be !== Lt[ot - 1]).join(" ");
+      let Z, [we, , , , ue] = $ > 1 ? W.map((be) => [be, s_(Y, be[2])]).sort(([, be], [, ot]) => be - ot)[0][0] : W[0], ge = Number.MAX_VALUE;
       const { devicePixelRatio: ie } = window, Ee = c.width * ie * c.height * ie;
       for (const be of ue) {
         const [ot, Lt] = be, Ir = ot * Lt, Rn = Math.abs(Ee - Ir);
@@ -771,7 +771,7 @@ class fP {
     this.targets[e.id]?.handleEvent(e.data);
   }
 }
-var Y = /* @__PURE__ */ ((a) => (a.CUSTOM = "ToolEvents::custom", a.REMOTE_CONNECTED = "ToolEvents::remoteConnected", a.REMOTE_DISCONNECTED = "ToolEvents::remoteDisconnected", a.SELECT_DROPDOWN = "ToolEvents::selectDropdown", a.DRAG_UPDATE = "ToolEvents::dragUpdate", a.ADD_SCENE = "ToolEvents::addScene", a.REFRESH_SCENE = "ToolEvents::refreshScene", a.REMOVE_SCENE = "ToolEvents::removeScene", a.SET_SCENE = "ToolEvents::setScene", a.GET_OBJECT = "ToolEvents::getObject", a.SET_OBJECT = "ToolEvents::setObject", a.CLEAR_OBJECT = "ToolEvents::clearObject", a.UPDATE_OBJECT = "ToolEvents::updateObject", a.CREATE_TEXTURE = "ToolEvents::createTexture", a.REQUEST_METHOD = "ToolEvents::requestMethod", a.ADD_CAMERA = "ToolEvents::addCamera", a.REMOVE_CAMERA = "ToolEvents::removeCamera", a.ADD_GROUP = "ToolEvents::addGroup", a.REMOVE_GROUP = "ToolEvents::removeGroup", a.ADD_SPLINE = "ToolEvents::addSpline", a.ADD_RENDERER = "ToolEvents::addRenderer", a.UPDATE_RENDERER = "ToolEvents::updateRenderer", a))(Y || {});
+var q = /* @__PURE__ */ ((a) => (a.CUSTOM = "ToolEvents::custom", a.REMOTE_CONNECTED = "ToolEvents::remoteConnected", a.REMOTE_DISCONNECTED = "ToolEvents::remoteDisconnected", a.SELECT_DROPDOWN = "ToolEvents::selectDropdown", a.DRAG_UPDATE = "ToolEvents::dragUpdate", a.ADD_SCENE = "ToolEvents::addScene", a.REFRESH_SCENE = "ToolEvents::refreshScene", a.REMOVE_SCENE = "ToolEvents::removeScene", a.SET_SCENE = "ToolEvents::setScene", a.GET_OBJECT = "ToolEvents::getObject", a.SET_OBJECT = "ToolEvents::setObject", a.CLEAR_OBJECT = "ToolEvents::clearObject", a.UPDATE_OBJECT = "ToolEvents::updateObject", a.CREATE_TEXTURE = "ToolEvents::createTexture", a.REQUEST_METHOD = "ToolEvents::requestMethod", a.ADD_CAMERA = "ToolEvents::addCamera", a.REMOVE_CAMERA = "ToolEvents::removeCamera", a.ADD_GROUP = "ToolEvents::addGroup", a.REMOVE_GROUP = "ToolEvents::removeGroup", a.ADD_SPLINE = "ToolEvents::addSpline", a.ADD_RENDERER = "ToolEvents::addRenderer", a.UPDATE_RENDERER = "ToolEvents::updateRenderer", a))(q || {});
 class mP extends xu {
   assets = {
     audio: /* @__PURE__ */ new Map(),
@@ -1099,10 +1099,10 @@ class xP extends Su {
   handleApp(e) {
     switch (e.event) {
       case "selectComponent":
-        this.app.dispatchEvent({ type: Y.SELECT_DROPDOWN, value: e.data });
+        this.app.dispatchEvent({ type: q.SELECT_DROPDOWN, value: e.data });
         break;
       case "draggableListUpdate":
-        this.app.dispatchEvent({ type: Y.DRAG_UPDATE, value: e.data });
+        this.app.dispatchEvent({ type: q.DRAG_UPDATE, value: e.data });
         break;
     }
   }
@@ -1824,16 +1824,16 @@ class SP extends Su {
   handleApp(e) {
     switch (e.event) {
       case "getObject":
-        this.app.dispatchEvent({ type: Y.GET_OBJECT, value: e.data });
+        this.app.dispatchEvent({ type: q.GET_OBJECT, value: e.data });
         break;
       case "updateObject":
-        this.app.dispatchEvent({ type: Y.UPDATE_OBJECT, value: e.data });
+        this.app.dispatchEvent({ type: q.UPDATE_OBJECT, value: e.data });
         break;
       case "createTexture":
-        this.app.dispatchEvent({ type: Y.CREATE_TEXTURE, value: e.data });
+        this.app.dispatchEvent({ type: q.CREATE_TEXTURE, value: e.data });
         break;
       case "requestMethod":
-        this.app.dispatchEvent({ type: Y.REQUEST_METHOD, value: e.data });
+        this.app.dispatchEvent({ type: q.REQUEST_METHOD, value: e.data });
         break;
       case "refreshScene":
         this.app.send({
@@ -1854,37 +1854,37 @@ class SP extends Su {
   handleEditor(e) {
     switch (e.event) {
       case "setObject":
-        this.app.dispatchEvent({ type: Y.SET_OBJECT, value: e.data });
+        this.app.dispatchEvent({ type: q.SET_OBJECT, value: e.data });
         break;
       case "addScene":
-        this.app.dispatchEvent({ type: Y.ADD_SCENE, value: e.data });
+        this.app.dispatchEvent({ type: q.ADD_SCENE, value: e.data });
         break;
       case "refreshScene":
-        this.app.dispatchEvent({ type: Y.REFRESH_SCENE, value: e.data });
+        this.app.dispatchEvent({ type: q.REFRESH_SCENE, value: e.data });
         break;
       case "removeScene":
-        this.app.dispatchEvent({ type: Y.REMOVE_SCENE, value: e.data });
+        this.app.dispatchEvent({ type: q.REMOVE_SCENE, value: e.data });
         break;
       case "setScene":
-        this.app.dispatchEvent({ type: Y.SET_SCENE, value: e.data });
+        this.app.dispatchEvent({ type: q.SET_SCENE, value: e.data });
         break;
       case "addCamera":
-        this.app.dispatchEvent({ type: Y.ADD_CAMERA, value: e.data });
+        this.app.dispatchEvent({ type: q.ADD_CAMERA, value: e.data });
         break;
       case "removeCamera":
-        this.app.dispatchEvent({ type: Y.REMOVE_CAMERA, value: e.data });
+        this.app.dispatchEvent({ type: q.REMOVE_CAMERA, value: e.data });
         break;
       case "addGroup":
-        this.app.dispatchEvent({ type: Y.ADD_GROUP, value: e.data });
+        this.app.dispatchEvent({ type: q.ADD_GROUP, value: e.data });
         break;
       case "removeGroup":
-        this.app.dispatchEvent({ type: Y.REMOVE_GROUP, value: e.data });
+        this.app.dispatchEvent({ type: q.REMOVE_GROUP, value: e.data });
         break;
       case "addSpline":
-        this.app.dispatchEvent({ type: Y.ADD_SPLINE, value: e.data });
+        this.app.dispatchEvent({ type: q.ADD_SPLINE, value: e.data });
         break;
       case "addRenderer":
-        this.app.dispatchEvent({ type: Y.ADD_RENDERER, value: e.data });
+        this.app.dispatchEvent({ type: q.ADD_RENDERER, value: e.data });
     }
   }
   // Renderer
@@ -2042,7 +2042,7 @@ function A_() {
         }
       return null;
     }
-    var q = Object.assign, Z = 0, we, ue, ge, ie, Ee, ze, at;
+    var Y = Object.assign, Z = 0, we, ue, ge, ie, Ee, ze, at;
     function be() {
     }
     be.__reactDisabledLog = !0;
@@ -2078,25 +2078,25 @@ function A_() {
             writable: !0
           };
           Object.defineProperties(console, {
-            log: q({}, S, {
+            log: Y({}, S, {
               value: we
             }),
-            info: q({}, S, {
+            info: Y({}, S, {
               value: ue
             }),
-            warn: q({}, S, {
+            warn: Y({}, S, {
               value: ge
             }),
-            error: q({}, S, {
+            error: Y({}, S, {
               value: ie
             }),
-            group: q({}, S, {
+            group: Y({}, S, {
               value: Ee
             }),
-            groupCollapsed: q({}, S, {
+            groupCollapsed: Y({}, S, {
               value: ze
             }),
-            groupEnd: q({}, S, {
+            groupEnd: Y({}, S, {
               value: at
             })
           });
@@ -2681,7 +2681,7 @@ function I_(a) {
 }
 function ol(a) {
   const [e, t] = Ne(a.open !== void 0 ? a.open : !0), s = !e || a.children === void 0, i = Ge(null), n = () => {
-    a.app.dispatchEvent({ type: Y.REMOVE_SCENE, value: a.scene });
+    a.app.dispatchEvent({ type: q.REMOVE_SCENE, value: a.scene });
   };
   return /* @__PURE__ */ C.jsxs("div", { className: `accordion ${s ? "hide" : ""}`, children: [
     /* @__PURE__ */ C.jsxs(
@@ -2937,8 +2937,8 @@ function B_(a) {
     window.removeEventListener("mousemove", T), window.removeEventListener("mouseup", b), x(!1);
   }
   function T(N) {
-    const k = n.current.getBoundingClientRect(), H = rn(0, 99, N.clientX - k.left) / 99, W = 1 - rn(0, 99, N.clientY - k.top) / 99, $ = vs(Fa(m.min, m.max, H), 3), q = vs(Fa(m.min, m.max, W), 3);
-    a.onChange({ target: { value: { x: $, y: q } } }), d($), f(q);
+    const k = n.current.getBoundingClientRect(), H = rn(0, 99, N.clientX - k.left) / 99, W = 1 - rn(0, 99, N.clientY - k.top) / 99, $ = vs(Fa(m.min, m.max, H), 3), Y = vs(Fa(m.min, m.max, W), 3);
+    a.onChange({ target: { value: { x: $, y: Y } } }), d($), f(Y);
   }
   function E() {
     const N = Number(s.current.value);
@@ -4687,10 +4687,10 @@ class xe extends Va {
   static groupTitles = [];
   static app;
   constructor(e) {
-    super(e), this.state = { lastUpdate: Date.now() }, xe.app = e.app, xe.instance = this, xe.app.addEventListener(Y.ADD_GROUP, this.addGroup), xe.app.addEventListener(Y.REMOVE_GROUP, this.removeGroup);
+    super(e), this.state = { lastUpdate: Date.now() }, xe.app = e.app, xe.instance = this, xe.app.addEventListener(q.ADD_GROUP, this.addGroup), xe.app.addEventListener(q.REMOVE_GROUP, this.removeGroup);
   }
   componentWillUnmount() {
-    xe.app.removeEventListener(Y.ADD_GROUP, this.addGroup), xe.app.removeEventListener(Y.REMOVE_GROUP, this.removeGroup);
+    xe.app.removeEventListener(q.ADD_GROUP, this.addGroup), xe.app.removeEventListener(q.REMOVE_GROUP, this.removeGroup);
   }
   render() {
     return /* @__PURE__ */ C.jsx("div", { className: "customGroups", children: xe.groups }, this.state.lastUpdate);
@@ -7652,8 +7652,8 @@ class Be {
    * @return {Matrix4} A reference to this matrix.
    */
   multiplyMatrices(e, t) {
-    const s = e.elements, i = t.elements, n = this.elements, r = s[0], o = s[4], l = s[8], c = s[12], h = s[1], u = s[5], d = s[9], p = s[13], f = s[2], m = s[6], y = s[10], g = s[14], x = s[3], _ = s[7], b = s[11], T = s[15], E = i[0], v = i[4], A = i[8], N = i[12], k = i[1], H = i[5], W = i[9], $ = i[13], q = i[2], Z = i[6], we = i[10], ue = i[14], ge = i[3], ie = i[7], Ee = i[11], ze = i[15];
-    return n[0] = r * E + o * k + l * q + c * ge, n[4] = r * v + o * H + l * Z + c * ie, n[8] = r * A + o * W + l * we + c * Ee, n[12] = r * N + o * $ + l * ue + c * ze, n[1] = h * E + u * k + d * q + p * ge, n[5] = h * v + u * H + d * Z + p * ie, n[9] = h * A + u * W + d * we + p * Ee, n[13] = h * N + u * $ + d * ue + p * ze, n[2] = f * E + m * k + y * q + g * ge, n[6] = f * v + m * H + y * Z + g * ie, n[10] = f * A + m * W + y * we + g * Ee, n[14] = f * N + m * $ + y * ue + g * ze, n[3] = x * E + _ * k + b * q + T * ge, n[7] = x * v + _ * H + b * Z + T * ie, n[11] = x * A + _ * W + b * we + T * Ee, n[15] = x * N + _ * $ + b * ue + T * ze, this;
+    const s = e.elements, i = t.elements, n = this.elements, r = s[0], o = s[4], l = s[8], c = s[12], h = s[1], u = s[5], d = s[9], p = s[13], f = s[2], m = s[6], y = s[10], g = s[14], x = s[3], _ = s[7], b = s[11], T = s[15], E = i[0], v = i[4], A = i[8], N = i[12], k = i[1], H = i[5], W = i[9], $ = i[13], Y = i[2], Z = i[6], we = i[10], ue = i[14], ge = i[3], ie = i[7], Ee = i[11], ze = i[15];
+    return n[0] = r * E + o * k + l * Y + c * ge, n[4] = r * v + o * H + l * Z + c * ie, n[8] = r * A + o * W + l * we + c * Ee, n[12] = r * N + o * $ + l * ue + c * ze, n[1] = h * E + u * k + d * Y + p * ge, n[5] = h * v + u * H + d * Z + p * ie, n[9] = h * A + u * W + d * we + p * Ee, n[13] = h * N + u * $ + d * ue + p * ze, n[2] = f * E + m * k + y * Y + g * ge, n[6] = f * v + m * H + y * Z + g * ie, n[10] = f * A + m * W + y * we + g * Ee, n[14] = f * N + m * $ + y * ue + g * ze, n[3] = x * E + _ * k + b * Y + T * ge, n[7] = x * v + _ * H + b * Z + T * ie, n[11] = x * A + _ * W + b * we + T * Ee, n[15] = x * N + _ * $ + b * ue + T * ze, this;
   }
   /**
    * Multiplies every component of the matrix by the given scalar.
@@ -19922,7 +19922,7 @@ class yi extends En {
     }]);
     for (let A = 0, N = x.length; A < N; ++A) {
       const k = x[A], H = k.start, W = k.count;
-      for (let $ = H, q = H + W; $ < q; $ += 3)
+      for (let $ = H, Y = H + W; $ < Y; $ += 3)
         g(
           e.getX($ + 0),
           e.getX($ + 1),
@@ -19939,7 +19939,7 @@ class yi extends En {
     }
     for (let A = 0, N = x.length; A < N; ++A) {
       const k = x[A], H = k.start, W = k.count;
-      for (let $ = H, q = H + W; $ < q; $ += 3)
+      for (let $ = H, Y = H + W; $ < Y; $ += 3)
         v(e.getX($ + 0)), v(e.getX($ + 1)), v(e.getX($ + 2));
     }
   }
@@ -22628,14 +22628,14 @@ class qa extends yi {
     let d = 0, p = 0;
     f("z", "y", "x", -1, -1, s, t, e, r, n, 0), f("z", "y", "x", 1, -1, s, t, -e, r, n, 1), f("x", "z", "y", 1, 1, e, s, t, i, r, 2), f("x", "z", "y", 1, -1, e, s, -t, i, r, 3), f("x", "y", "z", 1, -1, e, t, s, i, n, 4), f("x", "y", "z", -1, -1, e, t, -s, i, n, 5), this.setIndex(l), this.setAttribute("position", new Ot(c, 3)), this.setAttribute("normal", new Ot(h, 3)), this.setAttribute("uv", new Ot(u, 2));
     function f(m, y, g, x, _, b, T, E, v, A, N) {
-      const k = b / v, H = T / A, W = b / 2, $ = T / 2, q = E / 2, Z = v + 1, we = A + 1;
+      const k = b / v, H = T / A, W = b / 2, $ = T / 2, Y = E / 2, Z = v + 1, we = A + 1;
       let ue = 0, ge = 0;
       const ie = new R();
       for (let Ee = 0; Ee < we; Ee++) {
         const ze = Ee * H - $;
         for (let at = 0; at < Z; at++) {
           const be = at * k - W;
-          ie[m] = be * x, ie[y] = ze * _, ie[g] = q, c.push(ie.x, ie.y, ie.z), ie[m] = 0, ie[y] = 0, ie[g] = E > 0 ? 1 : -1, h.push(ie.x, ie.y, ie.z), u.push(at / v), u.push(1 - Ee / A), ue += 1;
+          ie[m] = be * x, ie[y] = ze * _, ie[g] = Y, c.push(ie.x, ie.y, ie.z), ie[m] = 0, ie[y] = 0, ie[g] = E > 0 ? 1 : -1, h.push(ie.x, ie.y, ie.z), u.push(at / v), u.push(1 - Ee / A), ue += 1;
         }
       }
       for (let Ee = 0; Ee < A; Ee++)
@@ -27341,7 +27341,7 @@ class yd extends yi {
       for (let A = 0; A <= n; A++) {
         const N = [], k = A / n, H = k * (t - e) + e;
         for (let W = 0; W <= i; W++) {
-          const $ = W / i, q = $ * l + o, Z = Math.sin(q), we = Math.cos(q);
+          const $ = W / i, Y = $ * l + o, Z = Math.sin(Y), we = Math.cos(Y);
           T.x = H * Z, T.y = -k * s + y, T.z = H * we, u.push(T.x, T.y, T.z), b.set(Z, v, we).normalize(), d.push(b.x, b.y, b.z), p.push($, 1 - k), N.push(f++);
         }
         m.push(N);
@@ -27361,12 +27361,12 @@ class yd extends yi {
         u.push(0, y * k, 0), d.push(0, k, 0), p.push(0.5, 0.5), f++;
       const H = f;
       for (let W = 0; W <= i; W++) {
-        const q = W / i * l + o, Z = Math.cos(q), we = Math.sin(q);
+        const Y = W / i * l + o, Z = Math.cos(Y), we = Math.sin(Y);
         v.x = N * we, v.y = y * k, v.z = N * Z, u.push(v.x, v.y, v.z), d.push(0, k, 0), E.x = Z * 0.5 + 0.5, E.y = we * 0.5 * k + 0.5, p.push(E.x, E.y), f++;
       }
       for (let W = 0; W < i; W++) {
-        const $ = T + W, q = H + W;
-        b === !0 ? h.push(q, q + 1, $) : h.push(q + 1, q, $), A += 3;
+        const $ = T + W, Y = H + W;
+        b === !0 ? h.push(Y, Y + 1, $) : h.push(Y + 1, Y, $), A += 3;
       }
       c.addGroup(g, A, b === !0 ? 1 : 2), g += A;
     }
@@ -32095,15 +32095,15 @@ class DR {
     if (s !== null)
       f = s.max.x - s.min.x, m = s.max.y - s.min.y, y = s.isBox3 ? s.max.z - s.min.z : 1, g = s.min.x, x = s.min.y, _ = s.isBox3 ? s.min.z : 0;
     else {
-      const q = Math.pow(2, -n);
-      f = Math.floor(v.width * q), m = Math.floor(v.height * q), e.isDataArrayTexture || e.isArrayTexture ? y = v.depth : e.isData3DTexture ? y = Math.floor(v.depth * q) : y = 1, g = 0, x = 0, _ = 0;
+      const Y = Math.pow(2, -n);
+      f = Math.floor(v.width * Y), m = Math.floor(v.height * Y), e.isDataArrayTexture || e.isArrayTexture ? y = v.depth : e.isData3DTexture ? y = Math.floor(v.depth * Y) : y = 1, g = 0, x = 0, _ = 0;
     }
     i !== null ? (b = i.x, T = i.y, E = i.z) : (b = 0, T = 0, E = 0), o.pixelStorei(o.UNPACK_FLIP_Y_WEBGL, t.flipY), o.pixelStorei(o.UNPACK_PREMULTIPLY_ALPHA_WEBGL, t.premultiplyAlpha), o.pixelStorei(o.UNPACK_ALIGNMENT, t.unpackAlignment);
     const A = o.getParameter(o.UNPACK_ROW_LENGTH), N = o.getParameter(o.UNPACK_IMAGE_HEIGHT), k = o.getParameter(o.UNPACK_SKIP_PIXELS), H = o.getParameter(o.UNPACK_SKIP_ROWS), W = o.getParameter(o.UNPACK_SKIP_IMAGES);
     o.pixelStorei(o.UNPACK_ROW_LENGTH, v.width), o.pixelStorei(o.UNPACK_IMAGE_HEIGHT, v.height), o.pixelStorei(o.UNPACK_SKIP_PIXELS, g), o.pixelStorei(o.UNPACK_SKIP_ROWS, x), o.pixelStorei(o.UNPACK_SKIP_IMAGES, _);
     const $ = t.isDataArrayTexture || t.isData3DTexture || t.isArrayTexture;
     if (e.isRenderTargetTexture || e.isDepthTexture) {
-      const q = l.get(e), Z = l.get(t), we = l.get(q.renderTarget), ue = l.get(Z.renderTarget), ge = we.framebuffers[q.cacheKey], ie = ue.framebuffers[Z.cacheKey];
+      const Y = l.get(e), Z = l.get(t), we = l.get(Y.renderTarget), ue = l.get(Z.renderTarget), ge = we.framebuffers[Y.cacheKey], ie = ue.framebuffers[Z.cacheKey];
       c.bindFramebuffer(o.READ_FRAMEBUFFER, ge), c.bindFramebuffer(o.DRAW_FRAMEBUFFER, ie);
       let Ee = o.COLOR_BUFFER_BIT;
       e.isDepthTexture && (Ee = o.DEPTH_BUFFER_BIT), o.blitFramebuffer(g, x, f, m, b, T, f, m, Ee, o.NEAREST), c.bindFramebuffer(o.READ_FRAMEBUFFER, null), c.bindFramebuffer(o.DRAW_FRAMEBUFFER, null);
@@ -32906,7 +32906,7 @@ class sm extends M0 {
         }
         v.indexesGPU = we;
       }
-      const k = this.get(N), H = this.renderer.getPixelRatio(), W = this._currentContext.renderTarget, $ = this._isRenderCameraDepthArray(this._currentContext), q = this._currentContext.activeCubeFace;
+      const k = this.get(N), H = this.renderer.getPixelRatio(), W = this._currentContext.renderTarget, $ = this._isRenderCameraDepthArray(this._currentContext), Y = this._currentContext.activeCubeFace;
       if ($) {
         const Z = this.get(W.depthTexture);
         if (Z.clearedRenderId !== this.renderer._nodes.nodeFrame.renderId) {
@@ -32914,7 +32914,7 @@ class sm extends M0 {
           const { stencilBuffer: we } = W;
           for (let ue = 0, ge = A.length; ue < ge; ue++)
             this.renderer._activeCubeFace = ue, this._currentContext.activeCubeFace = ue, this._setFramebuffer(this._currentContext), this.clear(!1, !0, we, this._currentContext, !1);
-          this.renderer._activeCubeFace = q, this._currentContext.activeCubeFace = q;
+          this.renderer._activeCubeFace = Y, this._currentContext.activeCubeFace = Y;
         }
       }
       for (let Z = 0, we = A.length; Z < we; Z++) {
@@ -32933,7 +32933,7 @@ class sm extends M0 {
           }
           c.bindBufferBase(l.UNIFORM_BUFFER, k.index, v.indexesGPU[Z]), E();
         }
-        this._currentContext.activeCubeFace = q, this.renderer._activeCubeFace = q;
+        this._currentContext.activeCubeFace = Y, this.renderer._activeCubeFace = Y;
       }
     } else
       E();
@@ -36688,8 +36688,8 @@ class l1 {
   createRenderPipeline(e, t) {
     const { object: s, material: i, geometry: n, pipeline: r } = e, { vertexProgram: o, fragmentProgram: l } = r, c = this.backend, h = c.device, u = c.utils, d = c.get(r), p = [];
     for (const $ of e.getBindings()) {
-      const q = c.get($);
-      p.push(q.layout);
+      const Y = c.get($);
+      p.push(Y.layout);
     }
     const f = c.attributeUtils.createShaderVertexBuffers(e);
     let m;
@@ -36704,8 +36704,8 @@ class l1 {
     const g = this._getColorWriteMask(i), x = [];
     if (e.context.textures !== null) {
       const $ = e.context.textures;
-      for (let q = 0; q < $.length; q++) {
-        const Z = u.getTextureFormatGPU($[q]);
+      for (let Y = 0; Y < $.length; Y++) {
+        const Z = u.getTextureFormatGPU($[Y]);
         x.push({
           format: Z,
           blend: m,
@@ -36736,9 +36736,9 @@ class l1 {
     if ((H === !0 || W === !0) && (H === !0 && (k.format = v, k.depthWriteEnabled = i.depthWrite, k.depthCompare = E), W === !0 && (k.stencilFront = y, k.stencilBack = {}, k.stencilReadMask = i.stencilFuncMask, k.stencilWriteMask = i.stencilWriteMask), i.polygonOffset === !0 && (k.depthBias = i.polygonOffsetUnits, k.depthBiasSlopeScale = i.polygonOffsetFactor, k.depthBiasClamp = 0), N.depthStencil = k), t === null)
       d.pipeline = h.createRenderPipeline(N);
     else {
-      const $ = new Promise((q) => {
+      const $ = new Promise((Y) => {
         h.createRenderPipelineAsync(N).then((Z) => {
-          d.pipeline = Z, q();
+          d.pipeline = Z, Y();
         });
       });
       t.push($);
@@ -40376,8 +40376,8 @@ function ym(a, e, t, s, i = 1 / 0, n, r) {
   h = a.x - p, u = a.y - f, d = a.z - m;
   const E = (t.x + o * p) * n, v = (t.y + o * f) * n, A = (t.z + o * m) * n;
   t.x = (t.x - o * E) * c, t.y = (t.y - o * v) * c, t.z = (t.z - o * A) * c, r.x = h + (p + E) * c, r.y = u + (f + v) * c, r.z = d + (m + A) * c;
-  const N = y - a.x, k = g - a.y, H = x - a.z, W = r.x - y, $ = r.y - g, q = r.z - x;
-  return N * W + k * $ + H * q > 0 && (r.x = y, r.y = g, r.z = x, t.x = (r.x - y) / n, t.y = (r.y - g) / n, t.z = (r.z - x) / n), r;
+  const N = y - a.x, k = g - a.y, H = x - a.z, W = r.x - y, $ = r.y - g, Y = r.z - x;
+  return N * W + k * $ + H * Y > 0 && (r.x = y, r.y = g, r.z = x, t.x = (r.x - y) / n, t.y = (r.y - g) / n, t.z = (r.z - x) / n), r;
 }
 function yh(a, e) {
   e.set(0, 0), a.forEach((t) => {
@@ -42378,7 +42378,7 @@ class zN extends Tr {
         [new Ls(g, i.clone()), [0, 0, -1e3], [0, -Math.PI / 2, 0], [1e6, 1, 1], "helper"]
       ]
     };
-    function q(Z) {
+    function Y(Z) {
       const we = new Tr();
       for (const ue in Z)
         for (let ge = Z[ue].length; ge--; ) {
@@ -42389,7 +42389,7 @@ class zN extends Tr {
         }
       return we;
     }
-    this.gizmo = {}, this.picker = {}, this.helper = {}, this.add(this.gizmo.translate = q(T)), this.add(this.gizmo.rotate = q(A)), this.add(this.gizmo.scale = q(H)), this.add(this.picker.translate = q(E)), this.add(this.picker.rotate = q(k)), this.add(this.picker.scale = q(W)), this.add(this.helper.translate = q(v)), this.add(this.helper.rotate = q(N)), this.add(this.helper.scale = q($)), this.picker.translate.visible = !1, this.picker.rotate.visible = !1, this.picker.scale.visible = !1;
+    this.gizmo = {}, this.picker = {}, this.helper = {}, this.add(this.gizmo.translate = Y(T)), this.add(this.gizmo.rotate = Y(A)), this.add(this.gizmo.scale = Y(H)), this.add(this.picker.translate = Y(E)), this.add(this.picker.rotate = Y(k)), this.add(this.picker.scale = Y(W)), this.add(this.helper.translate = Y(v)), this.add(this.helper.rotate = Y(N)), this.add(this.helper.scale = Y($)), this.picker.translate.visible = !1, this.picker.rotate.visible = !1, this.picker.scale.visible = !1;
   }
   // updateMatrixWorld will update transformations and appearance of individual handles
   updateMatrixWorld(e) {
@@ -42466,7 +42466,7 @@ class xt extends xu {
   controls = /* @__PURE__ */ new Map();
   visibility = /* @__PURE__ */ new Map();
   setApp(e, t) {
-    this.app = e, this.three = t, this.app.addEventListener(Y.SET_SCENE, this.setScene);
+    this.app = e, this.three = t, this.app.addEventListener(q.SET_SCENE, this.setScene);
   }
   clear() {
     for (const e of this.controls.values()) {
@@ -42866,7 +42866,7 @@ class HN extends Tr {
   app;
   splineDataText = "";
   constructor(e, t) {
-    super(), this.name = "Spline Editor", this._camera = e, this.app = t, this.app.addEventListener(Y.ADD_SPLINE, this.onAddSpline);
+    super(), this.name = "Spline Editor", this._camera = e, this.app = t, this.app.addEventListener(q.ADD_SPLINE, this.onAddSpline);
   }
   initDebug() {
     this.group = xe.addEditorGroup({
@@ -42938,7 +42938,7 @@ class HN extends Tr {
     });
   }
   dispose() {
-    this.app.removeEventListener(Y.ADD_SPLINE, this.onAddSpline), xe.removeEditorGroup(this.name);
+    this.app.removeEventListener(q.ADD_SPLINE, this.onAddSpline), xe.removeEditorGroup(this.name);
   }
   addSpline(e) {
     e.draggableScale = this.defaultScale, e.hideTransform(), this.group?.current !== null && e.initDebug(this.group.current), this.add(e), this.currentSpline = e;
@@ -43120,7 +43120,7 @@ class ht extends Va {
     "Debug"
   ];
   constructor(e) {
-    super(e), this.app = e.app, this.app.addEventListener(Y.ADD_RENDERER, this.setupRenderer), this.scene = new yu(), this.scene.name = this.scene.uuid = "", this.canvasRef = Ai(), this.containerRef = Ai(), this.tlWindow = Ai(), this.trWindow = Ai(), this.blWindow = Ai(), this.brWindow = Ai();
+    super(e), this.app = e.app, this.app.addEventListener(q.ADD_RENDERER, this.setupRenderer), this.scene = new yu(), this.scene.name = this.scene.uuid = "", this.canvasRef = Ai(), this.containerRef = Ai(), this.tlWindow = Ai(), this.trWindow = Ai(), this.blWindow = Ai(), this.brWindow = Ai();
     const t = e.three.app.appID, s = localStorage, i = s.getItem(`${t}_mode`);
     this.state = {
       mode: i !== null ? i : "Single",
@@ -43425,13 +43425,10 @@ class ht extends Va {
     });
   }
   clear() {
-    this.app.dispatchEvent({ type: Y.CLEAR_OBJECT }), xe.removeAllGroups(), this.clearLightHelpers(), this.clearControls(), this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), xt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = void 0, xt.instance.clear(), this.cameras.forEach((e) => {
-      if (this.editorCameras.indexOf(e.name) < 0) {
-        const s = this.cameraHelpers.get(e.uuid);
-        s && (s.parent?.remove(s), this.helpersContainer.remove(s), s.dispose()), this.cameraHelpers.delete(e.uuid);
-      }
+    this.app.dispatchEvent({ type: q.CLEAR_OBJECT }), xe.removeAllGroups(), this.clearLightHelpers(), this.clearControls(), this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), xt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = void 0, xt.instance.clear(), this.cameras.forEach((e) => {
+      this.editorCameras.indexOf(e.name) < 0 && this.app.dispatchEvent({ type: q.REMOVE_CAMERA, value: e });
     }), this.currentCamera = this.debugCamera, this.currentScene = void 0, this.scenes.forEach((e) => {
-      this.app.dispatchEvent({ type: Y.REMOVE_SCENE, value: e });
+      this.app.dispatchEvent({ type: q.REMOVE_SCENE, value: e });
     }), this.scenes.clear();
   }
   // Playback
@@ -43460,11 +43457,11 @@ class ht extends Va {
   // Events
   enable() {
     const e = this.containerRef.current;
-    e.addEventListener("mousemove", this.onMouseMove), e.addEventListener("click", this.onClick), window.addEventListener("keydown", this.onKey), window.addEventListener("resize", this.resize), this.app.addEventListener(Y.ADD_SCENE, this.addScene), this.app.addEventListener(Y.SET_SCENE, this.sceneUpdate), this.app.addEventListener(Y.REMOVE_SCENE, this.removeScene), this.app.addEventListener(Y.ADD_CAMERA, this.addCamera), this.app.addEventListener(Y.REMOVE_CAMERA, this.removeCamera), this.app.addEventListener(Y.SET_OBJECT, this.onSetSelectedItem), this.app.addEventListener(Y.REMOTE_CONNECTED, this.onRemoteConnected), this.app.addEventListener(Y.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
+    e.addEventListener("mousemove", this.onMouseMove), e.addEventListener("click", this.onClick), window.addEventListener("keydown", this.onKey), window.addEventListener("resize", this.resize), this.app.addEventListener(q.ADD_SCENE, this.addScene), this.app.addEventListener(q.SET_SCENE, this.sceneUpdate), this.app.addEventListener(q.REMOVE_SCENE, this.removeScene), this.app.addEventListener(q.ADD_CAMERA, this.addCamera), this.app.addEventListener(q.REMOVE_CAMERA, this.removeCamera), this.app.addEventListener(q.SET_OBJECT, this.onSetSelectedItem), this.app.addEventListener(q.REMOTE_CONNECTED, this.onRemoteConnected), this.app.addEventListener(q.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
   disable() {
     const e = this.containerRef.current;
-    e.removeEventListener("mousemove", this.onMouseMove), e.removeEventListener("click", this.onClick), window.removeEventListener("keydown", this.onKey), window.removeEventListener("resize", this.resize), this.app.removeEventListener(Y.ADD_SCENE, this.addScene), this.app.removeEventListener(Y.SET_SCENE, this.sceneUpdate), this.app.removeEventListener(Y.ADD_CAMERA, this.addCamera), this.app.removeEventListener(Y.REMOVE_CAMERA, this.removeCamera), this.app.removeEventListener(Y.SET_OBJECT, this.onSetSelectedItem), this.app.removeEventListener(Y.REMOTE_CONNECTED, this.onRemoteConnected), this.app.removeEventListener(Y.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
+    e.removeEventListener("mousemove", this.onMouseMove), e.removeEventListener("click", this.onClick), window.removeEventListener("keydown", this.onKey), window.removeEventListener("resize", this.resize), this.app.removeEventListener(q.ADD_SCENE, this.addScene), this.app.removeEventListener(q.SET_SCENE, this.sceneUpdate), this.app.removeEventListener(q.ADD_CAMERA, this.addCamera), this.app.removeEventListener(q.REMOVE_CAMERA, this.removeCamera), this.app.removeEventListener(q.SET_OBJECT, this.onSetSelectedItem), this.app.removeEventListener(q.REMOTE_CONNECTED, this.onRemoteConnected), this.app.removeEventListener(q.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
   resize = () => {
     this.width = window.innerWidth - 300, this.height = window.innerHeight, this.renderer?.setSize(this.width, this.height);
@@ -44066,8 +44063,8 @@ function XN(a) {
     function o() {
       t(Rh);
     }
-    return a.app.addEventListener(Y.CLEAR_OBJECT, o), a.app.addEventListener(Y.SET_SCENE, o), a.app.addEventListener(Y.SET_OBJECT, r), () => {
-      a.app.removeEventListener(Y.CLEAR_OBJECT, o), a.app.removeEventListener(Y.SET_SCENE, o), a.app.removeEventListener(Y.SET_OBJECT, r);
+    return a.app.addEventListener(q.CLEAR_OBJECT, o), a.app.addEventListener(q.SET_SCENE, o), a.app.addEventListener(q.SET_OBJECT, r), () => {
+      a.app.removeEventListener(q.CLEAR_OBJECT, o), a.app.removeEventListener(q.SET_SCENE, o), a.app.removeEventListener(q.SET_OBJECT, r);
     };
   }, []);
   const s = e.type.toLowerCase(), i = e.animations.length > 0 || e.mixer !== void 0, n = s.search("mesh") > -1 || s.search("line") > -1 || s.search("points") > -1;
@@ -44148,10 +44145,10 @@ class ZN extends Va {
       const i = ht.instance.renderer;
       i && (this.autoClear = i.autoClear, this.autoClearColor = i.autoClearColor, this.autoClearDepth = i.autoClearDepth, this.autoClearStencil = i.autoClearStencil, this.clearAlpha = i.getClearAlpha(), this.toneMapping = i.toneMapping, this.toneMappingExposure = i.toneMappingExposure, i instanceof da && (this.localClippingEnabled = i.localClippingEnabled, i.getClearColor(this.clearColor)));
     }
-    this.app.addEventListener(Y.ADD_RENDERER, this.onAddRenderer);
+    this.app.addEventListener(q.ADD_RENDERER, this.onAddRenderer);
   }
   componentwillunmount() {
-    this.app.removeEventListener(Y.ADD_RENDERER, this.onAddRenderer);
+    this.app.removeEventListener(q.ADD_RENDERER, this.onAddRenderer);
   }
   onAddRenderer = (e) => {
     const t = e.value;
@@ -44397,8 +44394,8 @@ function KN(a) {
         return;
       }
   };
-  return wn(() => (a.app.addEventListener(Y.ADD_SCENE, n), a.app.addEventListener(Y.REFRESH_SCENE, r), a.app.addEventListener(Y.REMOVE_SCENE, o), () => {
-    a.app.removeEventListener(Y.ADD_SCENE, n), a.app.removeEventListener(Y.REFRESH_SCENE, r), a.app.removeEventListener(Y.REMOVE_SCENE, o);
+  return wn(() => (a.app.addEventListener(q.ADD_SCENE, n), a.app.addEventListener(q.REFRESH_SCENE, r), a.app.addEventListener(q.REMOVE_SCENE, o), () => {
+    a.app.removeEventListener(q.ADD_SCENE, n), a.app.removeEventListener(q.REFRESH_SCENE, r), a.app.removeEventListener(q.REMOVE_SCENE, o);
   }), []), /* @__PURE__ */ C.jsxs("div", { id: "SidePanel", children: [
     /* @__PURE__ */ C.jsx("div", { className: "scenes", children: t }, s),
     /* @__PURE__ */ C.jsx(XN, { app: a.app, three: a.three }),
@@ -44475,8 +44472,8 @@ function EP(a) {
           console.log("Error requesting method:"), console.log(f), console.log(l), console.log(h);
         }
     };
-    return a.app.addEventListener(Y.GET_OBJECT, t), a.app.addEventListener(Y.UPDATE_OBJECT, i), a.app.addEventListener(Y.CREATE_TEXTURE, n), a.app.addEventListener(Y.REQUEST_METHOD, r), () => {
-      a.app.removeEventListener(Y.GET_OBJECT, t), a.app.removeEventListener(Y.UPDATE_OBJECT, i), a.app.removeEventListener(Y.CREATE_TEXTURE, n), a.app.removeEventListener(Y.REQUEST_METHOD, r);
+    return a.app.addEventListener(q.GET_OBJECT, t), a.app.addEventListener(q.UPDATE_OBJECT, i), a.app.addEventListener(q.CREATE_TEXTURE, n), a.app.addEventListener(q.REQUEST_METHOD, r), () => {
+      a.app.removeEventListener(q.GET_OBJECT, t), a.app.removeEventListener(q.UPDATE_OBJECT, i), a.app.removeEventListener(q.CREATE_TEXTURE, n), a.app.removeEventListener(q.REQUEST_METHOD, r);
     };
   }, []), null;
 }
@@ -44531,7 +44528,7 @@ export {
   Ah as Spline,
   HN as SplineEditor,
   CP as ThreeEditor,
-  Y as ToolEvents,
+  q as ToolEvents,
   xt as Transform,
   dP as WebworkerEventHandlers,
   al as capitalize,
