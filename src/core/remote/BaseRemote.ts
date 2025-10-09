@@ -1,4 +1,4 @@
-import { Application, RemoteCall } from '../Application';
+import { Application } from '../Application';
 import type { BroadcastData } from '../types';
 
 /**
@@ -6,26 +6,45 @@ import type { BroadcastData } from '../types';
  */
 export default class BaseRemote {
   app: Application;
+  protected debug = false;
+  protected editor = false;
+  protected broadcastChannel?: BroadcastChannel;
 
-  constructor(app: Application) {
+  constructor(app: Application, debug = false, editor = false) {
     this.app = app;
-    this.app.appHandlers.push({ remote: this, callback: this.handleApp.bind(this) });
-    this.app.editorHandlers.push({ remote: this, callback: this.handleEditor.bind(this) });
+    this.debug = debug;
+    this.editor = editor;
+
+    if (!debug) return;
+    this.broadcastChannel = new BroadcastChannel('Hermes');
+    this.broadcastChannel.addEventListener('message', this.messageHandler);
   }
 
   dispose() {
-    const index = this.app.appHandlers.findIndex((rc: RemoteCall) => rc.remote === this);
-    if (index > -1) {
-      this.app.appHandlers.splice(index, 1);
-      this.app.editorHandlers.splice(index, 1);
-    }
+    this.broadcastChannel?.removeEventListener('message', this.messageHandler);
   }
 
-  handleApp(msg: BroadcastData) {
+  // Broadcast
+
+  protected send(data: BroadcastData) {
+    const send = (this.editor && data.target === 'app') || (!this.editor && data.target === 'editor');
+    if (send) this.broadcastChannel?.postMessage(data);
+  }
+
+  protected messageHandler = (evt: MessageEvent) => {
+    const data: BroadcastData = evt.data;
+    if (data.target === 'app') {
+      this.handleApp(data);
+    } else {
+      this.handleEditor(data);
+    }
+  };
+
+  protected handleApp(msg: BroadcastData) {
     //
   }
 
-  handleEditor(msg: BroadcastData) {
+  protected handleEditor(msg: BroadcastData) {
     //
   }
 }
