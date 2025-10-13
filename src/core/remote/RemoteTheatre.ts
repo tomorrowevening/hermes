@@ -6,6 +6,7 @@ import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
+import { Application } from '../Application';
 
 type KeyframeData = {
   position: number
@@ -63,6 +64,10 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
+
+  constructor(app: Application, debug = false, editor = false) {
+    super(app, 'RemoteTheatre', debug, editor);
+  }
 
   override dispose(): void {
     this.project = undefined;

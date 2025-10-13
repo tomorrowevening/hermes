@@ -6,22 +6,25 @@ import type { BroadcastData } from '../types';
  */
 export default class BaseRemote {
   app: Application;
+  name: string;
   protected debug = false;
   protected editor = false;
   protected broadcastChannel?: BroadcastChannel;
 
-  constructor(app: Application, debug = false, editor = false) {
+  constructor(app: Application, name: string, debug = false, editor = false) {
     this.app = app;
+    this.name = name;
     this.debug = debug;
     this.editor = editor;
 
     if (!debug) return;
-    this.broadcastChannel = new BroadcastChannel('Hermes');
+    this.broadcastChannel = new BroadcastChannel(name);
     this.broadcastChannel.addEventListener('message', this.messageHandler);
   }
 
   dispose() {
     this.broadcastChannel?.removeEventListener('message', this.messageHandler);
+    this.broadcastChannel?.close();
   }
 
   // Broadcast
