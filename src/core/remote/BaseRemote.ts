@@ -5,14 +5,14 @@ import type { BroadcastData } from '../types';
  */
 export default class BaseRemote {
   name: string;
-  protected debug = false;
-  protected editor = false;
+  protected _debug = false;
+  protected _editor = false;
   protected broadcastChannel?: BroadcastChannel;
 
   constructor(name: string, debug = false, editor = false) {
     this.name = name;
-    this.debug = debug;
-    this.editor = editor;
+    this._debug = debug;
+    this._editor = editor;
 
     if (!debug) return;
     this.broadcastChannel = new BroadcastChannel(name);
@@ -22,6 +22,14 @@ export default class BaseRemote {
   dispose() {
     this.broadcastChannel?.removeEventListener('message', this.messageHandler);
     this.broadcastChannel?.close();
+  }
+
+  get debug(): boolean {
+    return this._debug;
+  }
+
+  get editor(): boolean {
+    return this._editor;
   }
 
   // Broadcast
