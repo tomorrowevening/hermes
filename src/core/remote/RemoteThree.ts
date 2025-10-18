@@ -1,5 +1,5 @@
 import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
-import { ToolEvents } from '../Application';
+import { Application, ToolEvents } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
@@ -16,6 +16,10 @@ export default class RemoteThree extends BaseRemote {
   private renderTargetsResize: Map<string, boolean> = new Map();
   private groups = new Map<string, GroupCallback>();
 
+  constructor(app: Application, debug = false, editor = false) {
+    super(app, 'RemoteThree', debug, editor);
+  }
+
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
       dispose(scene);
@@ -31,9 +35,9 @@ export default class RemoteThree extends BaseRemote {
   }
 
   getObject(uuid: string) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
-    this.app.send({
+    this.send({
       event: 'getObject',
       target: 'app',
       data: uuid,
@@ -43,7 +47,7 @@ export default class RemoteThree extends BaseRemote {
   setObject(value: any) {
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     const stripped = stripObject(value);
-    this.app.send({
+    this.send({
       event: 'setObject',
       target: 'editor',
       data: stripped,
@@ -51,7 +55,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   requestMethod(uuid: string, key: string, value?: any, subitem?: string) {
-    this.app.send({
+    this.send({
       event: 'requestMethod',
       target: 'app',
       data: {
@@ -64,7 +68,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateObject(uuid: string, key: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'updateObject',
       target: 'app',
       data: {
@@ -76,7 +80,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   createTexture(uuid: string, key: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'createTexture',
       target: 'app',
       data: {
@@ -96,7 +100,7 @@ export default class RemoteThree extends BaseRemote {
       title: data.title,
       onUpdate: data.onUpdate,
     });
-    this.app.send({
+    this.send({
       event: 'addGroup',
       target: 'editor',
       data: JSON.stringify(data),
@@ -107,7 +111,7 @@ export default class RemoteThree extends BaseRemote {
     if (this.groups.get(name) === undefined) return;
 
     this.groups.delete(name);
-    this.app.send({
+    this.send({
       event: 'removeGroup',
       target: 'editor',
       data: name,
@@ -115,7 +119,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateGroup(group: string, prop: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'updateGroup',
       target: 'app',
       data: JSON.stringify({ group, prop, value }),
@@ -124,7 +128,7 @@ export default class RemoteThree extends BaseRemote {
 
   addSpline(spline: Curve<any>) {
     setTimeout(() => {
-      this.app.send({
+      this.send({
         event: 'addSpline',
         target: 'editor',
         data: JSON.stringify(spline.toJSON()),
@@ -139,10 +143,10 @@ export default class RemoteThree extends BaseRemote {
     this.canvas = value.domElement;
     this.inputElement = inputElement !== null ? inputElement : this.canvas;
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
 
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
-    this.app.send({
+    this.send({
       event: 'addRenderer',
       target: 'editor',
       data: {
@@ -163,7 +167,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateRenderer(data: any) {
-    this.app.send({
+    this.send({
       event: 'updateRenderer',
       target: 'app',
       data,
@@ -176,11 +180,11 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scenes.set(value.name, value);
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     resetThreeObjects();
     hierarchyUUID(value);
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'addScene',
       target: 'editor',
       data: stripped,
@@ -188,11 +192,11 @@ export default class RemoteThree extends BaseRemote {
   }
 
   refreshScene(value: string) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const scene = this.scenes.get(value);
     if (scene !== undefined) {
       const stripped = stripScene(scene);
-      this.app.send({
+      this.send({
         event: 'refreshScene',
         target: 'app',
         data: stripped,
@@ -204,9 +208,9 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scenes.delete(value.name);
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'removeScene',
       target: 'editor',
       data: stripped,
@@ -229,12 +233,12 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scene = value;
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     resetThreeObjects();
     hierarchyUUID(value);
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'setScene',
       target: 'editor',
       data: stripped,
@@ -244,9 +248,9 @@ export default class RemoteThree extends BaseRemote {
   // Cameras
 
   addCamera(camera: Camera) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripObject(camera);
-    this.app.send({
+    this.send({
       event: 'addCamera',
       target: 'editor',
       data: stripped,
@@ -254,9 +258,9 @@ export default class RemoteThree extends BaseRemote {
   }
 
   removeCamera(camera: Camera) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripObject(camera);
-    this.app.send({
+    this.send({
       event: 'removeCamera',
       target: 'editor',
       data: stripped,
@@ -278,7 +282,7 @@ export default class RemoteThree extends BaseRemote {
         this.app.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
         break;
       case 'refreshScene':
-        this.app.send({
+        this.send({
           event: 'refreshScene',
           target: 'editor',
           data: stripScene(this.scenes.get(msg.data.name)!),
