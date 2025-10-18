@@ -12,7 +12,6 @@ export * from './core/Application';
 export { default as AppRunner } from './core/AppRunner';
 export { default as BaseScene } from './core/BaseScene';
 export { default as BaseRemote } from './core/remote/BaseRemote';
-export { default as RemoteComponents } from './core/remote/RemoteComponents';
 export * from './editor/theatreUtils';
 export { default as RemoteTheatre } from './core/remote/RemoteTheatre';
 export { default as RemoteThree } from './core/remote/RemoteThree';

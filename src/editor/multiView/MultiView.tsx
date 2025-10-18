@@ -64,6 +64,7 @@ type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLigh
 
 type MultiViewProps = {
   app: Application
+  name: string;
   three: RemoteThree;
   scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
@@ -78,7 +79,6 @@ type MultiViewState = {
   interactionMode: InteractionMode;
   interactionModeOpen: boolean;
   lastUpdate: number;
-  connected: boolean;
 }
 
 const ModeOptions: MultiViewMode[] = [
@@ -108,7 +108,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   currentCamera!: PerspectiveCamera | OrthographicCamera;
   currentWindow: any; // RefObject to one of the "windows"
   helpersContainer = new Group();
-
+  private name: string;
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
   private grid = new InfiniteGridHelper();
@@ -180,6 +180,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app = props.app;
     this.app.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
 
+    this.name = props.name;
+
     this.scene = new Scene();
     this.scene.name = this.scene.uuid = '';
 
@@ -192,7 +194,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.brWindow = createRef<HTMLDivElement>();
 
     // States
-    const appID = props.three.app.appID;
+    const appID = props.name;
     const ls = localStorage;
     const savedMode = ls.getItem(`${appID}_mode`);
 
@@ -203,7 +205,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       interactionMode: 'Orbit',
       interactionModeOpen: false,
       lastUpdate: Date.now(),
-      connected: false,
     };
 
     // Save Local Storage
@@ -541,8 +542,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           />
 
         </div>
-
-        {!this.state.connected && <div className='connectionStatus'>Not Connected</div>}
       </div>
     );
   }
@@ -623,7 +622,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.currentCamera = this.debugCamera;
 
     const ls = localStorage;
-    const appID = this.props.three.app.appID;
+    const appID = this.name;
     this.tlCam = this.cameras.get(ls.getItem(`${appID}_tlCam`) as string);
     this.trCam = this.cameras.get(ls.getItem(`${appID}_trCam`) as string);
     this.blCam = this.cameras.get(ls.getItem(`${appID}_blCam`) as string);
@@ -1441,7 +1440,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Getters
 
   get appID(): string {
-    return this.props.three.app.appID;
+    return this.name;
   }
 
   get mode(): MultiViewMode {

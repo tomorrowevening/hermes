@@ -7,6 +7,7 @@ import SidePanel from './sidePanel/SidePanel';
 
 interface ThreeEditorProps {
   app: Application
+  name: string
   three: RemoteThree
   scenes: Map<string, any>
   onSceneSet?: (scene: Scene) => void
@@ -20,6 +21,7 @@ export default function ThreeEditor(props: ThreeEditorProps) {
       <>
         <MultiView
           app={props.app}
+          name={props.name}
           three={props.three}
           scenes={props.scenes}
           onSceneResize={props.onSceneResize}
