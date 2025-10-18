@@ -2,7 +2,7 @@ import { Component, ReactNode } from 'react';
 import { Camera, Group, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
 type MultiViewProps = {

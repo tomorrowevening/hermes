@@ -1,5 +1,5 @@
 import { Scene } from 'three';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../core/remote/RemoteThree';
 interface ThreeEditorProps {
     three: RemoteThree;
     onSceneSet?: (scene: Scene) => void;

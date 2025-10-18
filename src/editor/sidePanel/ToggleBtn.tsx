@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { capitalize } from '@/editor/utils';
+import { capitalize } from '../../editor/utils';
 
 type ToggleBtnProps = {
   expanded: boolean

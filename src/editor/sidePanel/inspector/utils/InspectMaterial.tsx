@@ -34,10 +34,10 @@ import {
 } from 'three';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteMaterial, RemoteObject } from '../../types';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../../../core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 import { KeyboardEvent } from 'react';
-import { OptionInfo } from '@/core/types';
+import { OptionInfo } from '../../../../core/types';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(

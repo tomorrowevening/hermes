@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { clamp, mix, normalize, round } from '@/utils/math';
+import { clamp, mix, normalize, round } from '../../../utils/math';
 import DragNumber from './utils/DragNumber';
-import { randomID } from '@/editor/utils';
+import { randomID } from '../../utils';
 
 interface InspectVector2Props {
   min: number

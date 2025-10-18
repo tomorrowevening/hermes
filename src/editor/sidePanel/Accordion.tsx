@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { capitalize } from '@/editor/utils';
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
+import { capitalize } from '../../editor/utils';
+import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 
 type AccordionProps = {
   three: RemoteThree;

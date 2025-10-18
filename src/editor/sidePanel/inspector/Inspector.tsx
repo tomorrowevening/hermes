@@ -10,8 +10,8 @@ import { InspectMaterial } from './utils/InspectMaterial';
 import { InspectTransform } from './utils/InspectTransform';
 import { InspectLight } from './utils/InspectLight';
 import InspectAnimation from './utils/InspectAnimation';
-import Transform from '@/editor/tools/Transform';
-import { ToolEvents } from '@/core/remote/RemoteThree';
+import Transform from '../../../editor/tools/Transform';
+import { ToolEvents } from '../../../core/remote/RemoteThree';
 
 const defaultObject: RemoteObject = {
   name: '',

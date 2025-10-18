@@ -2,10 +2,10 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 // Remote
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils
-import { dispose } from '@/utils/three';
+import { dispose } from '../../utils/three';
 
 export default class Transform extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart';

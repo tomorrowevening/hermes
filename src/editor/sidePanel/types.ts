@@ -1,4 +1,4 @@
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../core/remote/RemoteThree';
 import { Color } from 'three';
 
 export interface CoreComponentProps {

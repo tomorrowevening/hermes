@@ -1,9 +1,9 @@
 import { Camera, Color, ColorManagement, Curve, EventDispatcher, EventListener, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
-import { stripObject, stripScene } from '@/editor/sidePanel/utils';
-import { clamp } from '@/utils/math';
-import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/utils/three';
+import { stripObject, stripScene } from '../../editor/sidePanel/utils';
+import { clamp } from '../../utils/math';
+import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '../../utils/three';
 
 export enum ToolEvents {
   CUSTOM = 'ToolEvents::custom',

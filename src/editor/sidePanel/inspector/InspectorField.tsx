@@ -1,13 +1,13 @@
-import { colorToHex, randomID } from '@/editor/utils';
+import { colorToHex, randomID } from '../../../editor/utils';
 import { KeyboardEvent, useRef, useState } from 'react';
-import { capitalize } from '@/editor/utils';
+import { capitalize } from '../../../editor/utils';
 import InspectNumber from './InspectNumber';
 import InspectVector2 from './InspectVector2';
 import InspectGrid3 from './InspectGrid3';
 import InspectGrid4 from './InspectGrid4';
 import InspectImage from './InspectImage';
 import { Color, LinearSRGBColorSpace } from 'three';
-import { OptionInfo } from '@/core/types';
+import { OptionInfo } from '../../../core/types';
 
 export type InspectorFieldType = 'string' |
   'field' |

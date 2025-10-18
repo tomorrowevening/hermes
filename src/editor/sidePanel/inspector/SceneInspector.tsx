@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Scene, Texture } from 'three';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../../core/remote/RemoteThree';
 import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {

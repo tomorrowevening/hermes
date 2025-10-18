@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { uploadLocalImage } from './utils/InspectMaterial';
-import { noImage } from '@/editor/components/content';
-import { randomID } from '@/editor/utils';
+import { noImage } from '../../../editor/components/content';
+import { randomID } from '../../../editor/utils';
 
 type InspectImageProps = {
   title: string;

@@ -1,7 +1,7 @@
 import { Euler, Matrix4, Vector3 } from 'three';
 import { Component, ReactNode } from 'react';
 import { RemoteObject } from '../../types';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../../../core/remote/RemoteThree';
 type InspectTransformProps = {
     object: RemoteObject;
     three: RemoteThree;

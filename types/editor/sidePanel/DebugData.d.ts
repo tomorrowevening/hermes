@@ -1,6 +1,6 @@
 import { Component, ReactNode, RefObject } from 'react';
-import RemoteThree from '@/core/remote/RemoteThree';
-import { GroupData } from '@/core/types';
+import RemoteThree from '../../core/remote/RemoteThree';
+import { GroupData } from '../../core/types';
 import InspectorGroup from './inspector/InspectorGroup';
 interface DebugDataProps {
     three: RemoteThree;

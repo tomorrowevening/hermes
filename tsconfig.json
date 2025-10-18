@@ -21,14 +21,6 @@
     "useDefineForClassFields": true,
     "noImplicitAny": false,
     "baseUrl": "./",
-    "paths": {
-      "@": [
-        "src"
-      ],
-      "@/*": [
-        "src/*"
-      ]
-    },
     "types": [
       "vite-plugin-glsl/ext"
     ]

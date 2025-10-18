@@ -1,9 +1,9 @@
 import { Component, createRef, KeyboardEvent, ReactNode, RefObject } from 'react';
 import Accordion from '../Accordion';
 import InspectorField, { InspectorFieldProps } from './InspectorField';
-import { capitalize } from '@/editor/utils';
-import { GroupData, GroupItemData } from '@/core/types';
-import RemoteThree from '@/core/remote/RemoteThree';
+import { capitalize } from '../../../editor/utils';
+import { GroupData, GroupItemData } from '../../../core/types';
+import RemoteThree from '../../../core/remote/RemoteThree';
 
 function isGroup(obj: any): obj is InspectorGroupProps {
   return 'items' in obj;

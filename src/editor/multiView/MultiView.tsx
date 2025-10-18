@@ -41,7 +41,7 @@ import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHel
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils';
 import CameraControls from 'camera-controls';
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
@@ -55,9 +55,9 @@ import UVMaterial from './UVMaterial';
 import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
-import { mix } from '@/utils/math';
+import { mix } from '../../utils/math';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { dispose } from '@/utils/three';
+import { dispose } from '../../utils/three';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 

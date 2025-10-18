@@ -1,5 +1,5 @@
 import { Color } from 'three';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../../../core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';

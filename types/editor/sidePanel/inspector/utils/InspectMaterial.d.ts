@@ -1,5 +1,5 @@
 import { RemoteMaterial, RemoteObject } from '../../types';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../../../core/remote/RemoteThree';
 export declare function acceptedMaterialNames(name: string): boolean;
 export declare function imageNames(name: string): string;
 export declare function prettyName(name: string): string;

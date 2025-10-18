@@ -3,9 +3,9 @@ import { Component, ReactNode } from 'react';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';
-import MultiView from '@/editor/multiView/MultiView';
-import RemoteThree from '@/core/remote/RemoteThree';
-import { round } from '@/utils/math';
+import MultiView from '../../../multiView/MultiView';
+import RemoteThree from '../../../../core/remote/RemoteThree';
+import { round } from '../../../../utils/math';
 
 type InspectTransformProps = {
   object: RemoteObject;

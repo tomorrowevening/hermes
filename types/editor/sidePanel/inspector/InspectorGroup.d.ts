@@ -1,7 +1,7 @@
 import { Component, ReactNode, RefObject } from 'react';
 import { InspectorFieldProps } from './InspectorField';
-import { GroupData } from '@/core/types';
-import RemoteThree from '@/core/remote/RemoteThree';
+import { GroupData } from '../../../core/types';
+import RemoteThree from '../../../core/remote/RemoteThree';
 export interface InspectorGroupProps {
     three: RemoteThree;
     title: string;

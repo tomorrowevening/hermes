@@ -1,10 +1,10 @@
 import { Camera, CatmullRomCurve3, Object3D, OrthographicCamera, Raycaster, Vector2, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
-import DebugData from '@/editor/sidePanel/DebugData';
-import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
-import MultiView from '@/editor/multiView/MultiView';
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
+import DebugData from '../../sidePanel/DebugData';
+import InspectorGroup from '../../sidePanel/inspector/InspectorGroup';
+import MultiView from '../../multiView/MultiView';
+import RemoteThree, { ToolEvents } from '../../../core/remote/RemoteThree';
 
 let splinesCreated = 0;
 

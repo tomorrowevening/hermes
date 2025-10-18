@@ -1,12 +1,11 @@
-import RemoteThree from '@/core/remote/RemoteThree';
-import { GroupItemData } from '@/core/types';
-import { EffectComposer, EffectPass, RenderPass, ShaderPass } from 'postprocessing';
+import RemoteThree from '../core/remote/RemoteThree';
+import { GroupItemData } from '../core/types';
 import { ExportTexture } from './three';
 import { PerspectiveCamera, RGBAFormat, ShaderMaterial, Texture, WebGLRenderer, WebGLRenderTarget } from 'three';
 
 let addedComposerGroups: string[] = [];
 
-export function inspectComposer(composer: EffectComposer, three: RemoteThree) {
+export function inspectComposer(composer: any, three: RemoteThree) {
   ExportTexture.renderer = three.renderer;
 
   composer.passes.forEach((pass) => {
@@ -20,7 +19,7 @@ export function inspectComposer(composer: EffectComposer, three: RemoteThree) {
       console.log('Default Handle Pass:', prop, value);
     };
 
-    if (pass instanceof EffectPass) {
+    if (pass.name === 'EffectPass') {
       // @ts-ignore
       pass.effects.forEach((effect, effIndex) => {
         if (effect.uniforms.size > 0) {
@@ -92,7 +91,7 @@ export function inspectComposer(composer: EffectComposer, three: RemoteThree) {
         });
       };
 
-    } else if (pass instanceof ShaderPass) {
+    } else if (pass.name === 'ShaderPass') {
       const mat = pass.fullscreenMaterial as ShaderMaterial;
       for (const key in mat.uniforms) {
         const uniform = mat.uniforms[key];
@@ -182,7 +181,7 @@ type FaceName = 'px' | 'nx' | 'py' | 'ny' | 'pz' | 'nz';
 export function generateCubemap(
   renderer: WebGLRenderer,
   camera: PerspectiveCamera,
-  composer: EffectComposer,
+  composer: any,
   size = 1024
 ): Promise<void> {
   return new Promise((resolve) => {
@@ -229,7 +228,7 @@ function generateCubemapFace(
   renderTarget: WebGLRenderTarget,
   camera: PerspectiveCamera,
   face: FaceName,
-  composer: EffectComposer,
+  composer: any,
   size: number
 ): Promise<void> {
   return new Promise((resolve) => {

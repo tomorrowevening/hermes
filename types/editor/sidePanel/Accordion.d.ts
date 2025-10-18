@@ -1,4 +1,4 @@
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../core/remote/RemoteThree';
 type AccordionProps = {
     three: RemoteThree;
     label: string;

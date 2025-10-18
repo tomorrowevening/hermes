@@ -1,5 +1,5 @@
 import BaseRemote from './remote/BaseRemote';
-import { AppSettings, detectSettings } from '@/utils/detectSettings';
+import { AppSettings, detectSettings } from '../utils/detectSettings';
 
 export class Application {
   assets = {

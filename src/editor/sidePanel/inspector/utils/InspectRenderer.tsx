@@ -17,9 +17,9 @@ import {
   ToneMapping,
   WebGLRenderer,
 } from 'three';
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '../../../../core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
-import MultiView from '@/editor/multiView/MultiView';
+import MultiView from '../../../multiView/MultiView';
 
 type InspectRendererProps = {
   three: RemoteThree;

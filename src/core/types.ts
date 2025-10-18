@@ -1,6 +1,6 @@
 // Interfaces
 
-import { InspectorFieldType } from '@/editor/sidePanel/inspector/InspectorField';
+import { InspectorFieldType } from '../editor/sidePanel/inspector/InspectorField';
 
 export interface BroadcastData {
   target: ApplicationMode

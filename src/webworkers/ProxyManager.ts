@@ -1,5 +1,5 @@
 import { EventDispatcher } from 'three';
-import { noop } from '@/core/types';
+import { noop } from '../core/types';
 
 /**
  * Code referenced from:

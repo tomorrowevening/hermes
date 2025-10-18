@@ -1,6 +1,6 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree from '../../core/remote/RemoteThree';
 export default class Transform extends EventDispatcher {
     static DRAG_START: string;
     static DRAG_END: string;

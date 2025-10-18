@@ -19,15 +19,14 @@ import { lerp } from 'three/src/math/MathUtils';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { RefObject } from 'react';
 // Tools
-import MultiView from '@/editor/multiView/MultiView';
+import MultiView from '../../multiView/MultiView';
 import Transform from '../Transform';
-import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
+import InspectorGroup from '../../sidePanel/inspector/InspectorGroup';
 // Utils
 import { copyToClipboard } from '../../utils';
-import { round } from '@/utils/math';
-import { dispose } from '@/utils/three';
+import { round } from '../../../utils/math';
+import { dispose } from '../../../utils/three';
 import SplineEditor from '.';
-import { js } from 'three/src/nodes/TSL';
 
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal';
 

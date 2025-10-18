@@ -1,8 +1,8 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { InspectorFieldType } from './InspectorField';
 import DragNumber from './utils/DragNumber';
-import { noop } from '@/core/types';
-import { randomID } from '@/editor/utils';
+import { noop } from '../../../core/types';
+import { randomID } from '../../../editor/utils';
 
 export interface InspectNumberProps {
   alt?: string

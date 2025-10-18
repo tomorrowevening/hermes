@@ -1,8 +1,8 @@
 // Libs
 import { Component, createRef, ReactNode, RefObject } from 'react';
 // Models
-import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
-import { GroupData, GroupItemData } from '@/core/types';
+import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
+import { GroupData, GroupItemData } from '../../core/types';
 // Components
 import InspectorGroup from './inspector/InspectorGroup';
 import { InspectorFieldProps } from './inspector/InspectorField';
