@@ -11,11 +11,11 @@ export default function AppWrapper() {
   const [app, setApp] = useState<Application | null>(null);
 
   useEffect(() => {
-    const instance = new Application('ws://localhost:8080');
+    const instance = new Application();
     instance.detectSettings(IS_DEV, IS_EDITOR).then(() => {
       if (IS_DEV) instance.setupRemote();
-      instance.addComponent('theatre', new RemoteTheatre(instance));
-      instance.addComponent('three', new RemoteThree(instance));
+      instance.addComponent('theatre', new RemoteTheatre(instance, IS_DEV, IS_EDITOR));
+      instance.addComponent('three', new RemoteThree(instance, IS_DEV, IS_EDITOR));
       setApp(instance);
     });
   }, []);
