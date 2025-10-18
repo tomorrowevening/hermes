@@ -5,10 +5,8 @@ import InspectorGroup from '../InspectorGroup';
 import { AnimationClipInfo, RemoteObject } from '../../types';
 import MultiView from '@/editor/multiView/MultiView';
 import { dispose } from '@/utils/three';
-import { Application } from '@/core/Application';
 
 type InspectAnimationProps = {
-  app: Application
   object: RemoteObject;
   three: RemoteThree;
 }
@@ -17,7 +15,7 @@ export default function InspectAnimation(props: InspectAnimationProps) {
   const object = props.object;
   const three = props.three;
   function expandedName(): string {
-    return `${three.app.appID}_animation`;
+    return `${three.name}_animation`;
   }
 
   const expandedValue = localStorage.getItem(expandedName());
@@ -116,7 +114,7 @@ export default function InspectAnimation(props: InspectAnimationProps) {
 
   return (
     <InspectorGroup
-      app={props.app}
+      three={props.three}
       title='Animation'
       items={items}
       expanded={expanded}

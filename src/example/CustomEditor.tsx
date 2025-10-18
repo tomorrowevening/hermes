@@ -27,8 +27,6 @@ export default function CustomEditor(props: CustomEditorProps) {
 
   return (
     <ThreeEditor
-      app={props.app}
-      name='Hermes Example'
       three={props.app.components.get('three') as RemoteThree}
       scenes={scenes}
       onSceneSet={(scene: any) => {

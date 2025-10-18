@@ -139,10 +139,11 @@ export default function SceneInspector(props: SceneInspectorProps) {
       }
     };
 
-    const broadcastChannel = new BroadcastChannel('Hermes');
+    const broadcastChannel = new BroadcastChannel('RemoteThree');
     broadcastChannel.addEventListener('message', messageHandler);
     return () => {
       broadcastChannel.removeEventListener('message', messageHandler);
+      broadcastChannel.close();
     };
   }, []);
 

@@ -3,7 +3,6 @@ import RemoteThree from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import { RemoteObject } from '../../types';
 import { setItemProps } from '../../utils';
-import { Application } from '@/core/Application';
 
 function prettyName(value: string): string {
   switch (value) {
@@ -20,9 +19,9 @@ function prettyName(value: string): string {
   return value;
 }
 
-export function InspectLight(object: RemoteObject, app: Application, three: RemoteThree) {
+export function InspectLight(object: RemoteObject, three: RemoteThree) {
   function expandedName(): string {
-    return `${three.app.appID}_light`;
+    return `${three.name}_light`;
   }
 
   const expandedValue = localStorage.getItem(expandedName());
@@ -81,7 +80,7 @@ export function InspectLight(object: RemoteObject, app: Application, three: Remo
   }
   return (
     <InspectorGroup
-      app={app}
+      three={three}
       title='Light'
       items={items}
       expanded={expanded}

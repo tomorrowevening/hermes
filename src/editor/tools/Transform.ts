@@ -2,8 +2,7 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 // Remote
-import { Application, ToolEvents } from '@/core/Application';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';
 // Utils
 import { dispose } from '@/utils/three';
@@ -14,17 +13,15 @@ export default class Transform extends EventDispatcher {
 
   private static _instance: Transform;
 
-  app!: Application;
   three!: RemoteThree;
   activeCamera!: Camera;
   controls: Map<string, TransformControls> = new Map();
 
   private visibility: Map<string, boolean> = new Map();
 
-  setApp(app: Application, three: RemoteThree) {
-    this.app = app;
+  setApp(three: RemoteThree) {
     this.three = three;
-    this.app.addEventListener(ToolEvents.SET_SCENE, this.setScene);
+    this.three.addEventListener(ToolEvents.SET_SCENE, this.setScene);
   }
 
   clear(): void {

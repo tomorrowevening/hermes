@@ -1,7 +1,6 @@
 // Libs
 import { useEffect, useState } from 'react';
 // Models
-import { ToolEvents } from '@/core/Application';
 import { RemoteObject, SidePanelState } from './types';
 // Components
 import '../scss/sidePanel.scss';
@@ -10,6 +9,7 @@ import ContainerObject from './ContainerObject';
 import DebugData from './DebugData';
 import Inspector from './inspector/Inspector';
 import InspectRenderer from './inspector/utils/InspectRenderer';
+import { ToolEvents } from '../../core/remote/RemoteThree';
 
 export default function SidePanel(props: SidePanelState) {
   const [scenes] = useState<RemoteObject[]>([]);
@@ -21,7 +21,7 @@ export default function SidePanel(props: SidePanelState) {
     scenes.push(scene);
     sceneComponents.push(
       <Accordion
-        app={props.app}
+        three={props.three}
         label={`Scene: ${scene.name}`}
         scene={scene}
         open={true}
@@ -30,7 +30,7 @@ export default function SidePanel(props: SidePanelState) {
           props.three.refreshScene(scene.name);
         }}
       >
-        <ContainerObject app={props.app} child={scene} scene={scene} three={props.three} />
+        <ContainerObject child={scene} scene={scene} three={props.three} />
       </Accordion>
     );
     setLastUpdate(Date.now());
@@ -43,7 +43,7 @@ export default function SidePanel(props: SidePanelState) {
         scenes[i] = scene;
         sceneComponents[i] = (
           <Accordion
-            app={props.app}
+            three={props.three}
             label={`Scene: ${scene.name}`}
             scene={scene}
             open={true}
@@ -52,7 +52,7 @@ export default function SidePanel(props: SidePanelState) {
               props.three.refreshScene(scene.name);
             }}
           >
-            <ContainerObject app={props.app} child={scene} scene={scene} three={props.three} />
+            <ContainerObject child={scene} scene={scene} three={props.three} />
           </Accordion>
         );
         setLastUpdate(Date.now());
@@ -74,13 +74,13 @@ export default function SidePanel(props: SidePanelState) {
   };
 
   useEffect(() => {
-    props.app.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
-    props.app.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
-    props.app.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
+    props.three.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
+    props.three.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
+    props.three.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     return () => {
-      props.app.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
-      props.app.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
-      props.app.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
+      props.three.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
+      props.three.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
+      props.three.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     };
   }, []);
 
@@ -89,9 +89,9 @@ export default function SidePanel(props: SidePanelState) {
       <div className='scenes' key={lastUpdate}>
         {sceneComponents}
       </div>
-      <Inspector app={props.app} three={props.three} />
-      <InspectRenderer app={props.app} three={props.three} />
-      <DebugData app={props.app} three={props.three} />
+      <Inspector three={props.three} />
+      <InspectRenderer three={props.three} />
+      <DebugData three={props.three} />
     </div>
   );
 }

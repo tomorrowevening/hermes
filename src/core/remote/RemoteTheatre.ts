@@ -1,12 +1,10 @@
 // Libs
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
 // Core
-// import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
 import { isColor } from '../../editor/utils';
-import { Application } from '../Application';
 
 type KeyframeData = {
   position: number
@@ -65,8 +63,8 @@ export default class RemoteTheatre extends BaseRemote {
   activeSheet: ISheet | undefined;
   studio: any = undefined;
 
-  constructor(app: Application, debug = false, editor = false) {
-    super(app, 'RemoteTheatre', debug, editor);
+  constructor(debug = false, editor = false) {
+    super('RemoteTheatre', debug, editor);
   }
 
   override dispose(): void {

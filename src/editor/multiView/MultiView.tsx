@@ -41,11 +41,10 @@ import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHel
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils';
 import CameraControls from 'camera-controls';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
-import { Application, ToolEvents } from '@/core/Application';
 // Components
 import './MultiView.scss';
 import DebugData from '../sidePanel/DebugData';
@@ -63,10 +62,7 @@ import { dispose } from '@/utils/three';
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
 
 type MultiViewProps = {
-  app: Application
-  name: string;
   three: RemoteThree;
-  scenes: Map<string, any>;
   onSceneSet?: (scene: Scene) => void;
   onSceneUpdate?: (scene: Scene) => void;
   onSceneResize?: (scene: Scene, width: number, height: number) => void;
@@ -98,7 +94,6 @@ const gridIcon = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACp
 export default class MultiView extends Component<MultiViewProps, MultiViewState> {
   static instance: MultiView | null = null;
 
-  app: Application;
   scene: Scene;
   renderer?: WebGLRenderer | WebGPURenderer | null;
   currentScene?: Scene;
@@ -108,7 +103,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   currentCamera!: PerspectiveCamera | OrthographicCamera;
   currentWindow: any; // RefObject to one of the "windows"
   helpersContainer = new Group();
-  private name: string;
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
   private grid = new InfiniteGridHelper();
@@ -177,10 +171,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   constructor(props: MultiViewProps) {
     super(props);
 
-    this.app = props.app;
-    this.app.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
-
-    this.name = props.name;
+    this.props.three.addEventListener(ToolEvents.ADD_RENDERER, this.setupRenderer);
 
     this.scene = new Scene();
     this.scene.name = this.scene.uuid = '';
@@ -194,7 +185,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.brWindow = createRef<HTMLDivElement>();
 
     // States
-    const appID = props.name;
+    const appID = props.three.name;
     const ls = localStorage;
     const savedMode = ls.getItem(`${appID}_mode`);
 
@@ -256,7 +247,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.resize();
     this.play();
 
-    Transform.instance.setApp(this.props.app, this.props.three);
+    Transform.instance.setApp(this.props.three);
     Transform.instance.activeCamera = this.debugCamera;
   }
 
@@ -622,7 +613,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.currentCamera = this.debugCamera;
 
     const ls = localStorage;
-    const appID = this.name;
+    const appID = this.props.three.name;
     this.tlCam = this.cameras.get(ls.getItem(`${appID}_tlCam`) as string);
     this.trCam = this.cameras.get(ls.getItem(`${appID}_trCam`) as string);
     this.blCam = this.cameras.get(ls.getItem(`${appID}_blCam`) as string);
@@ -636,7 +627,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   private setupTools() {
-    this.splineEditor = new SplineEditor(this.currentCamera, this.app);
+    this.splineEditor = new SplineEditor(this.currentCamera, this.three);
     this.splineEditor.initDebug();
     this.helpersContainer.add(this.splineEditor);
   }
@@ -661,7 +652,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   clear() {
-    this.app.dispatchEvent({ type: ToolEvents.CLEAR_OBJECT });
+    this.three.dispatchEvent({ type: ToolEvents.CLEAR_OBJECT });
     DebugData.removeAllGroups();
 
     // Helpers
@@ -680,7 +671,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.cameras.forEach((value: Camera) => {
       const index = this.editorCameras.indexOf(value.name);
       if (index < 0) {
-        this.app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value });
+        this.three.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value });
       }
     });
     this.currentCamera = this.debugCamera;
@@ -688,7 +679,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     // Clear Scenes
     this.currentScene = undefined;
     this.scenes.forEach((value: Scene) => {
-      this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value });
+      this.three.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value });
     });
     this.scenes.clear();
   }
@@ -751,12 +742,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.addEventListener('click', this.onClick);
     window.addEventListener('keydown', this.onKey);
     window.addEventListener('resize', this.resize);
-    this.app.addEventListener(ToolEvents.ADD_SCENE, this.addScene);
-    this.app.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
-    this.app.addEventListener(ToolEvents.REMOVE_SCENE, this.removeScene);
-    this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
-    this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
-    this.app.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.three.addEventListener(ToolEvents.ADD_SCENE, this.addScene);
+    this.three.addEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.three.addEventListener(ToolEvents.REMOVE_SCENE, this.removeScene);
+    this.three.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    this.three.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    this.three.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
   }
 
   private disable() {
@@ -765,11 +756,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     element.removeEventListener('click', this.onClick);
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('resize', this.resize);
-    this.app.removeEventListener(ToolEvents.ADD_SCENE, this.addScene);
-    this.app.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
-    this.app.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
-    this.app.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
-    this.app.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
+    this.three.removeEventListener(ToolEvents.ADD_SCENE, this.addScene);
+    this.three.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.three.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
+    this.three.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
+    this.three.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
   }
 
   private resize = () => {
@@ -824,9 +815,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   };
 
   private addScene = (evt: any) => {
-    const sceneClass = this.props.scenes.get(evt.value.name);
+    const sceneClass = this.props.three.scenes.get(evt.value.name);
     if (sceneClass !== undefined) {
-      const sceneInstance = new sceneClass();
+      const sceneInstance = new (sceneClass as any)();
       sceneInstance.visible = false;
       if (this.props.onSceneSet !== undefined) this.props.onSceneSet(sceneInstance);
       this.props.three.scene = sceneInstance;
@@ -1440,7 +1431,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Getters
 
   get appID(): string {
-    return this.name;
+    return this.props.three.name;
   }
 
   get mode(): MultiViewMode {

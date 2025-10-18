@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Application, ToolEvents } from '@/core/Application';
 import { CoreComponentProps, RemoteObject } from '../types';
 // Components
 import './inspector.scss';
@@ -12,6 +11,7 @@ import { InspectTransform } from './utils/InspectTransform';
 import { InspectLight } from './utils/InspectLight';
 import InspectAnimation from './utils/InspectAnimation';
 import Transform from '@/editor/tools/Transform';
+import { ToolEvents } from '@/core/remote/RemoteThree';
 
 const defaultObject: RemoteObject = {
   name: '',
@@ -39,13 +39,13 @@ export default function Inspector(props: CoreComponentProps) {
       setCurrentObject(defaultObject);
     }
 
-    props.app.addEventListener(ToolEvents.CLEAR_OBJECT, setScene);
-    props.app.addEventListener(ToolEvents.SET_SCENE, setScene);
-    props.app.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
+    props.three.addEventListener(ToolEvents.CLEAR_OBJECT, setScene);
+    props.three.addEventListener(ToolEvents.SET_SCENE, setScene);
+    props.three.addEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     return () => {
-      props.app.removeEventListener(ToolEvents.CLEAR_OBJECT, setScene);
-      props.app.removeEventListener(ToolEvents.SET_SCENE, setScene);
-      props.app.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
+      props.three.removeEventListener(ToolEvents.CLEAR_OBJECT, setScene);
+      props.three.removeEventListener(ToolEvents.SET_SCENE, setScene);
+      props.three.removeEventListener(ToolEvents.SET_OBJECT, onSelectItem);
     };
   }, []);
 
@@ -58,7 +58,7 @@ export default function Inspector(props: CoreComponentProps) {
 
   return (
     <Accordion
-      app={props.app}
+      three={props.three}
       label='Inspector'
       key='Inspector'
       button={
@@ -101,15 +101,15 @@ export default function Inspector(props: CoreComponentProps) {
             {/* Data */}
             <>
               {/* Transform */}
-              <InspectTransform object={currentObject} app={props.app} three={props.three} />
+              <InspectTransform object={currentObject} three={props.three} />
               {/* Animations */}
-              {hasAnimation ? <InspectAnimation app={props.app} object={currentObject} three={props.three} /> : null}
+              {hasAnimation ? <InspectAnimation object={currentObject} three={props.three} /> : null}
               {/* Cameras */}
-              {objType.search('camera') > -1 ? InspectCamera(currentObject, props.app, props.three) : null}
+              {objType.search('camera') > -1 ? InspectCamera(currentObject, props.three) : null}
               {/* Lights */}
-              {objType.search('light') > -1 ? InspectLight(currentObject, props.app, props.three) : null}
+              {objType.search('light') > -1 ? InspectLight(currentObject, props.three) : null}
               {/* Material */}
-              {hasMaterial ? InspectMaterial(currentObject, props.app, props.three) : null}
+              {hasMaterial ? InspectMaterial(currentObject, props.three) : null}
             </>
           </>
         )}

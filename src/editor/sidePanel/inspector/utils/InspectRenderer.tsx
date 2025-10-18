@@ -17,13 +17,11 @@ import {
   ToneMapping,
   WebGLRenderer,
 } from 'three';
-import { Application, ToolEvents } from '@/core/Application';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 import InspectorGroup from '../InspectorGroup';
 import MultiView from '@/editor/multiView/MultiView';
 
 type InspectRendererProps = {
-  app: Application
   three: RemoteThree;
 }
 
@@ -35,7 +33,6 @@ type InspectRendererState = {
 
 export default class InspectRenderer extends Component<InspectRendererProps, InspectRendererState> {
   // Renderer
-  private app: Application;
   private autoClear = true;
   private autoClearColor = true;
   private autoClearDepth = true;
@@ -50,7 +47,6 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
 
   constructor(props: InspectRendererProps) {
     super(props);
-    this.app = props.app;
 
     const expandedValue = localStorage.getItem(this.expandedName);
     const expanded = expandedValue !== null ? expandedValue === 'open' : false;
@@ -79,11 +75,11 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
       }
     }
 
-    this.app.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
+    this.props.three.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
   componentwillunmount() {
-    this.app.removeEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
+    this.props.three.removeEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
   private onAddRenderer = (evt: any) => {
@@ -154,7 +150,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
 
     return (
       <InspectorGroup
-        app={this.app}
+        three={this.props.three}
         key={Math.random()}
         title='Renderer'
         expanded={this.state.expanded}
@@ -331,6 +327,6 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
   }
 
   get expandedName(): string {
-    return `${this.props.three.app.appID}_renderer`;
+    return `${this.props.three.name}_renderer`;
   }
 }

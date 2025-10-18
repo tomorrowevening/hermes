@@ -18,7 +18,7 @@ export default function ChildObject(props: ChildObjectProps) {
   const children: Array<any> = [];
   if (props.child.children.length > 0) {
     props.child.children.map((child: RemoteObject, index: number) => {
-      children.push(<ChildObject app={props.app} child={child} key={index} three={props.three} />);
+      children.push(<ChildObject child={child} key={index} three={props.three} />);
     });
   }
 

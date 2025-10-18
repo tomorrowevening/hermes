@@ -1,18 +1,15 @@
-import { Application } from '../Application';
 import type { BroadcastData } from '../types';
 
 /**
  * Base class for remote-related extensions
  */
 export default class BaseRemote {
-  app: Application;
   name: string;
   protected debug = false;
   protected editor = false;
   protected broadcastChannel?: BroadcastChannel;
 
-  constructor(app: Application, name: string, debug = false, editor = false) {
-    this.app = app;
+  constructor(name: string, debug = false, editor = false) {
     this.name = name;
     this.debug = debug;
     this.editor = editor;
