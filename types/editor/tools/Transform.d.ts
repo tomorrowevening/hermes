@@ -1,17 +1,15 @@
 import { Camera, EventDispatcher } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 export default class Transform extends EventDispatcher {
     static DRAG_START: string;
     static DRAG_END: string;
     private static _instance;
-    app: Application;
     three: RemoteThree;
     activeCamera: Camera;
     controls: Map<string, TransformControls>;
     private visibility;
-    setApp(app: Application, three: RemoteThree): void;
+    setApp(three: RemoteThree): void;
     clear(): void;
     add(name: string): TransformControls;
     get(name: string): TransformControls | undefined;

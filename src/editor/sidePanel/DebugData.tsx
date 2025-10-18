@@ -1,15 +1,13 @@
 // Libs
 import { Component, createRef, ReactNode, RefObject } from 'react';
 // Models
-import { Application, ToolEvents } from '@/core/Application';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 import { GroupData, GroupItemData } from '@/core/types';
 // Components
 import InspectorGroup from './inspector/InspectorGroup';
 import { InspectorFieldProps } from './inspector/InspectorField';
 
 interface DebugDataProps {
-  app: Application
   three: RemoteThree;
 }
 
@@ -22,21 +20,20 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
   static groups: JSX.Element[] = [];
   static groupsRefs: RefObject<InspectorGroup>[] = [];
   static groupTitles: string[] = [];
-  static app: Application;
+  static three: RemoteThree;
 
   constructor(props: DebugDataProps) {
     super(props);
     this.state = { lastUpdate: Date.now() };
-    DebugData.app = props.app;
     DebugData.instance = this;
-
-    DebugData.app.addEventListener(ToolEvents.ADD_GROUP, this.addGroup);
-    DebugData.app.addEventListener(ToolEvents.REMOVE_GROUP, this.removeGroup);
+    DebugData.three = props.three;
+    props.three.addEventListener(ToolEvents.ADD_GROUP, this.addGroup);
+    props.three.addEventListener(ToolEvents.REMOVE_GROUP, this.removeGroup);
   }
 
   componentWillUnmount(): void {
-    DebugData.app.removeEventListener(ToolEvents.ADD_GROUP, this.addGroup);
-    DebugData.app.removeEventListener(ToolEvents.REMOVE_GROUP, this.removeGroup);
+    this.props.three.removeEventListener(ToolEvents.ADD_GROUP, this.addGroup);
+    this.props.three.removeEventListener(ToolEvents.REMOVE_GROUP, this.removeGroup);
   }
 
   render(): ReactNode {
@@ -72,7 +69,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     
     DebugData.groups.push(
       <InspectorGroup
-        app={DebugData.app}
+        three={this.props.three}
         title={data.title}
         items={items}
         key={Math.random()}
@@ -120,7 +117,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     const groupRef = createRef<InspectorGroup>();
     const group = (
       <InspectorGroup
-        app={DebugData.app}
+        three={DebugData.three}
         ref={groupRef}
         title={data.title}
         items={items}

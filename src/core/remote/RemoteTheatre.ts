@@ -1,7 +1,6 @@
 // Libs
 import { IProject, ISheet, ISheetObject } from '@theatre/core';
 // Core
-// import { Application } from '../Application';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
 // Utils
@@ -64,6 +63,10 @@ export default class RemoteTheatre extends BaseRemote {
   activeSheet: ISheet | undefined;
   studio: any = undefined;
 
+  constructor(debug = false, editor = false) {
+    super('RemoteTheatre', debug, editor);
+  }
+
   override dispose(): void {
     this.project = undefined;
     this.sheets = new Map();
@@ -100,7 +103,7 @@ export default class RemoteTheatre extends BaseRemote {
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
 
       // Remotely
-      this.app.send({
+      this.send({
         event: 'playSheet',
         target: 'editor',
         data: {
@@ -117,7 +120,7 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheet(name, instanceId)?.sequence.pause();
 
     // Remotely
-    this.app.send({
+    this.send({
       event: 'pauseSheet',
       target: 'editor',
       data: {
@@ -162,7 +165,7 @@ export default class RemoteTheatre extends BaseRemote {
 
     const unsubscribe = obj.onValuesChange((values: any) => {
       const callback = this.sheetObjectCBs.get(objName);
-      if (this.app.editor) {
+      if (this.editor) {
         for (const i in values) {
           const value = values[i];
           if (typeof value === 'object') {
@@ -176,7 +179,7 @@ export default class RemoteTheatre extends BaseRemote {
             }
           }
         }
-        this.app.send({
+        this.send({
           event: 'updateSheetObject',
           target: 'app',
           data: {
@@ -186,7 +189,7 @@ export default class RemoteTheatre extends BaseRemote {
           },
         });
         if (callback) callback(values);
-      } else if (!this.app.debugEnabled) {
+      } else if (!this.debug) {
         if (callback) callback(values);
       }
     });
@@ -282,7 +285,7 @@ export default class RemoteTheatre extends BaseRemote {
     }
   }
 
-  override handleApp(msg: BroadcastData): void {
+  protected override handleApp(msg: BroadcastData): void {
     let value: any = undefined;
     switch (msg.event) {
       case 'setSheet':
@@ -322,7 +325,7 @@ export default class RemoteTheatre extends BaseRemote {
     }
   }
 
-  override handleEditor(msg: BroadcastData): void {
+  protected override handleEditor(msg: BroadcastData): void {
     switch (msg.event) {
       case 'playSheet':
         this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
@@ -334,7 +337,7 @@ export default class RemoteTheatre extends BaseRemote {
   }
 
   handleEditorApp() {
-    if (this.app.editor) {
+    if (this.editor) {
       this.studio?.ui.restore();
       this.studio?.onSelectionChange((value: any[]) => {
         if (value.length < 1) return;
@@ -363,7 +366,7 @@ export default class RemoteTheatre extends BaseRemote {
               this.activeSheet = this.sheets.get(obj.address.sheetId);
               break;
           }
-          this.app.send({ event: type, target: 'app', data: data });
+          this.send({ event: type, target: 'app', data: data });
         });
       });
   
@@ -376,7 +379,7 @@ export default class RemoteTheatre extends BaseRemote {
         ) {
           position = this.activeSheet.sequence.position;
           const t = this.activeSheet as ISheet;
-          this.app.send({
+          this.send({
             event: 'updateTimeline',
             target: 'app',
             data: {

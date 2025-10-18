@@ -1,8 +1,6 @@
 import { Component, ReactNode } from 'react';
-import { Application } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 type InspectRendererProps = {
-    app: Application;
     three: RemoteThree;
 };
 type InspectRendererState = {
@@ -10,7 +8,6 @@ type InspectRendererState = {
     lastUpdated: number;
 };
 export default class InspectRenderer extends Component<InspectRendererProps, InspectRendererState> {
-    private app;
     private autoClear;
     private autoClearColor;
     private autoClearDepth;

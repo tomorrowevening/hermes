@@ -10,22 +10,31 @@ This example uses [React](https://react.dev/), [ThreeJS](https://threejs.org/), 
 
 ### Create an `Application`
 
-This acts as the Remote Controller between all components.
+An application isn't required, however it's nice to maintain multiple remotes. Alternatively, Remotes can be created independent.
 
 The `CustomEditor` is used as a multi-view editor for [ThreeJS](https://threejs.org/), and should be limited to only the Editor app.
 
 ```
+const IS_DEV = true;
+const IS_EDITOR = IS_DEV && document.location.hash.search('editor') > -1;
+
 export default function AppWrapper() {
   const [app, setApp] = useState<Application | null>(null);
 
   useEffect(() => {
-    const IS_DEV = true;
-    const IS_EDITOR = IS_DEV && document.location.hash.search('editor') > -1;
-    const instance = new Application('My App');
+    const instance = new Application();
     instance.detectSettings(IS_DEV, IS_EDITOR).then(() => {
-      if (IS_DEV) instance.setupRemote();
-      instance.addComponent('theatre', new RemoteTheatre(instance));
-      instance.addComponent('three', new RemoteThree(instance));
+      // TheatreJS
+      instance.addComponent('theatre', new RemoteTheatre(IS_DEV, IS_EDITOR));
+
+      // ThreeJS
+      const scenes: Map<string, any> = new Map();
+      scenes.set('ExampleScene', ExampleScene); // extends Scene class
+      const three = new RemoteThree('Hermes Example', IS_DEV, IS_EDITOR);
+      three.scenes = scenes;
+      instance.addComponent('three', three);
+
+      // Ready
       setApp(instance);
     });
   }, []);
@@ -34,8 +43,8 @@ export default function AppWrapper() {
     <>
       {app !== null && (
         <>
-          {app.debugEnabled && <RemoteSetup app={app} />}
-          {app.editor && <CustomEditor app={app} />}
+          {IS_DEV && <RemoteSetup app={app} />}
+          {IS_EDITOR && <CustomEditor app={app} />}
           <Wrapper app={app} />
         </>
       )}
@@ -55,26 +64,16 @@ In this example it's added to add custom Remote Component support for:
 
 ```
 type RemoteProps = {
-  app: Application
+  three: RemoteThree
+  theatre: RemoteTheatre
 }
 
 export default function RemoteSetup(props: RemoteProps) {
-  const app = props.app;
-  const three = app.components.get('three') as RemoteThree;
-
   // Remote Theatre setup
-  const theatre = app.components.get('theatre') as RemoteTheatre;
-  theatre.studio = studio;
-  theatre.handleEditorApp();
+  props.theatre.studio = studio;
+  props.theatre.handleEditorApp();
 
-  // Custom component support (optional)
-  app.addComponent('components', new RemoteComponents(app));
-
-  return (
-    <>
-      {app.debugEnabled ? <SceneInspector app={app} three={three} /> : null}
-    </>
-  );
+  return <SceneInspector three={props.three} />;
 }
 ```
 

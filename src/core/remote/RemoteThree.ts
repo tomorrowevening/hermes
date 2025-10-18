@@ -1,12 +1,39 @@
-import { Camera, Color, ColorManagement, Curve, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
-import { ToolEvents } from '../Application';
+import { Camera, Color, ColorManagement, Curve, EventDispatcher, EventListener, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { stripObject, stripScene } from '@/editor/sidePanel/utils';
 import { clamp } from '@/utils/math';
 import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '@/utils/three';
 
-export default class RemoteThree extends BaseRemote {
+export enum ToolEvents {
+  CUSTOM = 'ToolEvents::custom',
+  // Components
+  SELECT_DROPDOWN = 'ToolEvents::selectDropdown',
+  DRAG_UPDATE = 'ToolEvents::dragUpdate',
+  // SceneHierarchy
+  ADD_SCENE = 'ToolEvents::addScene',
+  REFRESH_SCENE = 'ToolEvents::refreshScene',
+  REMOVE_SCENE = 'ToolEvents::removeScene',
+  SET_SCENE = 'ToolEvents::setScene',
+  SET_OBJECT = 'ToolEvents::setObject',
+  CLEAR_OBJECT = 'ToolEvents::clearObject',
+  // MultiView
+  ADD_CAMERA = 'ToolEvents::addCamera',
+  REMOVE_CAMERA = 'ToolEvents::removeCamera',
+  // Custom
+  ADD_GROUP = 'ToolEvents::addGroup',
+  REMOVE_GROUP = 'ToolEvents::removeGroup',
+  ADD_SPLINE = 'ToolEvents::addSpline',
+  ADD_RENDERER = 'ToolEvents::addRenderer',
+  UPDATE_RENDERER = 'ToolEvents::updateRenderer',
+}
+
+export type ToolEvent = {
+  [key in ToolEvents]: { value?: unknown }
+}
+
+export default class RemoteThree extends BaseRemote implements EventDispatcher<ToolEvent> {
+  name: string;
   canvas: HTMLCanvasElement | null = null; // Canvas or OffscreenCanvas
   inputElement: any = null; // reference this to receive events
   scene?: Scene = undefined;
@@ -15,6 +42,12 @@ export default class RemoteThree extends BaseRemote {
   renderTargets: Map<string, WebGLRenderTarget> = new Map();
   private renderTargetsResize: Map<string, boolean> = new Map();
   private groups = new Map<string, GroupCallback>();
+  private _listeners: { [K in ToolEvents]?: EventListener<ToolEvent[K], K, this>[] } = {};
+
+  constructor(name: string, debug = false, editor = false) {
+    super('RemoteThree', debug, editor);
+    this.name = name;
+  }
 
   override dispose(): void {
     this.scenes.forEach((scene: Scene) => {
@@ -30,10 +63,59 @@ export default class RemoteThree extends BaseRemote {
     this.renderer?.dispose();
   }
 
+  // Event Dispatching (used for editor only)
+
+  addEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): void {
+    if (this._listeners === undefined ) this._listeners = {};
+		const listeners = this._listeners;
+		if (listeners[type] === undefined) {
+			listeners[type] = [];
+		}
+
+		if (listeners[type].indexOf(listener) === -1) {
+			listeners[type].push(listener);
+		}
+  }
+
+  hasEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): boolean {
+    const listeners = this._listeners;
+		if (listeners === undefined) return false;
+		return listeners[type] !== undefined && listeners[type].indexOf(listener) !== -1;
+  }
+
+  removeEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): void {
+    const listeners = this._listeners;
+		if (listeners === undefined) return;
+		const listenerArray = listeners[type];
+		if (listenerArray !== undefined) {
+			const index = listenerArray.indexOf(listener);
+			if (index !== -1) {
+				listenerArray.splice(index, 1);
+			}
+		}
+  }
+
+  dispatchEvent<T extends ToolEvents>(event: ToolEvent[T] & { type: T }): void {
+    const listeners = this._listeners;
+		if ( listeners === undefined ) return;
+		const listenerArray = listeners[event.type];
+		if ( listenerArray !== undefined ) {
+			const eventWithTarget = { ...event, target: this };
+
+			// Make a copy, in case listeners are removed while iterating.
+			const array = listenerArray.slice(0);
+			for ( let i = 0, l = array.length; i < l; i ++ ) {
+				array[i].call(this, eventWithTarget);
+			}
+		}
+  }
+
+  // Objects
+
   getObject(uuid: string) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
-    this.app.send({
+    this.send({
       event: 'getObject',
       target: 'app',
       data: uuid,
@@ -43,7 +125,7 @@ export default class RemoteThree extends BaseRemote {
   setObject(value: any) {
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     const stripped = stripObject(value);
-    this.app.send({
+    this.send({
       event: 'setObject',
       target: 'editor',
       data: stripped,
@@ -51,7 +133,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   requestMethod(uuid: string, key: string, value?: any, subitem?: string) {
-    this.app.send({
+    this.send({
       event: 'requestMethod',
       target: 'app',
       data: {
@@ -64,7 +146,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateObject(uuid: string, key: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'updateObject',
       target: 'app',
       data: {
@@ -76,7 +158,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   createTexture(uuid: string, key: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'createTexture',
       target: 'app',
       data: {
@@ -96,7 +178,7 @@ export default class RemoteThree extends BaseRemote {
       title: data.title,
       onUpdate: data.onUpdate,
     });
-    this.app.send({
+    this.send({
       event: 'addGroup',
       target: 'editor',
       data: JSON.stringify(data),
@@ -107,7 +189,7 @@ export default class RemoteThree extends BaseRemote {
     if (this.groups.get(name) === undefined) return;
 
     this.groups.delete(name);
-    this.app.send({
+    this.send({
       event: 'removeGroup',
       target: 'editor',
       data: name,
@@ -115,7 +197,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateGroup(group: string, prop: string, value: any) {
-    this.app.send({
+    this.send({
       event: 'updateGroup',
       target: 'app',
       data: JSON.stringify({ group, prop, value }),
@@ -124,7 +206,7 @@ export default class RemoteThree extends BaseRemote {
 
   addSpline(spline: Curve<any>) {
     setTimeout(() => {
-      this.app.send({
+      this.send({
         event: 'addSpline',
         target: 'editor',
         data: JSON.stringify(spline.toJSON()),
@@ -139,10 +221,10 @@ export default class RemoteThree extends BaseRemote {
     this.canvas = value.domElement;
     this.inputElement = inputElement !== null ? inputElement : this.canvas;
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
 
     const color = `#${value.getClearColor(new Color()).getHexString()}`;
-    this.app.send({
+    this.send({
       event: 'addRenderer',
       target: 'editor',
       data: {
@@ -163,7 +245,7 @@ export default class RemoteThree extends BaseRemote {
   }
 
   updateRenderer(data: any) {
-    this.app.send({
+    this.send({
       event: 'updateRenderer',
       target: 'app',
       data,
@@ -176,11 +258,11 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scenes.set(value.name, value);
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     resetThreeObjects();
     hierarchyUUID(value);
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'addScene',
       target: 'editor',
       data: stripped,
@@ -188,11 +270,11 @@ export default class RemoteThree extends BaseRemote {
   }
 
   refreshScene(value: string) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const scene = this.scenes.get(value);
     if (scene !== undefined) {
       const stripped = stripScene(scene);
-      this.app.send({
+      this.send({
         event: 'refreshScene',
         target: 'app',
         data: stripped,
@@ -204,9 +286,9 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scenes.delete(value.name);
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'removeScene',
       target: 'editor',
       data: stripped,
@@ -229,12 +311,12 @@ export default class RemoteThree extends BaseRemote {
     if (value === undefined) return;
     this.scene = value;
 
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     resetThreeObjects();
     hierarchyUUID(value);
     const stripped = stripScene(value);
-    this.app.send({
+    this.send({
       event: 'setScene',
       target: 'editor',
       data: stripped,
@@ -244,9 +326,9 @@ export default class RemoteThree extends BaseRemote {
   // Cameras
 
   addCamera(camera: Camera) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripObject(camera);
-    this.app.send({
+    this.send({
       event: 'addCamera',
       target: 'editor',
       data: stripped,
@@ -254,9 +336,9 @@ export default class RemoteThree extends BaseRemote {
   }
 
   removeCamera(camera: Camera) {
-    if (!this.app.debugEnabled) return;
+    if (!this.debug) return;
     const stripped = stripObject(camera);
-    this.app.send({
+    this.send({
       event: 'removeCamera',
       target: 'editor',
       data: stripped,
@@ -265,20 +347,8 @@ export default class RemoteThree extends BaseRemote {
 
   override handleApp(msg: BroadcastData): void {
     switch (msg.event) {
-      case 'getObject':
-        this.app.dispatchEvent({ type: ToolEvents.GET_OBJECT, value: msg.data });
-        break;
-      case 'updateObject':
-        this.app.dispatchEvent({ type: ToolEvents.UPDATE_OBJECT, value: msg.data });
-        break;
-      case 'createTexture':
-        this.app.dispatchEvent({ type: ToolEvents.CREATE_TEXTURE, value: msg.data });
-        break;
-      case 'requestMethod':
-        this.app.dispatchEvent({ type: ToolEvents.REQUEST_METHOD, value: msg.data });
-        break;
       case 'refreshScene':
-        this.app.send({
+        this.send({
           event: 'refreshScene',
           target: 'editor',
           data: stripScene(this.scenes.get(msg.data.name)!),
@@ -310,37 +380,37 @@ export default class RemoteThree extends BaseRemote {
   override handleEditor(msg: BroadcastData): void {
     switch (msg.event) {
       case 'setObject':
-        this.app.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
         break;
       case 'addScene':
-        this.app.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
         break;
       case 'refreshScene':
-        this.app.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.REFRESH_SCENE, value: msg.data });
         break;
       case 'removeScene':
-        this.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: msg.data });
         break;
       case 'setScene':
-        this.app.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.SET_SCENE, value: msg.data });
         break;
       case 'addCamera':
-        this.app.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.ADD_CAMERA, value: msg.data });
         break;
       case 'removeCamera':
-        this.app.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.REMOVE_CAMERA, value: msg.data });
         break;
       case 'addGroup':
-        this.app.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.ADD_GROUP, value: msg.data });
         break;
       case 'removeGroup':
-        this.app.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.REMOVE_GROUP, value: msg.data });
         break;
       case 'addSpline':
-        this.app.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.ADD_SPLINE, value: msg.data });
         break;
       case 'addRenderer':
-        this.app.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
+        this.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
     }
   }
 

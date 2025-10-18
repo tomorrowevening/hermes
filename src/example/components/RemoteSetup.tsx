@@ -1,6 +1,5 @@
 import studio from '@theatre/studio';
 import { Application } from '../../core/Application';
-import RemoteComponents from '../../core/remote/RemoteComponents';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
 import SceneInspector from '../../editor/sidePanel/inspector/SceneInspector';
@@ -18,8 +17,5 @@ export default function RemoteSetup(props: RemoteProps) {
   theatre.studio = studio;
   theatre.handleEditorApp();
 
-  // Custom component support (optional)
-  app.addComponent('components', new RemoteComponents(app));
-
-  return <SceneInspector app={app} three={three} />;
+  return <SceneInspector three={three} />;
 }

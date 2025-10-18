@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import { Scene, Texture } from 'three';
-import { Application, ToolEvents } from '@/core/Application';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { getSubItem, setItemProps, textureFromSrc } from '../utils';
 
 export interface SceneInspectorProps {
-  app: Application
   three: RemoteThree
 }
 
+/**
+ * This belongs in the app, not the editor
+ */
 export default function SceneInspector(props: SceneInspectorProps) {
   useEffect(() => {
     function getScene(uuid: string): Scene | null {
@@ -120,16 +121,29 @@ export default function SceneInspector(props: SceneInspectorProps) {
       }
     };
 
-    props.app.addEventListener(ToolEvents.GET_OBJECT, onGetObject);
-    props.app.addEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-    props.app.addEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
-    props.app.addEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
+    const messageHandler = (evt: MessageEvent) => {
+      const msg = evt.data;
+      switch (msg.event) {
+        case 'getObject':
+          onGetObject({ value: msg.data });
+          break;
+          case 'updateObject':
+            onUpdateObject({ value: msg.data });
+            break;
+          case 'createTexture':
+            onCreateTexture({ value: msg.data });
+            break;
+          case 'requestMethod':
+            onRequestMethod({ value: msg.data });
+          break;
+      }
+    };
 
+    const broadcastChannel = new BroadcastChannel('RemoteThree');
+    broadcastChannel.addEventListener('message', messageHandler);
     return () => {
-      props.app.removeEventListener(ToolEvents.GET_OBJECT, onGetObject);
-      props.app.removeEventListener(ToolEvents.UPDATE_OBJECT, onUpdateObject);
-      props.app.removeEventListener(ToolEvents.CREATE_TEXTURE, onCreateTexture);
-      props.app.removeEventListener(ToolEvents.REQUEST_METHOD, onRequestMethod);
+      broadcastChannel.removeEventListener('message', messageHandler);
+      broadcastChannel.close();
     };
   }, []);
 

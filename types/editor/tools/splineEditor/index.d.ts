@@ -1,6 +1,6 @@
 import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import Spline from './Spline';
-import { Application } from '@/core/Application';
+import RemoteThree from '@/core/remote/RemoteThree';
 export type SplineJSON = {
     name: string;
     points: Array<number[]>;
@@ -14,9 +14,9 @@ export default class SplineEditor extends Object3D {
     currentSpline: Spline | null;
     private _camera;
     private group;
-    private app;
+    private three;
     private splineDataText;
-    constructor(camera: Camera, app: Application);
+    constructor(camera: Camera, three: RemoteThree);
     initDebug(): void;
     dispose(): void;
     addSpline(spline: Spline): void;

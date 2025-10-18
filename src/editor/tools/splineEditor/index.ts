@@ -1,10 +1,10 @@
-import { Camera, CatmullRomCurve3, CircleGeometry, Mesh, MeshBasicMaterial, MeshNormalMaterial, Object3D, OrthographicCamera, Raycaster, SphereGeometry, Vector2, Vector3 } from 'three';
+import { Camera, CatmullRomCurve3, Object3D, OrthographicCamera, Raycaster, Vector2, Vector3 } from 'three';
 import { RefObject } from 'react';
 import Spline from './Spline';
-import { Application, ToolEvents } from '@/core/Application';
 import DebugData from '@/editor/sidePanel/DebugData';
 import InspectorGroup from '@/editor/sidePanel/inspector/InspectorGroup';
 import MultiView from '@/editor/multiView/MultiView';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 
 let splinesCreated = 0;
 
@@ -22,15 +22,15 @@ export default class SplineEditor extends Object3D {
   currentSpline: Spline | null = null;
   private _camera: Camera;
   private group: RefObject<InspectorGroup> | null = null;
-  private app: Application;
+  private three: RemoteThree;
   private splineDataText = '';
 
-  constructor(camera: Camera, app: Application) {
+  constructor(camera: Camera, three: RemoteThree) {
     super();
     this.name = 'Spline Editor';
     this._camera = camera;
-    this.app = app;
-    this.app.addEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
+    this.three = three;
+    this.three.addEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
   }
 
   initDebug() {
@@ -104,7 +104,7 @@ export default class SplineEditor extends Object3D {
   }
 
   dispose() {
-    this.app.removeEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
+    this.three.removeEventListener(ToolEvents.ADD_SPLINE, this.onAddSpline);
     DebugData.removeEditorGroup(this.name);
   }
 

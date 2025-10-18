@@ -6,10 +6,8 @@ import { setItemProps } from '../../utils';
 import MultiView from '@/editor/multiView/MultiView';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { round } from '@/utils/math';
-import { Application } from '@/core/Application';
 
 type InspectTransformProps = {
-  app: Application
   object: RemoteObject;
   three: RemoteThree;
 }
@@ -22,7 +20,6 @@ type InspectTransformState = {
 export class InspectTransform extends Component<InspectTransformProps, InspectTransformState> {
   static instance: InspectTransform;
 
-  app: Application;
   matrix = new Matrix4();
   position = new Vector3();
   rotation = new Euler();
@@ -31,7 +28,6 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
 
   constructor(props: InspectTransformProps) {
     super(props);
-    this.app = props.app;
 
     const expandedValue = localStorage.getItem(this.expandedName);
     const expanded = expandedValue !== null ? expandedValue === 'open' : false;
@@ -72,7 +68,7 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
   render(): ReactNode {
     return (
       <InspectorGroup
-        app={this.app}
+        three={this.props.three}
         key={this.state.lastUpdated}
         title='Transform'
         expanded={this.open}
@@ -134,6 +130,6 @@ export class InspectTransform extends Component<InspectTransformProps, InspectTr
   }
 
   get expandedName(): string {
-    return `${this.props.three.app.appID}_transform`;
+    return `${this.props.three.name}_transform`;
   }
 }

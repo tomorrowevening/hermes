@@ -4,12 +4,9 @@ import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RemoteThree from '@/core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
-import { Application } from '@/core/Application';
 import './MultiView.scss';
 type MultiViewProps = {
-    app: Application;
     three: RemoteThree;
-    scenes: Map<string, any>;
     onSceneSet?: (scene: Scene) => void;
     onSceneUpdate?: (scene: Scene) => void;
     onSceneResize?: (scene: Scene, width: number, height: number) => void;
@@ -21,11 +18,9 @@ type MultiViewState = {
     interactionMode: InteractionMode;
     interactionModeOpen: boolean;
     lastUpdate: number;
-    connected: boolean;
 };
 export default class MultiView extends Component<MultiViewProps, MultiViewState> {
     static instance: MultiView | null;
-    app: Application;
     scene: Scene;
     renderer?: WebGLRenderer | WebGPURenderer | null;
     currentScene?: Scene;
@@ -102,8 +97,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private onSetSelectedItem;
     private updateSelectedItemHelper;
     private onUpdateTransform;
-    private onRemoteConnected;
-    private onRemoteDisconnected;
     private clearLightHelpers;
     private addLightHelpers;
     private createControls;

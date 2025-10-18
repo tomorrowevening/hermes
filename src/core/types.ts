@@ -47,7 +47,6 @@ export type DataUpdateCallback = (data: any) => void
 
 export type EditorEvent =
   | 'custom'
-  | 'ping'
 // Theatre
   | 'setSheet'
   | 'setSheetObject'
@@ -76,9 +75,6 @@ export type EditorEvent =
   | 'updateBind'
   | 'addButton'
   | 'clickButton'
-// Components
-  | 'selectComponent'
-  | 'draggableListUpdate'
 // Groups
   | 'addGroup'
   | 'removeGroup'

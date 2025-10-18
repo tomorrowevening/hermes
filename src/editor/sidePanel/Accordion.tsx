@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react';
-import { Application, ToolEvents } from '@/core/Application';
 import { capitalize } from '@/editor/utils';
-import RemoteThree from '@/core/remote/RemoteThree';
+import RemoteThree, { ToolEvents } from '@/core/remote/RemoteThree';
 
 type AccordionProps = {
-  app: Application
+  three: RemoteThree;
   label: string
   scene?: any
   button?: JSX.Element
@@ -20,7 +19,7 @@ export default function Accordion(props: AccordionProps) {
   const visibleRef = useRef<HTMLButtonElement>(null);
 
   const onRemove = () => {
-    props.app.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
+    props.three.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
   };
 
   return (
@@ -43,7 +42,7 @@ export default function Accordion(props: AccordionProps) {
       {props.onRefresh ? (
         <>
           <button className='visibility' ref={visibleRef} onClick={() => {
-            const three = props.app.components.get('three') as RemoteThree;
+            const three = props.three;
             const scene = three.getScene(props.scene.uuid);
             if (scene) {
               const value = !scene.visible;
