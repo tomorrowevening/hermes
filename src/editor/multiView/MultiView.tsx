@@ -17,11 +17,9 @@ import {
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
-  MeshPhysicalMaterial,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,
-  PlaneGeometry,
   PointLight,
   PointLightHelper,
   Quaternion,
@@ -580,7 +578,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.renderer.setClearColor(0x000000);
       this.resize();
       this.props.three.renderer = this.renderer;
-      this.onRemoteConnected();
     }
   };
 
@@ -761,8 +758,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app.addEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.addEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.app.addEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
-    this.app.addEventListener(ToolEvents.REMOTE_CONNECTED, this.onRemoteConnected);
-    this.app.addEventListener(ToolEvents.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
 
   private disable() {
@@ -776,8 +771,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.app.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.app.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.app.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
-    this.app.removeEventListener(ToolEvents.REMOTE_CONNECTED, this.onRemoteConnected);
-    this.app.removeEventListener(ToolEvents.REMOTE_DISCONNECTED, this.onRemoteDisconnected);
   }
 
   private resize = () => {
@@ -1106,15 +1099,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     });
     this.props.three.updateObject(this.selectedItem.uuid, 'scale', this.selectedItem.scale);
     InspectTransform.instance.update();
-  };
-
-  private onRemoteConnected = () => {
-    this.setState({ connected: true });
-  };
-
-  private onRemoteDisconnected = () => {
-    this.clear();
-    this.setState({ connected: false });
   };
 
   // Utils
