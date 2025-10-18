@@ -1,6 +1,6 @@
-import { Application } from '@/core/Application';
+import RemoteThree from '@/core/remote/RemoteThree';
 type AccordionProps = {
-    app: Application;
+    three: RemoteThree;
     label: string;
     scene?: any;
     button?: JSX.Element;

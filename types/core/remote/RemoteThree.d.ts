@@ -1,7 +1,31 @@
-import { Camera, Curve, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
+import { Camera, Curve, EventDispatcher, EventListener, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
-export default class RemoteThree extends BaseRemote {
+export declare enum ToolEvents {
+    CUSTOM = "ToolEvents::custom",
+    SELECT_DROPDOWN = "ToolEvents::selectDropdown",
+    DRAG_UPDATE = "ToolEvents::dragUpdate",
+    ADD_SCENE = "ToolEvents::addScene",
+    REFRESH_SCENE = "ToolEvents::refreshScene",
+    REMOVE_SCENE = "ToolEvents::removeScene",
+    SET_SCENE = "ToolEvents::setScene",
+    SET_OBJECT = "ToolEvents::setObject",
+    CLEAR_OBJECT = "ToolEvents::clearObject",
+    ADD_CAMERA = "ToolEvents::addCamera",
+    REMOVE_CAMERA = "ToolEvents::removeCamera",
+    ADD_GROUP = "ToolEvents::addGroup",
+    REMOVE_GROUP = "ToolEvents::removeGroup",
+    ADD_SPLINE = "ToolEvents::addSpline",
+    ADD_RENDERER = "ToolEvents::addRenderer",
+    UPDATE_RENDERER = "ToolEvents::updateRenderer"
+}
+export type ToolEvent = {
+    [key in ToolEvents]: {
+        value?: unknown;
+    };
+};
+export default class RemoteThree extends BaseRemote implements EventDispatcher<ToolEvent> {
+    name: string;
     canvas: HTMLCanvasElement | null;
     inputElement: any;
     scene?: Scene;
@@ -10,7 +34,15 @@ export default class RemoteThree extends BaseRemote {
     renderTargets: Map<string, WebGLRenderTarget>;
     private renderTargetsResize;
     private groups;
+    private _listeners;
+    constructor(name: string, debug?: boolean, editor?: boolean);
     dispose(): void;
+    addEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): void;
+    hasEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): boolean;
+    removeEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): void;
+    dispatchEvent<T extends ToolEvents>(event: ToolEvent[T] & {
+        type: T;
+    }): void;
     getObject(uuid: string): void;
     setObject(value: any): void;
     requestMethod(uuid: string, key: string, value?: any, subitem?: string): void;
