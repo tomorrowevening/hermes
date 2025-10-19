@@ -93,3 +93,14 @@ export function cubicBezier(percent: number, x0: number, y0: number, x1: number,
 
   return yFromT(current, E, F, G, H);
 }
+
+const toHex = (v: number) => {
+  const n = Math.round(Math.min(1, Math.max(0, v)) * 255);
+  return n.toString(16).padStart(2, '0');
+};
+
+export function rgbaToHex({ r, g, b, a = 1 }: { r: number; g: number; b: number; a?: number }) {
+  const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  // Only include alpha if it's not fully opaque
+  return a < 1 ? `${hex}${toHex(a)}` : hex;
+}

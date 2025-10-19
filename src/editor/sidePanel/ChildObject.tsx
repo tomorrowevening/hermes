@@ -24,16 +24,24 @@ export default function ChildObject(props: ChildObjectProps) {
 
   useEffect(() => {
     if (props.child) {
-      const scene = props.three.getScene(props.child.uuid);
+      const sceneUUID = props.child.uuid.split('.')[0];
+      const scene = props.three.getScene(sceneUUID);
       if (scene !== null) {
-        const child = scene.getObjectByProperty('uuid', props.child.uuid);
-        if (child !== undefined) {
-          visibleRef.current!.style.opacity = child.visible ? '1' : '0.25';
-        } else {
-          console.log(`Hermes - Can't find child: ${props.child.uuid}`);
+        try {
+          const child = scene.getObjectByProperty('uuid', props.child.uuid);
+          if (child !== undefined) {
+            visibleRef.current!.style.opacity = child.visible ? '1' : '0.25';
+          } else {
+            console.log(`Hermes - Can't find child: ${props.child.uuid}`);
+          }
+        } catch (err: any) {
+          console.log(`Error looking for child:`, err);
+          console.log(props.child);
+          console.log(props.three.scenes);
+          console.log(scene);
         }
       } else {
-        console.log(`Hermes - Can't find Scene: ${props.child.uuid}`);
+        console.log(`Hermes (ChildObject) - Can't find Scene: ${sceneUUID} with child UUID: ${props.child.uuid}`, props.three.scenes, props.three.scene, scene);
       }
     }
   }, [open]);

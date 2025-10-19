@@ -7,3 +7,9 @@ export declare function round(value: number, precision?: number): number;
 export declare function damp(start: number, end: number, easing: number, dt: number): number;
 export declare function roundTo(value: number, digits?: number): number;
 export declare function cubicBezier(percent: number, x0: number, y0: number, x1: number, y1: number): number;
+export declare function rgbaToHex({ r, g, b, a }: {
+    r: number;
+    g: number;
+    b: number;
+    a?: number;
+}): string;

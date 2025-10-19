@@ -189,7 +189,7 @@ export default class RemoteTheatre extends BaseRemote {
           },
         });
         if (callback) callback(values);
-      } else if (!this.debug) {
+      } else {
         if (callback) callback(values);
       }
     });

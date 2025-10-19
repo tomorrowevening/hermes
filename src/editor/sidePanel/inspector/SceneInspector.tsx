@@ -13,9 +13,14 @@ export interface SceneInspectorProps {
 export default function SceneInspector(props: SceneInspectorProps) {
   useEffect(() => {
     function getScene(uuid: string): Scene | null {
+      const minUUID = uuid.split('.')[0];
+      if (props.three.scene && props.three.scene.uuid === minUUID) {
+        return props.three.scene;
+      }
+
       let scene: Scene | null = null;
       props.three.scenes.forEach((value: Scene) => {
-        if (uuid.search(value.uuid) > -1) scene = value;
+        if (value.uuid.search(minUUID) > -1) scene = value;
       });
       return scene;
     }
@@ -24,7 +29,7 @@ export default function SceneInspector(props: SceneInspectorProps) {
       const uuid = evt.value;
       const scene = getScene(uuid);
       if (!scene) {
-        console.log(`Hermes - can't find scene for object: ${uuid}`, props.three.scenes);
+        console.log(`Hermes (SceneInspector) - can't find scene for object: ${uuid}`, props.three.scenes);
         return;
       }
 
@@ -39,7 +44,7 @@ export default function SceneInspector(props: SceneInspectorProps) {
     const setChildProps = (uuid: string, key: string, value: any) => {
       const scene = getScene(uuid);
       if (!scene) {
-        console.log(`Hermes - can't find scene to set object: ${uuid}, ${key}`, props.three.scenes);
+        console.log(`Hermes (SceneInspector) - can't find scene to set object: ${uuid}, ${key}`, props.three.scenes);
         return;
       }
 

@@ -301,6 +301,10 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
 
   getScene(uuid: string): Scene | null {
     let scene: Scene | null = null;
+    if (this.scene !== undefined) {
+      if (this.scene.uuid.search(uuid) > -1) return this.scene;
+    }
+
     this.scenes.forEach((value: Scene, key: string) => {
       if (uuid.search(key) > -1) scene = value;
     });
