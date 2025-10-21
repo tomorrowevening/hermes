@@ -38,6 +38,12 @@ export default function AppWrapper() {
     });
   }, []);
 
+  // MultiView requires you identify each scene so they can be instantiated by the editor
+  const scenes: Map<string, any> = new Map();
+  scenes.set('Scene1', Scene1);
+  scenes.set('Scene2', Scene2);
+  scenes.set('RTTScene', RTTScene);
+
   return (
     <>
       {app !== null && (
@@ -55,13 +61,6 @@ export default function AppWrapper() {
                   }}
                 />
               )}
-            </>
-          )}
-          
-          {!IS_EDITOR && (
-            <>
-              <canvas ref={canvasRef} />
-              <div id="box" ref={divRef}></div>
             </>
           )}
         </>
