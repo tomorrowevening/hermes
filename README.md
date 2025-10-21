@@ -6,17 +6,20 @@ Open the [Application](https://hermes-lovat.vercel.app/) and [editor](https://he
 
 ## Setup
 
-This example uses [React](https://react.dev/), [ThreeJS](https://threejs.org/), and [TheatreJS](https://theatrejs.com/), and will default to using `BroadcastChannel` instead of `WebSocket` for simplicity.
+This example uses [React](https://react.dev/), [ThreeJS](https://threejs.org/), and [TheatreJS](https://theatrejs.com/).
 
 ### Create an `Application`
 
-An application isn't required, however it's nice to maintain multiple remotes. Alternatively, Remotes can be created independent.
+An application isn't required, however it's nice to maintain multiple remotes. Alternatively, Remotes can be created independently.
 
-The `CustomEditor` is used as a multi-view editor for [ThreeJS](https://threejs.org/), and should be limited to only the Editor app.
+The `ThreeEditor` is used as a multi-view editor for [ThreeJS](https://threejs.org/), and should be limited to only the Editor app.
 
 ```
 const IS_DEV = true;
 const IS_EDITOR = IS_DEV && document.location.hash.search('editor') > -1;
+
+const theatre = new RemoteTheatre(IS_DEV, IS_EDITOR);
+const three = new RemoteThree('Hermes Example', IS_DEV, IS_EDITOR);
 
 export default function AppWrapper() {
   const [app, setApp] = useState<Application | null>(null);
@@ -25,13 +28,9 @@ export default function AppWrapper() {
     const instance = new Application();
     instance.detectSettings(IS_DEV, IS_EDITOR).then(() => {
       // TheatreJS
-      instance.addComponent('theatre', new RemoteTheatre(IS_DEV, IS_EDITOR));
+      instance.addComponent('theatre', theatre);
 
       // ThreeJS
-      const scenes: Map<string, any> = new Map();
-      scenes.set('ExampleScene', ExampleScene); // extends Scene class
-      const three = new RemoteThree('Hermes Example', IS_DEV, IS_EDITOR);
-      three.scenes = scenes;
       instance.addComponent('three', three);
 
       // Ready
@@ -43,15 +42,38 @@ export default function AppWrapper() {
     <>
       {app !== null && (
         <>
-          {IS_DEV && <RemoteSetup app={app} />}
-          {IS_EDITOR && <CustomEditor app={app} />}
-          <Wrapper app={app} />
+          {IS_DEV && (
+            <>
+              <SceneInspector three={three} />
+
+              {IS_EDITOR && (
+                <ThreeEditor
+                  three={three}
+                  scenes={scenes}
+                  onSceneUpdate={(scene: any) => {
+                    scene.update();
+                  }}
+                />
+              )}
+            </>
+          )}
+          
+          {!IS_EDITOR && (
+            <>
+              <canvas ref={canvasRef} />
+              <div id="box" ref={divRef}></div>
+            </>
+          )}
         </>
       )}
     </>
   );
 }
 ```
+
+### Scene setup
+
+After all object's have been added to your scene, run `hierarchyUUID(yourScene)` to update the UUIDs of every object. This helps communicate back and forth between the app and your editor.
 
 ### Custom remote commands
 

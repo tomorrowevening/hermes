@@ -20,6 +20,7 @@ export default function CustomEditor(props: CustomEditorProps) {
     customizeTheatreElements();
   }, []);
 
+  // Pass in references to all your scenes so the Multiview can instantiate them
   const three = props.app.components.get('three') as RemoteThree;
   const scenes: Map<string, any> = new Map();
   scenes.set('Scene1', Scene1);
