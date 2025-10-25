@@ -9,7 +9,7 @@ export default class BaseRemote {
     get debug(): boolean;
     get editor(): boolean;
     protected send(data: BroadcastData): void;
-    protected messageHandler: (evt: MessageEvent) => void;
+    protected messageHandler(evt: MessageEvent): void;
     protected handleApp(msg: BroadcastData): void;
     protected handleEditor(msg: BroadcastData): void;
 }

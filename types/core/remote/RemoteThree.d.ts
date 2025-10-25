@@ -1,4 +1,4 @@
-import { Camera, Curve, EventDispatcher, EventListener, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
+import { Camera, Curve, EventDispatcher, EventListener, Object3D, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export declare enum ToolEvents {
@@ -43,11 +43,14 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     dispatchEvent<T extends ToolEvents>(event: ToolEvent[T] & {
         type: T;
     }): void;
+    getObjectByUUID(uuid: string): Object3D | undefined;
     getObject(uuid: string): void;
     setObject(value: any): void;
     requestMethod(uuid: string, key: string, value?: any, subitem?: string): void;
     updateObject(uuid: string, key: string, value: any): void;
     createTexture(uuid: string, key: string, value: any): void;
+    private onUpdateObject;
+    private onCreateTexture;
     addGroup(data: GroupData): void;
     removeGroup(name: string): void;
     updateGroup(group: string, prop: string, value: any): void;
@@ -64,6 +67,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     removeCamera(camera: Camera): void;
     handleApp(msg: BroadcastData): void;
     handleEditor(msg: BroadcastData): void;
+    protected messageHandler(evt: MessageEvent): void;
     addRT(name: string, resize?: boolean, params?: RenderTargetOptions): void;
     removeRT(name: string): void;
     resize(width: number, height: number): void;

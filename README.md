@@ -50,8 +50,6 @@ export default function AppWrapper() {
         <>
           {IS_DEV && (
             <>
-              <SceneInspector three={three} />
-
               {IS_EDITOR && (
                 <ThreeEditor
                   three={three}
@@ -80,7 +78,6 @@ This component is added only in debug-mode to add extra support for remote-compo
 
 In this example it's added to add custom Remote Component support for:
 
-- [ThreeJS](https://threejs.org/) - `SceneInspector` communicates with the Multi-view editor
 - [TheatreJS](https://theatrejs.com/) - Communicates with the `studio` instance
 
 ```
@@ -93,8 +90,7 @@ export default function RemoteSetup(props: RemoteProps) {
   // Remote Theatre setup
   props.theatre.studio = studio;
   props.theatre.handleEditorApp();
-
-  return <SceneInspector three={props.three} />;
+  return null;
 }
 ```
 
