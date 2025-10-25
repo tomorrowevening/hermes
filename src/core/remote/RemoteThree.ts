@@ -1,7 +1,7 @@
-import { Camera, Color, ColorManagement, Curve, EventDispatcher, EventListener, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
+import { Camera, Color, ColorManagement, Curve, EventDispatcher, EventListener, Object3D, RenderTargetOptions, Scene, Texture, WebGLRenderTarget } from 'three';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
-import { stripObject, stripScene } from '../../editor/sidePanel/utils';
+import { getSubItem, setItemProps, stripObject, stripScene, textureFromSrc } from '../../editor/sidePanel/utils';
 import { clamp } from '../../utils/math';
 import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '../../utils/three';
 
@@ -112,43 +112,52 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
 
   // Objects
 
+  /**
+   * Searches ALL active scenes
+   */
+  getObjectByUUID(uuid: string): Object3D | undefined {
+    const sceneName = uuid.split('.')[0];
+    const scene = this.scenes.get(sceneName);
+    if (scene !== undefined) {
+      return scene.getObjectByProperty('uuid', uuid);
+    }
+    return undefined;
+  }
+
   getObject(uuid: string) {
     if (!this.debug) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
-    this.send({
-      event: 'getObject',
-      target: 'app',
-      data: uuid,
-    });
+    const child = this.getObjectByUUID(uuid);
+    if (child) this.setObject(child);
   }
 
   setObject(value: any) {
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     const stripped = stripObject(value);
-    this.send({
-      event: 'setObject',
-      target: 'editor',
-      data: stripped,
-    });
+    this.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: stripped });
   }
 
   requestMethod(uuid: string, key: string, value?: any, subitem?: string) {
-    this.send({
-      event: 'requestMethod',
-      target: 'app',
-      data: {
-        uuid,
-        key,
-        value,
-        subitem,
-      },
-    });
+    const child = this.getObjectByUUID(uuid);
+    if (child) {
+      try {
+        if (subitem !== undefined) {
+          const target = getSubItem(child, subitem);
+          target[key](value);
+        } else {
+          child[key](value);
+        }
+      } catch (err: any) {
+        console.log('Hermes - Error requesting method:', uuid, key, value);
+        console.log(err);
+      }
+    }
   }
 
   updateObject(uuid: string, key: string, value: any) {
     this.send({
       event: 'updateObject',
-      target: 'app',
+      target: 'app', // used by both
       data: {
         uuid,
         key,
@@ -160,13 +169,59 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   createTexture(uuid: string, key: string, value: any) {
     this.send({
       event: 'createTexture',
-      target: 'app',
+      target: 'app', // used by both
       data: {
         uuid,
         key,
         value
       },
     });
+  }
+
+  private onUpdateObject(uuid: string, key: string, value: any) {
+    const child = this.getObjectByUUID(uuid);
+    if (child) {
+      setItemProps(child, key, value);
+    }
+  }
+
+  private onCreateTexture(uuid: string, key: string, value: any) {
+    const child = this.getObjectByUUID(uuid);
+    if (child) {
+      const onComplete = (value: Texture | null) => {
+        const keys = key.split('.');
+        const total = keys.length;
+        switch (total) {
+          case 1:
+            child[keys[0]] = value;
+            break;
+          case 2:
+            child[keys[0]][keys[1]] = value;
+            break;
+          case 3:
+            child[keys[0]][keys[1]][keys[2]] = value;
+            break;
+          case 4:
+            child[keys[0]][keys[1]][keys[2]][keys[3]] = value;
+            break;
+          case 5:
+            child[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]] = value;
+            break;
+        }
+        child['material']['needsUpdate'] = true;
+      };
+
+      // Load
+      if (value.src.length > 0) {
+        textureFromSrc(value.src).then((texture: Texture) => {
+          texture.offset.set(value.offset[0], value.offset[1]);
+          texture.repeat.set(value.repeat[0], value.repeat[1]);
+          onComplete(texture);
+        });
+      } else {
+        onComplete(null);
+      }
+    }
   }
 
   // Groups
@@ -383,9 +438,6 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
 
   override handleEditor(msg: BroadcastData): void {
     switch (msg.event) {
-      case 'setObject':
-        this.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: msg.data });
-        break;
       case 'addScene':
         this.dispatchEvent({ type: ToolEvents.ADD_SCENE, value: msg.data });
         break;
@@ -415,6 +467,23 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
         break;
       case 'addRenderer':
         this.dispatchEvent({ type: ToolEvents.ADD_RENDERER, value: msg.data });
+    }
+  }
+
+  protected override messageHandler(evt: MessageEvent) {
+    const data: BroadcastData = evt.data;
+    if (data.event === 'updateObject') {
+      this.onUpdateObject(data.data.uuid, data.data.key, data.data.value);
+      return;
+    } else if (data.event === 'createTexture') {
+      this.onCreateTexture(data.data.uuid, data.data.key, data.data.value);
+      return;
+    }
+
+    if (data.target === 'app') {
+      this.handleApp(data);
+    } else {
+      this.handleEditor(data);
     }
   }
 

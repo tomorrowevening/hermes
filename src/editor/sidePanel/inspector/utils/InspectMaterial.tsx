@@ -850,7 +850,7 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
         }
       }
     } catch(_) {
-      console.log('Issue cycling through material object:', prop, value);
+      console.log('Hermes - Issue cycling through material object:', prop, value);
     }
     if (children.length > 0) {
       sortChildren(children);
@@ -881,7 +881,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
       const obj = inspectObject(i, value, object, three);
       if (obj !== undefined) items.push(obj);
     } else if (value !== undefined) {
-      console.log('other:', i, propType, value);
+      console.log('Hermes - Other Material Prop Type:', i, propType, value);
     }
   }
 
