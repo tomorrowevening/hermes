@@ -825,7 +825,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.scenes.set(evt.value.name, sceneInstance);
       this.scene.add(sceneInstance);
     } else {
-      console.log('>>> scene not found:', evt.value.name, this.props.scenes);
+      console.log('Hermes - Scene not found:', evt.value.name, this.props.scenes);
     }
   };
 
