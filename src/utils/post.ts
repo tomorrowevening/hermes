@@ -1,171 +1,175 @@
+import { PerspectiveCamera, RGBAFormat, ShaderMaterial, Texture, WebGLRenderer, WebGLRenderTarget } from 'three';
 import RemoteThree from '../core/remote/RemoteThree';
 import { GroupItemData } from '../core/types';
 import { ExportTexture } from './three';
-import { PerspectiveCamera, RGBAFormat, ShaderMaterial, Texture, WebGLRenderer, WebGLRenderTarget } from 'three';
 
 let addedComposerGroups: string[] = [];
 
-export function inspectComposer(composer: any, three: RemoteThree) {
+export function inspectComposerPass(pass: any, three: RemoteThree) {
   ExportTexture.renderer = three.renderer;
 
-  composer.passes.forEach((pass) => {
-    const groupEffects: GroupItemData[] = [];
-    groupEffects.push({
-      type: 'boolean',
-      prop: 'Enabled',
-      value: pass.enabled,
-    });
-    let handlePass = (prop, value) => {
-      console.log('Default Handle Pass:', prop, value);
-    };
+  const groupEffects: GroupItemData[] = [];
+  groupEffects.push({
+    type: 'boolean',
+    prop: 'Enabled',
+    value: pass.enabled,
+  });
+  let handlePass = (prop, value) => {
+    console.log('Default Handle Pass:', prop, value);
+  };
 
-    if (pass.name === 'EffectPass') {
+  if (pass.name === 'EffectPass') {
+    // @ts-ignore
+    pass.effects.forEach((effect) => {
+      if (effect.uniforms.size > 0) {
+        effect.uniforms.forEach((uniform, key) => {
+          const title = `${effect.name.replace('Effect', '')} ${key}`;
+          // Textures
+          if (uniform.value === null) {
+            groupEffects.push({
+              prop: key,
+              title: title,
+              type: 'image',
+              value: {
+                offset: [0, 0],
+                repeat: [1, 1],
+                src: '',
+              },
+            });
+          } else if (uniform.value.isTexture) {
+            const texture = uniform.value as Texture;
+            const src = ExportTexture.renderToBlob(texture);
+            groupEffects.push({
+              prop: key,
+              title: title,
+              type: 'image',
+              value: {
+                offset: [texture.offset.x, texture.offset.y],
+                repeat: [texture.repeat.x, texture.repeat.y],
+                src: src,
+              },
+            });
+          } else if (typeof uniform.value === 'number') {
+            groupEffects.push({
+              prop: key,
+              title: title,
+              type: 'number',
+              value: uniform.value,
+              step: 0.01,
+            });
+          } else if (typeof uniform.value === 'string') {
+            groupEffects.push({
+              prop: key,
+              title: title,
+              type: 'string',
+              value: uniform.value,
+            });
+          } else if (typeof uniform.value === 'boolean') {
+            groupEffects.push({
+              prop: key,
+              title: title,
+              type: 'boolean',
+              value: uniform.value,
+            });
+          }
+        });
+      }
+    });
+
+    handlePass = (prop, value) => {
+      // console.log('Effect Pass:', prop, value);
       // @ts-ignore
-      pass.effects.forEach((effect, effIndex) => {
+      pass.effects.forEach((effect) => {
         if (effect.uniforms.size > 0) {
           effect.uniforms.forEach((uniform, key) => {
-            const title = `${effect.name.replace('Effect', '')} ${key}`;
-            // Textures
-            if (uniform.value === null) {
-              groupEffects.push({
-                prop: key,
-                title: title,
-                type: 'image',
-                value: {
-                  offset: [0, 0],
-                  repeat: [1, 1],
-                  src: '',
-                },
-              });
-            } else if (uniform.value.isTexture) {
-              const texture = uniform.value as Texture;
-              const src = ExportTexture.renderToBlob(texture);
-              groupEffects.push({
-                prop: key,
-                title: title,
-                type: 'image',
-                value: {
-                  offset: [texture.offset.x, texture.offset.y],
-                  repeat: [texture.repeat.x, texture.repeat.y],
-                  src: src,
-                },
-              });
-            } else if (typeof uniform.value === 'number') {
-              groupEffects.push({
-                prop: key,
-                title: title,
-                type: 'number',
-                value: uniform.value,
-                step: 0.01,
-              });
-            } else if (typeof uniform.value === 'string') {
-              groupEffects.push({
-                prop: key,
-                title: title,
-                type: 'string',
-                value: uniform.value,
-              });
-            } else if (typeof uniform.value === 'boolean') {
-              groupEffects.push({
-                prop: key,
-                title: title,
-                type: 'boolean',
-                value: uniform.value,
-              });
+            if (key === prop) {
+              uniform.value = value;
             }
           });
         }
       });
+    };
 
-      handlePass = (prop, value) => {
-        // console.log('Effect Pass:', prop, value);
-        // @ts-ignore
-        pass.effects.forEach((effect) => {
-          if (effect.uniforms.size > 0) {
-            effect.uniforms.forEach((uniform, key) => {
-              if (key === prop) {
-                uniform.value = value;
-              }
-            });
-          }
+  } else if (pass.name === 'ShaderPass') {
+    const mat = pass.fullscreenMaterial as ShaderMaterial;
+    for (const key in mat.uniforms) {
+      const uniform = mat.uniforms[key];
+      const title = `${mat.name.replace('Material', '')} ${key}`;
+      if (uniform.value === null) {
+        groupEffects.push({
+          title: title,
+          prop: key,
+          type: 'image',
+          value: {
+            offset: [0, 0],
+            repeat: [1, 1],
+            src: '',
+          },
         });
-      };
-
-    } else if (pass.name === 'ShaderPass') {
-      const mat = pass.fullscreenMaterial as ShaderMaterial;
-      for (const key in mat.uniforms) {
-        const uniform = mat.uniforms[key];
-        const title = `${mat.name.replace('Material', '')} ${key}`;
-        if (uniform.value === null) {
-          groupEffects.push({
-            title: title,
-            prop: key,
-            type: 'image',
-            value: {
-              offset: [0, 0],
-              repeat: [1, 1],
-              src: '',
-            },
-          });
-        } else if (uniform.value.isTexture) {
-          const texture = uniform.value as Texture;
-          const src = ExportTexture.renderToBlob(texture);
-          groupEffects.push({
-            title: title,
-            prop: key,
-            type: 'image',
-            value: {
-              offset: [texture.offset.x, texture.offset.y],
-              repeat: [texture.repeat.x, texture.repeat.y],
-              src: src,
-            },
-          });
-        } else if (typeof uniform.value === 'number') {
-          groupEffects.push({
-            title: title,
-            prop: key,
-            type: 'number',
-            value: uniform.value,
-            step: 0.01,
-          });
-        } else if (typeof uniform.value === 'string') {
-          groupEffects.push({
-            title: title,
-            prop: key,
-            type: 'string',
-            value: uniform.value,
-          });
-        } else if (typeof uniform.value === 'boolean') {
-          groupEffects.push({
-            title: title,
-            prop: key,
-            type: 'boolean',
-            value: uniform.value,
-          });
-        }
+      } else if (uniform.value.isTexture) {
+        const texture = uniform.value as Texture;
+        const src = ExportTexture.renderToBlob(texture);
+        groupEffects.push({
+          title: title,
+          prop: key,
+          type: 'image',
+          value: {
+            offset: [texture.offset.x, texture.offset.y],
+            repeat: [texture.repeat.x, texture.repeat.y],
+            src: src,
+          },
+        });
+      } else if (typeof uniform.value === 'number') {
+        groupEffects.push({
+          title: title,
+          prop: key,
+          type: 'number',
+          value: uniform.value,
+          step: 0.01,
+        });
+      } else if (typeof uniform.value === 'string') {
+        groupEffects.push({
+          title: title,
+          prop: key,
+          type: 'string',
+          value: uniform.value,
+        });
+      } else if (typeof uniform.value === 'boolean') {
+        groupEffects.push({
+          title: title,
+          prop: key,
+          type: 'boolean',
+          value: uniform.value,
+        });
       }
-
-      handlePass = (prop, value) => {
-        const uniform = mat.uniforms[prop];
-        uniform.value = value;
-      };
-    } else {
-      return;
     }
 
-    const groupName = `Pass: ${pass.name}`;
-    three.addGroup({
-      title: groupName,
-      items: groupEffects,
-      onUpdate: (prop, value) => {
-        if (prop === 'Enabled') {
-          pass.enabled = value;
-        } else {
-          handlePass(prop, value);
-        }
-      },
-    });
-    addedComposerGroups.push(groupName);
+    handlePass = (prop, value) => {
+      const uniform = mat.uniforms[prop];
+      uniform.value = value;
+    };
+  } else {
+    return;
+  }
+
+  const groupName = `${pass.name}: ${pass.scene.name}`;
+  three.addGroup({
+    title: groupName,
+    items: groupEffects,
+    onUpdate: (prop, value) => {
+      if (prop === 'Enabled') {
+        pass.enabled = value;
+      } else {
+        handlePass(prop, value);
+      }
+    },
+  });
+  addedComposerGroups.push(groupName);
+}
+
+export function inspectComposer(composer: any, three: RemoteThree) {
+  composer.passes.forEach((pass) => {
+    inspectComposerPass(pass, three);
   });
 }
 
