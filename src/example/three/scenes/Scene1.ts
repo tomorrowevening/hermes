@@ -42,7 +42,7 @@ export default class Scene1 extends BaseScene {
 
     this.createLights();
     this.createWorld();
-    if (!this.app.editor) this.createPost();
+    this.createPost();
     this.createAnimation();
     hierarchyUUID(this);
 
@@ -226,11 +226,13 @@ export default class Scene1 extends BaseScene {
     this.composer?.addPass(new RenderPass(this, this.camera));
 
     const pass = new EffectPass(this.camera, new FXAAEffect(), new BloomEffect(), new VignetteEffect());
-    pass.name = 'FXAA/Bloom/Vignette';
+    // @ts-ignore
+    pass.scene.name = 'FXAA/Bloom/Vignette';
     this.composer?.addPass(pass);
-
+    
     const displayPass = new ShaderPass(new CopyMaterial());
-    displayPass.name = 'Display';
+    // @ts-ignore
+    displayPass.scene.name = 'Display';
     this.composer?.addPass(displayPass);
 
     inspectComposer(this.composer, three);
