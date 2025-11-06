@@ -17,6 +17,7 @@ export default class RemoteTheatre extends BaseRemote {
     studio: any;
     constructor(debug?: boolean, editor?: boolean);
     dispose(): void;
+    loadProject(id: string, state?: any): Promise<void>;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
     playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;
@@ -28,6 +29,7 @@ export default class RemoteTheatre extends BaseRemote {
     unsubscribe(sheetObject: ISheetObject): undefined;
     protected handleApp(msg: BroadcastData): void;
     protected handleEditor(msg: BroadcastData): void;
+    getSheetNames(): string[];
     handleEditorApp(): void;
 }
 export {};
