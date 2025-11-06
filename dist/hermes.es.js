@@ -1027,7 +1027,7 @@ class bP extends tg {
     if (r === void 0) return;
     const l = `${this.getSheetInstance(e, n)}_${t}`;
     let c = this.sheetObjects.get(l), h = s;
-    c !== void 0 && (h = { ...s, ...c.value }), c = r.object(t, h), this.sheetObjects.set(l, c), this.sheetObjectCBs.set(l, i !== void 0 ? i : rl);
+    c !== void 0 && (h = { ...s, ...c.value }), c = r.object(t, h, { reconfigure: !0 }), this.sheetObjects.set(l, c), this.sheetObjectCBs.set(l, i !== void 0 ? i : rl);
     const u = c.onValuesChange((d) => {
       const p = this.sheetObjectCBs.get(l);
       if (this.editor) {
