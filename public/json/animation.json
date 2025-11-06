@@ -149,6 +149,18 @@
         }
       }
     },
+    "Scene1": {
+      "staticOverrides": {
+        "byObject": {}
+      },
+      "sequence": {
+        "subUnitsPerUnit": 30,
+        "length": 10,
+        "type": "PositionalSequence",
+        "tracksByObject": {
+        }
+      }
+    },
     "Scene2": {
       "staticOverrides": {
         "byObject": {}

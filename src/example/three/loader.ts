@@ -32,6 +32,7 @@ export function loadModel(name: string, source: string): Promise<Group> {
       .then((model: Group) => {
         // Shadows
         model.traverse((obj: Object3D) => {
+          // @ts-ignore
           if (obj['isMesh']) {
             obj.castShadow = true;
             obj.receiveShadow = true;
@@ -104,8 +105,7 @@ export function loadAssets(app: Application): Promise<void> {
       .then(() => {
         const theatre = app.components.get('theatre') as RemoteTheatre;
         const state = json.get('animation');
-        theatre.project = getProject('RemoteApp', { state });
-        theatre.project.ready.then(() => {
+        theatre.loadProject('RemoteApp', state).then(() => {
           threeDispatcher.dispatchEvent({ type: Events.LOAD_COMPLETE });
           resolve();
         });

@@ -1,5 +1,5 @@
 // Libs
-import { IProject, ISheet, ISheetObject } from '@theatre/core';
+import { getProject, IProject, ISheet, ISheetObject } from '@theatre/core';
 // Core
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
@@ -73,6 +73,19 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjects = new Map();
     this.sheetObjectCBs = new Map();
     this.sheetObjectUnsubscribe = new Map();
+  }
+
+  loadProject(id: string, state?: any): Promise<void> {
+    this.project = getProject(id, { state });
+    return new Promise((resolve, reject) => {
+      this.project?.ready.then(() => {
+        if (state) {
+          const sheets = state.sheetsById;
+          for (const i in sheets) this.sheet(i);
+        }
+        resolve();
+      }).catch(() => reject());
+    });
   }
 
   getSheetInstance(name: string, instanceId?: string): string {
@@ -334,6 +347,14 @@ export default class RemoteTheatre extends BaseRemote {
         this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
         break;
     }
+  }
+
+  getSheetNames(): string[] {
+    const sheets: string[] = [];
+    this.sheets.forEach((_, key: string) => {
+      sheets.push(key);
+    });
+    return sheets;
   }
 
   handleEditorApp() {
