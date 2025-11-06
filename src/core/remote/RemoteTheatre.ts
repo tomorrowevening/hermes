@@ -169,9 +169,9 @@ export default class RemoteTheatre extends BaseRemote {
     let obj = this.sheetObjects.get(objName);
     let objProps = props;
     if (obj !== undefined) {
-      objProps = {...props, ...obj.value}, {reconfigure: true};
+      objProps = {...props, ...obj.value};
     }
-    obj = sheet.object(key, objProps);
+    obj = sheet.object(key, objProps, { reconfigure: true });
 
     this.sheetObjects.set(objName, obj);
     this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop);
