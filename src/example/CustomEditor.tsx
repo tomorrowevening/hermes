@@ -6,7 +6,7 @@ import ThreeEditor from '../editor/ThreeEditor';
 import BaseScene from './three/scenes/BaseScene';
 // Utils
 import MultiView from '../editor/multiView/MultiView';
-import { customizeTheatreElements } from '../editor/theatreUtils';
+import { customizeTheatreElements } from '../utils/theatre';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
 import RTTScene from './three/scenes/RTTScene';

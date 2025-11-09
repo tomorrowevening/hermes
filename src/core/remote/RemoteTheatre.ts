@@ -1,5 +1,5 @@
 // Libs
-import { getProject, IProject, ISheet, ISheetObject } from '@theatre/core';
+import { getProject, IProject, ISheet, ISheetObject, types } from '@theatre/core';
 // Core
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
@@ -171,10 +171,31 @@ export default class RemoteTheatre extends BaseRemote {
     if (obj !== undefined) {
       objProps = {...props, ...obj.value};
     }
+
     obj = sheet.object(key, objProps, { reconfigure: true });
 
     this.sheetObjects.set(objName, obj);
     this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop);
+
+    function convertColor(obj, key, value) {
+      if (typeof value === 'object') {
+        if (isColor(value)) {
+          obj[key] = {
+            r: value.r,
+            g: value.g,
+            b: value.b,
+            a: value.a,
+          };
+        } else {
+          for (const n in value) {
+            const subvalue = value[n];
+            if (typeof subvalue === 'object') {
+              convertColor(value, n, subvalue);
+            }
+          }
+        }
+      }
+    }
 
     const unsubscribe = obj.onValuesChange((values: any) => {
       const callback = this.sheetObjectCBs.get(objName);
@@ -182,16 +203,10 @@ export default class RemoteTheatre extends BaseRemote {
         for (const i in values) {
           const value = values[i];
           if (typeof value === 'object') {
-            if (isColor(value)) {
-              values[i] = {
-                r: value.r,
-                g: value.g,
-                b: value.b,
-                a: value.a,
-              };
-            }
+            convertColor(values, i, value);
           }
         }
+
         this.send({
           event: 'updateSheetObject',
           target: 'app',

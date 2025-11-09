@@ -36,7 +36,15 @@ export default class BaseRemote {
 
   protected send(data: BroadcastData) {
     const send = (this.editor && data.target === 'app') || (!this.editor && data.target === 'editor');
-    if (send) this.broadcastChannel?.postMessage(data);
+    if (send) {
+      try {
+        this.broadcastChannel?.postMessage(data);
+      } catch (err: any) {
+        console.log('Hermes - Error sending message:');
+        console.log(err);
+        console.log(data);
+      }
+    }
   }
 
   protected messageHandler(evt: MessageEvent) {
