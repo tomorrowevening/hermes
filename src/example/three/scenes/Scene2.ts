@@ -140,13 +140,13 @@ export default class Scene2 extends BaseScene {
     rttMat.map = this.rttScene.renderTarget.texture;
     const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
     rttExample.name = 'rttExample';
-    rttExample.position.set(-100, 0, -150);
-    this.camera.add(rttExample);
+    rttExample.position.set(-75, 50, -125);
+    world.add(rttExample);
 
     if (three.renderer.isWebGLRenderer) {
       const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
       testShader.name = 'customShaderMaterial';
-      testShader.position.set(100, 50, -100);
+      testShader.position.set(75, 50, -125);
       world.add(testShader);
     } else {
       // WebGPU
