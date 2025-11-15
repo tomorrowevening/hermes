@@ -130,8 +130,8 @@ export const hierarchyUUID = (object: Object3D): void => {
 
 export class ExportTexture {
   static renderer: WebGLRenderer;
-  private static canvas: HTMLCanvasElement;
-  private static context: CanvasRenderingContext2D | null = null;
+  private static canvas: HTMLCanvasElement | OffscreenCanvas;
+  private static context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
   private static scene: Scene | null = null;
   private static camera: OrthographicCamera | null = null;
   private static material: MeshBasicMaterial | null = null;
@@ -142,7 +142,15 @@ export class ExportTexture {
   private static init() {
     if (this.inited) return;
 
-    this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+    // Check if we're in a web worker (no document) or main thread
+    if (typeof document !== 'undefined') {
+      // Main thread - use HTMLCanvasElement
+      this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+    } else {
+      // Web worker - use OffscreenCanvas
+      this.canvas = new OffscreenCanvas(this.width, this.height);
+    }
+    
     this.canvas.width = this.width;
     this.canvas.height = this.height;
 
@@ -151,7 +159,7 @@ export class ExportTexture {
     this.inited = true;
   }
 
-  static renderToBlob(texture: Texture): string {
+  static renderToBlob(texture: Texture): string | Promise<string> {
     this.init();
 
     // Textures
@@ -166,11 +174,14 @@ export class ExportTexture {
 
       const image = texture.image;
       if (image !== undefined && image !== null && image.width > 0) {
-        // @ts-ignore
-        this.canvas.title = texture.sourceFile;
+        // Set title only for HTMLCanvasElement
+        if (this.canvas instanceof HTMLCanvasElement) {
+          // @ts-ignore
+          this.canvas.title = texture.sourceFile;
+        }
         const scale = this.canvas.width / image.width;
         const canvas2 = this.renderToCanvas(texture);
-        this.context.drawImage( canvas2, 0, 0, image.width * scale, image.height * scale );
+        this.context!.drawImage(canvas2 as CanvasImageSource, 0, 0, image.width * scale, image.height * scale);
       }
     }
 
@@ -178,10 +189,22 @@ export class ExportTexture {
     texture.repeat.copy(repeat);
     texture.offset.copy(offset);
 
-    return this.canvas.toDataURL('image/png');
+    // Handle different canvas types
+    if (this.canvas instanceof HTMLCanvasElement) {
+      return this.canvas.toDataURL('image/png');
+    } else {
+      // OffscreenCanvas - convert to blob then to data URL
+      return this.canvas.convertToBlob({ type: 'image/png' }).then(blob => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+      });
+    }
   }
 
-  private static renderToCanvas(texture: Texture): HTMLCanvasElement {
+  private static renderToCanvas(texture: Texture): HTMLCanvasElement | OffscreenCanvas {
     if (this.material === null) {
       this.camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 100);
       this.scene = new Scene();
@@ -211,7 +234,10 @@ export class ExportTexture {
       texture.colorSpace = beforeTex;
     }
 
-    return this.renderer.domElement;
+    // Return the canvas used by the renderer
+    return this.renderer.domElement instanceof HTMLCanvasElement 
+      ? this.renderer.domElement 
+      : this.canvas;
   }
 }
 
