@@ -5,7 +5,7 @@ import { ExportTexture } from './three';
 
 let addedComposerGroups: string[] = [];
 
-export function inspectComposerPass(pass: any, three: RemoteThree) {
+export function inspectComposerPass(pass: any, three: RemoteThree, includeTextures = true) {
   ExportTexture.renderer = three.renderer;
 
   const groupEffects: GroupItemData[] = [];
@@ -23,9 +23,11 @@ export function inspectComposerPass(pass: any, three: RemoteThree) {
     pass.effects.forEach((effect) => {
       if (effect.uniforms.size > 0) {
         effect.uniforms.forEach((uniform, key) => {
+          if (key === 'map') return;
+
           const title = `${effect.name.replace('Effect', '')} ${key}`;
           // Textures
-          if (uniform.value === null) {
+          if (uniform.value === null && includeTextures) {
             groupEffects.push({
               prop: key,
               title: title,
@@ -36,7 +38,7 @@ export function inspectComposerPass(pass: any, three: RemoteThree) {
                 src: '',
               },
             });
-          } else if (uniform.value.isTexture) {
+          } else if (uniform.value.isTexture && includeTextures) {
             const texture = uniform.value as Texture;
             const src = ExportTexture.renderToBlob(texture);
             groupEffects.push({
@@ -93,9 +95,11 @@ export function inspectComposerPass(pass: any, three: RemoteThree) {
   } else if (pass.name === 'ShaderPass') {
     const mat = pass.fullscreenMaterial as ShaderMaterial;
     for (const key in mat.uniforms) {
+      if (key === 'inputBuffer' || key === 'map') continue;
+
       const uniform = mat.uniforms[key];
       const title = `${mat.name.replace('Material', '')} ${key}`;
-      if (uniform.value === null) {
+      if (uniform.value === null && includeTextures) {
         groupEffects.push({
           title: title,
           prop: key,
@@ -106,7 +110,7 @@ export function inspectComposerPass(pass: any, three: RemoteThree) {
             src: '',
           },
         });
-      } else if (uniform.value.isTexture) {
+      } else if (uniform.value.isTexture && includeTextures) {
         const texture = uniform.value as Texture;
         const src = ExportTexture.renderToBlob(texture);
         groupEffects.push({
