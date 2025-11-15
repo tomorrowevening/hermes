@@ -644,7 +644,7 @@ class xn {
   static width = 100;
   static height = 100;
   static init() {
-    this.inited || (typeof document < "u" ? this.canvas = document.createElement("canvas") : this.canvas = new OffscreenCanvas(this.width, this.height), this.canvas.width = this.width, this.canvas.height = this.height, this.context = this.canvas.getContext("2d"), this.inited = !0);
+    this.inited || (this.canvas = document.createElement("canvas"), this.canvas.width = this.width, this.canvas.height = this.height, this.context = this.canvas.getContext("2d"), this.inited = !0);
   }
   static renderToBlob(e) {
     this.init();
@@ -653,15 +653,12 @@ class xn {
       this.context.clearRect(0, 0, this.width, this.height);
       const i = e.image;
       if (i != null && i.width > 0) {
-        this.canvas instanceof HTMLCanvasElement && (this.canvas.title = e.sourceFile);
+        this.canvas.title = e.sourceFile;
         const n = this.canvas.width / i.width, r = this.renderToCanvas(e);
         this.context.drawImage(r, 0, 0, i.width * n, i.height * n);
       }
     }
-    return e.repeat.copy(t), e.offset.copy(s), this.canvas instanceof HTMLCanvasElement ? this.canvas.toDataURL("image/png") : this.canvas.convertToBlob({ type: "image/png" }).then((i) => new Promise((n) => {
-      const r = new FileReader();
-      r.onload = () => n(r.result), r.readAsDataURL(i);
-    }));
+    return e.repeat.copy(t), e.offset.copy(s), this.canvas.toDataURL("image/png");
   }
   static renderToCanvas(e) {
     if (this.material === null) {
@@ -677,7 +674,7 @@ class xn {
       const t = this.renderer.outputColorSpace, s = e.colorSpace;
       this.renderer.outputColorSpace = Fa, e.colorSpace = Fa, this.material.map = e, this.renderer.render(this.scene, this.camera), this.renderer.outputColorSpace = t, e.colorSpace = s;
     }
-    return this.renderer.domElement instanceof HTMLCanvasElement ? this.renderer.domElement : this.canvas;
+    return this.renderer.domElement;
   }
 }
 function _P(a) {
@@ -703,25 +700,26 @@ function _P(a) {
   });
 }
 let Lh = [];
-function y_(a, e) {
+function y_(a, e, t = !0) {
   xn.renderer = e.renderer;
-  const t = [];
-  t.push({
+  const s = [];
+  s.push({
     type: "boolean",
     prop: "Enabled",
     value: a.enabled
   });
-  let s = (n, r) => {
-    console.log("Default Handle Pass:", n, r);
+  let i = (r, o) => {
+    console.log("Default Handle Pass:", r, o);
   };
   if (a.name === "EffectPass")
-    a.effects.forEach((n) => {
-      n.uniforms.size > 0 && n.uniforms.forEach((r, o) => {
-        const l = `${n.name.replace("Effect", "")} ${o}`;
-        if (r.value === null)
-          t.push({
-            prop: o,
-            title: l,
+    a.effects.forEach((r) => {
+      r.uniforms.size > 0 && r.uniforms.forEach((o, l) => {
+        if (l === "map") return;
+        const c = `${r.name.replace("Effect", "")} ${l}`;
+        if (o.value === null && t)
+          s.push({
+            prop: l,
+            title: c,
             type: "image",
             value: {
               offset: [0, 0],
@@ -729,51 +727,52 @@ function y_(a, e) {
               src: ""
             }
           });
-        else if (r.value.isTexture) {
-          const c = r.value, h = xn.renderToBlob(c);
-          t.push({
-            prop: o,
-            title: l,
+        else if (o.value.isTexture && t) {
+          const h = o.value, u = xn.renderToBlob(h);
+          s.push({
+            prop: l,
+            title: c,
             type: "image",
             value: {
-              offset: [c.offset.x, c.offset.y],
-              repeat: [c.repeat.x, c.repeat.y],
-              src: h
+              offset: [h.offset.x, h.offset.y],
+              repeat: [h.repeat.x, h.repeat.y],
+              src: u
             }
           });
-        } else typeof r.value == "number" ? t.push({
-          prop: o,
-          title: l,
+        } else typeof o.value == "number" ? s.push({
+          prop: l,
+          title: c,
           type: "number",
-          value: r.value,
+          value: o.value,
           step: 0.01
-        }) : typeof r.value == "string" ? t.push({
-          prop: o,
-          title: l,
+        }) : typeof o.value == "string" ? s.push({
+          prop: l,
+          title: c,
           type: "string",
-          value: r.value
-        }) : typeof r.value == "boolean" && t.push({
-          prop: o,
-          title: l,
+          value: o.value
+        }) : typeof o.value == "boolean" && s.push({
+          prop: l,
+          title: c,
           type: "boolean",
-          value: r.value
+          value: o.value
         });
       });
-    }), s = (n, r) => {
-      a.effects.forEach((o) => {
-        o.uniforms.size > 0 && o.uniforms.forEach((l, c) => {
-          c === n && (l.value = r);
+    }), i = (r, o) => {
+      a.effects.forEach((l) => {
+        l.uniforms.size > 0 && l.uniforms.forEach((c, h) => {
+          h === r && (c.value = o);
         });
       });
     };
   else if (a.name === "ShaderPass") {
-    const n = a.fullscreenMaterial;
-    for (const r in n.uniforms) {
-      const o = n.uniforms[r], l = `${n.name.replace("Material", "")} ${r}`;
-      if (o.value === null)
-        t.push({
-          title: l,
-          prop: r,
+    const r = a.fullscreenMaterial;
+    for (const o in r.uniforms) {
+      if (o === "inputBuffer" || o === "map") continue;
+      const l = r.uniforms[o], c = `${r.name.replace("Material", "")} ${o}`;
+      if (l.value === null && t)
+        s.push({
+          title: c,
+          prop: o,
           type: "image",
           value: {
             offset: [0, 0],
@@ -781,50 +780,50 @@ function y_(a, e) {
             src: ""
           }
         });
-      else if (o.value.isTexture) {
-        const c = o.value, h = xn.renderToBlob(c);
-        t.push({
-          title: l,
-          prop: r,
+      else if (l.value.isTexture && t) {
+        const h = l.value, u = xn.renderToBlob(h);
+        s.push({
+          title: c,
+          prop: o,
           type: "image",
           value: {
-            offset: [c.offset.x, c.offset.y],
-            repeat: [c.repeat.x, c.repeat.y],
-            src: h
+            offset: [h.offset.x, h.offset.y],
+            repeat: [h.repeat.x, h.repeat.y],
+            src: u
           }
         });
-      } else typeof o.value == "number" ? t.push({
-        title: l,
-        prop: r,
+      } else typeof l.value == "number" ? s.push({
+        title: c,
+        prop: o,
         type: "number",
-        value: o.value,
+        value: l.value,
         step: 0.01
-      }) : typeof o.value == "string" ? t.push({
-        title: l,
-        prop: r,
+      }) : typeof l.value == "string" ? s.push({
+        title: c,
+        prop: o,
         type: "string",
-        value: o.value
-      }) : typeof o.value == "boolean" && t.push({
-        title: l,
-        prop: r,
+        value: l.value
+      }) : typeof l.value == "boolean" && s.push({
+        title: c,
+        prop: o,
         type: "boolean",
-        value: o.value
+        value: l.value
       });
     }
-    s = (r, o) => {
-      const l = n.uniforms[r];
-      l.value = o;
+    i = (o, l) => {
+      const c = r.uniforms[o];
+      c.value = l;
     };
   } else
     return;
-  const i = `${a.name}: ${a.scene.name}`;
+  const n = `${a.name}: ${a.scene.name}`;
   e.addGroup({
-    title: i,
-    items: t,
-    onUpdate: (n, r) => {
-      n === "Enabled" ? a.enabled = r : s(n, r);
+    title: n,
+    items: s,
+    onUpdate: (r, o) => {
+      r === "Enabled" ? a.enabled = o : i(r, o);
     }
-  }), Lh.push(i);
+  }), Lh.push(n);
 }
 function bP(a, e) {
   a.passes.forEach((t) => {

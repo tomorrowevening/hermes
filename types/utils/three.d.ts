@@ -17,7 +17,7 @@ export declare class ExportTexture {
     private static width;
     private static height;
     private static init;
-    static renderToBlob(texture: Texture): string | Promise<string>;
+    static renderToBlob(texture: Texture): string;
     private static renderToCanvas;
 }
 export type ParsedModel = {
