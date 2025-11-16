@@ -63,6 +63,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     removeAllScenes(): void;
     getScene(uuid: string): Scene | null;
     setScene(value: Scene): void;
+    requestSize(): void;
     addCamera(camera: Camera): void;
     removeCamera(camera: Camera): void;
     handleApp(msg: BroadcastData): void;

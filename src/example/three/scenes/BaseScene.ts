@@ -18,7 +18,7 @@ export default class BaseScene extends Scene {
     this.add(cameras);
 
     this.camera = new PerspectiveCamera(90, 1, 10, 1000);
-    this.camera.name = 'Main';
+    this.camera.name = 'SceneCamera';
     this.camera.position.set(0, 100, 125);
     this.camera.lookAt(0, 50, 0);
     cameras.add(this.camera);

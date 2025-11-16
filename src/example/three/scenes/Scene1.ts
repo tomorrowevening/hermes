@@ -250,8 +250,6 @@ export default class Scene1 extends BaseScene {
 
   override resize(width: number, height: number): void {
     super.resize(width, height);
-    // this.renderer?.setSize(width, height);
-    this.composer?.setSize(width, height);
-    
+    if (this.app.isApp) this.composer?.setSize(width, height);
   }
 }

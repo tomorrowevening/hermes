@@ -1951,6 +1951,12 @@ class RP extends ig {
       data: t
     });
   }
+  requestSize() {
+    this.send({
+      event: "requestSize",
+      target: "app"
+    });
+  }
   // Cameras
   addCamera(e) {
     if (!this.debug) return;
@@ -2028,6 +2034,18 @@ class RP extends ig {
       return;
     } else if (t.event === "createTexture") {
       this.onCreateTexture(t.data.uuid, t.data.key, t.data.value);
+      return;
+    } else if (t.event === "requestSize") {
+      t.target === "app" ? this.send({
+        event: "requestSize",
+        target: "editor",
+        data: {
+          width: this.width,
+          height: this.height
+        }
+      }) : this.scenes.forEach((s) => {
+        s.resize !== void 0 && s.resize(t.data.width, t.data.height);
+      });
       return;
     }
     t.target === "app" ? this.handleApp(t) : this.handleEditor(t);
@@ -44469,6 +44487,13 @@ class iP extends Ha {
             title: "Type",
             value: this.type,
             disabled: !0
+          },
+          {
+            type: "button",
+            title: "Resize Scenes from Source",
+            onChange: () => {
+              this.props.three.requestSize();
+            }
           }
         ],
         onToggle: (t) => {

@@ -382,6 +382,13 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     });
   }
 
+  requestSize() {
+    this.send({
+      event: 'requestSize',
+      target: 'app',
+    });
+  }
+
   // Cameras
 
   addCamera(camera: Camera) {
@@ -477,6 +484,23 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
       return;
     } else if (data.event === 'createTexture') {
       this.onCreateTexture(data.data.uuid, data.data.key, data.data.value);
+      return;
+    } else if (data.event === 'requestSize') {
+      if (data.target === 'app') {
+        this.send({
+          event: 'requestSize',
+          target: 'editor',
+          data: {
+            width: this.width,
+            height: this.height,
+          },
+        });
+      } else {
+        // Resize the scenes
+        this.scenes.forEach((scene: any) => {
+          if (scene.resize !== undefined) scene.resize(data.data.width, data.data.height);
+        });
+      }
       return;
     }
 

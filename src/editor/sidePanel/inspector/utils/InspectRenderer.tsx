@@ -30,7 +30,6 @@ type InspectRendererState = {
   lastUpdated: number;
 }
 
-
 export default class InspectRenderer extends Component<InspectRendererProps, InspectRendererState> {
   // Renderer
   private autoClear = true;
@@ -312,6 +311,13 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
             title: 'Type',
             value: this.type,
             disabled: true,
+          },
+          {
+            type: 'button',
+            title: 'Resize Scenes from Source',
+            onChange: () => {
+              this.props.three.requestSize();
+            }
           },
         ]}
         onToggle={(value: boolean) => {

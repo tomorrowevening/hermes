@@ -66,6 +66,7 @@ export type EditorEvent =
   | 'addSpline'
   | 'addRenderer'
   | 'updateRenderer'
+  | 'requestSize'
 // GUI
   | 'addFolder'
   | 'bindObject'
