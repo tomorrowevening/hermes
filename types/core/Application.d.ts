@@ -1,6 +1,6 @@
 import BaseRemote from './remote/BaseRemote';
 import { AppSettings } from '../utils/detectSettings';
-export declare class Application {
+export default class Application {
     assets: {
         audio: Map<string, any>;
         image: Map<string, ImageBitmap>;

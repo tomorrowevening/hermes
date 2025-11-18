@@ -15,9 +15,10 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
     activeSheet: ISheet | undefined;
     studio: any;
+    rafDriver?: any;
     constructor(debug?: boolean, editor?: boolean);
     dispose(): void;
-    loadProject(id: string, state?: any): Promise<void>;
+    loadProject(id: string, createRaf: boolean, json?: any): Promise<void>;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
     playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;
@@ -26,6 +27,7 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObject(sheetName: string, key: string, props: any, onUpdate?: DataUpdateCallback, instanceId?: string): ISheetObject | undefined;
     getSheetObjectKeyframes(sheetName: string, sheetObject: string, prop: string): any[];
     getSheetObjectVectors(sheetName: string, sheetObject: string): KeyframeVector[];
+    update(now: number): void;
     unsubscribe(sheetObject: ISheetObject): undefined;
     protected handleApp(msg: BroadcastData): void;
     protected handleEditor(msg: BroadcastData): void;
