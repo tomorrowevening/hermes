@@ -1,7 +1,7 @@
 import BaseRemote from './remote/BaseRemote';
 import { AppSettings, detectSettings } from '../utils/detectSettings';
 
-export class Application {
+export default class Application {
   assets = {
     audio: new Map<string, any>(),
     image: new Map<string, ImageBitmap>(),
@@ -29,9 +29,8 @@ export class Application {
   protected rafID = -1;
 
   dispose() {
-    this.components.forEach((value: BaseRemote) => {
-      value.dispose();
-    });
+    this.pause();
+    this.components.forEach((value: BaseRemote) => value.dispose());
     this.components.clear();
   }
 

@@ -1,5 +1,5 @@
 // Libs
-import { getProject, IProject, ISheet, ISheetObject, types } from '@theatre/core';
+import { createRafDriver, getProject, IProject, ISheet, ISheetObject, types } from '@theatre/core';
 // Core
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
@@ -62,6 +62,7 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
+  rafDriver?: any = undefined;
 
   constructor(debug = false, editor = false) {
     super('RemoteTheatre', debug, editor);
@@ -75,14 +76,16 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe = new Map();
   }
 
-  loadProject(id: string, state?: any): Promise<void> {
-    this.project = getProject(id, { state });
+  loadProject(id: string, createRaf: boolean, json?: any): Promise<void> {
+    this.project = getProject(id, { state: json });
     return new Promise((resolve, reject) => {
       this.project?.ready.then(() => {
-        if (state) {
-          const sheets = state.sheetsById;
+        if (json) {
+          const sheets = json.sheetsById;
           for (const i in sheets) this.sheet(i);
         }
+
+        if (createRaf) this.rafDriver = createRafDriver({ name: id });
         resolve();
       }).catch(() => reject());
     });
@@ -113,6 +116,7 @@ export default class RemoteTheatre extends BaseRemote {
     return new Promise((resolve) => {
       // Play locally
       const rafParams = params !== undefined ? {...params} : {};
+      rafParams.rafDriver = this.rafDriver;
       this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
 
       // Remotely
@@ -290,6 +294,10 @@ export default class RemoteTheatre extends BaseRemote {
       });
     });
     return keyframes;
+  }
+
+  update(now: number) {
+    this.rafDriver?.tick(now);
   }
 
   unsubscribe(sheetObject: ISheetObject) {
