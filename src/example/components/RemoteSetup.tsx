@@ -1,5 +1,5 @@
 import studio from '@theatre/studio';
-import { Application } from '../../core/Application';
+import Application from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 type RemoteProps = {

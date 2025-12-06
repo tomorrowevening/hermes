@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Application } from '../core/Application';
+import Application from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
 // Views
 import ThreeEditor from '../editor/ThreeEditor';

@@ -27,7 +27,7 @@ import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
 import CustomShaderMaterial from '../CustomShaderMaterial';
 import RTTScene from './RTTScene';
-import { Application } from '../../../core/Application';
+import Application from '../../../core/Application';
 
 const customGroupName = 'Custom Group';
 

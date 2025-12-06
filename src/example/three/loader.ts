@@ -2,8 +2,7 @@ import { CubeTexture, CubeTextureLoader, Group, Object3D, RepeatWrapping, Textur
 // @ts-ignore
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { Events, threeDispatcher } from '../constants';
-import { getProject } from '@theatre/core';
-import { Application } from '../../core/Application';
+import Application from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 
 export const cubeTextures: Map<string, CubeTexture> = new Map();

@@ -6,6 +6,7 @@ type AccordionProps = {
     button?: JSX.Element;
     children?: JSX.Element | JSX.Element[];
     open?: boolean;
+    visible?: boolean;
     onToggle?: (value: boolean) => void;
     onRefresh?: () => void;
 };

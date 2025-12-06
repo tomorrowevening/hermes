@@ -4,7 +4,7 @@ import { WebGLRenderer } from 'three';
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
-import { Application } from '../../core/Application';
+import Application from '../../core/Application';
 // Components
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three

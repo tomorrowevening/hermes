@@ -3,7 +3,7 @@ import { Events, threeDispatcher } from '../constants';
 import { loadAssets } from '../three/loader';
 import './App.css';
 import App from './App';
-import { Application } from '../../core/Application';
+import Application from '../../core/Application';
 
 type WrapperProps = {
   app: Application
