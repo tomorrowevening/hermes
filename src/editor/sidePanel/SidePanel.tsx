@@ -24,8 +24,9 @@ export default function SidePanel(props: SidePanelState) {
         three={props.three}
         label={`Scene: ${scene.name}`}
         scene={scene}
-        open={true}
-        key={Math.random()}
+        open={false}
+        key={scene.name}
+        visible={false}
         onRefresh={() => {
           props.three.refreshScene(scene.name);
         }}
@@ -46,8 +47,8 @@ export default function SidePanel(props: SidePanelState) {
             three={props.three}
             label={`Scene: ${scene.name}`}
             scene={scene}
-            open={true}
-            key={Math.random()}
+            open={sceneComponents[i].props.open}
+            key={scene.name}
             onRefresh={() => {
               props.three.refreshScene(scene.name);
             }}
@@ -73,12 +74,40 @@ export default function SidePanel(props: SidePanelState) {
     }
   };
 
+  const onSetScene = (evt: any) => {
+    const name = evt.value.name;
+    for (let i = 0; i < scenes.length; i++) {
+      const scene = scenes[i];
+      if (scene.name === name) {
+        sceneComponents[i] = (
+          <Accordion
+            three={props.three}
+            label={`Scene: ${scene.name}`}
+            scene={scene}
+            open={true}
+            key={scene.name}
+            visible={true}
+            onRefresh={() => {
+              props.three.refreshScene(scene.name);
+            }}
+          >
+            <ContainerObject child={scene} scene={scene} three={props.three} />
+          </Accordion>
+        );
+        break;
+      }
+    }
+    setLastUpdate(Date.now());
+  };
+
   useEffect(() => {
     props.three.addEventListener(ToolEvents.ADD_SCENE, onAddScene);
+    props.three.addEventListener(ToolEvents.SET_SCENE, onSetScene);
     props.three.addEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
     props.three.addEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     return () => {
       props.three.removeEventListener(ToolEvents.ADD_SCENE, onAddScene);
+      props.three.removeEventListener(ToolEvents.SET_SCENE, onSetScene);
       props.three.removeEventListener(ToolEvents.REFRESH_SCENE, onRefreshScene);
       props.three.removeEventListener(ToolEvents.REMOVE_SCENE, onRemoveScene);
     };

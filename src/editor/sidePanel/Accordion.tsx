@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { capitalize } from '../../editor/utils';
 import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 
@@ -9,14 +9,15 @@ type AccordionProps = {
   button?: JSX.Element
   children?: JSX.Element | JSX.Element[]
   open?: boolean
+  visible?: boolean
   onToggle?: (value: boolean) => void
   onRefresh?: () => void
 }
 
 export default function Accordion(props: AccordionProps) {
-  const [open, setOpen] = useState(props.open !== undefined ? props.open : true);
+  const [open, setOpen] = useState(props.open !== undefined ? props.open : false);
+  const [visible, setVisible] = useState(props.visible !== undefined ? props.visible : false);
   const hide = !open || props.children === undefined;
-  const visibleRef = useRef<HTMLButtonElement>(null);
 
   const onRemove = () => {
     props.three.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value: props.scene });
@@ -41,15 +42,21 @@ export default function Accordion(props: AccordionProps) {
       </button>
       {props.onRefresh ? (
         <>
-          <button className='visibility' ref={visibleRef} onClick={() => {
-            const three = props.three;
-            const scene = three.getScene(props.scene.uuid);
-            if (scene) {
-              const value = !scene.visible;
-              scene.visible = value;
-              visibleRef.current!.style.opacity = value ? '1' : '0.25';
+          <button
+            className='visibility'
+            style={{
+              opacity: visible ? 1 : 0.25,
+            }}
+            onClick={() => {
+              const three = props.three;
+              const scene = three.getScene(props.scene.uuid);
+              if (scene) {
+                const value = !scene.visible;
+                scene.visible = value;
+                setVisible(value);
+              }
             }
-          }}></button>
+          }></button>
           <button className='refresh' onClick={props.onRefresh}></button>
           <button className='remove' onClick={onRemove}></button>
         </>
