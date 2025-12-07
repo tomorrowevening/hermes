@@ -1,4 +1,5 @@
 import RemoteTheatre from '../core/remote/RemoteTheatre';
+export declare function useStudio(): any;
 export declare function customizeTheatreElements(): Promise<void>;
 export declare function animateObjectTransform(sheet: string, key: string, obj: any, theatre: RemoteTheatre): void;
 type PropType = 'array' | 'boolean' | 'color' | 'euler' | 'matrix2' | 'matrix3' | 'matrix4' | 'number' | 'object' | 'string' | 'texture' | 'vector2' | 'vector3' | 'vector4';

@@ -64,7 +64,7 @@ type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLigh
 type MultiViewProps = {
   three: RemoteThree;
   scenes: Map<string, any>;
-  onSceneSet?: (scene: Scene) => void;
+  onSceneAdd?: (scene: Scene) => void;
   onSceneUpdate?: (scene: Scene) => void;
   onSceneResize?: (scene: Scene, width: number, height: number) => void;
 }
@@ -820,7 +820,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (sceneClass !== undefined) {
       const sceneInstance = new sceneClass();
       sceneInstance.visible = false;
-      if (this.props.onSceneSet !== undefined) this.props.onSceneSet(sceneInstance);
+      if (this.props.onSceneAdd !== undefined) this.props.onSceneAdd(sceneInstance);
       this.props.three.scene = sceneInstance;
       this.scenes.set(evt.value.name, sceneInstance);
       this.scene.add(sceneInstance);

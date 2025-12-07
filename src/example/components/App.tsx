@@ -69,9 +69,7 @@ function App(props: AppProps) {
   
       const updateApp = () => {
         currentScene?.update();
-        stats.begin();
         currentScene?.draw();
-        stats.end();
         stats.update();
         raf = requestAnimationFrame(updateApp);
       };

@@ -24,7 +24,7 @@ import Transform from '../Transform';
 import InspectorGroup from '../../sidePanel/inspector/InspectorGroup';
 // Utils
 import { copyToClipboard } from '../../utils';
-import { round } from '../../../utils/math';
+import { roundTo } from '../../../utils/math';
 import { dispose } from '../../../utils/three';
 import SplineEditor from '.';
 
@@ -113,7 +113,11 @@ export default class Spline extends Object3D {
   exportSpline = () => {
     const pts: Array<number[]> = [];
     this.draggable.children.forEach((child: Object3D) => {
-      pts.push([round(child.position.x, 3), round(child.position.y, 3), round(child.position.z, 3)]);
+      pts.push([
+        roundTo(child.position.x, 3),
+        roundTo(child.position.y, 3),
+        roundTo(child.position.z, 3)
+      ]);
     });
     copyToClipboard({
       name: this.name,

@@ -31,7 +31,7 @@ export default function CustomEditor(props: CustomEditorProps) {
     <ThreeEditor
       three={three}
       scenes={scenes}
-      onSceneSet={(scene: any) => {
+      onSceneAdd={(scene: any) => {
         scene.setup(props.app, MultiView.instance?.renderer);
         scene.init();
       }}

@@ -1,5 +1,7 @@
-import { AnimationClip, AnimationMixer, Material, Object3D, Object3DEventMap, Texture, WebGLRenderer } from 'three';
+import { AnimationClip, AnimationMixer, BufferGeometry, Camera, Material, Mesh, Object3D, Object3DEventMap, OrthographicCamera, Texture, WebGLRenderer, WebGLRenderTarget } from 'three';
 import { ModelLite } from '../webworkers/types';
+export declare const triangle: BufferGeometry<import("three").NormalBufferAttributes>;
+export declare const orthoCamera: OrthographicCamera;
 export declare const disposeTexture: (texture?: Texture) => void;
 export declare const disposeMaterial: (material?: Material | Material[]) => void;
 export declare const dispose: (object: Object3D) => void;
@@ -27,3 +29,15 @@ export type ParsedModel = {
     mixer: AnimationMixer;
 };
 export declare function parseModelLite(model: ModelLite): Promise<ParsedModel>;
+export declare const renderToTexture: (renderer: WebGLRenderer, scene: Object3D, camera: Camera, target: WebGLRenderTarget) => void;
+export declare function anchorGeometry(geometry: BufferGeometry, x: number, y: number, z: number): void;
+export declare function anchorGeometryTL(geometry: BufferGeometry): void;
+export declare function updateCameraOrtho(camera: OrthographicCamera, width: number, height: number): void;
+export declare function updateCameraOrtho16x9(camera: OrthographicCamera, width: number, height: number): void;
+export declare function supportsOffscreenCanvas(): boolean;
+export declare function createMask(mesh: Mesh, id: number, colorWrite?: boolean, depthWrite?: boolean): void;
+export declare function useMask(mesh: Mesh, id: number, inverse?: boolean): void;
+export declare function setMaterialBlendNormal(material: Material): void;
+export declare function setMaterialBlendAdd(material: Material): void;
+export declare function setMaterialBlendMultiply(material: Material): void;
+export declare function setMaterialBlendScreen(material: Material): void;

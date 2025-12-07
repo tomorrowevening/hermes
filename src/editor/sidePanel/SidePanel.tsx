@@ -23,9 +23,9 @@ export default function SidePanel(props: SidePanelState) {
       <Accordion
         three={props.three}
         label={`Scene: ${scene.name}`}
+        key={scene.name}
         scene={scene}
         open={false}
-        key={scene.name}
         visible={false}
         onRefresh={() => {
           props.three.refreshScene(scene.name);
@@ -46,9 +46,10 @@ export default function SidePanel(props: SidePanelState) {
           <Accordion
             three={props.three}
             label={`Scene: ${scene.name}`}
+            key={scene.name}
             scene={scene}
             open={sceneComponents[i].props.open}
-            key={scene.name}
+            visible={sceneComponents[i].props.visible}
             onRefresh={() => {
               props.three.refreshScene(scene.name);
             }}
@@ -83,9 +84,9 @@ export default function SidePanel(props: SidePanelState) {
           <Accordion
             three={props.three}
             label={`Scene: ${scene.name}`}
+            key={scene.name}
             scene={scene}
             open={true}
-            key={scene.name}
             visible={true}
             onRefresh={() => {
               props.three.refreshScene(scene.name);

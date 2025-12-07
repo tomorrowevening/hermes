@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { clamp, mix, normalize, round } from '../../../utils/math';
+import { clamp, mix, normalize, roundTo } from '../../../utils/math';
 import DragNumber from './utils/DragNumber';
 import { randomID } from '../../utils';
 
@@ -105,8 +105,8 @@ export default function InspectVector2(props: InspectVector2Props) {
     const xPercent = clamp(0, 99, evt.clientX - containerBounds.left) / 99;
     const yPercent = 1 - (clamp(0, 99, evt.clientY - containerBounds.top) / 99);
 
-    const xValue = round(mix(bounds.min, bounds.max, xPercent), 3);
-    const yValue = round(mix(bounds.min, bounds.max, yPercent), 3);
+    const xValue = roundTo(mix(bounds.min, bounds.max, xPercent), 3);
+    const yValue = roundTo(mix(bounds.min, bounds.max, yPercent), 3);
     props.onChange({ target: { value: { x: xValue, y: yValue } } });
     setX(xValue);
     setY(yValue);

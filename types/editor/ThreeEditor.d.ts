@@ -3,7 +3,7 @@ import RemoteThree from '../core/remote/RemoteThree';
 interface ThreeEditorProps {
     three: RemoteThree;
     scenes: Map<string, any>;
-    onSceneSet?: (scene: Scene) => void;
+    onSceneAdd?: (scene: Scene) => void;
     onSceneUpdate?: (scene: Scene) => void;
     onSceneResize?: (scene: Scene, width: number, height: number) => void;
 }
