@@ -221,7 +221,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
           },
           {
             type: 'boolean',
-            title: 'Clear Management',
+            title: 'Color Management',
             value: ColorManagement.enabled,
             onChange: (_, value: boolean) => {
               ColorManagement.enabled = value;
