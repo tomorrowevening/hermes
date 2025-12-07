@@ -1,5 +1,25 @@
 import { types } from '@theatre/core';
+import { useEffect, useState } from 'react';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
+
+let studioPackage;
+
+export function useStudio() {
+  const [studio, setStudio] = useState(studioPackage);
+
+  useEffect(() => {
+    if (!studioPackage) {
+      import('@theatre/studio').then((pkg) => {
+        studioPackage = pkg.default;
+        studioPackage.initialize();
+        studioPackage.ui.hide();
+        setStudio(studioPackage);
+      });
+    }
+  }, []);
+
+  return studio;
+}
 
 // Call this after the Theatre's studio has inited (onload is good)
 export async function customizeTheatreElements() {

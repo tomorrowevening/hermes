@@ -1,23 +1,46 @@
 import {
+  AddEquation,
+  AlwaysStencilFunc,
   AnimationClip,
   AnimationMixer,
   Audio,
   BufferGeometry,
+  Camera,
+  CustomBlending,
+  DstColorFactor,
+  EqualStencilFunc,
   Float32BufferAttribute,
+  KeepStencilOp,
   LinearSRGBColorSpace,
   Material,
+  Matrix4,
   Mesh,
   MeshBasicMaterial,
+  NormalBlending,
+  NotEqualStencilFunc,
   Object3D,
   Object3DEventMap,
   ObjectLoader,
+  OneFactor,
+  OneMinusDstColorFactor,
+  OneMinusSrcAlphaFactor,
   OrthographicCamera,
+  ReplaceStencilOp,
   Scene,
   ShaderMaterial,
+  SrcAlphaFactor,
   Texture,
   WebGLRenderer,
+  WebGLRenderTarget,
 } from 'three';
 import { ModelLite } from '../webworkers/types';
+
+export const triangle = new BufferGeometry();
+triangle.setAttribute('position', new Float32BufferAttribute([-0.5, -0.5, 0, 1.5, -0.5, 0, -0.5, 1.5, 0], 3));
+triangle.setAttribute('normal', new Float32BufferAttribute([0, 0, 1, 0, 0, 1], 3));
+triangle.setAttribute('uv', new Float32BufferAttribute([0, 0, 2, 0, 0, 2], 2));
+
+export const orthoCamera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 100);
 
 // Dispose
 
@@ -261,4 +284,164 @@ export function parseModelLite(model: ModelLite): Promise<ParsedModel> {
       });
     });
   });
+}
+
+// Utils
+
+export const renderToTexture = (renderer: WebGLRenderer, scene: Object3D, camera: Camera, target: WebGLRenderTarget) => {
+  renderer.setRenderTarget(target);
+  renderer.clear();
+  renderer.render(scene, camera);
+};
+
+export function anchorGeometry(geometry: BufferGeometry, x: number, y: number, z: number) {
+  geometry.applyMatrix4(new Matrix4().makeTranslation(x, -y, -z));
+}
+
+export function anchorGeometryTL(geometry: BufferGeometry) {
+  geometry.computeBoundingBox();
+  const box = geometry.boundingBox!;
+  const x = (box.max.x - box.min.x) / 2;
+  const y = (box.max.y - box.min.y) / 2;
+  anchorGeometry(geometry, x, y, 0);
+}
+
+/**
+ * Updates an Orthographic camera's view to fit pixel-perfect in view
+ */
+export function updateCameraOrtho(camera: OrthographicCamera, width: number, height: number): void {
+  camera.left = width / -2;
+  camera.right = width / 2;
+  camera.top = height / 2;
+  camera.bottom = height / -2;
+  camera.position.x = width / 2;
+  camera.position.y = height / -2;
+  camera.updateProjectionMatrix();
+}
+
+/**
+ * Updates an Orthographic camera to maintain 16:9 aspect ratio
+ * The camera will letterbox/pillarbox to fit the viewport
+ */
+export function updateCameraOrtho16x9(camera: OrthographicCamera, width: number, height: number): void {
+  const targetAspect = 16 / 9;
+  const currentAspect = width / height;
+  
+  let viewWidth = width;
+  let viewHeight = height;
+  
+  if (currentAspect > targetAspect) {
+    // Viewport is wider than 16:9, pillarbox (letterbox on sides)
+    viewWidth = height * targetAspect;
+  } else {
+    // Viewport is taller than 16:9, letterbox (letterbox on top/bottom)
+    viewHeight = width / targetAspect;
+  }
+  
+  camera.left = viewWidth / -2;
+  camera.right = viewWidth / 2;
+  camera.top = viewHeight / 2;
+  camera.bottom = viewHeight / -2;
+  camera.updateProjectionMatrix();
+}
+
+export function supportsOffscreenCanvas(): boolean {
+  const canvas = document.createElement('canvas');
+  let supportOffScreenWebGL = 'transferControlToOffscreen' in canvas;
+
+  // If it's Safari, then check the version because Safari < 17 doesn't support OffscreenCanvas with a WebGL context.
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isSafari) {
+    const versionMatch = navigator.userAgent.match( /version\/(\d+)/i );
+    const safariVersion = versionMatch ? parseInt( versionMatch[ 1 ] ) : 0;
+    supportOffScreenWebGL = safariVersion >= 17;
+  }
+
+  return supportOffScreenWebGL;
+}
+
+//////////////////////////////////////////////////
+// Materials
+
+export function createMask(mesh: Mesh, id: number, colorWrite = true, depthWrite = false) {
+  mesh.renderOrder = -id;
+  const material = mesh.material;
+  if (Array.isArray(material)) {
+    material.forEach((mat: Material) => {
+      mat.colorWrite = colorWrite;
+      mat.depthWrite = depthWrite;
+      mat.stencilWrite = true;
+      mat.stencilRef = id;
+      mat.stencilFunc = AlwaysStencilFunc;
+      mat.stencilFail = ReplaceStencilOp;
+      mat.stencilZFail = ReplaceStencilOp;
+      mat.stencilZPass = ReplaceStencilOp;
+    });
+  } else {
+    material.colorWrite = colorWrite;
+    material.depthWrite = depthWrite;
+    material.stencilWrite = true;
+    material.stencilRef = id;
+    material.stencilFunc = AlwaysStencilFunc;
+    material.stencilFail = ReplaceStencilOp;
+    material.stencilZFail = ReplaceStencilOp;
+    material.stencilZPass = ReplaceStencilOp;
+  }
+}
+
+/**
+ * Based on:
+ * https://github.com/pmndrs/drei/blob/master/src/core/Mask.tsx
+ */
+export function useMask(mesh: Mesh, id: number, inverse = false) {
+  const material = mesh.material;
+  if (Array.isArray(material)) {
+    material.forEach((mat: Material) => {
+      mat.stencilWrite = true;
+      mat.stencilRef = id;
+      mat.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc;
+      mat.stencilFail = KeepStencilOp;
+      mat.stencilZFail = KeepStencilOp;
+      mat.stencilZPass = KeepStencilOp;
+    });
+  } else {
+    material.stencilWrite = true;
+    material.stencilRef = id;
+    material.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc;
+    material.stencilFail = KeepStencilOp;
+    material.stencilZFail = KeepStencilOp;
+    material.stencilZPass = KeepStencilOp;
+  }
+}
+
+export function setMaterialBlendNormal(material: Material) {
+  material.blending = NormalBlending;
+  material.blendEquation = AddEquation;
+  material.blendSrc = SrcAlphaFactor;
+  material.blendDst = OneMinusSrcAlphaFactor;
+  material.needsUpdate = true;
+}
+
+export function setMaterialBlendAdd(material: Material) {
+  material.blending = CustomBlending;
+  material.blendEquation = AddEquation;
+  material.blendSrc = SrcAlphaFactor;
+  material.blendDst = OneFactor;
+  material.needsUpdate = true;
+}
+
+export function setMaterialBlendMultiply(material: Material) {
+  material.blending = CustomBlending;
+  material.blendEquation = AddEquation;
+  material.blendSrc = DstColorFactor;
+  material.blendDst = OneMinusSrcAlphaFactor;
+  material.needsUpdate = true;
+}
+
+export function setMaterialBlendScreen(material: Material) {
+  material.blending = CustomBlending;
+  material.blendEquation = AddEquation;
+  material.blendSrc = OneMinusDstColorFactor;
+  material.blendDst = OneFactor;
+  material.needsUpdate = true;
 }

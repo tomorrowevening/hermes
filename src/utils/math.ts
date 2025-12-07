@@ -19,16 +19,16 @@ export function distance(x: number, y: number): number {
   return Math.sqrt(d * d);
 }
 
-export function round(value: number, precision: number = 1): number {
-  return Number(value.toFixed(precision));
-}
-
 export function damp(start: number, end: number, easing: number, dt: number) {
   return mix(start, end, 1 - Math.exp(-easing * dt));
 }
 
 export function roundTo(value: number, digits = 1): number {
   return Number(value.toFixed(digits));
+}
+
+export function getAngle(x1: number, y1: number, x2: number, y2: number): number {
+  return Math.atan2(y2 - y1, x2 - x1);
 }
 
 // Bezier
