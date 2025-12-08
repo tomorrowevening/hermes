@@ -104,9 +104,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   currentCamera!: PerspectiveCamera | OrthographicCamera;
   currentWindow: any; // RefObject to one of the "windows"
   helpersContainer = new Group();
+  grid = new InfiniteGridHelper();
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
-  private grid = new InfiniteGridHelper();
   private interactionHelper = new AxesHelper(25);
   private currentTransform?: TransformControls;
 
@@ -527,9 +527,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             height={21}
             width={21}
             onClick={(selected: boolean) => {
-              this.gridVisibility = selected;
-              this.saveExpandedGridVisibility();
-              this.grid.visible = selected;
+              this.setGridVisibility(selected);
             }}
           />
 
@@ -576,7 +574,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     this.helpersContainer.name = 'helpers';
     this.scene.add(this.helpersContainer);
 
-    this.grid.position.y = -1;
     this.scene.add(this.grid);
 
     this.interactionHelper.name = 'interactionHelper';
@@ -683,6 +680,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.three.dispatchEvent({ type: ToolEvents.REMOVE_SCENE, value });
     });
     this.scenes.clear();
+  }
+
+  setGridVisibility(value: boolean) {
+    this.gridVisibility = value;
+    this.saveExpandedGridVisibility();
+    this.grid.visible = value;
   }
 
   // Playback
