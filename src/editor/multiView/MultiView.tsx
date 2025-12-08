@@ -591,7 +591,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       return camera;
     };
 
-    const dist = 3000;
+    const dist = 1000;
     createOrtho('Top', new Vector3(0, dist, 0));
     createOrtho('Bottom', new Vector3(0, -dist, 0));
     createOrtho('Left', new Vector3(-dist, 0, 0));
