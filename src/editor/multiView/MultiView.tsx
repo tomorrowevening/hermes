@@ -591,7 +591,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       return camera;
     };
 
-    const dist = 1000;
+    const dist = 3000;
     createOrtho('Top', new Vector3(0, dist, 0));
     createOrtho('Bottom', new Vector3(0, -dist, 0));
     createOrtho('Left', new Vector3(-dist, 0, 0));
@@ -622,6 +622,24 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.trCam === undefined) this.trCam = this.cameras.get('Orthographic');
     if (this.blCam === undefined) this.blCam = this.cameras.get('Front');
     if (this.brCam === undefined) this.brCam = this.cameras.get('Top');
+
+    DebugData.addEditorGroup({
+      title: 'Editor',
+      items: [
+        {
+          type: 'number',
+          prop: 'Grid Position',
+          value: this.grid.position.y,
+        }
+      ],
+      onUpdate: (prop: string, value: any) => {
+        switch (prop) {
+          case 'Grid Position':
+            this.grid.position.y = value;
+            break;
+        }
+      },
+    });
   }
 
   private setupTools() {

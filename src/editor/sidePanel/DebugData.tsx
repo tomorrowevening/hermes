@@ -95,6 +95,14 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
   // Static
 
   static addEditorGroup(data: GroupData): RefObject<InspectorGroup> | null {
+    const total = DebugData.groupTitles.length;
+    for (let i = 0; i < total; i++) {
+      const value = DebugData.groupTitles[i];
+      if (value === data.title) {
+        return DebugData.groupsRefs[i];
+      }
+    }
+
     const items: InspectorFieldProps[] = [];
 
     data.items.forEach((item: GroupItemData) => {
@@ -127,6 +135,10 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     DebugData.groups.push(group);
     DebugData.groupsRefs.push(groupRef);
     DebugData.groupTitles.push(data.title);
+    setTimeout(() => {
+      DebugData.instance.setState({ lastUpdate: Date.now() });
+    }, 0);
+
     return groupRef;
   }
 

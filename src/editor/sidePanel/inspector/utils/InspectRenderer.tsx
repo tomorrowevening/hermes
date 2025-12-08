@@ -319,15 +319,6 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
               this.props.three.requestSize();
             }
           },
-          {
-            title: 'Grid Helper Position',
-            type: 'number',
-            step: 1,
-            value: MultiView.instance ? MultiView.instance.grid.position.y : 0,
-            onChange: (_, value) => {
-              if (MultiView.instance) MultiView.instance.grid.position.y = value;
-            }
-          }
         ]}
         onToggle={(value: boolean) => {
           this.setState({ expanded: value });
