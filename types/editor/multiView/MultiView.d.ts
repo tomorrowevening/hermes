@@ -3,6 +3,7 @@ import { Camera, Group, Object3D, OrthographicCamera, PerspectiveCamera, Scene, 
 import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RemoteThree from '../../core/remote/RemoteThree';
+import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
 type MultiViewProps = {
@@ -31,9 +32,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     currentCamera: PerspectiveCamera | OrthographicCamera;
     currentWindow: any;
     helpersContainer: Group<import("three").Object3DEventMap>;
+    grid: InfiniteGridHelper;
     private cameraHelpers;
     private lightHelpers;
-    private grid;
     private interactionHelper;
     private currentTransform?;
     private splineEditor;
@@ -81,6 +82,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     pause(): void;
     toggleOrbitControls(value: boolean): void;
     clear(): void;
+    setGridVisibility(value: boolean): void;
     private update;
     private draw;
     private onUpdate;
