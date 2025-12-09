@@ -259,12 +259,22 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     });
   }
 
-  addSpline(spline: Curve<any>) {
+  addSplineCurve(spline: Curve<any>) {
     setTimeout(() => {
       this.send({
         event: 'addSpline',
         target: 'editor',
         data: JSON.stringify(spline.toJSON()),
+      });
+    }, 1);
+  }
+
+  addSplineObject(spline: any) {
+    setTimeout(() => {
+      this.send({
+        event: 'addSpline',
+        target: 'editor',
+        data: JSON.stringify(spline),
       });
     }, 1);
   }

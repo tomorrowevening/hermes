@@ -54,7 +54,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     addGroup(data: GroupData): void;
     removeGroup(name: string): void;
     updateGroup(group: string, prop: string, value: any): void;
-    addSpline(spline: Curve<any>): void;
+    addSplineCurve(spline: Curve<any>): void;
+    addSplineObject(spline: any): void;
     setRenderer(value: any, inputElement?: any): void;
     updateRenderer(data: any): void;
     addScene(value: Scene): void;

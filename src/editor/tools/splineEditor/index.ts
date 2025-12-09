@@ -164,12 +164,16 @@ export default class SplineEditor extends Object3D {
 
   private onAddSpline = (evt: any) => {
     const data = JSON.parse(evt.value);
-    const name = `Spline ${splinesCreated + 1}`;
+    const name = data.name !== undefined ? data.name : `Spline ${splinesCreated + 1}`;
+    const spline = new Spline(name, this.camera);
+    if (data.tension !== undefined) spline.tension = data.tension;
+    if (data.closed !== undefined) spline.closed = data.closed;
+    if (data.subdivide !== undefined) spline.subdivide = data.subdivide;
+    if (data.type !== undefined) spline.curveType = data.type;
     const pts: Vector3[] = [];
     data.points.forEach((pt: number[]) => {
       pts.push(new Vector3(pt[0], pt[1], pt[2]));
     });
-    const spline = new Spline(name, this.camera);
     spline.addPoints(pts);
     this.addSpline(spline);
     splinesCreated++;
