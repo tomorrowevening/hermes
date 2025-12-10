@@ -35,6 +35,7 @@ export default class Spline extends Object3D {
     removeSelectedPt: () => void;
     updateLastPoint(value: Vector3): void;
     updateSpline: () => void;
+    updateField(position: Vector3): void;
     private onMouseClick;
     getPointAt(percentage: number): Vector3;
     getTangentAt(percentage: number): Vector3;
@@ -48,6 +49,6 @@ export default class Spline extends Object3D {
     set curvePercentage(value: number);
     private updateCurrentPoint;
     private onUpdateTransform;
-    initDebug(parentGroup: InspectorGroup): void;
+    initDebug(parentGroup: InspectorGroup, visible: boolean): void;
     private debugPoint;
 }

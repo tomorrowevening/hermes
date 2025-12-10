@@ -19,7 +19,7 @@ export default class SplineEditor extends Object3D {
     constructor(camera: Camera, three: RemoteThree);
     initDebug(): void;
     dispose(): void;
-    addSpline(spline: Spline): void;
+    addSpline(spline: Spline, visible: boolean): void;
     createSpline: (defaultPoints?: Array<Vector3>) => Spline;
     createSplineFromArray: (points: Array<number[]>) => Spline;
     createSplineFromCatmullRom: (curve: CatmullRomCurve3) => Spline;
