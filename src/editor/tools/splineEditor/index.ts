@@ -108,10 +108,10 @@ export default class SplineEditor extends Object3D {
     DebugData.removeEditorGroup(this.name);
   }
 
-  addSpline(spline: Spline) {
+  addSpline(spline: Spline, visible: boolean) {
     spline.draggableScale = this.defaultScale;
     spline.hideTransform();
-    if (this.group?.current !== null) spline.initDebug(this.group!.current);
+    if (this.group?.current !== null) spline.initDebug(this.group!.current, visible);
     this.add(spline);
     this.currentSpline = spline;
   }
@@ -120,7 +120,7 @@ export default class SplineEditor extends Object3D {
     const name = `Spline ${splinesCreated + 1}`;
     const spline = new Spline(name, this._camera);
     spline.addPoints(defaultPoints);
-    this.addSpline(spline);
+    this.addSpline(spline, true);
     splinesCreated++;
     return spline;
   };
@@ -151,7 +151,7 @@ export default class SplineEditor extends Object3D {
     spline.type = data.type;
     spline.addPoints(vectors);
     spline.updateSpline();
-    this.addSpline(spline);
+    this.addSpline(spline, false);
     return spline;
   };
 
@@ -175,7 +175,7 @@ export default class SplineEditor extends Object3D {
       pts.push(new Vector3(pt[0], pt[1], pt[2]));
     });
     spline.addPoints(pts);
-    this.addSpline(spline);
+    this.addSpline(spline, false);
     splinesCreated++;
   };
 
@@ -245,6 +245,7 @@ export default class SplineEditor extends Object3D {
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     const pos = this.mouseToSplinePos(x, y, rect.width, rect.height);
     this.currentSpline?.updateLastPoint(pos);
+    this.currentSpline?.updateField(pos);
   };
 
   private onMouseUp = () => {

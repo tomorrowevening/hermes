@@ -169,7 +169,7 @@ export default class Spline extends Object3D {
     const mesh = this.addPoint(pos);
     // this._transform?.attach(mesh);
 
-    this.group.current?.setField('Current Point', mesh.position);
+    this.updateField(mesh.position);
   };
 
   removePoint = (child: Object3D) => {
@@ -177,7 +177,7 @@ export default class Spline extends Object3D {
       this._transform?.detach();
       const nextPt = this.draggable.children[this.draggable.children.length - 1];
       this._transform?.attach(nextPt);
-      this.group.current?.setField('Current Point', nextPt.position);
+      this.updateField(nextPt.position);
     }
     dispose(child);
     this.updateSpline();
@@ -208,6 +208,10 @@ export default class Spline extends Object3D {
     this.curvePos.position.copy(this.getPointAt(this._curvePercentage));
   };
 
+  updateField(position: Vector3) {
+    this.group.current?.setField('Current Point', position);
+  }
+
   // Handlers
 
   private onMouseClick = (evt: MouseEvent) => {
@@ -226,7 +230,7 @@ export default class Spline extends Object3D {
       const object = intersects[0].object;
       if (object !== this._transform?.object) {
         this._transform?.attach(object);
-        this.group.current?.setField('Current Point', object.position);
+        this.updateField(object.position);
       }
     }
   };
@@ -289,7 +293,7 @@ export default class Spline extends Object3D {
     if (this._transform?.object && this.group) {
       const obj = this._transform?.object;
       if (obj.name.search('point') > -1) {
-        this.group.current?.setField('Current Point', obj.position);
+        this.updateField(obj.position);
       }
     }
   }
@@ -299,9 +303,9 @@ export default class Spline extends Object3D {
     this.updateSpline();
   };
 
-  initDebug(parentGroup: InspectorGroup) {
+  initDebug(parentGroup: InspectorGroup, visible: boolean) {
     const pts = this.draggable.children;
-
+    this.visible = visible;
     this.parentGroup = parentGroup;
     this._transform = Transform.instance.add(this.name);
     this._transform.camera = this._camera;
@@ -312,7 +316,7 @@ export default class Spline extends Object3D {
     const currentPoint = pts.length > 0 ? pts[pts.length - 1].position : { x: 0, y: 0, z: 0 };
     this.group = parentGroup.addGroup({
       title: this.name,
-      expanded: true,
+      expanded: visible,
       items: [
         {
           prop: 'Closed',
