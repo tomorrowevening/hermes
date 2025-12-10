@@ -44645,25 +44645,22 @@ function pP(a) {
   }, l = (c) => {
     const h = c.value.name;
     for (let u = 0; u < e.length; u++) {
-      const d = e[u];
-      if (d.name === h) {
-        t[u] = /* @__PURE__ */ M.jsx(
-          Ca,
-          {
-            three: a.three,
-            label: `Scene: ${d.name}`,
-            scene: d,
-            open: !0,
-            visible: !0,
-            onRefresh: () => {
-              a.three.refreshScene(d.name);
-            },
-            children: /* @__PURE__ */ M.jsx(yc, { child: d, scene: d, three: a.three })
+      const d = e[u], p = d.name === h;
+      t[u] = /* @__PURE__ */ M.jsx(
+        Ca,
+        {
+          three: a.three,
+          label: `Scene: ${d.name}`,
+          scene: d,
+          open: p,
+          visible: p,
+          onRefresh: () => {
+            a.three.refreshScene(d.name);
           },
-          d.name
-        );
-        break;
-      }
+          children: /* @__PURE__ */ M.jsx(yc, { child: d, scene: d, three: a.three })
+        },
+        d.name
+      );
     }
     i(Date.now());
   };
