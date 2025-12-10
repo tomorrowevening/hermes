@@ -79,24 +79,22 @@ export default function SidePanel(props: SidePanelState) {
     const name = evt.value.name;
     for (let i = 0; i < scenes.length; i++) {
       const scene = scenes[i];
-      if (scene.name === name) {
-        sceneComponents[i] = (
-          <Accordion
-            three={props.three}
-            label={`Scene: ${scene.name}`}
-            key={scene.name}
-            scene={scene}
-            open={true}
-            visible={true}
-            onRefresh={() => {
-              props.three.refreshScene(scene.name);
-            }}
-          >
-            <ContainerObject child={scene} scene={scene} three={props.three} />
-          </Accordion>
-        );
-        break;
-      }
+      const isActive = scene.name === name;
+      sceneComponents[i] = (
+        <Accordion
+          three={props.three}
+          label={`Scene: ${scene.name}`}
+          key={scene.name}
+          scene={scene}
+          open={isActive}
+          visible={isActive}
+          onRefresh={() => {
+            props.three.refreshScene(scene.name);
+          }}
+        >
+          <ContainerObject child={scene} scene={scene} three={props.three} />
+        </Accordion>
+      );
     }
     setLastUpdate(Date.now());
   };
