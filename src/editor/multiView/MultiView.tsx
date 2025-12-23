@@ -630,12 +630,19 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
           type: 'number',
           prop: 'Grid Position',
           value: this.grid.position.y,
+        },
+        {
+          type: 'button',
+          prop: 'Hide All Transforms',
         }
       ],
       onUpdate: (prop: string, value: any) => {
         switch (prop) {
           case 'Grid Position':
             this.grid.position.y = value;
+            break;
+          case 'Hide All Transforms':
+            Transform.instance.hide();
             break;
         }
       },
