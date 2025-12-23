@@ -1,6 +1,6 @@
 import { types as le, getProject as xx, createRafDriver as _x } from "@theatre/core";
 import Wm, { useState as Ae, useEffect as wn, useRef as We, useMemo as Ma, Component as qa, createRef as Ni, forwardRef as bx } from "react";
-import { BufferGeometry as zi, Float32BufferAttribute as Vs, OrthographicCamera as dl, Texture as Gh, Scene as jm, MeshBasicMaterial as Sn, Mesh as Y, LinearSRGBColorSpace as Ia, ObjectLoader as Tx, AnimationMixer as Sx, AnimationClip as vx, Matrix4 as Ya, AlwaysStencilFunc as Zd, ReplaceStencilOp as Dn, NotEqualStencilFunc as Kd, EqualStencilFunc as Qd, KeepStencilOp as On, NormalBlending as qm, AddEquation as Xa, SrcAlphaFactor as Il, OneMinusSrcAlphaFactor as Ll, CustomBlending as Ul, OneFactor as kl, DstColorFactor as Cu, OneMinusDstColorFactor as Au, WebGLRenderTarget as Ym, RGBAFormat as wx, EventDispatcher as Xm, RepeatWrapping as Jd, Color as En, ColorManagement as or, FrontSide as Ex, BackSide as Zm, DoubleSide as Ru, ZeroFactor as Km, SrcColorFactor as Qm, OneMinusSrcColorFactor as Jm, DstAlphaFactor as eg, OneMinusDstAlphaFactor as tg, SrcAlphaSaturateFactor as Mx, ConstantColorFactor as sg, OneMinusConstantColorFactor as ig, ConstantAlphaFactor as ng, OneMinusConstantAlphaFactor as rg, SubtractEquation as Cx, ReverseSubtractEquation as Ax, MinEquation as Rx, MaxEquation as Nx, NoBlending as Px, AdditiveBlending as Fx, SubtractiveBlending as Dx, MultiplyBlending as Ox, Line as Us, LineBasicMaterial as Nu, Controls as ag, Vector3 as Z, MOUSE as mr, TOUCH as lr, Quaternion as es, Spherical as Vh, Vector2 as xt, Ray as Bx, Plane as Ix, MathUtils as Lx, ShaderMaterial as og, GLSL3 as Ux, PlaneGeometry as lg, Raycaster as La, Object3D as Er, CylinderGeometry as zt, BoxGeometry as St, OctahedronGeometry as ro, TorusGeometry as Gr, SphereGeometry as cg, Euler as hg, CatmullRomCurve3 as ep, Group as kx, AxesHelper as zx, MeshDepthMaterial as Gx, MeshNormalMaterial as Vx, Sphere as Hx, Box3 as $x, Vector4 as Wx, WebGLRenderer as ga, PerspectiveCamera as tp, CameraHelper as jx, SkinnedMesh as qx, SpotLightHelper as Yx, PointLightHelper as Xx, HemisphereLightHelper as Zx, DirectionalLightHelper as Kx, Clock as Qx, SkeletonHelper as Jx, SRGBColorSpace as sp, NoToneMapping as ip, NoColorSpace as e_, LinearToneMapping as t_, ReinhardToneMapping as s_, CineonToneMapping as i_, ACESFilmicToneMapping as n_, AgXToneMapping as r_, NeutralToneMapping as a_, CustomToneMapping as o_ } from "three";
+import { BufferGeometry as zi, Float32BufferAttribute as Vs, OrthographicCamera as dl, Texture as Gh, Scene as jm, MeshBasicMaterial as Sn, Mesh as Y, LinearSRGBColorSpace as Ia, ObjectLoader as Tx, AnimationMixer as Sx, AnimationClip as vx, Matrix4 as Ya, AlwaysStencilFunc as Zd, ReplaceStencilOp as Dn, NotEqualStencilFunc as Kd, EqualStencilFunc as Qd, KeepStencilOp as On, NormalBlending as qm, AddEquation as Xa, SrcAlphaFactor as Il, OneMinusSrcAlphaFactor as Ll, CustomBlending as Ul, OneFactor as kl, DstColorFactor as Cu, OneMinusDstColorFactor as Au, WebGLRenderTarget as Ym, RGBAFormat as wx, EventDispatcher as Xm, RepeatWrapping as Jd, Color as En, ColorManagement as or, FrontSide as Ex, BackSide as Zm, DoubleSide as Ru, ZeroFactor as Km, SrcColorFactor as Qm, OneMinusSrcColorFactor as Jm, DstAlphaFactor as eg, OneMinusDstAlphaFactor as tg, SrcAlphaSaturateFactor as Mx, ConstantColorFactor as sg, OneMinusConstantColorFactor as ig, ConstantAlphaFactor as ng, OneMinusConstantAlphaFactor as rg, SubtractEquation as Cx, ReverseSubtractEquation as Ax, MinEquation as Rx, MaxEquation as Nx, NoBlending as Px, AdditiveBlending as Fx, SubtractiveBlending as Dx, MultiplyBlending as Ox, Line as Us, LineBasicMaterial as Nu, Controls as ag, Vector3 as Z, MOUSE as mr, TOUCH as lr, Quaternion as es, Spherical as Vh, Vector2 as _t, Ray as Bx, Plane as Ix, MathUtils as Lx, ShaderMaterial as og, GLSL3 as Ux, PlaneGeometry as lg, Raycaster as La, Object3D as Er, CylinderGeometry as zt, BoxGeometry as St, OctahedronGeometry as ro, TorusGeometry as Gr, SphereGeometry as cg, Euler as hg, CatmullRomCurve3 as ep, Group as kx, AxesHelper as zx, MeshDepthMaterial as Gx, MeshNormalMaterial as Vx, Sphere as Hx, Box3 as $x, Vector4 as Wx, WebGLRenderer as ga, PerspectiveCamera as tp, CameraHelper as jx, SkinnedMesh as qx, SpotLightHelper as Yx, PointLightHelper as Xx, HemisphereLightHelper as Zx, DirectionalLightHelper as Kx, Clock as Qx, SkeletonHelper as Jx, SRGBColorSpace as sp, NoToneMapping as ip, NoColorSpace as e_, LinearToneMapping as t_, ReinhardToneMapping as s_, CineonToneMapping as i_, ACESFilmicToneMapping as n_, AgXToneMapping as r_, NeutralToneMapping as a_, CustomToneMapping as o_ } from "three";
 const pl = () => {
 }, xP = () => {
 };
@@ -11,7 +11,7 @@ function l_(a) {
   const e = JSON.stringify(a);
   return navigator.clipboard.writeText(e), e;
 }
-function gt() {
+function yt() {
   return Math.round(Math.random() * 1e6).toString();
 }
 function c_(a) {
@@ -2883,7 +2883,7 @@ function K_(a) {
       );
       break;
   }
-  return /* @__PURE__ */ M.jsx("li", { className: t === e.title ? "selected" : "", children: i }, gt());
+  return /* @__PURE__ */ M.jsx("li", { className: t === e.title ? "selected" : "", children: i }, yt());
 }
 function Ca(a) {
   const [e, t] = Ae(a.open !== void 0 ? a.open : !1), [s, i] = Ae(a.visible !== void 0 ? a.visible : !1), n = !e || a.children === void 0, r = () => {
@@ -3061,7 +3061,7 @@ function bn(a) {
         max: a.max,
         step: a.step,
         disabled: a.disabled,
-        name: gt(),
+        name: yt(),
         onChange: (n) => {
           if (i(n.target.value), n.target.value.length === 0) return;
           const r = Number(n.target.value);
@@ -3078,7 +3078,7 @@ function bn(a) {
           disabled: a.disabled,
           ref: e,
           className: "min",
-          name: gt(),
+          name: yt(),
           onChange: (n) => {
             if (n.target.value.length === 0) return;
             const r = Number(n.target.value);
@@ -3096,7 +3096,7 @@ function bn(a) {
           max: a.max,
           step: a.step,
           ref: t,
-          name: gt(),
+          name: yt(),
           onChange: pl
         }
       )
@@ -3184,7 +3184,7 @@ function Q_(a) {
             min: m.min,
             max: m.max,
             step: A,
-            name: gt(),
+            name: yt(),
             onChange: (N) => {
               if (d(N.target.value), N.target.value.length === 0) return;
               const k = Number(N.target.value);
@@ -3204,7 +3204,7 @@ function Q_(a) {
             min: m.min,
             max: m.max,
             step: A,
-            name: gt(),
+            name: yt(),
             onChange: (N) => {
               if (f(N.target.value), N.target.value.length === 0) return;
               const k = Number(N.target.value);
@@ -3222,7 +3222,7 @@ function Q_(a) {
             type: "number",
             value: m.min,
             step: A,
-            name: gt(),
+            name: yt(),
             onChange: E
           }
         )
@@ -3236,7 +3236,7 @@ function Q_(a) {
             type: "number",
             value: m.max,
             step: A,
-            name: gt(),
+            name: yt(),
             onChange: v
           }
         )
@@ -4638,7 +4638,7 @@ function Rb(a) {
             type: "number",
             value: l,
             step: e,
-            name: gt(),
+            name: yt(),
             onChange: g
           }
         ),
@@ -4649,7 +4649,7 @@ function Rb(a) {
             type: "number",
             value: h,
             step: e,
-            name: gt(),
+            name: yt(),
             onChange: g
           }
         )
@@ -4663,7 +4663,7 @@ function Rb(a) {
             type: "number",
             value: d,
             step: e,
-            name: gt(),
+            name: yt(),
             onChange: g
           }
         ),
@@ -4674,7 +4674,7 @@ function Rb(a) {
             type: "number",
             value: f,
             step: e,
-            name: gt(),
+            name: yt(),
             onChange: g
           }
         )
@@ -4711,7 +4711,7 @@ function el(a) {
         disabled: a.disabled,
         onChange: n,
         value: t,
-        name: gt()
+        name: yt()
       }
     ),
     (a.type === "field" || a.type === "string" && o) && /* @__PURE__ */ M.jsx(
@@ -4725,7 +4725,7 @@ function el(a) {
           a.onKeyDown !== void 0 && a.onKeyDown(c);
         },
         value: t,
-        name: gt()
+        name: yt()
       }
     ),
     a.type === "boolean" && /* @__PURE__ */ M.jsx(
@@ -4735,7 +4735,7 @@ function el(a) {
         disabled: a.disabled,
         onChange: n,
         checked: t,
-        name: gt()
+        name: yt()
       }
     ),
     a.type === "number" && /* @__PURE__ */ M.jsx(
@@ -4767,8 +4767,8 @@ function el(a) {
       }
     ),
     a.type === "color" && /* @__PURE__ */ M.jsxs(M.Fragment, { children: [
-      /* @__PURE__ */ M.jsx("input", { type: "text", value: t.toString(), onChange: n, disabled: a.disabled, className: "color", name: gt() }),
-      /* @__PURE__ */ M.jsx("input", { type: "color", value: t, onChange: n, disabled: a.disabled, name: gt() })
+      /* @__PURE__ */ M.jsx("input", { type: "text", value: t.toString(), onChange: n, disabled: a.disabled, className: "color", name: yt() }),
+      /* @__PURE__ */ M.jsx("input", { type: "color", value: t, onChange: n, disabled: a.disabled, name: yt() })
     ] }),
     a.type === "button" && /* @__PURE__ */ M.jsx(
       "button",
@@ -4787,7 +4787,7 @@ function el(a) {
         onChange: n,
         disabled: a.disabled,
         defaultValue: a.value,
-        name: gt(),
+        name: yt(),
         children: a.options?.map((c, h) => /* @__PURE__ */ M.jsx("option", { value: c.value, children: fl(c.title) }, h))
       }
     ) }),
@@ -33807,7 +33807,7 @@ const fr = {
   LineStrip: "line-strip",
   TriangleList: "triangle-list",
   TriangleStrip: "triangle-strip"
-}, yt = {
+}, xt = {
   Never: "never",
   Less: "less",
   Equal: "equal",
@@ -33995,7 +33995,7 @@ const fr = {
 }, xm = {
   TwoD: "2d",
   ThreeD: "3d"
-}, mt = {
+}, gt = {
   TwoD: "2d",
   TwoDArray: "2d-array",
   Cube: "cube",
@@ -34227,12 +34227,12 @@ fn main( @location( 0 ) vTex : vec2<f32> ) -> @location( 0 ) vec4<f32> {
     }), h = e.createView({
       baseMipLevel: 0,
       mipLevelCount: 1,
-      dimension: mt.TwoD,
+      dimension: gt.TwoD,
       baseArrayLayer: s
     }), u = c.createView({
       baseMipLevel: 0,
       mipLevelCount: 1,
-      dimension: mt.TwoD,
+      dimension: gt.TwoD,
       baseArrayLayer: 0
     }), d = this.device.createCommandEncoder({}), p = (f, m, y) => {
       const g = f.getBindGroupLayout(0), x = this.device.createBindGroup({
@@ -34283,7 +34283,7 @@ fn main( @location( 0 ) vTex : vec2<f32> ) -> @location( 0 ) vec4<f32> {
     let r = e.createView({
       baseMipLevel: 0,
       mipLevelCount: 1,
-      dimension: mt.TwoD,
+      dimension: gt.TwoD,
       baseArrayLayer: s
     });
     const o = [];
@@ -34300,7 +34300,7 @@ fn main( @location( 0 ) vTex : vec2<f32> ) -> @location( 0 ) vec4<f32> {
       }), h = e.createView({
         baseMipLevel: l,
         mipLevelCount: 1,
-        dimension: mt.TwoD,
+        dimension: gt.TwoD,
         baseArrayLayer: s
       }), u = {
         colorAttachments: [{
@@ -34419,7 +34419,7 @@ class l1 {
         console.warn("WebGPURenderer: Texture format not supported."), this.createDefaultTexture(e);
         return;
       }
-      e.isCubeTexture && (m.textureBindingViewDimension = mt.Cube), i.texture = s.device.createTexture(m);
+      e.isCubeTexture && (m.textureBindingViewDimension = gt.Cube), i.texture = s.device.createTexture(m);
     }
     if (p) {
       const y = Object.assign({}, m);
@@ -36765,7 +36765,7 @@ class v1 {
           const h = r.texture.type;
           h === Pt ? l.sampleType = sn.SInt : h === Ke ? l.sampleType = sn.UInt : h === is && (this.backend.hasFeature("float32-filterable") ? l.sampleType = sn.Float : l.sampleType = sn.UnfilterableFloat);
         }
-        r.isSampledCubeTexture ? l.viewDimension = mt.Cube : r.texture.isArrayTexture || r.texture.isDataArrayTexture || r.texture.isCompressedArrayTexture ? l.viewDimension = mt.TwoDArray : r.isSampledTexture3D && (l.viewDimension = mt.ThreeD), o.texture = l;
+        r.isSampledCubeTexture ? l.viewDimension = gt.Cube : r.texture.isArrayTexture || r.texture.isDataArrayTexture || r.texture.isCompressedArrayTexture ? l.viewDimension = gt.TwoDArray : r.isSampledTexture3D && (l.viewDimension = gt.ThreeD), o.texture = l;
       } else
         console.error(`WebGPUBindingUtils: Unsupported binding "${r}".`);
       i.push(o);
@@ -36861,7 +36861,7 @@ class v1 {
           if (c = l[u], c === void 0) {
             const d = JR.All;
             let p;
-            o.isSampledCubeTexture ? p = mt.Cube : o.isSampledTexture3D ? p = mt.ThreeD : o.texture.isArrayTexture || o.texture.isDataArrayTexture || o.texture.isCompressedArrayTexture ? p = mt.TwoDArray : p = mt.TwoD, c = l[u] = l.texture.createView({ aspect: d, dimension: p, mipLevelCount: h });
+            o.isSampledCubeTexture ? p = gt.Cube : o.isSampledTexture3D ? p = gt.ThreeD : o.texture.isArrayTexture || o.texture.isDataArrayTexture || o.texture.isCompressedArrayTexture ? p = gt.TwoDArray : p = gt.TwoD, c = l[u] = l.texture.createView({ aspect: d, dimension: p, mipLevelCount: h });
           }
         }
         r.push({ binding: n, resource: c });
@@ -37139,28 +37139,28 @@ class w1 {
     const s = e.stencilFunc;
     switch (s) {
       case oT:
-        t = yt.Never;
+        t = xt.Never;
         break;
       case du:
-        t = yt.Always;
+        t = xt.Always;
         break;
       case lT:
-        t = yt.Less;
+        t = xt.Less;
         break;
       case hT:
-        t = yt.LessEqual;
+        t = xt.LessEqual;
         break;
       case cT:
-        t = yt.Equal;
+        t = xt.Equal;
         break;
       case pT:
-        t = yt.GreaterEqual;
+        t = xt.GreaterEqual;
         break;
       case uT:
-        t = yt.Greater;
+        t = xt.Greater;
         break;
       case dT:
-        t = yt.NotEqual;
+        t = xt.NotEqual;
         break;
       default:
         console.error("THREE.WebGPURenderer: Invalid stencil function.", s);
@@ -37284,33 +37284,33 @@ class w1 {
   _getDepthCompare(e) {
     let t;
     if (e.depthTest === !1)
-      t = yt.Always;
+      t = xt.Always;
     else {
       const s = e.depthFunc;
       switch (s) {
         case Ng:
-          t = yt.Never;
+          t = xt.Never;
           break;
         case Pg:
-          t = yt.Always;
+          t = xt.Always;
           break;
         case Fg:
-          t = yt.Less;
+          t = xt.Less;
           break;
         case Tl:
-          t = yt.LessEqual;
+          t = xt.LessEqual;
           break;
         case Dg:
-          t = yt.Equal;
+          t = xt.Equal;
           break;
         case Og:
-          t = yt.GreaterEqual;
+          t = xt.GreaterEqual;
           break;
         case Bg:
-          t = yt.Greater;
+          t = xt.Greater;
           break;
         case Ig:
-          t = yt.NotEqual;
+          t = xt.NotEqual;
           break;
         default:
           console.error("THREE.WebGPUPipelineUtils: Invalid depth function.", s);
@@ -37616,10 +37616,10 @@ class M1 extends U0 {
           mipLevelCount: 1,
           baseArrayLayer: e.activeCubeFace,
           arrayLayerCount: 1,
-          dimension: mt.TwoD
+          dimension: gt.TwoD
         };
         if (s.isRenderTarget3D)
-          u = e.activeCubeFace, m.baseArrayLayer = 0, m.dimension = mt.ThreeD, m.depthOrArrayLayers = c[p].image.depth;
+          u = e.activeCubeFace, m.baseArrayLayer = 0, m.dimension = gt.ThreeD, m.depthOrArrayLayers = c[p].image.depth;
         else if (s.isRenderTarget && c[p].image.depth > 1)
           if (d === !0) {
             const y = e.camera.cameras;
@@ -37628,7 +37628,7 @@ class M1 extends U0 {
                 ...m,
                 baseArrayLayer: g,
                 arrayLayerCount: 1,
-                dimension: mt.TwoD
+                dimension: gt.TwoD
               }, _ = f.texture.createView(x);
               h.push({
                 view: _,
@@ -37637,7 +37637,7 @@ class M1 extends U0 {
               });
             }
           } else
-            m.dimension = mt.TwoDArray, m.depthOrArrayLayers = c[p].image.depth;
+            m.dimension = gt.TwoDArray, m.depthOrArrayLayers = c[p].image.depth;
         if (d !== !0) {
           const y = f.texture.createView(m);
           let g, x;
@@ -37650,7 +37650,7 @@ class M1 extends U0 {
       }
       if (o = { textureViews: h }, e.depth) {
         const p = this.get(e.depthTexture), f = {};
-        e.depthTexture.isArrayTexture && (f.dimension = mt.TwoD, f.arrayLayerCount = 1, f.baseArrayLayer = e.activeCubeFace), o.depthStencilView = p.texture.createView(f);
+        e.depthTexture.isArrayTexture && (f.dimension = gt.TwoD, f.arrayLayerCount = 1, f.baseArrayLayer = e.activeCubeFace), o.depthStencilView = p.texture.createView(f);
       }
       n[r] = o, i.width = s.width, i.height = s.height, i.samples = s.samples, i.activeMipmapLevel = e.activeMipmapLevel, i.activeCubeFace = e.activeCubeFace, i.dimensions = s.dimensions;
     }
@@ -37750,7 +37750,7 @@ class M1 extends U0 {
       if (s.depthStencilAttachment) {
         const c = o;
         r.viewCache[c] || (r.viewCache[c] = r.texture.createView({
-          dimension: mt.TwoD,
+          dimension: gt.TwoD,
           baseArrayLayer: o,
           arrayLayerCount: 1
         })), l.depthStencilAttachment = {
@@ -40080,7 +40080,7 @@ class MN extends ag {
    * @param {?HTMLDOMElement} domElement - The HTML element used for event listeners.
    */
   constructor(e, t = null) {
-    super(e, t), this.state = De.NONE, this.target = new Z(), this.cursor = new Z(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: mr.ROTATE, MIDDLE: mr.DOLLY, RIGHT: mr.PAN }, this.touches = { ONE: lr.ROTATE, TWO: lr.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this._lastPosition = new Z(), this._lastQuaternion = new es(), this._lastTargetPosition = new Z(), this._quat = new es().setFromUnitVectors(e.up, new Z(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Vh(), this._sphericalDelta = new Vh(), this._scale = 1, this._panOffset = new Z(), this._rotateStart = new xt(), this._rotateEnd = new xt(), this._rotateDelta = new xt(), this._panStart = new xt(), this._panEnd = new xt(), this._panDelta = new xt(), this._dollyStart = new xt(), this._dollyEnd = new xt(), this._dollyDelta = new xt(), this._dollyDirection = new Z(), this._mouse = new xt(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = AN.bind(this), this._onPointerDown = CN.bind(this), this._onPointerUp = RN.bind(this), this._onContextMenu = IN.bind(this), this._onMouseWheel = FN.bind(this), this._onKeyDown = DN.bind(this), this._onTouchStart = ON.bind(this), this._onTouchMove = BN.bind(this), this._onMouseDown = NN.bind(this), this._onMouseMove = PN.bind(this), this._interceptControlDown = LN.bind(this), this._interceptControlUp = UN.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
+    super(e, t), this.state = De.NONE, this.target = new Z(), this.cursor = new Z(), this.minDistance = 0, this.maxDistance = 1 / 0, this.minZoom = 0, this.maxZoom = 1 / 0, this.minTargetRadius = 0, this.maxTargetRadius = 1 / 0, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -1 / 0, this.maxAzimuthAngle = 1 / 0, this.enableDamping = !1, this.dampingFactor = 0.05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = { LEFT: "ArrowLeft", UP: "ArrowUp", RIGHT: "ArrowRight", BOTTOM: "ArrowDown" }, this.mouseButtons = { LEFT: mr.ROTATE, MIDDLE: mr.DOLLY, RIGHT: mr.PAN }, this.touches = { ONE: lr.ROTATE, TWO: lr.DOLLY_PAN }, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._domElementKeyEvents = null, this._lastPosition = new Z(), this._lastQuaternion = new es(), this._lastTargetPosition = new Z(), this._quat = new es().setFromUnitVectors(e.up, new Z(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Vh(), this._sphericalDelta = new Vh(), this._scale = 1, this._panOffset = new Z(), this._rotateStart = new _t(), this._rotateEnd = new _t(), this._rotateDelta = new _t(), this._panStart = new _t(), this._panEnd = new _t(), this._panDelta = new _t(), this._dollyStart = new _t(), this._dollyEnd = new _t(), this._dollyDelta = new _t(), this._dollyDirection = new Z(), this._mouse = new _t(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = AN.bind(this), this._onPointerDown = CN.bind(this), this._onPointerUp = RN.bind(this), this._onContextMenu = IN.bind(this), this._onMouseWheel = FN.bind(this), this._onKeyDown = DN.bind(this), this._onTouchStart = ON.bind(this), this._onTouchMove = BN.bind(this), this._onMouseDown = NN.bind(this), this._onMouseMove = PN.bind(this), this._interceptControlDown = LN.bind(this), this._interceptControlUp = UN.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
   }
   connect(e) {
     super.connect(e), this.domElement.addEventListener("pointerdown", this._onPointerDown), this.domElement.addEventListener("pointercancel", this._onPointerUp), this.domElement.addEventListener("contextmenu", this._onContextMenu), this.domElement.addEventListener("wheel", this._onMouseWheel, { passive: !1 }), this.domElement.getRootNode().addEventListener("keydown", this._interceptControlDown, { passive: !0, capture: !0 }), this.domElement.style.touchAction = "none";
@@ -40344,7 +40344,7 @@ class MN extends ag {
   }
   _trackPointer(e) {
     let t = this._pointerPositions[e.pointerId];
-    t === void 0 && (t = new xt(), this._pointerPositions[e.pointerId] = t), t.set(e.pageX, e.pageY);
+    t === void 0 && (t = new _t(), this._pointerPositions[e.pointerId] = t), t.set(e.pageX, e.pageY);
   }
   _getSecondPointerPosition(e) {
     const t = e.pointerId === this._pointers[0] ? this._pointers[1] : this._pointers[0];
@@ -42118,13 +42118,15 @@ void main() {
 	#include <clipping_planes_vertex>
 	#include <worldpos_vertex>
 }`, qN = `
+uniform float opacity;
 #include <common>
 #include <uv_pars_fragment>
 #include <clipping_planes_pars_fragment>
 
 void main() {
 	#include <clipping_planes_fragment>
-	gl_FragColor = vec4(vec3(vUv, 0.0), 1.0);
+	if (opacity < 0.015) discard;
+	gl_FragColor = vec4(vec3(vUv, 0.0), opacity);
 }`;
 class YN extends og {
   constructor() {
@@ -42132,8 +42134,12 @@ class YN extends og {
       defines: {
         USE_UV: ""
       },
+      uniforms: {
+        opacity: { value: 1 }
+      },
       vertexShader: jN,
-      fragmentShader: qN
+      fragmentShader: qN,
+      transparent: !0
     });
   }
 }
@@ -42681,7 +42687,7 @@ class iP extends Y {
     Is.length() === 0 ? this.quaternion.copy(this.cameraQuaternion) : (Vm.lookAt(vt.set(0, 0, 0), Is, Be), this.quaternion.setFromRotationMatrix(Vm)), super.updateMatrixWorld(e);
   }
 }
-class _t extends Xm {
+class mt extends Xm {
   static DRAG_START = "Transform::dragStart";
   static DRAG_END = "Transform::dragEnd";
   static _instance;
@@ -42705,9 +42711,9 @@ class _t extends Xm {
     if (t === void 0) {
       const s = document.querySelector(".clickable");
       t = new XN(this.activeCamera, s), t.getHelper().name = e, t.setSize(0.5), t.setSpace("local"), this.controls.set(e, t), this.visibility.set(e, !0), t.addEventListener("mouseDown", () => {
-        this.dispatchEvent({ type: _t.DRAG_START });
+        this.dispatchEvent({ type: mt.DRAG_START });
       }), t.addEventListener("mouseUp", () => {
-        this.dispatchEvent({ type: _t.DRAG_END });
+        this.dispatchEvent({ type: mt.DRAG_END });
       }), t.addEventListener("dragging-changed", (i) => {
         ut.instance?.toggleOrbitControls(i.value);
       });
@@ -42747,10 +42753,10 @@ class _t extends Xm {
     this.clear();
   };
   static get instance() {
-    return _t._instance || (_t._instance = new _t()), _t._instance;
+    return mt._instance || (mt._instance = new mt()), mt._instance;
   }
 }
-const nP = new St(), Uh = new xt();
+const nP = new St(), Uh = new _t();
 class kh extends Er {
   curve = new ep();
   line;
@@ -42782,7 +42788,7 @@ class kh extends Er {
     document.removeEventListener("pointerdown", this.onMouseClick);
   }
   dispose = () => {
-    this._transform && (this._transform.removeEventListener("objectChange", this.updateSpline), _t.instance.remove(this.name)), this.disable(), this.parentGroup.removeGroup(this.name);
+    this._transform && (this._transform.removeEventListener("objectChange", this.updateSpline), mt.instance.remove(this.name)), this.disable(), this.parentGroup.removeGroup(this.name);
   };
   hideTransform = () => {
     this._transform?.detach();
@@ -42908,7 +42914,7 @@ class kh extends Er {
   };
   initDebug(e, t) {
     const s = this.draggable.children;
-    this.visible = t, this.parentGroup = e, this._transform = _t.instance.add(this.name), this._transform.camera = this._camera, this._transform.addEventListener("objectChange", this.onUpdateTransform), s.length > 0 && this._transform.attach(s[s.length - 1]), ut.instance?.helpersContainer.add(this._transform.getHelper());
+    this.visible = t, this.parentGroup = e, this._transform = mt.instance.add(this.name), this._transform.camera = this._camera, this._transform.addEventListener("objectChange", this.onUpdateTransform), s.length > 0 && this._transform.attach(s[s.length - 1]), ut.instance?.helpersContainer.add(this._transform.getHelper());
     const i = s.length > 0 ? s[s.length - 1].position : { x: 0, y: 0, z: 0 };
     this.group = e.addGroup({
       title: this.name,
@@ -43226,7 +43232,7 @@ class rP extends Er {
     const s = e.target.getBoundingClientRect(), i = (e.clientX - s.left) / s.width * 2 - 1, n = -((e.clientY - s.top) / s.height) * 2 + 1;
     if (ut.instance) {
       const o = new La();
-      o.setFromCamera(new xt(i, n), this._camera);
+      o.setFromCamera(new _t(i, n), this._camera);
       const l = o.intersectObjects(ut.instance.helpersContainer.children, !0);
       for (let c = 0; c < l.length; c++) {
         const h = l[c];
@@ -43329,7 +43335,7 @@ class ut extends qa {
   selectedItem = void 0;
   debugCamera;
   raycaster = new La();
-  pointer = new xt();
+  pointer = new _t();
   cameraControls = void 0;
   // References
   canvasRef;
@@ -43361,7 +43367,7 @@ class ut extends qa {
       lastUpdate: Date.now()
     }, s.setItem(`${t}_mode`, this.state.mode), s.setItem(`${t}_tlCam`, s.getItem(`${t}_tlCam`) !== null ? s.getItem(`${t}_tlCam`) : "Debug"), s.setItem(`${t}_trCam`, s.getItem(`${t}_trCam`) !== null ? s.getItem(`${t}_trCam`) : "Orthographic"), s.setItem(`${t}_blCam`, s.getItem(`${t}_blCam`) !== null ? s.getItem(`${t}_blCam`) : "Front"), s.setItem(`${t}_brCam`, s.getItem(`${t}_brCam`) !== null ? s.getItem(`${t}_brCam`) : "Top"), s.setItem(`${t}_tlRender`, s.getItem(`${t}_tlRender`) !== null ? s.getItem(`${t}_tlRender`) : "Renderer"), s.setItem(`${t}_trRender`, s.getItem(`${t}_trRender`) !== null ? s.getItem(`${t}_trRender`) : "Renderer"), s.setItem(`${t}_blRender`, s.getItem(`${t}_blRender`) !== null ? s.getItem(`${t}_blRender`) : "Renderer"), s.setItem(`${t}_brRender`, s.getItem(`${t}_brRender`) !== null ? s.getItem(`${t}_brRender`) : "Renderer");
     const n = {
-      Vector2: xt,
+      Vector2: _t,
       Vector3: Z,
       Vector4: Wx,
       Quaternion: es,
@@ -43380,7 +43386,7 @@ class ut extends qa {
     l !== null && (this.gridVisibility = l === "open"), this.grid.visible = this.gridVisibility, this.saveExpandedGridVisibility(), ut.instance = this;
   }
   componentDidMount() {
-    this.enable(), this.assignControls(), this.resize(), this.play(), _t.instance.setApp(this.props.three), _t.instance.activeCamera = this.debugCamera;
+    this.enable(), this.assignControls(), this.resize(), this.play(), mt.instance.setApp(this.props.three), mt.instance.activeCamera = this.debugCamera;
   }
   componentDidUpdate(e, t, s) {
     t.mode !== this.state.mode && (this.assignControls(), this.resize());
@@ -43642,12 +43648,19 @@ class ut extends qa {
           type: "number",
           prop: "Grid Position",
           value: this.grid.position.y
+        },
+        {
+          type: "button",
+          prop: "Hide All Transforms"
         }
       ],
       onUpdate: (n, r) => {
         switch (n) {
           case "Grid Position":
             this.grid.position.y = r;
+            break;
+          case "Hide All Transforms":
+            mt.instance.hide();
             break;
         }
       }
@@ -43669,7 +43682,7 @@ class ut extends qa {
     });
   }
   clear() {
-    this.three.dispatchEvent({ type: ce.CLEAR_OBJECT }), _e.removeAllGroups(), this.clearLightHelpers(), this.clearControls(), this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), _t.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = void 0, _t.instance.clear(), this.cameras.forEach((e) => {
+    this.three.dispatchEvent({ type: ce.CLEAR_OBJECT }), _e.removeAllGroups(), this.clearLightHelpers(), this.clearControls(), this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), mt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = void 0, mt.instance.clear(), this.cameras.forEach((e) => {
       this.editorCameras.indexOf(e.name) < 0 && this.three.dispatchEvent({ type: ce.REMOVE_CAMERA, value: e });
     }), this.currentCamera = this.debugCamera, this.currentScene = void 0, this.scenes.forEach((e) => {
       this.three.dispatchEvent({ type: ce.REMOVE_SCENE, value: e });
@@ -43766,7 +43779,7 @@ class ut extends qa {
     i !== void 0 && (this.helpersContainer.remove(i), i.dispose()), this.cameras.delete(s), this.setState({ lastUpdate: Date.now() });
   };
   onMouseMove = (e) => {
-    const t = new xt();
+    const t = new _t();
     this.renderer?.getSize(t);
     const s = Math.min(e.clientX, t.x), i = Math.min(e.clientY, t.y);
     this.pointer.x = cn(s, 0, t.x, -1, 1), this.pointer.y = cn(i, 0, t.y, 1, -1);
@@ -43792,7 +43805,7 @@ class ut extends qa {
   };
   onClick = (e) => {
     if (this.state.interactionMode === "Orbit" || this.currentScene === void 0) return;
-    const t = new xt();
+    const t = new _t();
     if (this.renderer.getSize(t), e.clientX >= t.x) return;
     this.onMouseMove(e);
     const s = this.raycaster.intersectObjects(this.currentScene.children);
@@ -43830,7 +43843,7 @@ class ut extends qa {
       console.log(`Hermes - Can't find selected item: ${e.value.uuid}, ${e.value.name}`);
       return;
     }
-    this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), _t.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = _t.instance.add(e.value.name), this.currentTransform.attach(this.selectedItem), this.helpersContainer.add(this.currentTransform.getHelper()), this.currentTransform.addEventListener("objectChange", this.onUpdateTransform), this.updateSelectedItemHelper(!0);
+    this.currentTransform !== void 0 && (this.currentTransform.removeEventListener("objectChange", this.onUpdateTransform), mt.instance.remove(this.currentTransform.getHelper().name)), this.currentTransform = mt.instance.add(e.value.name), this.currentTransform.attach(this.selectedItem), this.helpersContainer.add(this.currentTransform.getHelper()), this.currentTransform.addEventListener("objectChange", this.onUpdateTransform), this.updateSelectedItemHelper(!0);
   };
   updateSelectedItemHelper(e) {
     if (this.selectedItem !== void 0)
@@ -43939,7 +43952,7 @@ class ut extends qa {
         t < i ? this.currentCamera = this.tlCam : this.currentCamera = this.trCam;
         break;
     }
-    this.splineEditor.camera = this.currentCamera, this.raycaster.setFromCamera(this.pointer, this.currentCamera), this.currentCamera === this.tlCam ? this.currentWindow = this.tlWindow : this.currentCamera === this.trCam ? this.currentWindow = this.trWindow : this.currentCamera === this.blCam ? this.currentWindow = this.blWindow : this.currentCamera === this.brCam && (this.currentWindow = this.brWindow), _t.instance.updateCamera(this.currentCamera, this.currentWindow.current);
+    this.splineEditor.camera = this.currentCamera, this.raycaster.setFromCamera(this.pointer, this.currentCamera), this.currentCamera === this.tlCam ? this.currentWindow = this.tlWindow : this.currentCamera === this.trCam ? this.currentWindow = this.trWindow : this.currentCamera === this.blCam ? this.currentWindow = this.blWindow : this.currentCamera === this.brCam && (this.currentWindow = this.brWindow), mt.instance.updateCamera(this.currentCamera, this.currentWindow.current);
   };
   updateCameraControls = (e, t = !1) => {
     if (this.selectedItem === void 0) return;
@@ -44315,7 +44328,7 @@ function uP(a) {
       three: a.three,
       label: "Inspector",
       button: e.uuid.length > 0 ? /* @__PURE__ */ M.jsx("button", { className: "remove", onClick: () => {
-        _t.instance.remove(e.name), t(zh);
+        mt.instance.remove(e.name), t(zh);
       } }) : void 0,
       children: /* @__PURE__ */ M.jsx("div", { id: "Inspector", className: a.class, children: e.uuid.length > 0 && /* @__PURE__ */ M.jsxs(M.Fragment, { children: [
         /* @__PURE__ */ M.jsxs(M.Fragment, { children: [
@@ -44721,7 +44734,7 @@ export {
   kh as Spline,
   rP as SplineEditor,
   JP as ThreeEditor,
-  _t as Transform,
+  mt as Transform,
   YN as UVMaterial,
   WP as WebworkerEventHandlers,
   E_ as anchorGeometry,
@@ -44759,7 +44772,7 @@ export {
   Hh as normalize,
   RP as orthoCamera,
   NP as parseModelLite,
-  gt as randomID,
+  yt as randomID,
   PP as renderToTexture,
   hp as resetThreeObjects,
   wP as rgbaToHex,
