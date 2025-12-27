@@ -103,8 +103,9 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
       }
     }
 
-    const items: InspectorFieldProps[] = [];
+    const items: (InspectorFieldProps | any)[] = [];
 
+    // Add regular field items
     data.items.forEach((item: GroupItemData) => {
       items.push({
         type: item.type,
@@ -122,12 +123,44 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
       });
     });
 
+    // Add subgroups if they exist
+    if (data.subgroups && data.subgroups.length > 0) {
+      data.subgroups.forEach((subgroup: GroupData) => {
+        const subgroupItems: InspectorFieldProps[] = [];
+        
+        subgroup.items.forEach((item: GroupItemData) => {
+          subgroupItems.push({
+            type: item.type,
+            prop: item.prop,
+            title: item.title !== undefined ? item.title : item.prop,
+            value: item.value,
+            min: item.min,
+            max: item.max,
+            step: item.step,
+            options: item.options,
+            disabled: item.disabled,
+            onChange: (prop: string, value: any) => {
+              subgroup.onUpdate(prop, value);
+            },
+          });
+        });
+
+        items.push({
+          three: DebugData.three,
+          title: subgroup.title,
+          expanded: subgroup.expanded,
+          items: subgroupItems,
+        });
+      });
+    }
+
     const groupRef = createRef<InspectorGroup>();
     const group = (
       <InspectorGroup
         three={DebugData.three}
         ref={groupRef}
         title={data.title}
+        expanded={data.expanded}
         items={items}
         key={Math.random()}
       />

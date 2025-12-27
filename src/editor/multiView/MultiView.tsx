@@ -627,32 +627,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       title: 'Editor',
       items: [
         {
-          type: 'number',
-          prop: 'Grid Position',
-          value: this.grid.position.y,
-        },
-        {
-          type: 'boolean',
-          prop: 'Grid Depth Test',
-          value: this.grid.gridMaterial.depthTest,
-        },
-        {
-          type: 'range',
-          prop: 'Debug Camera Near',
-          step: 0.0001,
-          min: 0.001,
-          max: 1000,
-          value: this.debugCamera.near,
-        },
-        {
-          type: 'range',
-          prop: 'Debug Camera Far',
-          step: 0.001,
-          min: 0.001,
-          max: 10000,
-          value: this.debugCamera.far,
-        },
-        {
           type: 'button',
           prop: 'Hide All Transforms',
         },
@@ -663,21 +637,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       ],
       onUpdate: (prop: string, value: any) => {
         switch (prop) {
-          case 'Grid Position':
-            this.grid.position.y = value;
-            break;
-          case 'Grid Depth Test':
-            this.grid.gridMaterial.depthTest = value;
-            this.grid.gridMaterial.needsUpdate = true;
-            break;
-          case 'Debug Camera Near':
-            this.debugCamera.near = value;
-            this.debugCamera.updateProjectionMatrix();
-            break;
-          case 'Debug Camera Far':
-            this.debugCamera.far = value;
-            this.debugCamera.updateProjectionMatrix();
-            break;
           case 'Hide All Transforms':
             Transform.instance.hide();
             break;
@@ -686,6 +645,67 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             break;
         }
       },
+      subgroups: [
+        {
+          title: 'Debug Camera',
+          items: [
+            {
+              type: 'range',
+              prop: 'Near',
+              step: 0.0001,
+              min: 0.001,
+              max: 1000,
+              value: this.debugCamera.near,
+            },
+            {
+              type: 'range',
+              prop: 'Far',
+              step: 0.001,
+              min: 0.001,
+              max: 10000,
+              value: this.debugCamera.far,
+            },
+          ],
+          onUpdate: (prop: string, value: any) => {
+            switch (prop) {
+              case 'Near':
+                this.debugCamera.near = value;
+                this.debugCamera.updateProjectionMatrix();
+                break;
+              case 'Far':
+                this.debugCamera.far = value;
+                this.debugCamera.updateProjectionMatrix();
+                break;
+            }
+          },
+        },
+        {
+          title: 'Grid',
+          items: [
+            {
+              type: 'number',
+              prop: 'Position',
+              value: this.grid.position.y,
+            },
+            {
+              type: 'boolean',
+              prop: 'Depth Test',
+              value: this.grid.gridMaterial.depthTest,
+            },
+          ],
+          onUpdate: (prop: string, value: any) => {
+            switch (prop) {
+              case 'Position':
+                this.grid.position.y = value;
+                break;
+              case 'Depth Test':
+                this.grid.gridMaterial.depthTest = value;
+                this.grid.gridMaterial.needsUpdate = true;
+                break;
+            }
+          },
+        },
+      ],
     });
   }
 

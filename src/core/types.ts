@@ -29,6 +29,7 @@ export interface GroupData {
   title: string
   expanded?: boolean
   items: GroupItemData[]
+  subgroups?: GroupData[]
   onUpdate: (prop: string, value: any) => void
 }
 
