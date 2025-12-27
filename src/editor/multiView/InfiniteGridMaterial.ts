@@ -123,6 +123,7 @@ export default class InfiniteGridMaterial extends ShaderMaterial {
       name: 'InfiniteGrid',
       vertexShader: vertex,
       fragmentShader: fragment,
+      depthTest: false,
     });
   }
 }
