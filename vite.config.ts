@@ -22,6 +22,7 @@ export default defineConfig({
         'postprocessing',
       ],
       output: {
+        inlineDynamicImports: true,
         globals: {
           react: 'React',
           three: 'THREE',

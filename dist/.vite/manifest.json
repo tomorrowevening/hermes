@@ -1,42 +1,9 @@
 {
-  "_index-BbHZrFC2.cjs": {
-    "file": "index-BbHZrFC2.cjs",
-    "name": "index",
-    "dynamicImports": [
-      "_index-f6wIvPCL.cjs"
-    ]
-  },
-  "_index-COIHFelW.js": {
-    "file": "index-COIHFelW.js",
-    "name": "index",
-    "isDynamicEntry": true,
-    "imports": [
-      "_index-CbJ4YiKZ.js"
-    ]
-  },
-  "_index-CbJ4YiKZ.js": {
-    "file": "index-CbJ4YiKZ.js",
-    "name": "index",
-    "dynamicImports": [
-      "_index-COIHFelW.js"
-    ]
-  },
-  "_index-f6wIvPCL.cjs": {
-    "file": "index-f6wIvPCL.cjs",
-    "name": "index",
-    "isDynamicEntry": true,
-    "imports": [
-      "_index-BbHZrFC2.cjs"
-    ]
-  },
   "src/index.ts": {
     "file": "hermes.es.js",
     "name": "index",
     "src": "src/index.ts",
-    "isEntry": true,
-    "imports": [
-      "_index-CbJ4YiKZ.js"
-    ]
+    "isEntry": true
   },
   "style.css": {
     "file": "hermes.css",
