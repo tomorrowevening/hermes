@@ -1,4 +1,4 @@
-import { IProject, ISheet, ISheetObject } from '@theatre/core';
+import { IProject, ISheet, ISheetObject } from '@tomorrowevening/theatre-core';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, VoidCallback } from '../types';
 type KeyframeVector = {
@@ -15,10 +15,9 @@ export default class RemoteTheatre extends BaseRemote {
     sheetObjectUnsubscribe: Map<string, VoidCallback>;
     activeSheet: ISheet | undefined;
     studio: any;
-    rafDriver?: any;
     constructor(debug?: boolean, editor?: boolean);
     dispose(): void;
-    loadProject(id: string, createRaf: boolean, json?: any): Promise<void>;
+    loadProject(id: string, json?: any): Promise<void>;
     getSheetInstance(name: string, instanceId?: string): string;
     sheet(name: string, instanceId?: string): ISheet | undefined;
     playSheet(name: string, params?: any, instanceId?: string): Promise<boolean>;

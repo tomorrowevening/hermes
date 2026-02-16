@@ -1,5 +1,5 @@
 // Libs
-import { createRafDriver, getProject, IProject, ISheet, ISheetObject, types } from '@theatre/core';
+import { createRafDriver, getProject, IProject, ISheet, ISheetObject, types } from '@tomorrowevening/theatre-core';
 // Core
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
@@ -62,7 +62,6 @@ export default class RemoteTheatre extends BaseRemote {
   sheetObjectUnsubscribe: Map<string, VoidCallback> = new Map();
   activeSheet: ISheet | undefined;
   studio: any = undefined;
-  rafDriver?: any = undefined;
 
   constructor(debug = false, editor = false) {
     super('RemoteTheatre', debug, editor);
@@ -76,16 +75,17 @@ export default class RemoteTheatre extends BaseRemote {
     this.sheetObjectUnsubscribe = new Map();
   }
 
-  loadProject(id: string, createRaf: boolean, json?: any): Promise<void> {
+  loadProject(id: string, json?: any): Promise<void> {
+    console.log(id, json);
     this.project = getProject(id, { state: json });
     return new Promise((resolve, reject) => {
       this.project?.ready.then(() => {
         if (json) {
           const sheets = json.sheetsById;
+          console.log('loaded sheets', sheets);
           for (const i in sheets) this.sheet(i);
         }
 
-        if (createRaf) this.rafDriver = createRafDriver({ name: id });
         resolve();
       }).catch(() => reject());
     });
@@ -115,9 +115,7 @@ export default class RemoteTheatre extends BaseRemote {
   playSheet(name: string, params?: any, instanceId?: string): Promise<boolean> {
     return new Promise((resolve) => {
       // Play locally
-      const rafParams = params !== undefined ? {...params} : {};
-      rafParams.rafDriver = this.rafDriver;
-      this.sheet(name, instanceId)?.sequence.play(rafParams).then((complete: boolean) => resolve(complete));
+      this.sheet(name, instanceId)?.sequence.play(params).then((complete: boolean) => resolve(complete));
 
       // Remotely
       this.send({
@@ -297,7 +295,7 @@ export default class RemoteTheatre extends BaseRemote {
   }
 
   update(now: number) {
-    this.rafDriver?.tick(now);
+    // 
   }
 
   unsubscribe(sheetObject: ISheetObject) {

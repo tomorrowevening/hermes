@@ -1,4 +1,4 @@
-import { types } from '@theatre/core';
+import { types } from '@tomorrowevening/theatre-core';
 import { useEffect, useState } from 'react';
 import RemoteTheatre from '../core/remote/RemoteTheatre';
 
@@ -9,7 +9,7 @@ export function useStudio() {
 
   useEffect(() => {
     if (!studioPackage) {
-      import('@theatre/studio').then((pkg) => {
+      import('@tomorrowevening/theatre-studio').then((pkg) => {
         studioPackage = pkg.default;
         studioPackage.initialize();
         studioPackage.ui.hide();

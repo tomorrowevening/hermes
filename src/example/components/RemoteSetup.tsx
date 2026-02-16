@@ -1,4 +1,4 @@
-import studio from '@theatre/studio';
+import studio from '@tomorrowevening/theatre-studio';
 import Application from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 

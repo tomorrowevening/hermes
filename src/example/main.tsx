@@ -1,7 +1,7 @@
 // Libs
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import studio from '@theatre/studio';
+import studio from '@tomorrowevening/theatre-studio';
 // Models
 import { IS_DEV } from './constants';
 // Components
