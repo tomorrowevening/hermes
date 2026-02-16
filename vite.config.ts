@@ -17,12 +17,11 @@ export default defineConfig({
         'react',
         'three',
         'framer-motion',
-        '@theatre/core',
-        '@theatre/studio',
+        '@tomorrowevening/theatre-core',
+        '@tomorrowevening/theatre-studio',
         'postprocessing',
       ],
       output: {
-        inlineDynamicImports: true,
         globals: {
           react: 'React',
           three: 'THREE',
