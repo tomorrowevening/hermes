@@ -76,13 +76,11 @@ export default class RemoteTheatre extends BaseRemote {
   }
 
   loadProject(id: string, json?: any): Promise<void> {
-    console.log(id, json);
     this.project = getProject(id, { state: json });
     return new Promise((resolve, reject) => {
       this.project?.ready.then(() => {
         if (json) {
           const sheets = json.sheetsById;
-          console.log('loaded sheets', sheets);
           for (const i in sheets) this.sheet(i);
         }
 

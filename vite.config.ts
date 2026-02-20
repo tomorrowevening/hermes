@@ -15,6 +15,8 @@ export default defineConfig({
     rollupOptions: {
       external: [
         'react',
+        'react-dom',
+        'react/jsx-runtime',
         'three',
         'framer-motion',
         '@tomorrowevening/theatre-core',
@@ -24,6 +26,7 @@ export default defineConfig({
       output: {
         globals: {
           react: 'React',
+          'react-dom': 'ReactDOM',
           three: 'THREE',
         }
       }
