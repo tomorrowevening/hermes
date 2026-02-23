@@ -1,4 +1,4 @@
-import { Clock, Object3D, PerspectiveCamera, Scene } from 'three';
+import { Object3D, PerspectiveCamera, Scene, Timer } from 'three';
 import Application from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 
@@ -6,12 +6,12 @@ export default class BaseScene extends Scene {
   app!: Application;
   camera: PerspectiveCamera;
   renderer?: any;
-  clock: Clock;
+  clock: Timer;
 
   constructor() {
     super();
-    this.clock = new Clock();
-    this.clock.start();
+    this.clock = new Timer();
+    this.clock.connect(document);
 
     const cameras = new Object3D();
     cameras.name = 'cameras';
@@ -36,6 +36,7 @@ export default class BaseScene extends Scene {
   dispose() {
     const theatre = this.app.components.get('theatre') as RemoteTheatre;
     theatre.clearSheetObjects(this.name);
+    this.clock.disconnect();
   }
 
   resize(width: number, height: number) {

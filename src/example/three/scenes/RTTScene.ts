@@ -76,7 +76,7 @@ export default class RTTScene extends BaseScene {
   }
 
   override draw() {
-    const time = this.clock.getElapsedTime();
+    const time = this.clock.getElapsed();
     const radius = 100;
     const angle = time * 0.05 * Math.PI * 2;
     const x = Math.cos(angle) * radius;
