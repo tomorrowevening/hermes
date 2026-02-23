@@ -1,9 +1,8 @@
 import { Component, ReactNode } from 'react';
-import { Camera, Group, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Camera, Group, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { WebGPURenderer } from 'three/webgpu';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import RemoteThree from '../../core/remote/RemoteThree';
-import InfiniteGridHelper from './InfiniteGridHelper';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
 import './MultiView.scss';
 type MultiViewProps = {
@@ -32,7 +31,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     currentCamera: PerspectiveCamera | OrthographicCamera;
     currentWindow: any;
     helpersContainer: Group<import("three").Object3DEventMap>;
-    grid: InfiniteGridHelper;
+    grid?: Mesh;
     private cameraHelpers;
     private lightHelpers;
     private interactionHelper;
