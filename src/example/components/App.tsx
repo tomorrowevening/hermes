@@ -1,7 +1,7 @@
 // Libs
 import { useEffect, useRef } from 'react';
 import { WebGLRenderer } from 'three';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
+import { WebGPURenderer } from 'three/webgpu';
 import Stats from 'stats-gl';
 // Models
 import Application from '../../core/Application';
@@ -38,7 +38,7 @@ function App(props: AppProps) {
     useEffect(() => {
       const canvas = canvasRef.current!;
       // TODO - Add WebGPU support
-      const useWebGPU = false;
+      const useWebGPU = true;
       if (useWebGPU) {
         renderer = new WebGPURenderer({
           canvas,
@@ -57,8 +57,7 @@ function App(props: AppProps) {
       three.setRenderer(renderer, canvas);
 
       if (useWebGPU) {
-        // @ts-ignore
-        renderer.init().then(() => {
+        (renderer as WebGPURenderer).init().then(() => {
           rendererReady = true;
         });
       }

@@ -868,6 +868,7 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
   const items: any[] = [];
   for (const i in material) {
     if (!acceptedMaterialNames(i)) continue;
+    if (i.search('Node') > -1) continue; // Skip nodes
 
     const propType = typeof material[i];
     const value = material[i];

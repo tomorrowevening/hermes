@@ -36,10 +36,10 @@ import {
   Vector4,
   WebGLRenderer
 } from 'three';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer';
-import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { degToRad, mapLinear } from 'three/src/math/MathUtils';
+import { WebGPURenderer } from 'three/webgpu';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { degToRad, mapLinear } from 'three/src/math/MathUtils.js';
 import CameraControls from 'camera-controls';
 import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
@@ -56,7 +56,7 @@ import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
 // Utils
 import { mix } from '../../utils/math';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { dispose } from '../../utils/three';
 
 type LightHelper = DirectionalLightHelper | HemisphereLightHelper | RectAreaLightHelper | PointLightHelper | SpotLightHelper
@@ -568,14 +568,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.renderer) {
       this.renderer.autoClear = false;
       this.renderer.shadowMap.enabled = true;
-      this.renderer.setPixelRatio(devicePixelRatio);
       this.renderer.setClearColor(0x000000);
+      this.renderer.setPixelRatio(devicePixelRatio);
+      this.renderer.setScissorTest(true);
       this.resize();
       this.props.three.renderer = this.renderer;
 
       if (data.type === 'WebGPURenderer') {
-        // @ts-ignore
-        this.renderer.init().then(() => {
+        (this.renderer as WebGPURenderer).init().then(() => {
           this.rendererReady = true;
         });
       }
@@ -1154,9 +1154,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     }
 
     this.currentTransform = Transform.instance.add(evt.value.name);
-    this.currentTransform.attach(this.selectedItem);
-    this.helpersContainer.add(this.currentTransform.getHelper());
-    this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
+    if (this.currentTransform) {
+      this.currentTransform.attach(this.selectedItem);
+      this.helpersContainer.add(this.currentTransform.getHelper());
+      this.currentTransform.addEventListener('objectChange', this.onUpdateTransform);
+    }
 
     this.updateSelectedItemHelper(true);
   };
@@ -1457,10 +1459,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         break;
     }
 
-    this.scene.overrideMaterial = material;
+    // this.scene.overrideMaterial = material;
     if (this.renderer) {
-      this.renderer?.setViewport(x, y, width, height);
       this.renderer?.setScissor(x, y, width, height);
+      this.renderer?.setViewport(x, y, width, height);
       this.renderer?.render(this.scene, camera);
     }
     this.grid.rotation.set(0, 0, 0);
@@ -1476,27 +1478,39 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     const materialB = this.getSceneOverride(this.trRender);
     const bw = Math.floor(this.width / 2);
     const bh = Math.floor(this.height / 2);
+    const webgpu = this.renderer instanceof WebGPURenderer;
 
     if (this.state.mode === 'Side by Side') {
-      this.drawTo(0, 0, bw, this.height, this.tlCam, materialA);
-      this.drawTo(bw, 0, bw, this.height, this.trCam, materialB);
+      if (webgpu) {
+        this.drawTo(bw, 0, bw, this.height, this.tlCam, materialA);
+        this.drawTo(0, 0, bw, this.height, this.trCam, materialB);
+      } else {
+        this.drawTo(0, 0, bw, this.height, this.tlCam, materialA);
+        this.drawTo(bw, 0, bw, this.height, this.trCam, materialB);
+      }
     } else {
       const y = this.height - bh;
-      this.drawTo(0, y, this.width, bh, this.tlCam, materialA);
-      this.drawTo(0, 0, this.width, bh, this.trCam, materialB);
+      if (webgpu) {
+        this.drawTo(0, 0, this.width, bh, this.tlCam, materialA);
+        this.drawTo(0, y, this.width, bh, this.trCam, materialB);
+      } else {
+        this.drawTo(0, y, this.width, bh, this.tlCam, materialA);
+        this.drawTo(0, 0, this.width, bh, this.trCam, materialB);
+      }
     }
   };
 
   private drawQuad = () => {
+    const webgpu = this.renderer instanceof WebGPURenderer;
     const materialA = this.getSceneOverride(this.tlRender);
     const materialB = this.getSceneOverride(this.trRender);
     const materialC = this.getSceneOverride(this.blRender);
     const materialD = this.getSceneOverride(this.brRender);
     const bw = Math.floor(this.width / 2);
     const bh = Math.floor(this.height / 2);
+    const bottom = this.height - bh;
     let x = 0;
-    let y = 0;
-    y = this.height - bh;
+    let y = webgpu ? 0 : this.height - bh;
 
     // TL
     x = 0;
@@ -1506,7 +1520,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     x = bw;
     this.drawTo(x, y, bw, bh, this.trCam, materialB);
 
-    y = 0;
+    y = webgpu ? bottom : 0;
 
     // BL
     x = 0;

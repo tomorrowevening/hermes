@@ -1,4 +1,5 @@
-import { Mesh, MeshNormalMaterial, SphereGeometry } from 'three';
+import { Mesh, SphereGeometry } from 'three';
+import { MeshNormalNodeMaterial } from 'three/webgpu';
 import BaseScene from './BaseScene';
 import { hierarchyUUID } from '../../../utils/three';
 import RemoteThree from '../../../core/remote/RemoteThree';
@@ -12,7 +13,8 @@ export default class Scene3 extends BaseScene {
   }
 
   override init(): void {
-    const mesh = new Mesh(new SphereGeometry(50), new MeshNormalMaterial());
+    const material = new MeshNormalNodeMaterial();
+    const mesh = new Mesh(new SphereGeometry(50), material);
     mesh.name = 'mesh';
     this.add(mesh);
 
