@@ -7,7 +7,7 @@
   "module": "./dist/hermes.esm.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -55,7 +55,7 @@
     "@tomorrowevening/theatre-studio": "^1.0.19",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@types/three": "^0.177.0",
+    "@types/three": "^0.183.1",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "@vitejs/plugin-react": "^4.0.3",
@@ -74,7 +74,7 @@
     "rimraf": "^6.1.3",
     "sass": "^1.89.2",
     "stats-gl": "^3.6.0",
-    "three": "^0.177.0",
+    "three": "^0.183.1",
     "typescript": "^5.0.2",
     "vite": "^6.3.5",
     "vite-plugin-glsl": "1.2.1",

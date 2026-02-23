@@ -11,6 +11,7 @@ import RemoteThree from '../../core/remote/RemoteThree';
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
+import Scene3 from '../three/scenes/Scene3';
 // Utils
 import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
@@ -22,6 +23,8 @@ let sceneName = '';
 type AppProps = {
   app: Application
 }
+
+let rendererReady = false;
 
 function App(props: AppProps) {
   const app = props.app;
@@ -46,11 +49,19 @@ function App(props: AppProps) {
           canvas,
           stencil: false
         });
+        rendererReady = true;
       }
       renderer.shadowMap.enabled = true;
       renderer.setPixelRatio(devicePixelRatio);
       renderer.setClearColor(0x000000);
       three.setRenderer(renderer, canvas);
+
+      if (useWebGPU) {
+        // @ts-ignore
+        renderer.init().then(() => {
+          rendererReady = true;
+        });
+      }
 
       // ThreeJS
       const stats = new Stats();
@@ -68,8 +79,10 @@ function App(props: AppProps) {
       };
   
       const updateApp = () => {
-        currentScene?.update();
-        currentScene?.draw();
+        if (rendererReady) {
+          currentScene?.update();
+          currentScene?.draw();
+        }
         stats.update();
         raf = requestAnimationFrame(updateApp);
       };
@@ -104,8 +117,10 @@ function App(props: AppProps) {
     }
     if (sceneName === 'scene1') {
       currentScene = new Scene1();
-    } else {
+    } else if (sceneName === 'scene2') {
       currentScene = new Scene2();
+    } else {
+      currentScene = new Scene3();
     }
     currentScene.setup(app, renderer);
     currentScene.init();
@@ -124,6 +139,12 @@ function App(props: AppProps) {
     createScene();
   };
 
+  const createScene3 = () => {
+    if (sceneName === 'scene3') return;
+    sceneName = 'scene3';
+    createScene();
+  };
+
   return (
     <>
       {app.isApp && (
@@ -136,6 +157,7 @@ function App(props: AppProps) {
           }}>
             <button onClick={createScene1}>Scene 1</button>
             <button onClick={createScene2}>Scene 2</button>
+            <button onClick={createScene3}>Scene 3</button>
           </div>
         </>
       )}

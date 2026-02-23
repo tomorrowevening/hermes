@@ -9,6 +9,7 @@ import MultiView from '../editor/multiView/MultiView';
 import { customizeTheatreElements } from '../utils/theatre';
 import Scene1 from './three/scenes/Scene1';
 import Scene2 from './three/scenes/Scene2';
+import Scene3 from './three/scenes/Scene3';
 import RTTScene from './three/scenes/RTTScene';
 
 type CustomEditorProps = {
@@ -25,6 +26,7 @@ export default function CustomEditor(props: CustomEditorProps) {
   const scenes: Map<string, any> = new Map();
   scenes.set('Scene1', Scene1);
   scenes.set('Scene2', Scene2);
+  scenes.set('Scene3', Scene3);
   scenes.set('RTTScene', RTTScene);
 
   return (

@@ -58,6 +58,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     private cameraVisibility;
     private lightVisibility;
     private gridVisibility;
+    private rendererReady;
     selectedItem: Object3D | undefined;
     private debugCamera;
     private raycaster;

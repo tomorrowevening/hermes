@@ -105,7 +105,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
         // renderer.autoClearDepth = this.autoClearDepth;
         // renderer.autoClearStencil = this.autoClearStencil;
         renderer.outputColorSpace = this.outputColorSpace;
-        renderer.localClippingEnabled = this.localClippingEnabled;
+        if (renderer instanceof WebGLRenderer) renderer.localClippingEnabled = this.localClippingEnabled;
         renderer.toneMapping = this.toneMapping;
         renderer.toneMappingExposure = this.toneMappingExposure;
         renderer.setClearColor(data.clearColor, this.clearAlpha);
@@ -125,7 +125,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
           // renderer.autoClearDepth = this.autoClearDepth;
           // renderer.autoClearStencil = this.autoClearStencil;
           renderer.outputColorSpace = this.outputColorSpace;
-          renderer.localClippingEnabled = this.localClippingEnabled;
+          if (renderer instanceof WebGLRenderer) renderer.localClippingEnabled = this.localClippingEnabled;
           renderer.toneMapping = this.toneMapping;
           renderer.toneMappingExposure = this.toneMappingExposure;
           renderer.setClearColor(this.clearColor.getStyle(), this.clearAlpha);

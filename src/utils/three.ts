@@ -137,10 +137,12 @@ export const hierarchyUUID = (object: Object3D): void => {
     const mesh = object as Mesh;
     if (Array.isArray(mesh.material)) {
       mesh.material.forEach((material: Material, index: number) => {
+        // @ts-ignore
         material.uuid = `${uuid}.material.${index}`;
       });
     } else {
       const material = mesh.material as Material;
+      // @ts-ignore
       material.uuid = `${uuid}.material`;
     }
   }
@@ -191,11 +193,14 @@ export class ExportTexture {
       this.context.clearRect(0, 0, this.width, this.height);
 
       const image = texture.image;
+      // @ts-ignore
       if (image !== undefined && image !== null && image.width > 0) {
         // @ts-ignore
         this.canvas.title = texture.sourceFile;
+        // @ts-ignore
         const scale = this.canvas.width / image.width;
         const canvas2 = this.renderToCanvas(texture);
+        // @ts-ignore
         this.context.drawImage( canvas2, 0, 0, image.width * scale, image.height * scale );
       }
     }

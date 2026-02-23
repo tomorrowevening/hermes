@@ -1,6 +1,6 @@
 import { AnimationClip, AnimationMixer, BufferGeometry, Camera, Material, Mesh, Object3D, Object3DEventMap, OrthographicCamera, Texture, WebGLRenderer, WebGLRenderTarget } from 'three';
 import { ModelLite } from '../webworkers/types';
-export declare const triangle: BufferGeometry<import("three").NormalBufferAttributes>;
+export declare const triangle: BufferGeometry<import("three").NormalBufferAttributes, import("three").BufferGeometryEventMap>;
 export declare const orthoCamera: OrthographicCamera;
 export declare const disposeTexture: (texture?: Texture) => void;
 export declare const disposeMaterial: (material?: Material | Material[]) => void;

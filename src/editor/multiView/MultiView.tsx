@@ -142,6 +142,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private cameraVisibility = true;
   private lightVisibility = true;
   private gridVisibility = true;
+  private rendererReady = false;
 
   // Interactions
   selectedItem: Object3D | undefined = undefined;
@@ -543,6 +544,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.renderer.dispose();
     }
 
+    this.rendererReady = false;
+
     const canvas = this.canvasRef.current!;
     this.props.three.canvas = canvas;
     const data = evt.value;
@@ -552,6 +555,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         stencil: false
       });
       this.grid.visible = true;
+      this.rendererReady = true;
+      this.scene.add(this.grid);
     } else if (data.type === 'WebGPURenderer') {
       this.renderer = new WebGPURenderer({
         canvas: canvas,
@@ -567,14 +572,19 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.renderer.setClearColor(0x000000);
       this.resize();
       this.props.three.renderer = this.renderer;
+
+      if (data.type === 'WebGPURenderer') {
+        // @ts-ignore
+        this.renderer.init().then(() => {
+          this.rendererReady = true;
+        });
+      }
     }
   };
 
   private setupScene() {
     this.helpersContainer.name = 'helpers';
     this.scene.add(this.helpersContainer);
-
-    this.scene.add(this.grid);
 
     this.interactionHelper.name = 'interactionHelper';
     this.interactionHelper.visible = false;
@@ -776,13 +786,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Playback
 
   private update() {
-    if (this.renderer) {
-      if (this.renderer instanceof WebGLRenderer) {
-        this.renderer?.clear();
-      } else if (this.renderer instanceof WebGPURenderer) {
-        this.renderer?.clearAsync();
-      }
-    }
+    if (this.renderer && this.rendererReady) this.renderer?.clear();
+    
     // Updates
     this.controls.forEach((control: OrbitControls) => control.update());
     this.cameraHelpers.forEach((helper: CameraHelper) => helper.update());
@@ -795,12 +800,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   private draw() {
+    if (!this.rendererReady) return;
+
     if (this.renderer) {
-      if (this.renderer instanceof WebGLRenderer) {
-        this.renderer?.clear();
-      } else if (this.renderer instanceof WebGPURenderer) {
-        this.renderer?.clearAsync();
-      }
+      this.renderer?.clear();
     }
     switch (this.state.mode) {
       case 'Single':
@@ -1458,11 +1461,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.renderer) {
       this.renderer?.setViewport(x, y, width, height);
       this.renderer?.setScissor(x, y, width, height);
-      if (this.renderer instanceof WebGLRenderer) {
-        this.renderer?.render(this.scene, camera);
-      } else if (this.renderer instanceof WebGPURenderer) {
-        this.renderer?.renderAsync(this.scene, camera);
-      }
+      this.renderer?.render(this.scene, camera);
     }
     this.grid.rotation.set(0, 0, 0);
   }

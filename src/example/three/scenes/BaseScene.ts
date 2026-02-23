@@ -48,10 +48,6 @@ export default class BaseScene extends Scene {
   }
 
   draw() {
-    if (this.renderer.isWebGLRenderer) {
-      this.renderer.render(this, this.camera);
-    } else {
-      this.renderer.renderAsync(this, this.camera);
-    }
+    this.renderer.render(this, this.camera);
   }
 }
