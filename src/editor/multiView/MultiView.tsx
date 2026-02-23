@@ -36,7 +36,7 @@ import {
   Vector4,
   WebGLRenderer
 } from 'three';
-import { WebGPURenderer } from 'three/webgpu';
+import { MeshNormalNodeMaterial, WebGPURenderer } from 'three/webgpu';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils.js';
@@ -44,13 +44,16 @@ import CameraControls from 'camera-controls';
 import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 import CameraWindow, { Dropdown } from './CameraWindow';
 import InfiniteGridHelper from './InfiniteGridHelper';
+import InfiniteGridHelperGPU from './InfiniteGridHelperGPU';
 import { InteractionMode, MultiViewMode, RenderMode } from './MultiViewData';
 // Components
 import './MultiView.scss';
 import DebugData from '../sidePanel/DebugData';
 import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 import Toggle from './Toggle';
+import DepthNodeMaterial from './DepthNodeMaterial';
 import UVMaterial from './UVMaterial';
+import UVNodeMaterial from './UVNodeMaterial';
 // Tools
 import SplineEditor from '../tools/splineEditor';
 import Transform from '../tools/Transform';
@@ -104,7 +107,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   currentCamera!: PerspectiveCamera | OrthographicCamera;
   currentWindow: any; // RefObject to one of the "windows"
   helpersContainer = new Group();
-  grid = new InfiniteGridHelper();
+  grid?: Mesh;
   private cameraHelpers: Map<string, CameraHelper> = new Map();
   private lightHelpers: Map<string, LightHelper> = new Map();
   private interactionHelper = new AxesHelper(25);
@@ -114,9 +117,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private splineEditor!: SplineEditor;
 
   // Override Materials
-  private depthMaterial = new MeshDepthMaterial();
-  private normalsMaterial = new MeshNormalMaterial();
-  private uvMaterial =  new UVMaterial();
+  private depthMaterial!: Material;
+  private normalsMaterial!: Material;
+  private uvMaterial!: Material;
   private wireframeMaterial =  new MeshBasicMaterial({
     opacity: 0.33,
     transparent: true,
@@ -236,7 +239,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     const expandedGridVisibility = localStorage.getItem(this.expandedGridVisibility);
     if (expandedGridVisibility !== null) this.gridVisibility = expandedGridVisibility === 'open';
-    this.grid.visible = this.gridVisibility;
+    if (this.grid) this.grid.visible = this.gridVisibility;
     this.saveExpandedGridVisibility();
 
     // Static-access
@@ -554,15 +557,24 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         canvas: canvas,
         stencil: false
       });
-      this.grid.visible = true;
-      this.rendererReady = true;
+
+      // Materials
+      this.depthMaterial = new MeshDepthMaterial();
+      this.normalsMaterial = new MeshNormalMaterial();
+      this.uvMaterial =  new UVMaterial();
+      
+      this.grid = new InfiniteGridHelper();
       this.scene.add(this.grid);
+
+      this.rendererReady = true;
     } else if (data.type === 'WebGPURenderer') {
       this.renderer = new WebGPURenderer({
         canvas: canvas,
         stencil: false
       });
-      this.grid.visible = false;
+
+      this.grid = new InfiniteGridHelperGPU();
+      this.scene.add(this.grid);
     }
 
     if (this.renderer) {
@@ -573,6 +585,11 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.renderer.setScissorTest(true);
       this.resize();
       this.props.three.renderer = this.renderer;
+
+      // Materials
+      this.depthMaterial = new DepthNodeMaterial();
+      this.normalsMaterial = new MeshNormalNodeMaterial();
+      this.uvMaterial = new UVNodeMaterial();
 
       if (data.type === 'WebGPURenderer') {
         (this.renderer as WebGPURenderer).init().then(() => {
@@ -695,22 +712,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
             {
               type: 'number',
               prop: 'Position',
-              value: this.grid.position.y,
-            },
-            {
-              type: 'boolean',
-              prop: 'Depth Test',
-              value: this.grid.gridMaterial.depthTest,
+              value: 0,
             },
           ],
           onUpdate: (prop: string, value: any) => {
             switch (prop) {
               case 'Position':
-                this.grid.position.y = value;
-                break;
-              case 'Depth Test':
-                this.grid.gridMaterial.depthTest = value;
-                this.grid.gridMaterial.needsUpdate = true;
+                if (this.grid) this.grid.position.y = value;
                 break;
             }
           },
@@ -780,7 +788,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   setGridVisibility(value: boolean) {
     this.gridVisibility = value;
     this.saveExpandedGridVisibility();
-    this.grid.visible = value;
+    if (this.grid) this.grid.visible = value;
   }
 
   // Playback
@@ -1451,21 +1459,21 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     switch (camera.name) {
       case 'Left':
       case 'Right':
-        this.grid.rotation.z = Math.PI / 2;
+        if (this.grid) this.grid.rotation.z = Math.PI / 2;
         break;
       case 'Front':
       case 'Back':
-        this.grid.rotation.x = Math.PI / 2;
+        if (this.grid) this.grid.rotation.x = Math.PI / 2;
         break;
     }
 
-    // this.scene.overrideMaterial = material;
+    this.scene.overrideMaterial = material;
     if (this.renderer) {
       this.renderer?.setScissor(x, y, width, height);
       this.renderer?.setViewport(x, y, width, height);
       this.renderer?.render(this.scene, camera);
     }
-    this.grid.rotation.set(0, 0, 0);
+    if (this.grid) this.grid.rotation.set(0, 0, 0);
   }
 
   private drawSingle() {
@@ -1481,13 +1489,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     const webgpu = this.renderer instanceof WebGPURenderer;
 
     if (this.state.mode === 'Side by Side') {
-      if (webgpu) {
-        this.drawTo(bw, 0, bw, this.height, this.tlCam, materialA);
-        this.drawTo(0, 0, bw, this.height, this.trCam, materialB);
-      } else {
-        this.drawTo(0, 0, bw, this.height, this.tlCam, materialA);
-        this.drawTo(bw, 0, bw, this.height, this.trCam, materialB);
-      }
+      this.drawTo(0, 0, bw, this.height, this.tlCam, materialA);
+      this.drawTo(bw, 0, bw, this.height, this.trCam, materialB);
     } else {
       const y = this.height - bh;
       if (webgpu) {

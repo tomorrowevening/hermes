@@ -15,8 +15,8 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { lerp } from 'three/src/math/MathUtils';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { lerp } from 'three/src/math/MathUtils.js';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { RefObject } from 'react';
 // Tools
 import MultiView from '../../multiView/MultiView';
@@ -308,10 +308,10 @@ export default class Spline extends Object3D {
     this.visible = visible;
     this.parentGroup = parentGroup;
     this._transform = Transform.instance.add(this.name);
-    this._transform.camera = this._camera;
-    this._transform.addEventListener('objectChange', this.onUpdateTransform);
-    if (pts.length > 0) this._transform.attach(pts[pts.length - 1]);
-    MultiView.instance?.helpersContainer.add(this._transform.getHelper());
+    this._transform!.camera = this._camera;
+    this._transform!.addEventListener('objectChange', this.onUpdateTransform);
+    if (pts.length > 0) this._transform!.attach(pts[pts.length - 1]);
+    MultiView.instance?.helpersContainer.add(this._transform!.getHelper());
 
     const currentPoint = pts.length > 0 ? pts[pts.length - 1].position : { x: 0, y: 0, z: 0 };
     this.group = parentGroup.addGroup({

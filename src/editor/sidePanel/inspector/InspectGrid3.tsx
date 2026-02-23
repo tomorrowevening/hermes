@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Euler, Matrix3, Vector3 } from 'three';
 import InspectNumber from './InspectNumber';
-import { degToRad, radToDeg } from 'three/src/math/MathUtils';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 
 interface InspectGrid3Props {
   value: Vector3 | Matrix3 | Euler;

@@ -1,6 +1,6 @@
 // Libs
 import { Camera, EventDispatcher } from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 // Remote
 import RemoteThree, { ToolEvents } from '../../core/remote/RemoteThree';
 import MultiView from '../multiView/MultiView';

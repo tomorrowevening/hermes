@@ -16,8 +16,4 @@ export default class InfiniteGridHelper extends Mesh {
     this.frustumCulled = false;
     this.name = 'InfiniteGridHelper';
   }
-
-  update() {
-    this.gridMaterial.needsUpdate = true;
-  }
 }
