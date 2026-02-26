@@ -43,8 +43,8 @@ export default class InfiniteGridNodeMaterial extends NodeMaterial {
     this.uDivisions = uniform(props?.divisions ?? 10);
     this.uColor = uniform(props?.color ?? new Color(0xffffff));
     this.uDistance = uniform(props?.distance ?? 10000);
-    this.uSubgridOpacity = uniform(props?.subgridOpacity ?? 0.05);
-    this.uGridOpacity = uniform(props?.gridOpacity ?? 0.15);
+    this.uSubgridOpacity = uniform(props?.subgridOpacity ?? 0.15);
+    this.uGridOpacity = uniform(props?.gridOpacity ?? 0.25);
 
     const { uScale, uDivisions, uColor, uDistance, uSubgridOpacity, uGridOpacity } = this;
 
@@ -127,5 +127,31 @@ export default class InfiniteGridNodeMaterial extends NodeMaterial {
 
       return vec4(uColor, alphaFinal);
     })();
+  }
+
+  // Getters / Setters
+
+  get color(): Color {
+    return this.uColor.value;
+  }
+
+  set color(value: Color) {
+    this.uColor.value = value;
+  }
+
+  get gridOpacity(): number {
+    return this.uGridOpacity.value;
+  }
+
+  set gridOpacity(value: number) {
+    this.uGridOpacity.value = value;
+  }
+  
+  get subgridOpacity(): number {
+    return this.uSubgridOpacity.value;
+  }
+  
+  set subgridOpacity(value: number) {
+    this.uSubgridOpacity.value = value;
   }
 }

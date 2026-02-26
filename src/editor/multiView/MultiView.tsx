@@ -718,12 +718,42 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
               prop: 'Position',
               value: 0,
             },
+            {
+              type: 'color',
+              prop: 'Color',
+              value: '#FFFFFF',
+            },
+            {
+              type: 'range',
+              prop: 'Grid Opacity',
+              value: 0.25,
+              min: 0,
+              max: 1,
+              step: 0.01,
+            },
+            {
+              type: 'range',
+              prop: 'Subgrid Opacity',
+              value: 0.15,
+              min: 0,
+              max: 1,
+              step: 0.01,
+            },
           ],
           onUpdate: (prop: string, value: any) => {
             switch (prop) {
               case 'Position':
                 if (this.grid) this.grid.position.y = value;
                 break;
+              case 'Color':
+                if (this.grid) this.grid['color'].setStyle(value);
+                break;
+                case 'Grid Opacity':
+                if (this.grid) this.grid['gridOpacity'] = value;
+                break;
+                case 'Subgrid Opacity':
+                  if (this.grid) this.grid['subgridOpacity'] = value;
+                  break;
             }
           },
         },

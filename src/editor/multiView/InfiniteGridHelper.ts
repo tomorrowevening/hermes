@@ -16,4 +16,30 @@ export default class InfiniteGridHelper extends Mesh {
     this.frustumCulled = false;
     this.name = 'InfiniteGridHelper';
   }
+
+  // Getters / Setters
+    
+  get color(): Color {
+    return this.gridMaterial.color;
+  }
+
+  set color(value: Color) {
+    this.gridMaterial.color = value;
+  }
+
+  get gridOpacity(): number {
+    return this.gridMaterial.gridOpacity;
+  }
+
+  set gridOpacity(value: number) {
+    this.gridMaterial.gridOpacity = value;
+  }
+
+  get subgridOpacity(): number {
+    return this.gridMaterial.subgridOpacity;
+  }
+
+  set subgridOpacity(value: number) {
+    this.gridMaterial.subgridOpacity = value;
+  }
 }

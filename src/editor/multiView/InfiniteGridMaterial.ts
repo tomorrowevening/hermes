@@ -125,4 +125,30 @@ export default class InfiniteGridMaterial extends ShaderMaterial {
       fragmentShader: fragment,
     });
   }
+
+  // Getters / Setters
+
+  get color(): Color {
+    return this.uniforms.uColor.value;
+  }
+
+  set color(value: Color) {
+    this.uniforms.uColor.value = value;
+  }
+
+  get gridOpacity(): number {
+    return this.uniforms.uGridOpacity.value;
+  }
+
+  set gridOpacity(value: number) {
+    this.uniforms.uGridOpacity.value = value;
+  }
+
+  get subgridOpacity(): number {
+    return this.uniforms.uSubgridOpacity.value;
+  }
+
+  set subgridOpacity(value: number) {
+    this.uniforms.uSubgridOpacity.value = value;
+  }
 }

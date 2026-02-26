@@ -1,4 +1,4 @@
-import { Mesh, PlaneGeometry } from 'three';
+import { Color, Mesh, PlaneGeometry } from 'three';
 import InfiniteGridNodeMaterial from './InfiniteGridNodeMaterial';
 import type { InfiniteGridProps } from './InfiniteGridMaterial';
 
@@ -11,5 +11,31 @@ export default class InfiniteGridHelperGPU extends Mesh {
     this.gridMaterial = material;
     this.frustumCulled = false;
     this.name = 'InfiniteGridHelper';
+  }
+
+  // Getters / Setters
+  
+  get color(): Color {
+    return this.gridMaterial.color;
+  }
+
+  set color(value: Color) {
+    this.gridMaterial.color = value;
+  }
+
+  get gridOpacity(): number {
+    return this.gridMaterial.gridOpacity;
+  }
+
+  set gridOpacity(value: number) {
+    this.gridMaterial.gridOpacity = value;
+  }
+
+  get subgridOpacity(): number {
+    return this.gridMaterial.subgridOpacity;
+  }
+
+  set subgridOpacity(value: number) {
+    this.gridMaterial.subgridOpacity = value;
   }
 }
