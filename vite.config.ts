@@ -17,7 +17,7 @@ export default defineConfig({
         'react',
         'react-dom',
         'react/jsx-runtime',
-        'three',
+        /^three(\/.*)?$/,
         'framer-motion',
         '@tomorrowevening/theatre-core',
         '@tomorrowevening/theatre-studio',
