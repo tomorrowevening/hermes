@@ -1,4 +1,4 @@
-import { Mesh, PlaneGeometry } from 'three';
+import { Color, Mesh, PlaneGeometry } from 'three';
 import InfiniteGridMaterial, { InfiniteGridProps } from './InfiniteGridMaterial';
 
 /**

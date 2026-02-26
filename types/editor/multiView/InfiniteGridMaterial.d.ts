@@ -9,4 +9,10 @@ export type InfiniteGridProps = {
 };
 export default class InfiniteGridMaterial extends ShaderMaterial {
     constructor(props?: InfiniteGridProps);
+    get color(): Color;
+    set color(value: Color);
+    get gridOpacity(): number;
+    set gridOpacity(value: number);
+    get subgridOpacity(): number;
+    set subgridOpacity(value: number);
 }
