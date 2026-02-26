@@ -254,6 +254,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     Transform.instance.setApp(this.props.three);
     Transform.instance.activeCamera = this.debugCamera;
+
+    this.props.three.requestRenderer();
   }
 
   componentDidUpdate(prevProps: Readonly<MultiViewProps>, prevState: Readonly<MultiViewState>, snapshot?: any): void {
@@ -597,6 +599,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         });
       }
     }
+
+    this.props.three.requestScene();
   };
 
   private setupScene() {

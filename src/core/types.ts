@@ -68,6 +68,8 @@ export type EditorEvent =
   | 'addRenderer'
   | 'updateRenderer'
   | 'requestSize'
+  | 'requestRenderer'
+  | 'requestScene'
 // GUI
   | 'addFolder'
   | 'bindObject'

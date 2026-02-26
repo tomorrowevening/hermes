@@ -399,6 +399,20 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     });
   }
 
+  requestRenderer() {
+    this.send({
+      event: 'requestRenderer',
+      target: 'app',
+    });
+  }
+
+  requestScene() {
+    this.send({
+      event: 'requestScene',
+      target: 'app',
+    });
+  }
+
   // Cameras
 
   addCamera(camera: Camera) {
@@ -442,6 +456,50 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
           this.renderer.toneMapping = msg.data.toneMapping;
           this.renderer.toneMappingExposure = msg.data.toneMappingExposure;
           ColorManagement.enabled = msg.data.colorManagement;
+        }
+        break;
+      case 'requestRenderer':
+        if (this.renderer !== undefined) {
+          const color = `#${this.renderer.getClearColor(new Color()).getHexString()}`;
+          this.send({
+            event: 'addRenderer',
+            target: 'editor',
+            data: {
+              autoClear: this.renderer.autoClear,
+              autoClearColor: this.renderer.autoClearColor,
+              autoClearDepth: this.renderer.autoClearDepth,
+              autoClearStencil: this.renderer.autoClearStencil,
+              outputColorSpace: this.renderer.outputColorSpace,
+              localClippingEnabled: this.renderer.localClippingEnabled,
+              clearColor: color,
+              clearAlpha: this.renderer.getClearAlpha(),
+              colorManagement: ColorManagement.enabled,
+              toneMapping: this.renderer.toneMapping,
+              toneMappingExposure: this.renderer.toneMappingExposure,
+              type: this.renderer.isWebGLRenderer ? 'WebGLRenderer' : 'WebGPURenderer',
+            },
+          });
+        }
+        break;
+      case 'requestScene':
+        this.scenes.forEach((scene: Scene) => {
+          resetThreeObjects();
+          hierarchyUUID(scene);
+          this.send({
+            event: 'addScene',
+            target: 'editor',
+            data: stripScene(scene),
+          });
+        });
+        if (this.scene !== undefined) {
+          if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
+          resetThreeObjects();
+          hierarchyUUID(this.scene);
+          this.send({
+            event: 'setScene',
+            target: 'editor',
+            data: stripScene(this.scene),
+          });
         }
         break;
     }
