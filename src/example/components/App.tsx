@@ -1,7 +1,7 @@
 // Libs
 import { useEffect, useRef } from 'react';
 import { WebGLRenderer } from 'three';
-import { WebGPURenderer } from 'three/webgpu';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import Stats from 'stats-gl';
 // Models
 import Application from '../../core/Application';
@@ -42,7 +42,9 @@ function App(props: AppProps) {
       if (useWebGPU) {
         renderer = new WebGPURenderer({
           canvas,
-          stencil: false
+          stencil: false,
+          forceWebGL: false,
+          requiredLimits: { maxStorageBuffersInVertexStage: 3 },
         });
       } else {
         renderer = new WebGLRenderer({
