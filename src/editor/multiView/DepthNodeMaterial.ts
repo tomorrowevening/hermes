@@ -1,5 +1,5 @@
-import { MeshBasicNodeMaterial } from 'three/webgpu';
-import { linearDepth, vec4, remapClamp } from 'three/tsl';
+import MeshBasicNodeMaterial from 'three/src/materials/nodes/MeshBasicNodeMaterial.js';
+import { linearDepth, vec4, remapClamp } from 'three/src/nodes/TSL.js';
 
 export default class DepthNodeMaterial extends MeshBasicNodeMaterial {
   constructor() {

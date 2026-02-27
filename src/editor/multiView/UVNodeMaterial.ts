@@ -1,5 +1,5 @@
-import { MeshBasicNodeMaterial } from 'three/webgpu';
-import { uv, vec4 } from 'three/tsl';
+import MeshBasicNodeMaterial from 'three/src/materials/nodes/MeshBasicNodeMaterial.js';
+import { uv, vec4 } from 'three/src/nodes/TSL.js';
 
 export default class UVNodeMaterial extends MeshBasicNodeMaterial {
   constructor() {

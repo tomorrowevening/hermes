@@ -36,7 +36,8 @@ import {
   Vector4,
   WebGLRenderer
 } from 'three';
-import { MeshNormalNodeMaterial, WebGPURenderer } from 'three/webgpu';
+import MeshNormalNodeMaterial from 'three/src/materials/nodes/MeshNormalNodeMaterial.js';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils.js';
@@ -596,11 +597,12 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       if (data.type === 'WebGPURenderer') {
         (this.renderer as WebGPURenderer).init().then(() => {
           this.rendererReady = true;
+          this.props.three.requestScene();
         });
+      } else {
+        this.props.three.requestScene();
       }
     }
-
-    this.props.three.requestScene();
   };
 
   private setupScene() {

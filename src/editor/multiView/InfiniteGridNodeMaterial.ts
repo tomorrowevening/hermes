@@ -1,5 +1,5 @@
 import { Color, DoubleSide } from 'three';
-import { NodeMaterial } from 'three/webgpu';
+import NodeMaterial from 'three/src/materials/nodes/NodeMaterial.js';
 import {
   abs,
   cameraPosition,
@@ -22,7 +22,7 @@ import {
   varyingProperty,
   vec3,
   vec4,
-} from 'three/tsl';
+} from 'three/src/nodes/TSL.js';
 import type { InfiniteGridProps } from './InfiniteGridMaterial';
 
 export default class InfiniteGridNodeMaterial extends NodeMaterial {

@@ -1,5 +1,5 @@
 import { Color } from 'three';
-import { NodeMaterial } from 'three/webgpu';
+import NodeMaterial from 'three/src/materials/nodes/NodeMaterial.js';
 import type { InfiniteGridProps } from './InfiniteGridMaterial';
 export default class InfiniteGridNodeMaterial extends NodeMaterial {
     readonly uScale: any;

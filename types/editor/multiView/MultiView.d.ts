@@ -1,6 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { Camera, Group, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { WebGPURenderer } from 'three/webgpu';
+import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import RemoteThree from '../../core/remote/RemoteThree';
 import { InteractionMode, MultiViewMode } from './MultiViewData';
