@@ -3,13 +3,16 @@ import { useState as L, useEffect as Ee, useRef as z, useMemo as qe, Component a
 import { BufferGeometry as ht, Float32BufferAttribute as Ne, OrthographicCamera as dt, Texture as Yt, Scene as zi, MeshBasicMaterial as ut, Mesh as Fe, LinearSRGBColorSpace as Xe, ObjectLoader as vs, AnimationMixer as _s, AnimationClip as Cs, Matrix4 as jt, AlwaysStencilFunc as ai, ReplaceStencilOp as Oe, NotEqualStencilFunc as oi, EqualStencilFunc as li, KeepStencilOp as we, NormalBlending as Hi, AddEquation as Je, SrcAlphaFactor as vt, OneMinusSrcAlphaFactor as _t, CustomBlending as Ct, OneFactor as yt, DstColorFactor as Qt, OneMinusDstColorFactor as Jt, WebGLRenderTarget as Bi, RGBAFormat as ys, EventDispatcher as Vi, RepeatWrapping as ci, Color as le, ColorManagement as ye, FrontSide as bs, BackSide as Es, DoubleSide as ei, ZeroFactor as Gi, SrcColorFactor as Yi, OneMinusSrcColorFactor as $i, DstAlphaFactor as Wi, OneMinusDstAlphaFactor as Zi, SrcAlphaSaturateFactor as Ss, ConstantColorFactor as qi, OneMinusConstantColorFactor as Ki, ConstantAlphaFactor as Xi, OneMinusConstantAlphaFactor as ji, SubtractEquation as Os, ReverseSubtractEquation as ws, MinEquation as xs, MaxEquation as Ts, NoBlending as Ms, AdditiveBlending as As, SubtractiveBlending as Rs, MultiplyBlending as Ps, ShaderMaterial as Qi, GLSL3 as Ds, PlaneGeometry as Ji, BoxGeometry as Is, Vector2 as ke, Object3D as $t, CatmullRomCurve3 as hi, LineBasicMaterial as Us, Line as Ls, SphereGeometry as ks, Raycaster as pt, Vector3 as W, Group as Ns, AxesHelper as Fs, Sphere as zs, Box3 as Hs, Spherical as Bs, Quaternion as Vs, Vector4 as Gs, WebGLRenderer as lt, MeshDepthMaterial as Ys, MeshNormalMaterial as $s, PerspectiveCamera as di, CameraHelper as Ws, SkinnedMesh as Zs, SpotLightHelper as qs, PointLightHelper as Ks, HemisphereLightHelper as Xs, DirectionalLightHelper as js, Clock as Qs, Euler as Js, SkeletonHelper as en, SRGBColorSpace as ui, NoToneMapping as pi, NoColorSpace as tn, LinearToneMapping as sn, ReinhardToneMapping as nn, CineonToneMapping as rn, ACESFilmicToneMapping as an, AgXToneMapping as on, NeutralToneMapping as ln, CustomToneMapping as cn } from "three";
 import { jsx as f, jsxs as M, Fragment as K } from "react/jsx-runtime";
 import { radToDeg as hn, degToRad as Wt, lerp as Ot, mapLinear as xe } from "three/src/math/MathUtils.js";
-import { NodeMaterial as dn, MeshBasicNodeMaterial as es, WebGPURenderer as wt, MeshNormalNodeMaterial as un } from "three/webgpu";
-import { RectAreaLightHelper as pn } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
-import { OrbitControls as mn } from "three/examples/jsm/controls/OrbitControls.js";
-import { uniform as Te, varyingProperty as fn, Fn as xt, positionLocal as gn, vec3 as vn, cameraPosition as et, float as Z, fwidth as _n, abs as mi, fract as Cn, min as Tt, max as fi, distance as yn, log as gi, pow as vi, floor as bn, mix as _i, If as En, lessThanEqual as Sn, Discard as On, vec4 as ti, remapClamp as wn, linearDepth as xn, uv as Tn } from "three/tsl";
+import dn from "three/src/materials/nodes/MeshNormalNodeMaterial.js";
+import wt from "three/src/renderers/webgpu/WebGPURenderer.js";
+import { RectAreaLightHelper as un } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
+import { OrbitControls as pn } from "three/examples/jsm/controls/OrbitControls.js";
+import mn from "three/src/materials/nodes/NodeMaterial.js";
+import { uniform as Te, varyingProperty as fn, Fn as xt, positionLocal as gn, vec3 as vn, cameraPosition as et, float as Z, fwidth as _n, abs as mi, fract as Cn, min as Tt, max as fi, distance as yn, log as gi, pow as vi, floor as bn, mix as _i, If as En, lessThanEqual as Sn, Discard as On, vec4 as ti, remapClamp as wn, linearDepth as xn, uv as Tn } from "three/src/nodes/TSL.js";
+import es from "three/src/materials/nodes/MeshBasicNodeMaterial.js";
 import { TransformControls as Mn } from "three/examples/jsm/controls/TransformControls.js";
 const mt = () => {
-}, va = () => {
+}, ya = () => {
 };
 function ft(i) {
   return i.substring(0, 1).toUpperCase() + i.substring(1);
@@ -245,20 +248,20 @@ function Zt(i, e, t) {
 function je(i, e, t) {
   return i * (1 - t) + e * t;
 }
-function _a(i, e, t, s, n) {
+function ba(i, e, t, s, n) {
   return je(t, s, Zt(i, e, n));
 }
-function Ca(i, e) {
+function Ea(i, e) {
   const t = i - e;
   return Math.sqrt(t * t);
 }
-function ya(i, e, t, s) {
+function Sa(i, e, t, s) {
   return je(i, e, 1 - Math.exp(-t * s));
 }
 function te(i, e = 1) {
   return Number(i.toFixed(e));
 }
-function ba(i, e, t, s) {
+function Oa(i, e, t, s) {
   return Math.atan2(s - e, t - i);
 }
 function Fn(i, e, t, s) {
@@ -274,7 +277,7 @@ function Bn(i, e, t, s, n) {
   const a = i * i;
   return e * (a * i) + t * a + s * i + n;
 }
-function Ea(i, e, t, s, n) {
+function wa(i, e, t, s, n) {
   if (i <= 0) return 0;
   if (i >= 1) return 1;
   if (Fn(e, t, s, n)) return i;
@@ -288,12 +291,12 @@ function Ea(i, e, t, s, n) {
   return Bn(b, g, _, E, S);
 }
 const tt = (i) => Math.round(Math.min(1, Math.max(0, i)) * 255).toString(16).padStart(2, "0");
-function Sa({ r: i, g: e, b: t, a: s = 1 }) {
+function xa({ r: i, g: e, b: t, a: s = 1 }) {
   const n = `#${tt(i)}${tt(e)}${tt(t)}`;
   return s < 1 ? `${n}${tt(s)}` : n;
 }
 let Me;
-function Oa() {
+function Ta() {
   const [i, e] = L(Me);
   return Ee(() => {
     Me || import("@tomorrowevening/theatre-studio").then((t) => {
@@ -301,7 +304,7 @@ function Oa() {
     });
   }, []), i;
 }
-async function wa() {
+async function Ma() {
   for (; !document.getElementById("theatrejs-studio-root"); )
     await new Promise((s) => setTimeout(s, 100));
   const i = document.getElementById("theatrejs-studio-root");
@@ -322,7 +325,7 @@ async function wa() {
     }
   }
 }
-function xa(i, e, t, s) {
+function Aa(i, e, t, s) {
   s.sheetObject(i, e, {
     transform: {
       position: {
@@ -588,7 +591,7 @@ function $n(i, e, t) {
       }
   });
 }
-function Ta(i, e, t, s) {
+function Ra(i, e, t, s) {
   if (!t.isMaterial) return;
   const n = Gn(t), a = Yn(n);
   s.sheetObject(i, e, {
@@ -601,7 +604,7 @@ const ii = new ht();
 ii.setAttribute("position", new Ne([-0.5, -0.5, 0, 1.5, -0.5, 0, -0.5, 1.5, 0], 3));
 ii.setAttribute("normal", new Ne([0, 0, 1, 0, 0, 1], 3));
 ii.setAttribute("uv", new Ne([0, 0, 2, 0, 0, 2], 2));
-const Ma = new dt(-0.5, 0.5, 0.5, -0.5, 0, 100), Oi = (i) => {
+const Pa = new dt(-0.5, 0.5, 0.5, -0.5, 0, 100), Oi = (i) => {
   i?.dispose();
 }, is = (i) => {
   if (i)
@@ -697,7 +700,7 @@ class pe {
     return this.renderer.domElement;
   }
 }
-function Aa(i) {
+function Da(i) {
   return new Promise((e) => {
     const t = new vs();
     t.parseAsync(i.scene).then((s) => {
@@ -719,26 +722,26 @@ function Aa(i) {
     });
   });
 }
-const Ra = (i, e, t, s) => {
+const Ia = (i, e, t, s) => {
   i.setRenderTarget(s), i.clear(), i.render(e, t);
 };
 function Wn(i, e, t, s) {
   i.applyMatrix4(new jt().makeTranslation(e, -t, -s));
 }
-function Pa(i) {
+function Ua(i) {
   i.computeBoundingBox();
   const e = i.boundingBox, t = (e.max.x - e.min.x) / 2, s = (e.max.y - e.min.y) / 2;
   Wn(i, t, s, 0);
 }
-function Da(i, e, t) {
+function La(i, e, t) {
   i.left = e / -2, i.right = e / 2, i.top = t / 2, i.bottom = t / -2, i.position.x = e / 2, i.position.y = t / -2, i.updateProjectionMatrix();
 }
-function Ia(i, e, t) {
+function ka(i, e, t) {
   const s = 1.7777777777777777, n = e / t;
   let a = e, r = t;
   n > s ? a = t * s : r = e / s, i.left = a / -2, i.right = a / 2, i.top = r / 2, i.bottom = r / -2, i.updateProjectionMatrix();
 }
-function Ua() {
+function Na() {
   let e = "transferControlToOffscreen" in document.createElement("canvas");
   if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
     const s = navigator.userAgent.match(/version\/(\d+)/i);
@@ -746,29 +749,29 @@ function Ua() {
   }
   return e;
 }
-function La(i, e, t = !0, s = !1) {
+function Fa(i, e, t = !0, s = !1) {
   i.renderOrder = -e;
   const n = i.material;
   Array.isArray(n) ? n.forEach((a) => {
     a.colorWrite = t, a.depthWrite = s, a.stencilWrite = !0, a.stencilRef = e, a.stencilFunc = ai, a.stencilFail = Oe, a.stencilZFail = Oe, a.stencilZPass = Oe;
   }) : (n.colorWrite = t, n.depthWrite = s, n.stencilWrite = !0, n.stencilRef = e, n.stencilFunc = ai, n.stencilFail = Oe, n.stencilZFail = Oe, n.stencilZPass = Oe);
 }
-function ka(i, e, t = !1) {
+function za(i, e, t = !1) {
   const s = i.material;
   Array.isArray(s) ? s.forEach((n) => {
     n.stencilWrite = !0, n.stencilRef = e, n.stencilFunc = t ? oi : li, n.stencilFail = we, n.stencilZFail = we, n.stencilZPass = we;
   }) : (s.stencilWrite = !0, s.stencilRef = e, s.stencilFunc = t ? oi : li, s.stencilFail = we, s.stencilZFail = we, s.stencilZPass = we);
 }
-function Na(i) {
+function Ha(i) {
   i.blending = Hi, i.blendEquation = Je, i.blendSrc = vt, i.blendDst = _t, i.needsUpdate = !0;
 }
-function Fa(i) {
+function Ba(i) {
   i.blending = Ct, i.blendEquation = Je, i.blendSrc = vt, i.blendDst = yt, i.needsUpdate = !0;
 }
-function za(i) {
+function Va(i) {
   i.blending = Ct, i.blendEquation = Je, i.blendSrc = Qt, i.blendDst = _t, i.needsUpdate = !0;
 }
-function Ha(i) {
+function Ga(i) {
   i.blending = Ct, i.blendEquation = Je, i.blendSrc = Jt, i.blendDst = yt, i.needsUpdate = !0;
 }
 let Kt = [];
@@ -897,17 +900,17 @@ function Zn(i, e, t = !0) {
     }
   }), Kt.push(a);
 }
-function Ba(i, e) {
+function Ya(i, e) {
   i.passes.forEach((t) => {
     Zn(t, e);
   });
 }
-function Va(i) {
+function $a(i) {
   Kt.forEach((e) => {
     i.removeGroup(e);
   }), Kt = [];
 }
-function Ga(i, e, t, s = 1024) {
+function Wa(i, e, t, s = 1024) {
   return new Promise((n) => {
     const a = e.aspect, r = e.fov, o = e.rotation.clone(), c = t.outputBuffer;
     e.aspect = 1, e.fov = 90, e.updateProjectionMatrix();
@@ -1033,7 +1036,7 @@ function er(i, e) {
   const { keyCode: t } = i;
   Jn[t] && (i.preventDefault(), Kn(i, e));
 }
-const Ya = {
+const Za = {
   contextmenu: jn,
   mousedown: Re,
   mousemove: Re,
@@ -1048,7 +1051,7 @@ const Ya = {
   keydown: er
 };
 let tr = 0;
-class $a {
+class qa {
   id;
   worker;
   constructor(e, t, s) {
@@ -1134,7 +1137,7 @@ class ir extends Vi {
     return this;
   }
 }
-class Wa {
+class Ka {
   targets = {};
   constructor() {
     this.handleEvent = this.handleEvent.bind(this);
@@ -1150,7 +1153,7 @@ class Wa {
     this.targets[e.id]?.handleEvent(e.data);
   }
 }
-class Za {
+class Xa {
   assets = {
     audio: /* @__PURE__ */ new Map(),
     image: /* @__PURE__ */ new Map(),
@@ -1271,7 +1274,7 @@ function nr(i, e, t) {
     e.value
   );
 }
-class qa extends ss {
+class ja extends ss {
   project;
   sheets = /* @__PURE__ */ new Map();
   sheetObjects = /* @__PURE__ */ new Map();
@@ -1736,7 +1739,7 @@ function ns(i) {
   });
 }
 var P = /* @__PURE__ */ ((i) => (i.CUSTOM = "ToolEvents::custom", i.SELECT_DROPDOWN = "ToolEvents::selectDropdown", i.DRAG_UPDATE = "ToolEvents::dragUpdate", i.ADD_SCENE = "ToolEvents::addScene", i.REFRESH_SCENE = "ToolEvents::refreshScene", i.REMOVE_SCENE = "ToolEvents::removeScene", i.SET_SCENE = "ToolEvents::setScene", i.SET_OBJECT = "ToolEvents::setObject", i.CLEAR_OBJECT = "ToolEvents::clearObject", i.ADD_CAMERA = "ToolEvents::addCamera", i.REMOVE_CAMERA = "ToolEvents::removeCamera", i.ADD_GROUP = "ToolEvents::addGroup", i.REMOVE_GROUP = "ToolEvents::removeGroup", i.ADD_SPLINE = "ToolEvents::addSpline", i.ADD_RENDERER = "ToolEvents::addRenderer", i.UPDATE_RENDERER = "ToolEvents::updateRenderer", i))(P || {});
-class Ka extends ss {
+class Qa extends ss {
   name;
   canvas = null;
   // Canvas or OffscreenCanvas
@@ -5749,7 +5752,7 @@ class Vr extends Fe {
     this.gridMaterial.subgridOpacity = e;
   }
 }
-class Gr extends dn {
+class Gr extends mn {
   uScale;
   uDivisions;
   uColor;
@@ -6866,9 +6869,9 @@ class G extends Qe {
     }), this.depthMaterial = new Ys(), this.normalsMaterial = new $s(), this.uvMaterial = new qr(), this.grid = new Vr(), this.scene.add(this.grid), this.rendererReady = !0) : s.type === "WebGPURenderer" && (this.renderer = new wt({
       canvas: t,
       stencil: !1
-    }), this.grid = new Yr(), this.scene.add(this.grid)), this.renderer && (this.renderer.autoClear = !1, this.renderer.shadowMap.enabled = !0, this.renderer.setClearColor(0), this.renderer.setPixelRatio(devicePixelRatio), this.renderer.setScissorTest(!0), this.resize(), this.props.three.renderer = this.renderer, this.depthMaterial = new $r(), this.normalsMaterial = new un(), this.uvMaterial = new Kr(), s.type === "WebGPURenderer" && this.renderer.init().then(() => {
-      this.rendererReady = !0;
-    })), this.props.three.requestScene();
+    }), this.grid = new Yr(), this.scene.add(this.grid)), this.renderer && (this.renderer.autoClear = !1, this.renderer.shadowMap.enabled = !0, this.renderer.setClearColor(0), this.renderer.setPixelRatio(devicePixelRatio), this.renderer.setScissorTest(!0), this.resize(), this.props.three.renderer = this.renderer, this.depthMaterial = new $r(), this.normalsMaterial = new dn(), this.uvMaterial = new Kr(), s.type === "WebGPURenderer" ? this.renderer.init().then(() => {
+      this.rendererReady = !0, this.props.three.requestScene();
+    }) : this.props.three.requestScene());
   };
   setupScene() {
     this.helpersContainer.name = "helpers", this.scene.add(this.helpersContainer), this.interactionHelper.name = "interactionHelper", this.interactionHelper.visible = !1, this.helpersContainer.add(this.interactionHelper);
@@ -7199,7 +7202,7 @@ class G extends Qe {
             s = new Xs(t, 250), s.name = `${t.name}Helper`, s.visible = this.lightVisibility, this.lightHelpers.set(t.name, s), this.helpersContainer.add(s);
             break;
           case "RectAreaLight":
-            s = new pn(t), s.name = `${t.name}Helper`, s.visible = this.lightVisibility, this.lightHelpers.set(t.name, s), this.helpersContainer.add(s);
+            s = new un(t), s.name = `${t.name}Helper`, s.visible = this.lightVisibility, this.lightHelpers.set(t.name, s), this.helpersContainer.add(s);
             break;
           case "PointLight":
             s = new Ks(t, 100), s.name = `${t.name}Helper`, s.visible = this.lightVisibility, this.lightHelpers.set(t.name, s), this.helpersContainer.add(s);
@@ -7214,7 +7217,7 @@ class G extends Qe {
   createControls(e, t) {
     const s = this.controls.get(e.name);
     if (s !== void 0 && s.dispose(), this.controls.delete(e.name), e.name === "UI") return;
-    const n = new mn(e, t);
+    const n = new pn(e, t);
     switch (n.enableDamping = !0, n.dampingFactor = 0.1, e.name) {
       case "Top":
       case "Bottom":
@@ -8010,7 +8013,7 @@ function aa(i) {
     /* @__PURE__ */ f("div", { className: "footer", children: i.footer })
   ] });
 }
-function Xa(i) {
+function Ja(i) {
   return /* @__PURE__ */ f(aa, { children: /* @__PURE__ */ M(K, { children: [
     /* @__PURE__ */ f(
       G,
@@ -8027,7 +8030,7 @@ function Xa(i) {
 }
 export {
   Ke as Accordion,
-  Za as Application,
+  Xa as Application,
   ss as BaseRemote,
   as as ChildObject,
   Dt as ContainerObject,
@@ -8037,7 +8040,7 @@ export {
   mr as Dropdown,
   fr as DropdownItem,
   aa as Editor,
-  $a as ElementProxy,
+  qa as ElementProxy,
   ir as ElementProxyReceiver,
   pe as ExportTexture,
   Vr as InfiniteGridHelper,
@@ -8047,66 +8050,66 @@ export {
   sa as Inspector,
   G as MultiView,
   rs as NavButton,
-  Wa as ProxyManager,
-  qa as RemoteTheatre,
-  Ka as RemoteThree,
+  Ka as ProxyManager,
+  ja as RemoteTheatre,
+  Qa as RemoteThree,
   ra as SidePanel,
   Vt as Spline,
   jr as SplineEditor,
-  Xa as ThreeEditor,
+  Ja as ThreeEditor,
   Y as Transform,
   qr as UVMaterial,
   Kr as UVNodeMaterial,
-  Ya as WebworkerEventHandlers,
+  Za as WebworkerEventHandlers,
   Wn as anchorGeometry,
-  Pa as anchorGeometryTL,
-  Ta as animateObjectMaterial,
-  xa as animateObjectTransform,
+  Ua as anchorGeometryTL,
+  Ra as animateObjectMaterial,
+  Aa as animateObjectTransform,
   $n as applyObjectMaterial,
   ft as capitalize,
   Ce as clamp,
-  Va as clearComposerGroups,
+  $a as clearComposerGroups,
   Ci as colorToHex,
   An as copyToClipboard,
-  La as createMask,
-  Ea as cubicBezier,
-  wa as customizeTheatreElements,
-  ya as damp,
-  va as defaultTheatreCallback,
+  Fa as createMask,
+  wa as cubicBezier,
+  Ma as customizeTheatreElements,
+  Sa as damp,
+  ya as defaultTheatreCallback,
   kn as detectMaxFrameRate,
   Nn as detectSettings,
   ce as dispose,
   is as disposeMaterial,
   Oi as disposeTexture,
-  Ca as distance,
-  Ga as generateCubemap,
-  ba as getAngle,
+  Ea as distance,
+  Wa as generateCubemap,
+  Oa as getAngle,
   Yn as getObjectMaterialObject,
   Gn as getObjectMaterialProps,
   $e as hierarchyUUID,
-  Ba as inspectComposer,
+  Ya as inspectComposer,
   Zn as inspectComposerPass,
   Rn as isColor,
-  _a as map,
+  ba as map,
   je as mix,
   mt as noop,
   Zt as normalize,
-  Ma as orthoCamera,
-  Aa as parseModelLite,
+  Pa as orthoCamera,
+  Da as parseModelLite,
   $ as randomID,
-  Ra as renderToTexture,
+  Ia as renderToTexture,
   it as resetThreeObjects,
-  Sa as rgbaToHex,
+  xa as rgbaToHex,
   te as roundTo,
-  Fa as setMaterialBlendAdd,
-  za as setMaterialBlendMultiply,
-  Na as setMaterialBlendNormal,
-  Ha as setMaterialBlendScreen,
-  Ua as supportsOffscreenCanvas,
+  Ba as setMaterialBlendAdd,
+  Va as setMaterialBlendMultiply,
+  Ha as setMaterialBlendNormal,
+  Ga as setMaterialBlendScreen,
+  Na as supportsOffscreenCanvas,
   qt as totalThreeObjects,
   ii as triangle,
-  Da as updateCameraOrtho,
-  Ia as updateCameraOrtho16x9,
-  ka as useMask,
-  Oa as useStudio
+  La as updateCameraOrtho,
+  ka as updateCameraOrtho16x9,
+  za as useMask,
+  Ta as useStudio
 };
