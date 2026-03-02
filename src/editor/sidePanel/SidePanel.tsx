@@ -18,6 +18,10 @@ export default function SidePanel(props: SidePanelState) {
 
   const onAddScene = (evt: any) => {
     const scene = evt.value;
+    for (let i = 0; i < scenes.length; i++) {
+      if (scene.uuid === scenes[i].uuid) return;
+    }
+
     scenes.push(scene);
     sceneComponents.push(
       <Accordion

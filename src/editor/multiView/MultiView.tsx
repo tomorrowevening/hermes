@@ -955,6 +955,15 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   private addScene = (evt: any) => {
     const sceneClass = this.props.scenes.get(evt.value.name);
     if (sceneClass !== undefined) {
+      // Check if added
+      const current = this.scenes.get(evt.value.name);
+      if (current !== undefined) {
+        if (this.props.onSceneAdd !== undefined) this.props.onSceneAdd(current);
+        this.props.three.scene = current;
+        return;
+      }
+
+      // Add
       const sceneInstance = new sceneClass();
       sceneInstance.visible = false;
       if (this.props.onSceneAdd !== undefined) this.props.onSceneAdd(sceneInstance);
