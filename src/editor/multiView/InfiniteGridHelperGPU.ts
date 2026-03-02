@@ -1,4 +1,4 @@
-import { Color, Mesh, PlaneGeometry } from 'three';
+import { Color, Mesh, PlaneGeometry } from 'three/webgpu';
 import InfiniteGridNodeMaterial from './InfiniteGridNodeMaterial';
 import type { InfiniteGridProps } from './InfiniteGridMaterial';
 

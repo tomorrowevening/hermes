@@ -56,8 +56,6 @@ export default function Inspector(props: CoreComponentProps) {
     || objType.search('line') > -1
     || objType.search('points') > -1;
 
-  if (hasMaterial) console.log(objType, currentObject);
-
   return (
     <Accordion
       three={props.three}

@@ -1,4 +1,4 @@
-import { Object3D, PerspectiveCamera, Scene, Timer } from 'three';
+import { Object3D, PerspectiveCamera, Scene, Timer } from 'three/webgpu';
 import Application from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 

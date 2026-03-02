@@ -4,3 +4,8 @@
   height: 100px;
   position: absolute;
 }
+
+button {
+  display: block;
+  margin: 5px;
+}

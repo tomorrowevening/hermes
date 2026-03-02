@@ -17,6 +17,7 @@ import {
   MeshBasicMaterial,
   MeshDepthMaterial,
   MeshNormalMaterial,
+  MeshNormalNodeMaterial,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,
@@ -34,10 +35,9 @@ import {
   Vector2,
   Vector3,
   Vector4,
-  WebGLRenderer
-} from 'three';
-import MeshNormalNodeMaterial from 'three/src/materials/nodes/MeshNormalNodeMaterial.js';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
+  WebGPURenderer,
+} from 'three/webgpu';
+import { WebGLRenderer } from 'three';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { degToRad, mapLinear } from 'three/src/math/MathUtils.js';
@@ -546,7 +546,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Setup
 
   private setupRenderer = (evt: any) => {
+    const data = evt.value;
     if (this.renderer) {
+      if (this.renderer instanceof WebGLRenderer && data.type === 'WebGLRenderer') return;
+      if (this.renderer instanceof WebGPURenderer && data.type === 'WebGPURenderer') return;
       this.renderer.dispose();
     }
 
@@ -554,7 +557,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     const canvas = this.canvasRef.current!;
     this.props.three.canvas = canvas;
-    const data = evt.value;
     if (data.type === 'WebGLRenderer') {
       this.renderer = new WebGLRenderer({
         canvas: canvas,

@@ -1,4 +1,18 @@
-import { Camera, Color, ColorManagement, Curve, EventDispatcher, EventListener, Object3D, RenderTargetOptions, Scene, Texture, WebGLRenderTarget } from 'three';
+import {
+  Camera,
+  Color,
+  ColorManagement,
+  Curve,
+  EventDispatcher,
+  EventListener,
+  Object3D,
+  RenderTarget,
+  RenderTargetOptions,
+  Scene,
+  Texture,
+  WebGLRenderTarget,
+  WebGPURenderer,
+} from 'three/webgpu';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { getSubItem, setItemProps, stripObject, stripScene, textureFromSrc } from '../../editor/sidePanel/utils';
@@ -39,7 +53,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   scene?: Scene = undefined;
   scenes: Map<string, Scene> = new Map();
   renderer?: any = undefined;
-  renderTargets: Map<string, WebGLRenderTarget> = new Map();
+  renderTargets: Map<string, RenderTarget> = new Map();
   private renderTargetsResize: Map<string, boolean> = new Map();
   private groups = new Map<string, GroupCallback>();
   private _listeners: { [K in ToolEvents]?: EventListener<ToolEvent[K], K, this>[] } = {};
@@ -56,7 +70,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     this.scenes.clear();
     if (this.scene) dispose(this.scene);
 
-    this.renderTargets.forEach((value: WebGLRenderTarget) => {
+    this.renderTargets.forEach((value: RenderTarget) => {
       value.dispose();
     });
     this.renderTargets.clear();
@@ -582,7 +596,13 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   // Renderer
 
   addRT(name: string, resize = true, params?: RenderTargetOptions) {
-    const rt = new WebGLRenderTarget(32, 32, params);
+    if (!this.renderer) return;
+    let rt: any;
+    if (this.renderer instanceof WebGPURenderer) {
+      rt = new RenderTarget(32, 32, params);
+    } else {
+      rt = new WebGLRenderTarget(32, 32, params);
+    }
     rt.texture.name = name;
     this.renderTargets.set(name, rt);
     this.renderTargetsResize.set(name, resize);
@@ -595,7 +615,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
 
   resize(width: number, height: number) {
     const dpr = this.dpr;
-    this.renderTargets.forEach((renderTarget: WebGLRenderTarget, key: string) => {
+    this.renderTargets.forEach((renderTarget: RenderTarget, key: string) => {
       const resize = this.renderTargetsResize.get(key);
       if (resize) renderTarget.setSize(width * dpr, height * dpr);
     });

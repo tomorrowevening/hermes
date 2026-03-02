@@ -1,7 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { BufferAttribute, BufferGeometry, DoubleSide, InstancedMesh, Vector3 } from 'three';
-import NodeMaterial from 'three/src/materials/nodes/NodeMaterial.js';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
+import {
+  BufferAttribute,
+  BufferGeometry,
+  ComputeNode,
+  DoubleSide,
+  InstancedMesh,
+  Matrix4,
+  MeshStandardNodeMaterial,
+  Vector3,
+  WebGPURenderer,
+} from 'three/webgpu';
 import {
   uniform,
   max,
@@ -28,18 +35,30 @@ import {
   vertexIndex,
   vec3,
   vec4,
-} from 'three/src/nodes/TSL.js';
+  varyingProperty,
+  mrt,
+  output,
+} from 'three/tsl';
+
+//////////////////////////////////////////////////
+// Geometry
 
 class BirdGeometry extends BufferGeometry {
   constructor() {
     super();
 
-    const points = 3 * 3;
-    const vertices = new BufferAttribute(new Float32Array(points * 3), 3);
+    const vertCount = 3 * 3; // 3 triangles × 3 vertices
+    const vertices = new BufferAttribute(new Float32Array(vertCount * 3), 3);
+    const normals = new BufferAttribute(new Float32Array(vertCount * 3), 3);
+    const uvs = new BufferAttribute(new Float32Array(vertCount * 2), 2);
 
     this.setAttribute('position', vertices);
+    this.setAttribute('normal', normals);
+    this.setAttribute('uv', uvs);
 
     let v = 0;
+    let n = 0;
+    let u = 0;
 
     function verts_push(verts: number[]) {
       for (let i = 0; i < verts.length; i++) {
@@ -47,28 +66,69 @@ class BirdGeometry extends BufferGeometry {
       }
     }
 
+    function normal_push(nx: number, ny: number, nz: number) {
+      for (let i = 0; i < 3; i++) {
+        normals.array[n++] = nx;
+        normals.array[n++] = ny;
+        normals.array[n++] = nz;
+      }
+    }
+
+    function uv_push(coords: number[]) {
+      for (let i = 0; i < coords.length; i++) {
+        uvs.array[u++] = coords[i];
+      }
+    }
+
+    // Compute a flat face normal from three vertex positions
+    function faceNormal(
+      x0: number, y0: number, z0: number,
+      x1: number, y1: number, z1: number,
+      x2: number, y2: number, z2: number,
+    ): [number, number, number] {
+      const ax = x1 - x0, ay = y1 - y0, az = z1 - z0;
+      const bx = x2 - x0, by = y2 - y0, bz = z2 - z0;
+      const nx = ay * bz - az * by;
+      const ny = az * bx - ax * bz;
+      const nz = ax * by - ay * bx;
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+      return [nx / len, ny / len, nz / len];
+    }
+
     const wingsSpan = 20;
 
     // Body
     verts_push([0, 0, -20, 0, -8, 10, 0, 0, 30]);
+    normal_push(...faceNormal(0, 0, -20, 0, -8, 10, 0, 0, 30));
+    uv_push([0.5, 0, 0, 1, 1, 1]);
 
     // Left Wing
     verts_push([0, 0, -15, -wingsSpan, 0, 5, 0, 0, 15]);
+    normal_push(...faceNormal(0, 0, -15, -wingsSpan, 0, 5, 0, 0, 15));
+    uv_push([0.5, 0, 0, 1, 1, 1]);
 
     // Right Wing
     verts_push([0, 0, 15, wingsSpan, 0, 5, 0, 0, -15]);
+    normal_push(...faceNormal(0, 0, 15, wingsSpan, 0, 5, 0, 0, -15));
+    uv_push([0.5, 0, 0, 1, 1, 1]);
 
     this.scale(0.2, 0.2, 0.2);
   }
 }
 
+//////////////////////////////////////////////////
+// Material
+
 const SPEED_LIMIT = 9.0;
 const BOUNDS = 800,
   BOUNDS_HALF = BOUNDS / 2;
 
-class BirdMaterial extends NodeMaterial {
-  computeVelocity: any;
-  computePosition: any;
+class BirdMaterial extends MeshStandardNodeMaterial {
+  computeVelocity: ComputeNode;
+  computePosition: ComputeNode;
+  computeCopyPositions!: ComputeNode;
+  prevVPMatrix = uniform(new Matrix4()).setName('prevVPMatrix');
+  private _velocityMRTNode!: ReturnType<typeof mrt>;
   effectController = {
     separation: uniform(15.0).setName('separation'),
     alignment: uniform(20.0).setName('alignment'),
@@ -122,11 +182,16 @@ class BirdMaterial extends NodeMaterial {
     velocityStorage.setPBO(true);
     phaseStorage.setPBO(true);
 
+    const previousPositionStorage = instancedArray(new Float32Array(positionArray), 'vec3').setName('previousPositionStorage');
+    previousPositionStorage.setPBO(true);
+
+    const birdVelocityVarying = varyingProperty('vec4', 'birdVelocity');
+
     // Animate bird mesh within vertex shader, then apply position offset to vertices.
     // Vertex shader Fns are called during getNodeType() before the builder stack is
     // initialised, so ANY assign op (addAssign/mulAssign/assign) or If()/Loop() will
     // throw. The Fn must be written purely functionally — no mutations.
-    const birdVertexTSL = Fn(() => {
+    const birdVertexTSL = Fn((): any => {
       const phase = phaseStorage.element(instanceIndex);
       const vel = normalize(velocityStorage.element(instanceIndex));
 
@@ -151,15 +216,25 @@ class BirdMaterial extends NodeMaterial {
       const worldPos = modelWorldMatrix.mul(localPos);
       const finalPos = maty.mul(matz).mul(worldPos).add(positionStorage.element(instanceIndex));
 
+      // Compute velocity for MRT velocity pass using bird center positions
+      const currBirdPos = positionStorage.element(instanceIndex);
+      const prevBirdPos = previousPositionStorage.element(instanceIndex);
+      const currClip = cameraProjectionMatrix.mul(cameraViewMatrix).mul(vec4(currBirdPos, 1));
+      const prevClip = this.prevVPMatrix.mul(vec4(prevBirdPos, 1));
+      const velocity2D = currClip.xy.div(currClip.w).sub(prevClip.xy.div(prevClip.w)).mul(0.5);
+      birdVelocityVarying.assign(vec4(velocity2D, 0.0, 0.0));
+
       return cameraProjectionMatrix.mul(cameraViewMatrix).mul(finalPos);
     }, 'vec4');
 
     this.vertexNode = birdVertexTSL();
+    this._velocityMRTNode = mrt({ output, velocity: birdVelocityVarying });
+    this.mrtNode = this._velocityMRTNode;
     this.side = DoubleSide;
 
-    this.fragmentNode = Fn(() => {
-      return vec4(1, 0, 0, 1);
-    })();
+    // this.fragmentNode = Fn(() => {
+    //   return vec4(screenCoordinate.div(1000), 0, 1)
+    // })()
 
     // Define GPU Compute shaders.
     // Shaders are computationally identical to their GLSL counterparts outside of texture destructuring.
@@ -273,34 +348,71 @@ class BirdMaterial extends NodeMaterial {
 
       // Write back the final velocity to storage
       velocityStorage.element(birdIndex).assign(velocity);
-    }, 'void');
+    });
 
     this.computeVelocity = computeVelocityFn().compute(total);
 
     // Position
-    const computePositionFn = Fn(
-      () => {
-        const { deltaTime } = this.effectController;
-        positionStorage
-          .element(instanceIndex)
-          .addAssign(velocityStorage.element(instanceIndex).mul(deltaTime).mul(15.0));
+    const computePositionFn = Fn(() => {
+      const { deltaTime } = this.effectController;
+      positionStorage.element(instanceIndex).addAssign(velocityStorage.element(instanceIndex).mul(deltaTime).mul(15.0));
 
-        const velocity = velocityStorage.element(instanceIndex);
-        const phase = phaseStorage.element(instanceIndex);
+      const velocity = velocityStorage.element(instanceIndex);
+      const phase = phaseStorage.element(instanceIndex);
 
-        const modValue = phase
-          .add(deltaTime)
-          .add(length(velocity.xz).mul(deltaTime).mul(3.0))
-          .add(max(velocity.y, 0.0).mul(deltaTime).mul(6.0));
-        phaseStorage.element(instanceIndex).assign(modValue.mod(62.83));
-      },
-      {
-        name: 'computePosition',
-        type: 'void',
-      },
-    );
+      const modValue = phase
+        .add(deltaTime)
+        .add(length(velocity.xz).mul(deltaTime).mul(3.0))
+        .add(max(velocity.y, 0.0).mul(deltaTime).mul(6.0));
+      phaseStorage.element(instanceIndex).assign(modValue.mod(62.83));
+    });
 
     this.computePosition = computePositionFn().compute(total);
+
+    const computeCopyPositionsFn = Fn(() => {
+      previousPositionStorage.element(instanceIndex).assign(positionStorage.element(instanceIndex));
+    }, 'void');
+    this.computeCopyPositions = computeCopyPositionsFn().compute(total);
+  }
+
+  get alignment(): number {
+    return this.effectController.alignment.value;
+  }
+
+  set alignment(value: number) {
+    this.effectController.alignment.value = value;
+  }
+
+  get cohesion(): number {
+    return this.effectController.cohesion.value;
+  }
+
+  set cohesion(value: number) {
+    this.effectController.cohesion.value = value;
+  }
+
+  get freedom(): number {
+    return this.effectController.freedom.value;
+  }
+
+  set freedom(value: number) {
+    this.effectController.freedom.value = value;
+  }
+
+  get separation(): number {
+    return this.effectController.separation.value;
+  }
+
+  set separation(value: number) {
+    this.effectController.separation.value = value;
+  }
+
+  set rayOrigin(value: Vector3) {
+    this.effectController.rayOrigin.value = value;
+  }
+
+  set rayDirection(value: Vector3) {
+    this.effectController.rayDirection.value = value;
   }
 
   set delta(value: number) {
@@ -310,10 +422,22 @@ class BirdMaterial extends NodeMaterial {
   set now(value: number) {
     this.effectController.now.value = value;
   }
+
+  get useMRT(): boolean {
+    return this.mrtNode !== null;
+  }
+
+  set useMRT(value: boolean) {
+    this.mrtNode = value ? this._velocityMRTNode : null;
+    this.needsUpdate = true;
+  }
 }
 
+//////////////////////////////////////////////////
+// Mesh
+
 export default class Birds extends InstancedMesh {
-  private birdMaterial?: BirdMaterial;
+  private birdMaterial: BirdMaterial;
 
   constructor(total: number = 8192) {
     const birdMaterial = new BirdMaterial(total);
@@ -326,12 +450,63 @@ export default class Birds extends InstancedMesh {
     this.updateMatrix();
   }
 
+  savePrevCamera(camera: { projectionMatrix: Matrix4; matrixWorldInverse: Matrix4 }) {
+    this.birdMaterial.prevVPMatrix.value.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+  }
+
   update(delta: number, now: number, renderer: WebGPURenderer) {
-    if (this.birdMaterial) {
-      this.birdMaterial.delta = delta;
-      this.birdMaterial.now = now;
-      renderer.computeAsync(this.birdMaterial.computeVelocity);
-      renderer.computeAsync(this.birdMaterial.computePosition);
-    }
+    this.birdMaterial.delta = delta;
+    this.birdMaterial.now = now;
+    renderer.computeAsync(this.birdMaterial.computeCopyPositions);
+    renderer.computeAsync(this.birdMaterial.computeVelocity);
+    renderer.computeAsync(this.birdMaterial.computePosition);
+  }
+
+  get alignment(): number {
+    return this.birdMaterial.alignment;
+  }
+
+  set alignment(value: number) {
+    this.birdMaterial.alignment = value;
+  }
+
+  get cohesion(): number {
+    return this.birdMaterial.cohesion;
+  }
+
+  set cohesion(value: number) {
+    this.birdMaterial.cohesion = value;
+  }
+
+  get freedom(): number {
+    return this.birdMaterial.freedom;
+  }
+
+  set freedom(value: number) {
+    this.birdMaterial.freedom = value;
+  }
+
+  get separation(): number {
+    return this.birdMaterial.separation;
+  }
+
+  set separation(value: number) {
+    this.birdMaterial.separation = value;
+  }
+
+  set rayOrigin(value: Vector3) {
+    this.birdMaterial.rayOrigin = value;
+  }
+
+  set rayDirection(value: Vector3) {
+    this.birdMaterial.rayDirection = value;
+  }
+
+  get useMRT(): boolean {
+    return this.birdMaterial.useMRT;
+  }
+
+  set useMRT(value: boolean) {
+    this.birdMaterial.useMRT = value;
   }
 }

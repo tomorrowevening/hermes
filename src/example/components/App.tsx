@@ -1,7 +1,7 @@
 // Libs
 import { useEffect, useRef } from 'react';
 import { WebGLRenderer } from 'three';
-import WebGPURenderer from 'three/src/renderers/webgpu/WebGPURenderer.js';
+import { WebGPURenderer } from 'three/webgpu';
 import Stats from 'stats-gl';
 // Models
 import Application from '../../core/Application';
@@ -15,6 +15,7 @@ import Scene3 from '../three/scenes/Scene3';
 // Utils
 import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
+import { Inspector } from 'three/examples/jsm/inspector/Inspector.js';
 
 let renderer: WebGLRenderer | WebGPURenderer;
 let currentScene: BaseScene;
@@ -25,6 +26,7 @@ type AppProps = {
 }
 
 let rendererReady = false;
+const useWebGPU = true;
 
 function App(props: AppProps) {
   const app = props.app;
@@ -37,24 +39,19 @@ function App(props: AppProps) {
   if (app.isApp) {
     useEffect(() => {
       const canvas = canvasRef.current!;
-      // TODO - Add WebGPU support
-      const useWebGPU = true;
+      const params = {
+        canvas,
+        stencil: false,
+      };
       if (useWebGPU) {
-        renderer = new WebGPURenderer({
-          canvas,
-          stencil: false,
-          forceWebGL: false,
-          requiredLimits: { maxStorageBuffersInVertexStage: 3 },
-        });
+        renderer = new WebGPURenderer(params);
+        renderer.inspector = new Inspector();
       } else {
-        renderer = new WebGLRenderer({
-          canvas,
-          stencil: false
-        });
+        renderer = new WebGLRenderer(params);
         rendererReady = true;
       }
       renderer.shadowMap.enabled = true;
-      renderer.setPixelRatio(devicePixelRatio);
+      renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
       renderer.setClearColor(0x000000);
       three.setRenderer(renderer, canvas);
 
@@ -69,9 +66,6 @@ function App(props: AppProps) {
       stats.init(renderer);
       document.body.appendChild(stats.dom);
   
-      // Start RAF
-      let raf = -1;
-  
       const onResize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -85,12 +79,11 @@ function App(props: AppProps) {
           currentScene?.draw();
         }
         stats.update();
-        raf = requestAnimationFrame(updateApp);
       };
   
+      renderer.setAnimationLoop(updateApp);
       window.addEventListener('resize', onResize);
       onResize();
-      updateApp();
 
       // Dispose
       return () => {
@@ -100,8 +93,6 @@ function App(props: AppProps) {
           dispose(currentScene);
         }
         window.removeEventListener('resize', onResize);
-        cancelAnimationFrame(raf);
-        raf = -1;
         renderer.dispose();
       };
     }, []);
@@ -156,9 +147,9 @@ function App(props: AppProps) {
             bottom: '20px',
             left: '20px',
           }}>
-            <button onClick={createScene1}>Scene 1</button>
-            <button onClick={createScene2}>Scene 2</button>
-            <button onClick={createScene3}>Scene 3</button>
+            {!useWebGPU && <button onClick={createScene1}>WebGL</button>}
+            <button onClick={createScene2}>WebGPU 1</button>
+            {useWebGPU && <button onClick={createScene3}>WebGPU 2</button>}
           </div>
         </>
       )}

@@ -1,4 +1,13 @@
-import { AnimationClip, CubeTexture, Line, Material, Mesh, Object3D, Points, RepeatWrapping, Texture } from 'three';
+import {
+  AnimationClip,
+  Line,
+  Material,
+  Mesh,
+  Object3D,
+  Points,
+  RepeatWrapping,
+  Texture,
+} from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
 import { ExportTexture } from '../../utils/three';
 

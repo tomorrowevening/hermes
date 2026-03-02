@@ -1,5 +1,4 @@
 import {
-  BackSide,
   CircleGeometry,
   Color,
   LineBasicMaterial,
@@ -13,19 +12,21 @@ import {
   Points,
   PointsMaterial,
   RectAreaLight,
+  RenderPipeline,
   SkinnedMesh,
   SphereGeometry,
   SpotLight,
-} from 'three';
-// @ts-ignore
-import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
+} from 'three/webgpu';
+import { pass, uniform, output, mrt, velocity } from 'three/tsl';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+import { motionBlur } from 'three/addons/tsl/display/MotionBlur.js';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
 import { dispose, hierarchyUUID } from '../../../utils/three';
 import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
-import CustomShaderMaterial from '../CustomShaderMaterial';
+// import CustomShaderMaterial from '../CustomShaderMaterial';
 import RTTScene from './RTTScene';
 import Application from '../../../core/Application';
 
@@ -35,6 +36,7 @@ export default class Scene2 extends BaseScene {
   dance!: FBXAnimation;
   rttScene: RTTScene;
   speed = 1;
+  renderPipeline!: RenderPipeline;
 
   constructor() {
     super();
@@ -53,13 +55,35 @@ export default class Scene2 extends BaseScene {
 
     const three = this.app.components.get('three') as RemoteThree;
 
-    this.camera.position.set(0, 100, 125);
+    this.camera.position.set(0, 50, 75);
     this.camera.lookAt(0, 50, 0);
 
     this.createLights();
     this.createWorld();
     this.createAnimation();
     hierarchyUUID(this);
+
+    // Post
+    
+    const blurAmount = uniform(1);
+    const scenePass = pass(this, this.camera);
+
+    scenePass.setMRT(mrt({
+      output,
+      velocity
+    }));
+
+    const beauty = scenePass.getTextureNode().toInspector( 'Color' );
+    const vel = scenePass.getTextureNode( 'velocity' ).toInspector( 'Velocity' ).mul( blurAmount );
+    const mBlur = motionBlur( beauty, vel );
+
+    this.renderPipeline = new RenderPipeline( three.renderer! );
+    this.renderPipeline.outputNode = mBlur;
+
+    if (this.app.isApp) {
+      const gui = three.renderer!.inspector.createParameters( 'Motion Blur Settings' );
+      gui.add( blurAmount, 'value', 0, 3 ).name( 'blur amount' );
+    }
 
     three.addScene(this);
     three.addCamera(this.camera);
@@ -144,15 +168,13 @@ export default class Scene2 extends BaseScene {
     world.add(rttExample);
 
     if (three.renderer.isWebGLRenderer) {
-      const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
-      testShader.name = 'customShaderMaterial';
-      testShader.position.set(75, 50, -125);
-      world.add(testShader);
+      // const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
+      // testShader.name = 'customShaderMaterial';
+      // testShader.position.set(75, 50, -125);
+      // world.add(testShader);
     } else {
       // WebGPU
       rttExample.scale.y = -1;
-      rttMat.side = BackSide;
-      rttMat.needsUpdate = true;
     }
 
     this.dance = new FBXAnimation('Flair');
@@ -253,10 +275,15 @@ export default class Scene2 extends BaseScene {
   }
 
   override update(): void {
+    this.clock.update();
     const delta = this.clock.getDelta();
     this.dance.update(delta * this.speed);
     this.rttScene.update();
     this.rttScene.draw();
+  }
+
+  override draw() {
+    this.renderPipeline.render();
   }
 
   override resize(width: number, height: number): void {

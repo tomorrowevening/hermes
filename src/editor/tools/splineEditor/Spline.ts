@@ -14,7 +14,7 @@ import {
   SphereGeometry,
   Vector2,
   Vector3,
-} from 'three';
+} from 'three/webgpu';
 import { lerp } from 'three/src/math/MathUtils.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { RefObject } from 'react';
