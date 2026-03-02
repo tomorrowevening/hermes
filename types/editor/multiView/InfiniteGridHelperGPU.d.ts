@@ -1,4 +1,4 @@
-import { Color, Mesh } from 'three';
+import { Color, Mesh } from 'three/webgpu';
 import InfiniteGridNodeMaterial from './InfiniteGridNodeMaterial';
 import type { InfiniteGridProps } from './InfiniteGridMaterial';
 export default class InfiniteGridHelperGPU extends Mesh {

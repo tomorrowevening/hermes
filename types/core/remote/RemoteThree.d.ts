@@ -1,4 +1,4 @@
-import { Camera, Curve, EventDispatcher, EventListener, Object3D, RenderTargetOptions, Scene, WebGLRenderTarget } from 'three';
+import { Camera, Curve, EventDispatcher, EventListener, Object3D, RenderTarget, RenderTargetOptions, Scene } from 'three/webgpu';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export declare enum ToolEvents {
@@ -31,7 +31,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     scene?: Scene;
     scenes: Map<string, Scene>;
     renderer?: any;
-    renderTargets: Map<string, WebGLRenderTarget>;
+    renderTargets: Map<string, RenderTarget>;
     private renderTargetsResize;
     private groups;
     private _listeners;

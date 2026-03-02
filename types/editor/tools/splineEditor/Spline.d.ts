@@ -1,4 +1,4 @@
-import { Camera, CatmullRomCurve3, Line, Mesh, Object3D, Vector3 } from 'three';
+import { Camera, CatmullRomCurve3, Line, Mesh, Object3D, Vector3 } from 'three/webgpu';
 import InspectorGroup from '../../sidePanel/inspector/InspectorGroup';
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal';
 export default class Spline extends Object3D {
