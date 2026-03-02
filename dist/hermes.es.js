@@ -7070,8 +7070,13 @@ class G extends Qe {
   addScene = (e) => {
     const t = this.props.scenes.get(e.value.name);
     if (t !== void 0) {
-      const s = new t();
-      s.visible = !1, this.props.onSceneAdd !== void 0 && this.props.onSceneAdd(s), this.props.three.scene = s, this.scenes.set(e.value.name, s), this.scene.add(s);
+      const s = this.scenes.get(e.value.name);
+      if (s !== void 0) {
+        this.props.onSceneAdd !== void 0 && this.props.onSceneAdd(s), this.props.three.scene = s;
+        return;
+      }
+      const n = new t();
+      n.visible = !1, this.props.onSceneAdd !== void 0 && this.props.onSceneAdd(n), this.props.three.scene = n, this.scenes.set(e.value.name, n), this.scene.add(n);
     } else
       console.log("Hermes - Scene not found:", e.value.name, this.props.scenes);
   };
@@ -7933,6 +7938,8 @@ class ba extends Qe {
 function Ea(i) {
   const [e] = L([]), [t] = L([]), [s, n] = L(0), a = (l) => {
     const h = l.value;
+    for (let d = 0; d < e.length; d++)
+      if (h.uuid === e[d].uuid) return;
     e.push(h), t.push(
       /* @__PURE__ */ f(
         Ke,
