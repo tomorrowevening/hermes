@@ -67,6 +67,7 @@ export default class Scene3 extends BaseScene {
       this.add(light);
 
       const helper = new PointLightHelper(light, 100);
+      helper.name = `${light.name}Helper`;
       this.add(helper);
     });
 

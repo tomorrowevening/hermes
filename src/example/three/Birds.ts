@@ -129,7 +129,7 @@ class BirdMaterial extends MeshStandardNodeMaterial {
   computeCopyPositions!: ComputeNode;
   prevVPMatrix = uniform(new Matrix4()).setName('prevVPMatrix');
   private _velocityMRTNode!: ReturnType<typeof mrt>;
-  effectController = {
+  uniforms = {
     separation: uniform(15.0).setName('separation'),
     alignment: uniform(20.0).setName('alignment'),
     cohesion: uniform(20.0).setName('cohesion'),
@@ -197,7 +197,7 @@ class BirdMaterial extends MeshStandardNodeMaterial {
 
       // Wing flap: select() is a pure ternary — no stack needed.
       const isWingVertex = vertexIndex.equal(4).or(vertexIndex.equal(7));
-      const wingY = isWingVertex.select(sin(phase).mul(5.0), float(0.0));
+      const wingY = isWingVertex.select(sin(phase).mul(1.0), float(0.0));
       const localPos = vec3(positionLocal.x, positionLocal.y.add(wingY), positionLocal.z);
 
       // Negate Z via vec3 construction instead of mulAssign.
@@ -249,7 +249,7 @@ class BirdMaterial extends MeshStandardNodeMaterial {
       const limit = float(SPEED_LIMIT).toVar('limit');
 
       // Destructure uniforms
-      const { alignment, separation, cohesion, deltaTime, rayOrigin, rayDirection } = this.effectController;
+      const { alignment, separation, cohesion, deltaTime, rayOrigin, rayDirection } = this.uniforms;
 
       const zoneRadius = separation.add(alignment).add(cohesion).toConst();
       const separationThresh = separation.div(zoneRadius).toConst();
@@ -354,7 +354,7 @@ class BirdMaterial extends MeshStandardNodeMaterial {
 
     // Position
     const computePositionFn = Fn(() => {
-      const { deltaTime } = this.effectController;
+      const { deltaTime } = this.uniforms;
       positionStorage.element(instanceIndex).addAssign(velocityStorage.element(instanceIndex).mul(deltaTime).mul(15.0));
 
       const velocity = velocityStorage.element(instanceIndex);
@@ -376,51 +376,51 @@ class BirdMaterial extends MeshStandardNodeMaterial {
   }
 
   get alignment(): number {
-    return this.effectController.alignment.value;
+    return this.uniforms.alignment.value;
   }
 
   set alignment(value: number) {
-    this.effectController.alignment.value = value;
+    this.uniforms.alignment.value = value;
   }
 
   get cohesion(): number {
-    return this.effectController.cohesion.value;
+    return this.uniforms.cohesion.value;
   }
 
   set cohesion(value: number) {
-    this.effectController.cohesion.value = value;
+    this.uniforms.cohesion.value = value;
   }
 
   get freedom(): number {
-    return this.effectController.freedom.value;
+    return this.uniforms.freedom.value;
   }
 
   set freedom(value: number) {
-    this.effectController.freedom.value = value;
+    this.uniforms.freedom.value = value;
   }
 
   get separation(): number {
-    return this.effectController.separation.value;
+    return this.uniforms.separation.value;
   }
 
   set separation(value: number) {
-    this.effectController.separation.value = value;
+    this.uniforms.separation.value = value;
   }
 
   set rayOrigin(value: Vector3) {
-    this.effectController.rayOrigin.value = value;
+    this.uniforms.rayOrigin.value = value;
   }
 
   set rayDirection(value: Vector3) {
-    this.effectController.rayDirection.value = value;
+    this.uniforms.rayDirection.value = value;
   }
 
   set delta(value: number) {
-    this.effectController.deltaTime.value = value;
+    this.uniforms.deltaTime.value = value;
   }
 
   set now(value: number) {
-    this.effectController.now.value = value;
+    this.uniforms.now.value = value;
   }
 
   get useMRT(): boolean {
@@ -445,7 +445,6 @@ export default class Birds extends InstancedMesh {
     this.name = 'birds';
     this.birdMaterial = birdMaterial;
     this.rotation.y = Math.PI / 2;
-    this.matrixAutoUpdate = false;
     this.frustumCulled = false;
     this.updateMatrix();
   }
