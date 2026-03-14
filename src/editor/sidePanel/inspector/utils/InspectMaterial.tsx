@@ -38,6 +38,7 @@ import RemoteThree from '../../../../core/remote/RemoteThree';
 import { setItemProps, textureFromSrc } from '../../utils';
 import { KeyboardEvent } from 'react';
 import { OptionInfo } from '../../../../core/types';
+import { ComputeNode } from 'three/webgpu';
 
 export function acceptedMaterialNames(name: string): boolean {
   return !(
@@ -598,6 +599,11 @@ function inspectObject(prop: string, value: any, object: RemoteObject, three: Re
   const propPath = subprop.length > 0 ? `${subprop}.${prop}` : prop;
   const valueType = typeof value;
 
+  // Unwrap uniform() node — recurse with `.value` so updates target material.prop.value
+  if (valueType === 'object' && value !== null && value.__isUniform === true) {
+    return inspectObject(`${prop}.value`, value.value, object, three, subprop, disabled);
+  }
+
   if (valueType === 'boolean' || valueType === 'string') {
     return {
       title: propName,
@@ -868,7 +874,9 @@ export function inspectMaterialItems(material: RemoteMaterial, object: RemoteObj
   const items: any[] = [];
   for (const i in material) {
     if (!acceptedMaterialNames(i)) continue;
-    if (i.search('Node') > -1) continue; // Skip nodes
+    if (i.search('Node') > -1 || material[i] instanceof ComputeNode) {
+      continue;
+    }
 
     const propType = typeof material[i];
     const value = material[i];

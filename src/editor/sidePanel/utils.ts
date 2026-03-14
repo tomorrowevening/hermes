@@ -99,19 +99,32 @@ function stripMaterialData(material: Material): RemoteMaterial {
         break;
       case 'object':
         if (value !== null) {
-          materialData[i] = value;
           if (value.isTexture) {
             materialData[i] = {
               src: ExportTexture.renderToBlob(value),
               offset: [value.offset.x, value.offset.y],
               repeat: [value.repeat.x, value.repeat.y],
             };
+          } else if (value.isUniformNode) {
+            const inner = value.value;
+            materialData[i] = {
+              __isUniform: true,
+              value: inner?.isTexture
+                ? { src: ExportTexture.renderToBlob(inner), offset: [inner.offset.x, inner.offset.y], repeat: [inner.repeat.x, inner.repeat.y] }
+                : inner,
+            };
           } else if (i === 'uniforms') {
-            materialData[i] = cleanUniforms(materialData[i]);
+            materialData[i] = cleanUniforms(value);
+          } else if (i.search('Node') > -1) {
+            // Skip non-uniform node properties (shader graph nodes)
+          } else {
+            materialData[i] = value;
           }
         } else {
           if (i === 'glslVersion') {
             materialData[i] = '';
+          } else if (i.search('Node') > -1) {
+            // Skip null node properties
           } else {
             materialData[i] = {
               src: '',
