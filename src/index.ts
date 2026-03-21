@@ -2,6 +2,7 @@
 export * from './core/types';
 export * from './editor/utils';
 export * from './utils/detectSettings';
+export * from './utils/ImageSequenceCapturer';
 export * from './utils/math';
 export * from './utils/theatre';
 export * from './utils/three';
