@@ -72,7 +72,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
         three={this.props.three}
         title={data.title}
         items={items}
-        key={Math.random()}
+        key={data.title}
       />
     );
     DebugData.groupTitles.push(data.title);
@@ -162,7 +162,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
         title={data.title}
         expanded={data.expanded}
         items={items}
-        key={Math.random()}
+        key={data.title}
       />
     );
     DebugData.groups.push(group);
@@ -188,10 +188,9 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
   }
 
   static removeAllGroups() {
-    for (let i = DebugData.groupTitles.length; i > 0; i--) {
-      DebugData.groups.splice(i, 1);
-      DebugData.groupTitles.splice(i, 1);
-    }
+    DebugData.groups = [];
+    DebugData.groupTitles = [];
+    DebugData.groupsRefs = [];
     DebugData.instance.setState({ lastUpdate: Date.now() });
   }
 }

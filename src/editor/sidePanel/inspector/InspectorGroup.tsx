@@ -61,7 +61,7 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
         title={data.title}
         expanded={data.expanded}
         items={items}
-        key={Math.random()}
+        key={data.title}
       />
     );
     this.subgroupNames.push(data.title);
@@ -94,14 +94,14 @@ export default class InspectorGroup extends Component<InspectorGroupProps, Inspe
     this.props.items.forEach((child: InspectorFieldProps | InspectorGroupProps) => {
       if (isGroup(child)) {
         children.push(
-          <InspectorGroup three={this.props.three} title={capitalize(child.title)} items={child.items} key={Math.random()} />
+          <InspectorGroup three={this.props.three} title={capitalize(child.title)} items={child.items} key={child.title} />
         );
       } else {
         const valueOverride = this.valueOverrides.get(child.title);
         const value = valueOverride !== undefined ? valueOverride : child.value;
         children.push(
           <InspectorField
-            key={Math.random()}
+            key={child.title}
             title={child.title}
             prop={child.prop}
             value={value}
