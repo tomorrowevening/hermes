@@ -20,7 +20,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     private toneMappingExposure;
     private type;
     constructor(props: InspectRendererProps);
-    componentwillunmount(): void;
+    componentWillUnmount(): void;
     private onAddRenderer;
     render(): ReactNode;
     private saveExpanded;
