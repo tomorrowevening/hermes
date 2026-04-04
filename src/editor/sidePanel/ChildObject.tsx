@@ -47,7 +47,7 @@ export default function ChildObject(props: ChildObjectProps) {
   }, [open]);
 
   return (
-    <div className='childObject' key={Math.random()}>
+    <div className='childObject'>
       <div className='child'>
         {hasChildren ? (
           <button

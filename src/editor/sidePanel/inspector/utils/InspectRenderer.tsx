@@ -77,7 +77,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     this.props.three.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
-  componentwillunmount() {
+  componentWillUnmount() {
     this.props.three.removeEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
 
@@ -150,7 +150,7 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     return (
       <InspectorGroup
         three={this.props.three}
-        key={Math.random()}
+        key='renderer'
         title='Renderer'
         expanded={this.state.expanded}
         items={[

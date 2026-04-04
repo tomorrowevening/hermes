@@ -62,7 +62,7 @@ export default function Accordion(props: AccordionProps) {
         </>
       ) : null}
       {props.button}
-      <div className={open ? 'open' : ''} key={Math.random()}>
+      <div className={open ? 'open' : ''}>
         <div>
           {props.children}
         </div>

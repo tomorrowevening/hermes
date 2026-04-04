@@ -5,7 +5,6 @@ import {
   Box3,
   Camera,
   CameraHelper,
-  Clock,
   DirectionalLight,
   DirectionalLightHelper,
   Group,
@@ -15,8 +14,6 @@ import {
   Matrix4,
   Mesh,
   MeshBasicMaterial,
-  MeshDepthMaterial,
-  MeshNormalMaterial,
   MeshNormalNodeMaterial,
   Object3D,
   OrthographicCamera,
@@ -53,7 +50,6 @@ import DebugData from '../sidePanel/DebugData';
 import { InspectTransform } from '../sidePanel/inspector/utils/InspectTransform';
 import Toggle from './Toggle';
 import DepthNodeMaterial from './DepthNodeMaterial';
-import UVMaterial from './UVMaterial';
 import UVNodeMaterial from './UVNodeMaterial';
 // Tools
 import SplineEditor from '../tools/splineEditor';
@@ -150,6 +146,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
   // Interactions
   selectedItem: Object3D | undefined = undefined;
+  private cameraControlsStartTime = 0;
+  private cameraControlsLastTime = 0;
   private debugCamera!: PerspectiveCamera;
   private raycaster = new Raycaster();
   private pointer = new Vector2();
@@ -563,11 +561,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         stencil: false
       });
 
-      // Materials
-      this.depthMaterial = new MeshDepthMaterial();
-      this.normalsMaterial = new MeshNormalMaterial();
-      this.uvMaterial =  new UVMaterial();
-      
+      if (this.grid) {
+        this.scene.remove(this.grid);
+        dispose(this.grid);
+      }
       this.grid = new InfiniteGridHelper();
       this.scene.add(this.grid);
 
@@ -578,6 +575,10 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
         stencil: false
       });
 
+      if (this.grid) {
+        this.scene.remove(this.grid);
+        dispose(this.grid);
+      }
       this.grid = new InfiniteGridHelperGPU();
       this.scene.add(this.grid);
     }
@@ -592,6 +593,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.props.three.renderer = this.renderer;
 
       // Materials
+      this.depthMaterial?.dispose();
+      this.normalsMaterial?.dispose();
+      this.uvMaterial?.dispose();
       this.depthMaterial = new DepthNodeMaterial();
       this.normalsMaterial = new MeshNormalNodeMaterial();
       this.uvMaterial = new UVNodeMaterial();
@@ -832,8 +836,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   // Playback
 
   private update() {
-    if (this.renderer && this.rendererReady) this.renderer?.clear();
-    
     // Updates
     this.controls.forEach((control: OrbitControls) => control.update());
     this.cameraHelpers.forEach((helper: CameraHelper) => helper.update());
@@ -896,6 +898,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     window.removeEventListener('resize', this.resize);
     this.three.removeEventListener(ToolEvents.ADD_SCENE, this.addScene);
     this.three.removeEventListener(ToolEvents.SET_SCENE, this.sceneUpdate);
+    this.three.removeEventListener(ToolEvents.REMOVE_SCENE, this.removeScene);
     this.three.removeEventListener(ToolEvents.ADD_CAMERA, this.addCamera);
     this.three.removeEventListener(ToolEvents.REMOVE_CAMERA, this.removeCamera);
     this.three.removeEventListener(ToolEvents.SET_OBJECT, this.onSetSelectedItem);
@@ -1441,13 +1444,15 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
     if (this.cameraControls) this.cameraControls.smoothTime = 0.1;
 
     const speed = 0.15;
-    const clock = new Clock();
-    clock.start();
+    this.cameraControlsStartTime = performance.now();
+    this.cameraControlsLastTime = this.cameraControlsStartTime;
     this.selectedItem.getWorldPosition(control.target0);
 
     const onUpdate = () => {
       // Update
-      const delta = clock.getDelta();
+      const now = performance.now();
+      const delta = (now - this.cameraControlsLastTime) / 1000;
+      this.cameraControlsLastTime = now;
       if (this.cameraControls) this.cameraControls.update(delta);
 
       if (reposition) {
@@ -1461,7 +1466,7 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       }
 
       // Complete?
-      const complete = clock.getElapsedTime() >= 0.5;
+      const complete = (now - this.cameraControlsStartTime) / 1000 >= 0.5;
       if (complete) {
         cancelAnimationFrame(this.cameraControlsRafID);
         this.cameraControlsRafID = -1;
