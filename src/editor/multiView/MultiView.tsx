@@ -989,6 +989,13 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.currentScene.visible = true;
       this.addLightHelpers(this.currentScene);
     }
+
+    // Show only camera helpers belonging to the new current scene
+    this.cameraHelpers.forEach((helper: CameraHelper, uuid: string) => {
+      const inCurrentScene = this.currentScene !== undefined &&
+        this.currentScene.getObjectByProperty('uuid', uuid) !== undefined;
+      helper.visible = this.cameraVisibility && inCurrentScene;
+    });
   };
 
   private removeScene = (evt: any) => {
@@ -1013,7 +1020,9 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       this.cameras.set(cameraName, camera);
 
       const helper = new CameraHelper(camera);
-      helper.visible = this.cameraVisibility;
+      const inCurrentScene = this.currentScene !== undefined &&
+        this.currentScene.getObjectByProperty('uuid', cameraName) !== undefined;
+      helper.visible = this.cameraVisibility && inCurrentScene;
       this.cameraHelpers.set(cameraName, helper);
       this.helpersContainer.add(helper);
 
