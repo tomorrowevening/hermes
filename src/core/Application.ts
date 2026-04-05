@@ -23,10 +23,15 @@ export default class Application {
     editor: false,
   };
   onUpdateCallback?: () => void;
-  
+
   // Protected
   protected playing = false;
   protected rafID = -1;
+
+  constructor(dev: boolean, editor: boolean = false) {
+    this.settings.dev = dev;
+    this.settings.editor = editor;
+  }
 
   dispose() {
     this.pause();
@@ -34,9 +39,9 @@ export default class Application {
     this.components.clear();
   }
 
-  detectSettings(dev: boolean = false, editor: boolean = false): Promise<void> {
+  detectSettings(): Promise<void> {
     return new Promise((resolve) => {
-      detectSettings(dev, editor).then((settings: AppSettings) => {
+      detectSettings(this.settings.dev, this.settings.editor).then((settings: AppSettings) => {
         this.settings = settings;
         resolve();
       });
@@ -66,7 +71,7 @@ export default class Application {
     this.rafID = -1;
   };
 
-  private onUpdate = () => {
+  protected onUpdate = () => {
     this.update();
     if (this.isApp) this.draw();
     if (this.onUpdateCallback) this.onUpdateCallback();
