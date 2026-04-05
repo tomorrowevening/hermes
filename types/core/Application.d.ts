@@ -13,13 +13,14 @@ export default class Application {
     onUpdateCallback?: () => void;
     protected playing: boolean;
     protected rafID: number;
+    constructor(dev: boolean, editor?: boolean);
     dispose(): void;
-    detectSettings(dev?: boolean, editor?: boolean): Promise<void>;
+    detectSettings(): Promise<void>;
     update(): void;
     draw(): void;
     play: () => void;
     pause: () => void;
-    private onUpdate;
+    protected onUpdate: () => void;
     addComponent(name: string, component: BaseRemote): void;
     get debugEnabled(): boolean;
     get isApp(): boolean;

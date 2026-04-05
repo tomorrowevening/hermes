@@ -559,7 +559,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     }
   }
 
-  protected override messageHandler = (evt: MessageEvent) => {
+  protected override messageHandler(evt: MessageEvent) {
     const data: BroadcastData = evt.data;
     if (data.event === 'updateObject') {
       this.onUpdateObject(data.data.uuid, data.data.key, data.data.value);
@@ -591,7 +591,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     } else {
       this.handleEditor(data);
     }
-  };
+  }
 
   // Renderer
 

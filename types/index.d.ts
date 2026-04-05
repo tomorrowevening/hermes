@@ -26,6 +26,7 @@ export { default as Inspector } from './editor/sidePanel/inspector/Inspector';
 export { default as MultiView } from './editor/multiView/MultiView';
 export { default as Editor } from './editor/Editor';
 export { default as ThreeEditor } from './editor/ThreeEditor';
+export { default as HermesApp } from './editor/HermesApp';
 export { default as Transform } from './editor/tools/Transform';
 export { default as Spline } from './editor/tools/splineEditor/Spline';
 export { default as SplineEditor } from './editor/tools/splineEditor';

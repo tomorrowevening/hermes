@@ -71,7 +71,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     removeCamera(camera: Camera): void;
     handleApp(msg: BroadcastData): void;
     handleEditor(msg: BroadcastData): void;
-    protected messageHandler: (evt: MessageEvent) => void;
+    protected messageHandler(evt: MessageEvent): void;
     addRT(name: string, resize?: boolean, params?: RenderTargetOptions): void;
     removeRT(name: string): void;
     resize(width: number, height: number): void;

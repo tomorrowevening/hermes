@@ -8,6 +8,7 @@ export default class BaseRemote {
   protected _debug = false;
   protected _editor = false;
   protected broadcastChannel?: BroadcastChannel;
+  private onMessageHandler?: any;
 
   constructor(name: string, debug = false, editor = false) {
     this.name = name;
@@ -16,11 +17,12 @@ export default class BaseRemote {
 
     if (!debug) return;
     this.broadcastChannel = new BroadcastChannel(name);
-    this.broadcastChannel.addEventListener('message', this.messageHandler);
+    this.onMessageHandler = this.messageHandler.bind(this);
+    this.broadcastChannel.addEventListener('message', this.onMessageHandler);
   }
 
   dispose() {
-    this.broadcastChannel?.removeEventListener('message', this.messageHandler);
+    this.broadcastChannel?.removeEventListener('message', this.onMessageHandler);
     this.broadcastChannel?.close();
   }
 
@@ -47,14 +49,14 @@ export default class BaseRemote {
     }
   }
 
-  protected messageHandler = (evt: MessageEvent) => {
+  protected messageHandler(evt: MessageEvent) {
     const data: BroadcastData = evt.data;
     if (data.target === 'app') {
       this.handleApp(data);
     } else {
       this.handleEditor(data);
     }
-  };
+  }
 
   protected handleApp(msg: BroadcastData) {
     //

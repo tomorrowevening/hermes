@@ -1,8 +1,7 @@
 // Libs
 import { useEffect, useRef } from 'react';
-import { WebGLRenderer } from 'three';
 import { WebGPURenderer } from 'three/webgpu';
-import Stats from 'stats-gl';
+import { Inspector } from 'three/examples/jsm/inspector/Inspector.js';
 // Models
 import Application from '../../core/Application';
 // Components
@@ -15,17 +14,11 @@ import Scene3 from '../three/scenes/Scene3';
 // Utils
 import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
-import { Inspector } from 'three/examples/jsm/inspector/Inspector.js';
-
-let renderer: WebGLRenderer | WebGPURenderer;
-let currentScene: BaseScene;
-let sceneName = '';
 
 type AppProps = {
   app: Application
 }
 
-let rendererReady = false;
 const useWebGPU = true;
 
 function App(props: AppProps) {
@@ -33,107 +26,86 @@ function App(props: AppProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const three = props.app.components.get('three') as RemoteThree;
 
-  console.log('Settings', app.settings);
+  const currentSceneRef = useRef<BaseScene | undefined>(undefined);
+  const sceneNameRef = useRef('');
 
   // Renderer setup
-  if (app.isApp) {
-    useEffect(() => {
-      const canvas = canvasRef.current!;
-      const params = {
-        canvas,
-        stencil: false,
-      };
-      if (useWebGPU) {
-        renderer = new WebGPURenderer(params);
-        renderer.inspector = new Inspector();
-      } else {
-        renderer = new WebGLRenderer(params);
-        rendererReady = true;
-      }
-      renderer.shadowMap.enabled = true;
-      renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
-      renderer.setClearColor(0x000000);
-      three.setRenderer(renderer, canvas);
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const renderer = new WebGPURenderer({ canvas, stencil: false });
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
+    renderer.setClearColor(0x000000);
+    renderer.inspector = new Inspector();
+    three.setRenderer(renderer, canvas);
 
-      if (useWebGPU) {
-        (renderer as WebGPURenderer).init().then(() => {
-          rendererReady = true;
-        });
-      }
+    const onResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      currentSceneRef.current?.resize(width, height);
+      renderer.setSize(width, height);
+    };
 
-      // ThreeJS
-      const stats = new Stats();
-      stats.init(renderer);
-      document.body.appendChild(stats.dom);
-  
-      const onResize = () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        currentScene?.resize(width, height);
-        renderer.setSize(width, height);
-      };
-  
-      const updateApp = () => {
-        if (rendererReady) {
-          currentScene?.update();
-          currentScene?.draw();
-        }
-        stats.update();
-      };
-  
+    const updateApp = () => {
+      currentSceneRef.current?.update();
+      currentSceneRef.current?.draw();
+    };
+
+    renderer.init().then(() => {
+      console.log('Renderer ready');
       renderer.setAnimationLoop(updateApp);
-      window.addEventListener('resize', onResize);
-      onResize();
+    });
 
-      // Dispose
-      return () => {
-        if (currentScene !== undefined) {
-          three.removeCamera(currentScene.camera);
-          three.removeScene(currentScene);
-          dispose(currentScene);
-        }
-        window.removeEventListener('resize', onResize);
-        renderer.dispose();
-      };
-    }, []);
-  }
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // Dispose
+    return () => {
+      if (currentSceneRef.current !== undefined) {
+        three.removeCamera(currentSceneRef.current.camera);
+        three.removeScene(currentSceneRef.current);
+        dispose(currentSceneRef.current);
+      }
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   // Load the scenes
 
   const createScene = () => {
-    if (currentScene !== undefined) {
-      if (currentScene.camera !== undefined) three.removeCamera(currentScene.camera);
-      three.removeScene(currentScene);
-      dispose(currentScene);
+    if (currentSceneRef.current !== undefined) {
+      if (currentSceneRef.current.camera !== undefined) three.removeCamera(currentSceneRef.current.camera);
+      three.removeScene(currentSceneRef.current);
+      dispose(currentSceneRef.current);
       clearComposerGroups(three);
     }
-    if (sceneName === 'scene1') {
-      currentScene = new Scene1();
-    } else if (sceneName === 'scene2') {
-      currentScene = new Scene2();
+    if (sceneNameRef.current === 'scene1') {
+      currentSceneRef.current = new Scene1();
+    } else if (sceneNameRef.current === 'scene2') {
+      currentSceneRef.current = new Scene2();
     } else {
-      currentScene = new Scene3();
+      currentSceneRef.current = new Scene3();
     }
-    currentScene.setup(app, renderer);
-    currentScene.init();
-    currentScene.resize(window.innerWidth, window.innerHeight);
+    currentSceneRef.current.setup(app, three.renderer!);
+    currentSceneRef.current.init();
+    currentSceneRef.current.resize(window.innerWidth, window.innerHeight);
   };
 
   const createScene1 = () => {
-    if (sceneName === 'scene1') return;
-    sceneName = 'scene1';
+    if (sceneNameRef.current === 'scene1') return;
+    sceneNameRef.current = 'scene1';
     createScene();
   };
 
   const createScene2 = () => {
-    if (sceneName === 'scene2') return;
-    sceneName = 'scene2';
+    if (sceneNameRef.current === 'scene2') return;
+    sceneNameRef.current = 'scene2';
     createScene();
   };
 
   const createScene3 = () => {
-    if (sceneName === 'scene3') return;
-    sceneName = 'scene3';
+    if (sceneNameRef.current === 'scene3') return;
+    sceneNameRef.current = 'scene3';
     createScene();
   };
 
