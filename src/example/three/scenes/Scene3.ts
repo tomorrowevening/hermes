@@ -33,11 +33,9 @@ export default class Scene3 extends BaseScene {
     this.name = 'Scene3';
     this.camera.position.set(0, 100, 500);
     this.camera.rotation.set(0, 0, 0);
-    console.log('Scene3', Date.now());
   }
 
   override init(): void {
-    console.log('Scene3 init', Date.now());
     const three = this.app.components.get('three') as RemoteThree;
 
     const envMap = cubeTextures.get('environment')!.clone();
