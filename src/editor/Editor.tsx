@@ -1,20 +1,22 @@
-import { CSSProperties, Ref } from 'react';
+import { CSSProperties, forwardRef } from 'react';
 import './scss/index.scss';
 
 type EditorProps = {
   header?: JSX.Element | JSX.Element[]
   children?: JSX.Element | JSX.Element[]
   footer?: JSX.Element | JSX.Element[]
-  ref?: Ref<any>
   style?: CSSProperties
 }
 
-export default function Editor(props: EditorProps) {
+const Editor = forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
   return (
-    <div className='editor' ref={props.ref} style={props.style}>
-      <div className='header'>{props.header}</div>
+    <div className='editor' ref={ref} style={props.style}>
+      {props.header && <div className='header'>{props.header}</div>}
       {props.children}
-      <div className='footer'>{props.footer}</div>
+      {props.footer && <div className='footer'>{props.footer}</div>}
     </div>
   );
-}
+});
+
+Editor.displayName = 'Editor';
+export default Editor;
