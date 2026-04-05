@@ -1,9 +1,12 @@
 // Libs
 import { useEffect, useRef } from 'react';
+import { WebGPURenderer } from 'three/webgpu';
+import { Inspector } from 'three/examples/jsm/inspector/Inspector.js';
+// Models
+import Application from '../../core/Application';
 // Components
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three
-import ExampleApplication from '../three/ExampleApplication';
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
@@ -13,7 +16,7 @@ import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
 
 type AppProps = {
-  app: ExampleApplication
+  app: Application
 }
 
 const useWebGPU = true;
@@ -29,15 +32,18 @@ function App(props: AppProps) {
   // Renderer setup
   useEffect(() => {
     const canvas = canvasRef.current!;
-    app.init(canvas).then(() => {
-      console.log('Renderer ready');
-    });
+    const renderer = new WebGPURenderer({ canvas, stencil: false });
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
+    renderer.setClearColor(0x000000);
+    renderer.inspector = new Inspector();
+    three.setRenderer(renderer, canvas);
 
     const onResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       currentSceneRef.current?.resize(width, height);
-      app.three.renderer?.setSize(width, height);
+      renderer.setSize(width, height);
     };
 
     const updateApp = () => {
@@ -45,7 +51,11 @@ function App(props: AppProps) {
       currentSceneRef.current?.draw();
     };
 
-    app.three.renderer?.setAnimationLoop(updateApp);
+    renderer.init().then(() => {
+      console.log('Renderer ready');
+      renderer.setAnimationLoop(updateApp);
+    });
+
     window.addEventListener('resize', onResize);
     onResize();
 
@@ -76,7 +86,7 @@ function App(props: AppProps) {
     } else {
       currentSceneRef.current = new Scene3();
     }
-    currentSceneRef.current.setup(app, app.three.renderer!);
+    currentSceneRef.current.setup(app, three.renderer!);
     currentSceneRef.current.init();
     currentSceneRef.current.resize(window.innerWidth, window.innerHeight);
   };
