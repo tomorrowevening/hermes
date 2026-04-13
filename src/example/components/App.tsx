@@ -111,20 +111,16 @@ function App(props: AppProps) {
 
   return (
     <>
-      {app.isApp && (
-        <>
-          <canvas ref={canvasRef} />
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '20px',
-          }}>
-            {!useWebGPU && <button onClick={createScene1}>WebGL</button>}
-            <button onClick={createScene2}>WebGPU 1</button>
-            {useWebGPU && <button onClick={createScene3}>WebGPU 2</button>}
-          </div>
-        </>
-      )}
+      <canvas ref={canvasRef} />
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '20px',
+      }}>
+        {!useWebGPU && <button onClick={createScene1}>WebGL</button>}
+        <button onClick={createScene2}>WebGPU 1</button>
+        {useWebGPU && <button onClick={createScene3}>WebGPU 2</button>}
+      </div>
     </>
   );
 }

@@ -3,7 +3,6 @@ import studio from '@tomorrowevening/theatre-studio';
 // Models
 import { IS_DEV, IS_EDITOR } from '../constants';
 import Application from '../../core/Application';
-import RemoteTheatre from '../../core/remote/RemoteTheatre';
 //
 import HermesApp from '../../editor/HermesApp';
 import App from './App';
@@ -26,9 +25,8 @@ const scenes = new Map<string, any>([
 const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
 if (IS_DEV && IS_EDITOR && studio) {
   studio.initialize();
-  const theatre = app.components.get('theatre') as RemoteTheatre;
-  theatre.studio = studio;
-  theatre.handleEditorApp();
+  app.theatre.studio = studio;
+  app.theatre.handleEditorApp();
 }
 
 export default function AppWrapper() {
