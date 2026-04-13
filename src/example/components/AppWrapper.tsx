@@ -6,7 +6,6 @@ import Application from '../../core/Application';
 //
 import HermesApp from '../../editor/HermesApp';
 import App from './App';
-import CustomEditor from '../CustomEditor';
 import ExampleApplication from '../three/ExampleApplication';
 import BaseScene from '../three/scenes/BaseScene';
 import Scene1 from '../three/scenes/Scene1';
@@ -41,7 +40,6 @@ export default function AppWrapper() {
       onSceneUpdate={(scene) => {
         (scene as BaseScene).update();
       }}
-      renderEditor={(_app) => <CustomEditor app={_app} />}
       onLoad={loadAssets}
     >
       {(_app: Application) => <App app={_app} />}

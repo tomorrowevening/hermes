@@ -25,11 +25,6 @@ type HermesAppProps = {
   onSceneUpdate?: (scene: any) => void
   /** Called when MultiView resizes a scene */
   onSceneResize?: (scene: Scene, width: number, height: number) => void
-  /**
-   * Override the entire editor UI. Receives app + three so you can
-   * compose your own panels around ThreeEditor or SidePanel.
-   */
-  renderEditor?: (app: Application, three: RemoteThree) => ReactNode
 
   // ── App ──────────────────────────────────────────────────────────────────
 
@@ -78,7 +73,6 @@ export default function HermesApp(props: HermesAppProps) {
     onSceneAdd,
     onSceneUpdate,
     onSceneResize,
-    renderEditor,
     onLoad,
     renderLoading = null,
     children,
@@ -101,7 +95,6 @@ export default function HermesApp(props: HermesAppProps) {
   const three = app.components.get('three') as RemoteThree;
 
   if (app.editor) {
-    if (renderEditor) return <>{renderEditor(app, three)}</>;
     return (
       <ThreeEditor
         three={three}
