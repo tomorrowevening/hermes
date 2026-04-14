@@ -51,7 +51,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   canvas: HTMLCanvasElement | null = null; // Canvas or OffscreenCanvas
   inputElement: any = null; // reference this to receive events
   scene?: Scene = undefined;
-  scenes: Map<string, Scene> = new Map();
+  scenes: Map<string, Scene> = new Map(); // scene instances
   renderer?: any = undefined;
   renderTargets: Map<string, RenderTarget> = new Map();
   private renderTargetsResize: Map<string, boolean> = new Map();

@@ -3,7 +3,6 @@ import { Scene } from 'three';
 import Application from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
 import ThreeEditor from './ThreeEditor';
-import MultiView from './multiView/MultiView';
 
 type HermesAppProps = {
   /**
@@ -15,12 +14,12 @@ type HermesAppProps = {
   // ── Editor ───────────────────────────────────────────────────────────────
 
   /** Map of scene name → scene class, passed to MultiView */
-  scenes?: Map<string, any>
+  scenes: Map<string, any>
   /**
    * Called when MultiView instantiates a scene.
    * Defaults to: scene.setup(app, renderer); scene.init()
    */
-  onSceneAdd?: (scene: any, app: Application, renderer: any) => void
+  onSceneAdd?: (scene: any) => void
   /** Called every frame for the active scene */
   onSceneUpdate?: (scene: any) => void
   /** Called when MultiView resizes a scene */
@@ -69,7 +68,7 @@ type HermesAppProps = {
 export default function HermesApp(props: HermesAppProps) {
   const {
     app,
-    scenes = new Map(),
+    scenes,
     onSceneAdd,
     onSceneUpdate,
     onSceneResize,
@@ -99,11 +98,7 @@ export default function HermesApp(props: HermesAppProps) {
       <ThreeEditor
         three={three}
         scenes={scenes}
-        onSceneAdd={(scene) => {
-          if (onSceneAdd) {
-            onSceneAdd(scene, app, MultiView.instance?.renderer);
-          }
-        }}
+        onSceneAdd={onSceneAdd}
         onSceneUpdate={onSceneUpdate}
         onSceneResize={onSceneResize}
       />
