@@ -8,7 +8,6 @@ import Application from '../../core/Application';
 import RemoteThree from '../../core/remote/RemoteThree';
 // Three
 import BaseScene from '../three/scenes/BaseScene';
-import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 import Scene3 from '../three/scenes/Scene3';
 // Utils
@@ -79,14 +78,12 @@ function App(props: AppProps) {
       dispose(currentSceneRef.current);
       clearComposerGroups(three);
     }
-    if (sceneNameRef.current === 'scene1') {
-      currentSceneRef.current = new Scene1();
-    } else if (sceneNameRef.current === 'scene2') {
+    if (sceneNameRef.current === 'scene2') {
       currentSceneRef.current = new Scene2();
     } else {
       currentSceneRef.current = new Scene3();
     }
-    currentSceneRef.current.setup(app, three.renderer!);
+    currentSceneRef.current.setup(app);
     currentSceneRef.current.init();
     currentSceneRef.current.resize(window.innerWidth, window.innerHeight);
   };
