@@ -26,7 +26,6 @@ import BaseScene from './BaseScene';
 import FBXAnimation from '../FBXAnimation';
 import { cubeTextures, textures } from '../loader';
 import RemoteThree from '../../../core/remote/RemoteThree';
-// import CustomShaderMaterial from '../CustomShaderMaterial';
 import RTTScene from './RTTScene';
 import Application from '../../../core/Application';
 
@@ -45,9 +44,9 @@ export default class Scene2 extends BaseScene {
     this.rttScene = new RTTScene();
   }
 
-  override setup(app: Application, renderer?: any): void {
-    super.setup(app, renderer);
-    this.rttScene.setup(app, renderer);
+  override setup(app: Application): void {
+    super.setup(app);
+    this.rttScene.setup(app);
   }
 
   override init(): void {
@@ -165,17 +164,8 @@ export default class Scene2 extends BaseScene {
     const rttExample = new Mesh(new PlaneGeometry(100, 100), rttMat);
     rttExample.name = 'rttExample';
     rttExample.position.set(-75, 50, -125);
+    rttExample.scale.y = -1;
     world.add(rttExample);
-
-    if (three.renderer.isWebGLRenderer) {
-      // const testShader = new Mesh(new PlaneGeometry(100, 100), new CustomShaderMaterial());
-      // testShader.name = 'customShaderMaterial';
-      // testShader.position.set(75, 50, -125);
-      // world.add(testShader);
-    } else {
-      // WebGPU
-      rttExample.scale.y = -1;
-    }
 
     this.dance = new FBXAnimation('Flair');
     this.dance.name = 'flair';

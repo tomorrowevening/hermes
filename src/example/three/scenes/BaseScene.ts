@@ -1,6 +1,7 @@
 import { Object3D, PerspectiveCamera, Scene, Timer } from 'three/webgpu';
 import Application from '../../../core/Application';
 import RemoteTheatre from '../../../core/remote/RemoteTheatre';
+import RemoteThree from '../../../core/remote/RemoteThree';
 
 export default class BaseScene extends Scene {
   app!: Application;
@@ -24,9 +25,10 @@ export default class BaseScene extends Scene {
     cameras.add(this.camera);
   }
 
-  setup(app: Application, renderer?: any) {
+  setup(app: Application) {
     this.app = app;
-    this.renderer = renderer;
+    const three = app.components.get('three') as RemoteThree;
+    this.renderer = three.renderer;
   }
 
   init() {
