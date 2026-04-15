@@ -81,8 +81,8 @@ export default class Scene3 extends BaseScene {
       velocity
     }));
 
-    const beauty = scenePass.getTextureNode().toInspector( 'Color' );
-    const vel = scenePass.getTextureNode( 'velocity' ).toInspector( 'Velocity' ).mul( blurAmount );
+    const beauty = scenePass.getTextureNode();
+    const vel = scenePass.getTextureNode( 'velocity' );
     const mBlur = motionBlur( beauty, vel );
     const fxaaPass = fxaa( mBlur );
     this.renderPipeline = new RenderPipeline( three.renderer! );
@@ -94,11 +94,6 @@ export default class Scene3 extends BaseScene {
     this.controls.enableDamping = true;
     this.controls.autoRotate = true;
     this.controls.autoRotateSpeed = 0.5;
-
-    if (this.app.isApp) {
-      const gui = three.renderer!.inspector.createParameters( 'Motion Blur Settings' );
-      gui.add( blurAmount, 'value', 0, 3 ).name( 'blur amount' );
-    }
 
     hierarchyUUID(this);
     three.addScene(this);

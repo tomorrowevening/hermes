@@ -72,17 +72,12 @@ export default class Scene2 extends BaseScene {
       velocity
     }));
 
-    const beauty = scenePass.getTextureNode().toInspector( 'Color' );
-    const vel = scenePass.getTextureNode( 'velocity' ).toInspector( 'Velocity' ).mul( blurAmount );
+    const beauty = scenePass.getTextureNode();
+    const vel = scenePass.getTextureNode( 'velocity' );
     const mBlur = motionBlur( beauty, vel );
 
     this.renderPipeline = new RenderPipeline( three.renderer! );
     this.renderPipeline.outputNode = mBlur;
-
-    if (this.app.isApp) {
-      const gui = three.renderer!.inspector.createParameters( 'Motion Blur Settings' );
-      gui.add( blurAmount, 'value', 0, 3 ).name( 'blur amount' );
-    }
 
     three.addScene(this);
     three.addCamera(this.camera);
@@ -135,7 +130,7 @@ export default class Scene2 extends BaseScene {
     world.name = 'world';
     this.add(world);
 
-    const gridTexture = textures.get('uv_grid')!;
+    const gridTexture = textures.get('uv_grid')!.clone();
     gridTexture.repeat.setScalar(10);
     gridTexture.needsUpdate = true;
     const floorMaterial = new MeshPhysicalMaterial({
