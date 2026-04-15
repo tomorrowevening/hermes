@@ -6,17 +6,14 @@ import Application from '../../core/Application';
 //
 import HermesApp from '../../editor/HermesApp';
 import App from './App';
-import CustomEditor from '../CustomEditor';
 import ExampleApplication from '../three/ExampleApplication';
 import BaseScene from '../three/scenes/BaseScene';
-import Scene1 from '../three/scenes/Scene1';
 import Scene2 from '../three/scenes/Scene2';
 import Scene3 from '../three/scenes/Scene3';
 import RTTScene from '../three/scenes/RTTScene';
 import { loadAssets } from '../three/loader';
 
 const scenes = new Map<string, any>([
-  ['Scene1', Scene1],
   ['Scene2', Scene2],
   ['Scene3', Scene3],
   ['RTTScene', RTTScene],
@@ -34,14 +31,13 @@ export default function AppWrapper() {
     <HermesApp
       app={app}
       scenes={scenes}
-      onSceneAdd={(scene, _app, renderer) => {
-        scene.setup(_app, renderer);
+      onSceneAdd={(scene) => {
+        scene.setup(app);
         scene.init();
       }}
       onSceneUpdate={(scene) => {
         (scene as BaseScene).update();
       }}
-      renderEditor={(_app) => <CustomEditor app={_app} />}
       onLoad={loadAssets}
     >
       {(_app: Application) => <App app={_app} />}

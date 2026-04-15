@@ -48,23 +48,45 @@ export function stripScene(obj: Object3D): MinimumObject {
   return min;
 }
 
+function serializeTextureEntry(tex: any) {
+  return {
+    src: tex.image?.src ?? '',
+    offset: [tex.offset.x, tex.offset.y],
+    repeat: [tex.repeat.x, tex.repeat.y],
+  };
+}
+
+const EMPTY_TEXTURE_ENTRY = { src: '', offset: [0, 0], repeat: [1, 1] };
+
 function cleanUniforms(obj: any) {
   const newObj = {};
   for (const i in obj) {
-    const value = obj[i].value;
-    newObj[i] = { value: value };
-    if (value === null) {
-      newObj[i].value = {
-        src: '',
-        offset: [0, 0],
-        repeat: [1, 1],
-      };
-    } else if (value !== undefined && value.isTexture) {
-      newObj[i].value = {
-        src: value.image.src,
-        offset: [value.offset.x, value.offset.y],
-        repeat: [value.repeat.x, value.repeat.y],
-      };
+    const entry = obj[i];
+    // Detect Three.js uniform wrapper { key: { value: ... } } vs plain value { key: texture }
+    const isWrapper =
+      entry !== null &&
+      typeof entry === 'object' &&
+      Object.prototype.hasOwnProperty.call(entry, 'value');
+
+    if (isWrapper) {
+      // Three.js uniform format — keep wrapper so prop path resolves to uniforms.key.value
+      const value = entry.value;
+      if (value === null || value === undefined) {
+        newObj[i] = { value: EMPTY_TEXTURE_ENTRY };
+      } else if (value.isTexture) {
+        newObj[i] = { value: serializeTextureEntry(value) };
+      } else {
+        newObj[i] = { value };
+      }
+    } else {
+      // Plain value format — store directly so prop path resolves to uniforms.key
+      if (entry === null || entry === undefined) {
+        newObj[i] = EMPTY_TEXTURE_ENTRY;
+      } else if (entry.isTexture) {
+        newObj[i] = serializeTextureEntry(entry);
+      } else {
+        newObj[i] = entry;
+      }
     }
   }
   return newObj;

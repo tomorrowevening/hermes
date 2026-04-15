@@ -29,9 +29,7 @@ export default class ExampleApplication extends Application {
         renderer.inspector = new Inspector();
         this.three.setRenderer(renderer, canvas);
         renderer.init()
-          .then(() => {
-            resolve();
-          })
+          .then(() => resolve())
           .catch(() => {
             console.log('Error creating WebGPU Renderer');
             reject();

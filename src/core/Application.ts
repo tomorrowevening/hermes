@@ -9,7 +9,7 @@ export default class Application {
     model: new Map<string, any>(),
     video: new Map<string, any>(),
   };
-  components: Map<string, any> = new Map();
+  components: Map<string, BaseRemote> = new Map();
   settings: AppSettings = {
     dpr: 1,
     fps: 30,
