@@ -10,87 +10,80 @@ This example uses [React](https://react.dev/), [ThreeJS](https://threejs.org/), 
 
 ### Create an `Application`
 
-An application isn't required, however it's nice to maintain multiple remotes. Alternatively, Remotes can be created independently.
+Instantiate your `Application` (or a custom subclass) outside the component tree, then wrap your app with `HermesApp`. It handles `detectSettings`, the loading gate, Theatre Studio initialisation, and automatically switches between editor and app rendering based on `IS_EDITOR`.
 
-The `ThreeEditor` is used as a multi-view editor for [ThreeJS](https://threejs.org/), and should be limited to only the Editor app.
+```tsx
+import studio from '@tomorrowevening/theatre-studio';
+import HermesApp from '@tomorrowevening/hermes/editor/HermesApp';
+import ExampleApplication from './three/ExampleApplication';
+import { loadAssets } from './three/loader';
+import Scene1 from './three/scenes/Scene1';
+import Scene2 from './three/scenes/Scene2';
+import MyCanvas from './components/MyCanvas';
+import { IS_DEV, IS_EDITOR } from './constants';
 
-```
-const IS_DEV = true;
-const IS_EDITOR = IS_DEV && document.location.hash.search('editor') > -1;
+// Register scene classes so MultiView can instantiate them in the editor
+const scenes = new Map<string, any>([
+  ['Scene1', Scene1],
+  ['Scene2', Scene2],
+  ['RTTScene', RTTScene],
+]);
 
-const theatre = new RemoteTheatre(IS_DEV, IS_EDITOR);
-const three = new RemoteThree('Hermes Example', IS_DEV, IS_EDITOR);
+// Create once outside the component — avoids re-instantiation on re-render
+const app = new ExampleApplication('My Project', IS_DEV, IS_EDITOR);
+if (IS_DEV && IS_EDITOR && studio) {
+  studio.initialize();
+  app.theatre.studio = studio;
+  app.theatre.handleEditorApp();
+}
 
 export default function AppWrapper() {
-  const [app, setApp] = useState<Application | null>(null);
-
-  useEffect(() => {
-    const instance = new Application();
-    instance.detectSettings(IS_DEV, IS_EDITOR).then(() => {
-      // TheatreJS
-      instance.addComponent('theatre', theatre);
-
-      // ThreeJS
-      instance.addComponent('three', three);
-
-      // Ready
-      setApp(instance);
-    });
-  }, []);
-
-  // MultiView requires you identify each scene so they can be instantiated by the editor
-  const scenes: Map<string, any> = new Map();
-  scenes.set('Scene1', Scene1);
-  scenes.set('Scene2', Scene2);
-  scenes.set('RTTScene', RTTScene);
-
   return (
-    <>
-      {app !== null && (
-        <>
-          {IS_DEV && (
-            <>
-              {IS_EDITOR && (
-                <ThreeEditor
-                  three={three}
-                  scenes={scenes}
-                  onSceneUpdate={(scene: any) => {
-                    scene.update();
-                  }}
-                />
-              )}
-            </>
-          )}
-        </>
-      )}
-    </>
+    <HermesApp
+      app={app}
+      scenes={scenes}
+      onSceneAdd={(scene) => {
+        scene.setup(app);
+        scene.init();
+      }}
+      onSceneUpdate={(scene) => scene.update()}
+      onLoad={loadAssets}
+    >
+      {(app) => <MyCanvas app={app} />}
+    </HermesApp>
   );
 }
 ```
+
+#### `HermesApp` props
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `app` | `Application` | Application instance with RemoteTheatre + RemoteThree added as components |
+| `scenes` | `Map<string, any>` | Scene name → scene class map, used by the editor's MultiView |
+| `onSceneAdd` | `(scene) => void` | Called when MultiView instantiates a scene (setup + init) |
+| `onSceneUpdate` | `(scene) => void` | Called every frame for the active scene in the editor |
+| `onSceneResize` | `(scene, w, h) => void` | Called when MultiView resizes a scene |
+| `onLoad` | `(app) => Promise<void>` | Asset loading function — `HermesApp` waits for this before rendering children |
+| `renderLoading` | `ReactNode` | Shown while `detectSettings` or `onLoad` is pending |
+| `children` | `(app) => ReactNode` | App content rendered after loading completes (not shown in editor mode) |
 
 ### Scene setup
 
 After all object's have been added to your scene, run `hierarchyUUID(yourScene)` to update the UUIDs of every object. This helps communicate back and forth between the app and your editor.
 
-### Custom remote commands
+### Theatre Studio integration
 
-This component is added only in debug-mode to add extra support for remote-components.
+Theatre Studio is initialised before `HermesApp` is mounted. Wire it up on the `app` instance so `HermesApp` can hand it off to the editor automatically:
 
-In this example it's added to add custom Remote Component support for:
+```tsx
+import studio from '@tomorrowevening/theatre-studio';
 
-- [TheatreJS](https://theatrejs.com/) - Communicates with the `studio` instance
-
-```
-type RemoteProps = {
-  three: RemoteThree
-  theatre: RemoteTheatre
-}
-
-export default function RemoteSetup(props: RemoteProps) {
-  // Remote Theatre setup
-  props.theatre.studio = studio;
-  props.theatre.handleEditorApp();
-  return null;
+const app = new ExampleApplication('My Project', IS_DEV, IS_EDITOR);
+if (IS_DEV && IS_EDITOR && studio) {
+  studio.initialize();
+  app.theatre.studio = studio;
+  app.theatre.handleEditorApp();
 }
 ```
 
