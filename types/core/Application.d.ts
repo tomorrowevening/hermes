@@ -8,7 +8,7 @@ export default class Application {
         model: Map<string, any>;
         video: Map<string, any>;
     };
-    components: Map<string, any>;
+    components: Map<string, BaseRemote>;
     settings: AppSettings;
     onUpdateCallback?: () => void;
     protected playing: boolean;
