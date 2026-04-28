@@ -1,4 +1,5 @@
 // Libs
+import { Suspense, lazy } from 'react';
 import studio from '@tomorrowevening/theatre-studio';
 // Models
 import { IS_DEV, IS_EDITOR } from '../constants';
@@ -19,6 +20,10 @@ const scenes = new Map<string, any>([
   ['RTTScene', RTTScene],
 ]);
 
+const ThreeEditor = IS_DEV
+  ? lazy(() => import('../../editor/ThreeEditor'))
+  : null;
+
 const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
 if (IS_DEV && IS_EDITOR && studio) {
   studio.initialize();
@@ -30,14 +35,21 @@ export default function AppWrapper() {
   return (
     <HermesApp
       app={app}
-      scenes={scenes}
-      onSceneAdd={(scene) => {
-        scene.setup(app);
-        scene.init();
-      }}
-      onSceneUpdate={(scene) => {
-        (scene as BaseScene).update();
-      }}
+      renderEditor={ThreeEditor ? (three) => (
+        <Suspense fallback={null}>
+          <ThreeEditor
+            three={three}
+            scenes={scenes}
+            onSceneAdd={(scene) => {
+              (scene as BaseScene).setup(app);
+              (scene as BaseScene).init();
+            }}
+            onSceneUpdate={(scene) => {
+              (scene as BaseScene).update();
+            }}
+          />
+        </Suspense>
+      ) : undefined}
       onLoad={loadAssets}
     >
       {(_app: Application) => <App app={_app} />}
