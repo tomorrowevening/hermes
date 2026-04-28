@@ -20,6 +20,7 @@
     "useDefineForClassFields": true,
     "noImplicitAny": false,
     "types": [
+      "vite/client",
       "vite-plugin-glsl/ext"
     ]
   },
