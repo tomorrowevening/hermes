@@ -169,7 +169,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     DebugData.groupsRefs.push(groupRef);
     DebugData.groupTitles.push(data.title);
     setTimeout(() => {
-      DebugData.instance.setState({ lastUpdate: Date.now() });
+      DebugData.instance?.setState({ lastUpdate: Date.now() });
     }, 0);
 
     return groupRef;
@@ -181,7 +181,7 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
       if (name === DebugData.groupTitles[i]) {
         DebugData.groups.splice(i, 1);
         DebugData.groupTitles.splice(i, 1);
-        DebugData.instance.setState({ lastUpdate: Date.now() });
+        DebugData.instance?.setState({ lastUpdate: Date.now() });
         return;
       }
     }
@@ -191,6 +191,6 @@ export default class DebugData extends Component<DebugDataProps, DebugDataState>
     DebugData.groups = [];
     DebugData.groupTitles = [];
     DebugData.groupsRefs = [];
-    DebugData.instance.setState({ lastUpdate: Date.now() });
+    DebugData.instance?.setState({ lastUpdate: Date.now() });
   }
 }

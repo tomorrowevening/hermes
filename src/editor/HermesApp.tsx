@@ -1,8 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { Scene } from 'three';
 import Application from '../core/Application';
 import RemoteThree from '../core/remote/RemoteThree';
-import ThreeEditor from './ThreeEditor';
 
 type HermesAppProps = {
   /**
@@ -13,17 +11,19 @@ type HermesAppProps = {
 
   // ── Editor ───────────────────────────────────────────────────────────────
 
-  /** Map of scene name → scene class, passed to MultiView */
-  scenes: Map<string, any>
   /**
-   * Called when MultiView instantiates a scene.
-   * Defaults to: scene.setup(app, renderer); scene.init()
+   * Render prop for the editor UI. Receives the RemoteThree instance.
+   * Only called when app.editor is true. Omitting this prop means ThreeEditor
+   * is never imported, keeping it out of your production bundle entirely.
+   *
+   * @example
+   * import ThreeEditor from '@tomorrowevening/hermes/editor/ThreeEditor';
+   * <HermesApp
+   *   app={app}
+   *   renderEditor={(three) => <ThreeEditor three={three} scenes={scenes} />}
+   * />
    */
-  onSceneAdd?: (scene: any) => void
-  /** Called every frame for the active scene */
-  onSceneUpdate?: (scene: any) => void
-  /** Called when MultiView resizes a scene */
-  onSceneResize?: (scene: Scene, width: number, height: number) => void
+  renderEditor?: (three: RemoteThree) => ReactNode
 
   // ── App ──────────────────────────────────────────────────────────────────
 
@@ -41,25 +41,25 @@ type HermesAppProps = {
 /**
  * HermesApp — drop-in bootstrap for a Hermes-powered project.
  *
- * Receives an Application instance (or custom subclass) and handles
- * detectSettings, the loading gate, Theatre Studio initialisation, and
- * switching between editor and app rendering.
+ * Handles detectSettings, the loading gate, and switching between editor
+ * and app rendering. The editor UI is supplied via renderEditor so that
+ * ThreeEditor (and all its deps) are only bundled in projects that
+ * explicitly import and pass it.
  *
  * @example
- * // Minimal app
- * const app = new Application(IS_DEV, IS_EDITOR);
+ * // App only (no editor in bundle)
  * <HermesApp app={app} onLoad={loadAssets}>
  *   {(app) => <MyCanvas app={app} />}
  * </HermesApp>
  *
  * @example
- * // Custom application subclass
- * const app = new ExampleApplication('My Project', IS_DEV, IS_EDITOR);
+ * // With editor (dev builds only)
+ * import ThreeEditor from '@tomorrowevening/hermes/editor/ThreeEditor';
  * <HermesApp
  *   app={app}
- *   scenes={scenes}
- *   onSceneAdd={(scene, app, renderer) => { scene.setup(app, renderer); scene.init(); }}
- *   onSceneUpdate={(scene) => scene.update()}
+ *   renderEditor={(three) => (
+ *     <ThreeEditor three={three} scenes={scenes} onSceneAdd={onSceneAdd} />
+ *   )}
  *   onLoad={loadAssets}
  * >
  *   {(app) => <MyCanvas app={app} />}
@@ -68,10 +68,7 @@ type HermesAppProps = {
 export default function HermesApp(props: HermesAppProps) {
   const {
     app,
-    scenes,
-    onSceneAdd,
-    onSceneUpdate,
-    onSceneResize,
+    renderEditor,
     onLoad,
     renderLoading = null,
     children,
@@ -91,18 +88,9 @@ export default function HermesApp(props: HermesAppProps) {
 
   if (!ready) return <>{renderLoading}</>;
 
-  const three = app.components.get('three') as RemoteThree;
-
-  if (app.editor) {
-    return (
-      <ThreeEditor
-        three={three}
-        scenes={scenes}
-        onSceneAdd={onSceneAdd}
-        onSceneUpdate={onSceneUpdate}
-        onSceneResize={onSceneResize}
-      />
-    );
+  if (app.editor && renderEditor) {
+    const three = app.components.get('three') as RemoteThree;
+    return <>{renderEditor(three)}</>;
   }
 
   return <>{children?.(app)}</>;
