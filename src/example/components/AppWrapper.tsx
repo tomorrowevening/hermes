@@ -25,6 +25,7 @@ const ThreeEditor = IS_DEV
   : null;
 
 const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
+
 if (IS_DEV && IS_EDITOR && studio) {
   studio.initialize();
   app.theatre.studio = studio;
@@ -35,6 +36,7 @@ export default function AppWrapper() {
   return (
     <HermesApp
       app={app}
+      onLoad={loadAssets}
       renderEditor={ThreeEditor ? (three) => (
         <Suspense fallback={null}>
           <ThreeEditor
@@ -50,7 +52,6 @@ export default function AppWrapper() {
           />
         </Suspense>
       ) : undefined}
-      onLoad={loadAssets}
     >
       {(_app: Application) => <App app={_app} />}
     </HermesApp>

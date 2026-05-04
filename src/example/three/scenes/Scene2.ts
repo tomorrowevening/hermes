@@ -64,7 +64,6 @@ export default class Scene2 extends BaseScene {
 
     // Post
     
-    const blurAmount = uniform(1);
     const scenePass = pass(this, this.camera);
 
     scenePass.setMRT(mrt({
