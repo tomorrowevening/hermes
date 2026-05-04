@@ -307,12 +307,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
       event: 'addRenderer',
       target: 'editor',
       data: {
-        autoClear: value.autoClear,
         autoClearColor: value.autoClearColor,
-        autoClearDepth: value.autoClearDepth,
-        autoClearStencil: value.autoClearStencil,
         outputColorSpace: value.outputColorSpace,
-        localClippingEnabled: value.localClippingEnabled,
         clearColor: color,
         clearAlpha: value.getClearAlpha(),
         colorManagement: ColorManagement.enabled,
@@ -460,12 +456,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
         break;
       case 'updateRenderer':
         if (this.renderer) {
-          // this.renderer.autoClear = msg.data.autoClear;
           this.renderer.autoClearColor = msg.data.autoClearColor;
-          // this.renderer.autoClearDepth = msg.data.autoClearDepth;
-          // this.renderer.autoClearStencil = msg.data.autoClearStencil;
           this.renderer.outputColorSpace = msg.data.outputColorSpace;
-          this.renderer.localClippingEnabled = msg.data.localClippingEnabled;
           this.renderer.setClearColor(msg.data.clearColor, msg.data.clearAlpha);
           this.renderer.toneMapping = msg.data.toneMapping;
           this.renderer.toneMappingExposure = msg.data.toneMappingExposure;
@@ -479,12 +471,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
             event: 'addRenderer',
             target: 'editor',
             data: {
-              autoClear: this.renderer.autoClear,
               autoClearColor: this.renderer.autoClearColor,
-              autoClearDepth: this.renderer.autoClearDepth,
-              autoClearStencil: this.renderer.autoClearStencil,
               outputColorSpace: this.renderer.outputColorSpace,
-              localClippingEnabled: this.renderer.localClippingEnabled,
               clearColor: color,
               clearAlpha: this.renderer.getClearAlpha(),
               colorManagement: ColorManagement.enabled,

@@ -553,7 +553,14 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
 
     this.rendererReady = false;
 
-    const canvas = this.canvasRef.current!;
+    const canvas = this.canvasRef.current;
+    if (canvas === null) {
+      // canvasRef not yet attached (ADD_RENDERER fired before React committed
+      // the canvas element). Retry once the component is fully mounted.
+      setTimeout(() => this.props.three.requestRenderer(), 100);
+      return;
+    }
+
     this.props.three.canvas = canvas;
     if (data.type === 'WebGLRenderer') {
       this.renderer = new WebGLRenderer({
