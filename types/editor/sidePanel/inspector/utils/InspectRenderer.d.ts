@@ -8,12 +8,8 @@ type InspectRendererState = {
     lastUpdated: number;
 };
 export default class InspectRenderer extends Component<InspectRendererProps, InspectRendererState> {
-    private autoClear;
     private autoClearColor;
-    private autoClearDepth;
-    private autoClearStencil;
     private outputColorSpace;
-    private localClippingEnabled;
     private clearColor;
     private clearAlpha;
     private toneMapping;
