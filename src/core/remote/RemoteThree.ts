@@ -15,7 +15,6 @@ import {
 } from 'three/webgpu';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
-import { getSubItem, setItemProps, stripObject, stripScene, textureFromSrc } from '../../editor/sidePanel/utils';
 import { clamp } from '../../utils/math';
 import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '../../utils/three';
 
@@ -46,6 +45,14 @@ export type ToolEvent = {
   [key in ToolEvents]: { value?: unknown }
 }
 
+export interface EditorUtils {
+  stripObject: (obj: Object3D) => unknown
+  stripScene: (obj: Object3D) => unknown
+  getSubItem: (child: unknown, key: string) => unknown
+  setItemProps: (child: unknown, key: string, value: unknown) => void
+  textureFromSrc: (src: string) => Promise<Texture>
+}
+
 export default class RemoteThree extends BaseRemote implements EventDispatcher<ToolEvent> {
   name: string;
   canvas: HTMLCanvasElement | null = null; // Canvas or OffscreenCanvas
@@ -57,10 +64,15 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   private renderTargetsResize: Map<string, boolean> = new Map();
   private groups = new Map<string, GroupCallback>();
   private _listeners: { [K in ToolEvents]?: EventListener<ToolEvent[K], K, this>[] } = {};
+  private editorUtils?: EditorUtils;
 
   constructor(name: string, debug = false, editor = false) {
     super('RemoteThree', debug, editor);
     this.name = name;
+  }
+
+  setEditorUtils(utils: EditorUtils | undefined): void {
+    this.editorUtils = utils;
   }
 
   override dispose(): void {
@@ -146,8 +158,9 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   }
 
   setObject(value: any) {
+    if (!this.editorUtils) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
-    const stripped = stripObject(value);
+    const stripped = this.editorUtils.stripObject(value);
     this.dispatchEvent({ type: ToolEvents.SET_OBJECT, value: stripped });
   }
 
@@ -156,8 +169,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     if (child) {
       try {
         if (subitem !== undefined) {
-          const target = getSubItem(child, subitem);
-          target[key](value);
+          const target = this.editorUtils?.getSubItem(child, subitem) as any;
+          if (target !== undefined) target[key](value);
         } else {
           child[key](value);
         }
@@ -195,11 +208,12 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   private onUpdateObject(uuid: string, key: string, value: any) {
     const child = this.getObjectByUUID(uuid);
     if (child) {
-      setItemProps(child, key, value);
+      this.editorUtils?.setItemProps(child, key, value);
     }
   }
 
   private onCreateTexture(uuid: string, key: string, value: any) {
+    if (!this.editorUtils) return;
     const child = this.getObjectByUUID(uuid);
     if (child) {
       const onComplete = (value: Texture | null) => {
@@ -227,7 +241,7 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
 
       // Load
       if (value.src.length > 0) {
-        textureFromSrc(value.src).then((texture: Texture) => {
+        this.editorUtils.textureFromSrc(value.src).then((texture: Texture) => {
           texture.offset.set(value.offset[0], value.offset[1]);
           texture.repeat.set(value.repeat[0], value.repeat[1]);
           onComplete(texture);
@@ -333,10 +347,10 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     if (value === undefined) return;
     this.scenes.set(value.name, value);
 
-    if (!this.debug) return;
+    if (!this.debug || !this.editorUtils) return;
     resetThreeObjects();
     hierarchyUUID(value);
-    const stripped = stripScene(value);
+    const stripped = this.editorUtils.stripScene(value);
     this.send({
       event: 'addScene',
       target: 'editor',
@@ -345,10 +359,10 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   }
 
   refreshScene(value: string) {
-    if (!this.debug) return;
+    if (!this.debug || !this.editorUtils) return;
     const scene = this.scenes.get(value);
     if (scene !== undefined) {
-      const stripped = stripScene(scene);
+      const stripped = this.editorUtils.stripScene(scene);
       this.send({
         event: 'refreshScene',
         target: 'app',
@@ -361,8 +375,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     if (value === undefined) return;
     this.scenes.delete(value.name);
 
-    if (!this.debug) return;
-    const stripped = stripScene(value);
+    if (!this.debug || !this.editorUtils) return;
+    const stripped = this.editorUtils.stripScene(value);
     this.send({
       event: 'removeScene',
       target: 'editor',
@@ -390,11 +404,11 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     if (value === undefined) return;
     this.scene = value;
 
-    if (!this.debug) return;
+    if (!this.debug || !this.editorUtils) return;
     if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
     resetThreeObjects();
     hierarchyUUID(value);
-    const stripped = stripScene(value);
+    const stripped = this.editorUtils.stripScene(value);
     this.send({
       event: 'setScene',
       target: 'editor',
@@ -426,8 +440,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   // Cameras
 
   addCamera(camera: Camera) {
-    if (!this.debug) return;
-    const stripped = stripObject(camera);
+    if (!this.debug || !this.editorUtils) return;
+    const stripped = this.editorUtils.stripObject(camera as unknown as Object3D);
     this.send({
       event: 'addCamera',
       target: 'editor',
@@ -436,8 +450,8 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   }
 
   removeCamera(camera: Camera) {
-    if (!this.debug) return;
-    const stripped = stripObject(camera);
+    if (!this.debug || !this.editorUtils) return;
+    const stripped = this.editorUtils.stripObject(camera as unknown as Object3D);
     this.send({
       event: 'removeCamera',
       target: 'editor',
@@ -448,11 +462,13 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
   override handleApp(msg: BroadcastData): void {
     switch (msg.event) {
       case 'refreshScene':
-        this.send({
-          event: 'refreshScene',
-          target: 'editor',
-          data: stripScene(this.scenes.get(msg.data.name)!),
-        });
+        if (this.editorUtils) {
+          this.send({
+            event: 'refreshScene',
+            target: 'editor',
+            data: this.editorUtils.stripScene(this.scenes.get(msg.data.name)! as unknown as Object3D),
+          });
+        }
         break;
       case 'updateRenderer':
         if (this.renderer) {
@@ -484,24 +500,26 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
         }
         break;
       case 'requestScene':
-        this.scenes.forEach((scene: Scene) => {
-          resetThreeObjects();
-          hierarchyUUID(scene);
-          this.send({
-            event: 'addScene',
-            target: 'editor',
-            data: stripScene(scene),
+        if (this.editorUtils) {
+          this.scenes.forEach((scene: Scene) => {
+            resetThreeObjects();
+            hierarchyUUID(scene);
+            this.send({
+              event: 'addScene',
+              target: 'editor',
+              data: this.editorUtils!.stripScene(scene as unknown as Object3D),
+            });
           });
-        });
-        if (this.scene !== undefined) {
-          if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
-          resetThreeObjects();
-          hierarchyUUID(this.scene);
-          this.send({
-            event: 'setScene',
-            target: 'editor',
-            data: stripScene(this.scene),
-          });
+          if (this.scene !== undefined) {
+            if (this.renderer !== undefined) ExportTexture.renderer = this.renderer;
+            resetThreeObjects();
+            hierarchyUUID(this.scene);
+            this.send({
+              event: 'setScene',
+              target: 'editor',
+              data: this.editorUtils!.stripScene(this.scene as unknown as Object3D),
+            });
+          }
         }
         break;
     }

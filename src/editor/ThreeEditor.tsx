@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { Scene } from 'three';
 import Editor from './Editor';
 import MultiView from './multiView/MultiView';
 import RemoteThree from '../core/remote/RemoteThree';
 import SidePanel from './sidePanel/SidePanel';
+import { getSubItem, setItemProps, stripObject, stripScene, textureFromSrc } from './sidePanel/utils';
+
+const EDITOR_UTILS = { stripObject, stripScene, getSubItem, setItemProps, textureFromSrc };
 
 interface ThreeEditorProps {
   three: RemoteThree
@@ -13,6 +17,11 @@ interface ThreeEditorProps {
 }
 
 export default function ThreeEditor(props: ThreeEditorProps) {
+  useEffect(() => {
+    props.three.setEditorUtils(EDITOR_UTILS);
+    return () => props.three.setEditorUtils(undefined);
+  }, [props.three]);
+
   return (
     <Editor>
       <MultiView
