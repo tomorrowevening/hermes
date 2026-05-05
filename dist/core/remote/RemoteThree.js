@@ -1,10 +1,9 @@
-import { Color as g, ColorManagement as l, WebGPURenderer as f, RenderTarget as E, WebGLRenderTarget as S } from "three/webgpu";
-import b from "./BaseRemote.js";
-import { stripObject as u, getSubItem as C, setItemProps as R, textureFromSrc as m, stripScene as o } from "../../editor/sidePanel/utils.js";
-import { clamp as T } from "../../utils/math.js";
-import { dispose as v, hierarchyUUID as h, ExportTexture as c, resetThreeObjects as p } from "../../utils/three.js";
-var O = /* @__PURE__ */ ((i) => (i.CUSTOM = "ToolEvents::custom", i.SELECT_DROPDOWN = "ToolEvents::selectDropdown", i.DRAG_UPDATE = "ToolEvents::dragUpdate", i.ADD_SCENE = "ToolEvents::addScene", i.REFRESH_SCENE = "ToolEvents::refreshScene", i.REMOVE_SCENE = "ToolEvents::removeScene", i.SET_SCENE = "ToolEvents::setScene", i.SET_OBJECT = "ToolEvents::setObject", i.CLEAR_OBJECT = "ToolEvents::clearObject", i.ADD_CAMERA = "ToolEvents::addCamera", i.REMOVE_CAMERA = "ToolEvents::removeCamera", i.ADD_GROUP = "ToolEvents::addGroup", i.REMOVE_GROUP = "ToolEvents::removeGroup", i.ADD_SPLINE = "ToolEvents::addSpline", i.ADD_RENDERER = "ToolEvents::addRenderer", i.UPDATE_RENDERER = "ToolEvents::updateRenderer", i))(O || {});
-class A extends b {
+import { Color as l, ColorManagement as p, WebGPURenderer as g, RenderTarget as v, WebGLRenderTarget as f } from "three/webgpu";
+import E from "./BaseRemote.js";
+import { clamp as S } from "../../utils/math.js";
+import { dispose as u, hierarchyUUID as o, ExportTexture as h, resetThreeObjects as c } from "../../utils/three.js";
+var b = /* @__PURE__ */ ((a) => (a.CUSTOM = "ToolEvents::custom", a.SELECT_DROPDOWN = "ToolEvents::selectDropdown", a.DRAG_UPDATE = "ToolEvents::dragUpdate", a.ADD_SCENE = "ToolEvents::addScene", a.REFRESH_SCENE = "ToolEvents::refreshScene", a.REMOVE_SCENE = "ToolEvents::removeScene", a.SET_SCENE = "ToolEvents::setScene", a.SET_OBJECT = "ToolEvents::setObject", a.CLEAR_OBJECT = "ToolEvents::clearObject", a.ADD_CAMERA = "ToolEvents::addCamera", a.REMOVE_CAMERA = "ToolEvents::removeCamera", a.ADD_GROUP = "ToolEvents::addGroup", a.REMOVE_GROUP = "ToolEvents::removeGroup", a.ADD_SPLINE = "ToolEvents::addSpline", a.ADD_RENDERER = "ToolEvents::addRenderer", a.UPDATE_RENDERER = "ToolEvents::updateRenderer", a))(b || {});
+class O extends E {
   name;
   canvas = null;
   // Canvas or OffscreenCanvas
@@ -18,13 +17,17 @@ class A extends b {
   renderTargetsResize = /* @__PURE__ */ new Map();
   groups = /* @__PURE__ */ new Map();
   _listeners = {};
+  editorUtils;
   constructor(e, t = !1, r = !1) {
     super("RemoteThree", t, r), this.name = e;
   }
+  setEditorUtils(e) {
+    this.editorUtils = e;
+  }
   dispose() {
     this.scenes.forEach((e) => {
-      v(e);
-    }), this.scenes.clear(), this.scene && v(this.scene), this.renderTargets.forEach((e) => {
+      u(e);
+    }), this.scenes.clear(), this.scene && u(this.scene), this.renderTargets.forEach((e) => {
       e.dispose();
     }), this.renderTargets.clear(), this.renderer?.dispose();
   }
@@ -53,8 +56,8 @@ class A extends b {
     const r = t[e.type];
     if (r !== void 0) {
       const s = { ...e, target: this }, d = r.slice(0);
-      for (let a = 0, n = d.length; a < n; a++)
-        d[a].call(this, s);
+      for (let i = 0, n = d.length; i < n; i++)
+        d[i].call(this, s);
     }
   }
   // Objects
@@ -68,22 +71,27 @@ class A extends b {
   }
   getObject(e) {
     if (!this.debug) return;
-    this.renderer !== void 0 && (c.renderer = this.renderer);
+    this.renderer !== void 0 && (h.renderer = this.renderer);
     const t = this.getObjectByUUID(e);
     t && this.setObject(t);
   }
   setObject(e) {
-    this.renderer !== void 0 && (c.renderer = this.renderer);
-    const t = u(e);
+    if (!this.editorUtils) return;
+    this.renderer !== void 0 && (h.renderer = this.renderer);
+    const t = this.editorUtils.stripObject(e);
     this.dispatchEvent({ type: "ToolEvents::setObject", value: t });
   }
   requestMethod(e, t, r, s) {
     const d = this.getObjectByUUID(e);
     if (d)
       try {
-        s !== void 0 ? C(d, s)[t](r) : d[t](r);
-      } catch (a) {
-        console.log("Hermes - Error requesting method:", e, t, r), console.log(a);
+        if (s !== void 0) {
+          const i = this.editorUtils?.getSubItem(d, s);
+          i !== void 0 && i[t](r);
+        } else
+          d[t](r);
+      } catch (i) {
+        console.log("Hermes - Error requesting method:", e, t, r), console.log(i);
       }
   }
   updateObject(e, t, r) {
@@ -112,34 +120,35 @@ class A extends b {
   }
   onUpdateObject(e, t, r) {
     const s = this.getObjectByUUID(e);
-    s && R(s, t, r);
+    s && this.editorUtils?.setItemProps(s, t, r);
   }
   onCreateTexture(e, t, r) {
+    if (!this.editorUtils) return;
     const s = this.getObjectByUUID(e);
     if (s) {
-      const d = (a) => {
+      const d = (i) => {
         const n = t.split(".");
         switch (n.length) {
           case 1:
-            s[n[0]] = a;
+            s[n[0]] = i;
             break;
           case 2:
-            s[n[0]][n[1]] = a;
+            s[n[0]][n[1]] = i;
             break;
           case 3:
-            s[n[0]][n[1]][n[2]] = a;
+            s[n[0]][n[1]][n[2]] = i;
             break;
           case 4:
-            s[n[0]][n[1]][n[2]][n[3]] = a;
+            s[n[0]][n[1]][n[2]][n[3]] = i;
             break;
           case 5:
-            s[n[0]][n[1]][n[2]][n[3]][n[4]] = a;
+            s[n[0]][n[1]][n[2]][n[3]][n[4]] = i;
             break;
         }
         s.material.needsUpdate = !0;
       };
-      r.src.length > 0 ? m(r.src).then((a) => {
-        a.offset.set(r.offset[0], r.offset[1]), a.repeat.set(r.repeat[0], r.repeat[1]), d(a);
+      r.src.length > 0 ? this.editorUtils.textureFromSrc(r.src).then((i) => {
+        i.offset.set(r.offset[0], r.offset[1]), i.repeat.set(r.repeat[0], r.repeat[1]), d(i);
       }) : d(null);
     }
   }
@@ -189,7 +198,7 @@ class A extends b {
   // Renderer
   setRenderer(e, t = null) {
     if (this.renderer = e, this.canvas = e.domElement, this.inputElement = t !== null ? t : this.canvas, !this.debug) return;
-    const r = `#${e.getClearColor(new g()).getHexString()}`;
+    const r = `#${e.getClearColor(new l()).getHexString()}`;
     this.send({
       event: "addRenderer",
       target: "editor",
@@ -198,7 +207,7 @@ class A extends b {
         outputColorSpace: e.outputColorSpace,
         clearColor: r,
         clearAlpha: e.getClearAlpha(),
-        colorManagement: l.enabled,
+        colorManagement: p.enabled,
         toneMapping: e.toneMapping,
         toneMappingExposure: e.toneMappingExposure,
         type: e.isWebGLRenderer ? "WebGLRenderer" : "WebGPURenderer"
@@ -214,9 +223,9 @@ class A extends b {
   }
   // Scenes
   addScene(e) {
-    if (e === void 0 || (this.scenes.set(e.name, e), !this.debug)) return;
-    p(), h(e);
-    const t = o(e);
+    if (e === void 0 || (this.scenes.set(e.name, e), !this.debug || !this.editorUtils)) return;
+    c(), o(e);
+    const t = this.editorUtils.stripScene(e);
     this.send({
       event: "addScene",
       target: "editor",
@@ -224,10 +233,10 @@ class A extends b {
     });
   }
   refreshScene(e) {
-    if (!this.debug) return;
+    if (!this.debug || !this.editorUtils) return;
     const t = this.scenes.get(e);
     if (t !== void 0) {
-      const r = o(t);
+      const r = this.editorUtils.stripScene(t);
       this.send({
         event: "refreshScene",
         target: "app",
@@ -236,8 +245,8 @@ class A extends b {
     }
   }
   removeScene(e) {
-    if (e === void 0 || (this.scenes.delete(e.name), !this.debug)) return;
-    const t = o(e);
+    if (e === void 0 || (this.scenes.delete(e.name), !this.debug || !this.editorUtils)) return;
+    const t = this.editorUtils.stripScene(e);
     this.send({
       event: "removeScene",
       target: "editor",
@@ -254,9 +263,9 @@ class A extends b {
     }), t);
   }
   setScene(e) {
-    if (e === void 0 || (this.scene = e, !this.debug)) return;
-    this.renderer !== void 0 && (c.renderer = this.renderer), p(), h(e);
-    const t = o(e);
+    if (e === void 0 || (this.scene = e, !this.debug || !this.editorUtils)) return;
+    this.renderer !== void 0 && (h.renderer = this.renderer), c(), o(e);
+    const t = this.editorUtils.stripScene(e);
     this.send({
       event: "setScene",
       target: "editor",
@@ -283,8 +292,8 @@ class A extends b {
   }
   // Cameras
   addCamera(e) {
-    if (!this.debug) return;
-    const t = u(e);
+    if (!this.debug || !this.editorUtils) return;
+    const t = this.editorUtils.stripObject(e);
     this.send({
       event: "addCamera",
       target: "editor",
@@ -292,8 +301,8 @@ class A extends b {
     });
   }
   removeCamera(e) {
-    if (!this.debug) return;
-    const t = u(e);
+    if (!this.debug || !this.editorUtils) return;
+    const t = this.editorUtils.stripObject(e);
     this.send({
       event: "removeCamera",
       target: "editor",
@@ -303,18 +312,18 @@ class A extends b {
   handleApp(e) {
     switch (e.event) {
       case "refreshScene":
-        this.send({
+        this.editorUtils && this.send({
           event: "refreshScene",
           target: "editor",
-          data: o(this.scenes.get(e.data.name))
+          data: this.editorUtils.stripScene(this.scenes.get(e.data.name))
         });
         break;
       case "updateRenderer":
-        this.renderer && (this.renderer.autoClearColor = e.data.autoClearColor, this.renderer.outputColorSpace = e.data.outputColorSpace, this.renderer.setClearColor(e.data.clearColor, e.data.clearAlpha), this.renderer.toneMapping = e.data.toneMapping, this.renderer.toneMappingExposure = e.data.toneMappingExposure, l.enabled = e.data.colorManagement);
+        this.renderer && (this.renderer.autoClearColor = e.data.autoClearColor, this.renderer.outputColorSpace = e.data.outputColorSpace, this.renderer.setClearColor(e.data.clearColor, e.data.clearAlpha), this.renderer.toneMapping = e.data.toneMapping, this.renderer.toneMappingExposure = e.data.toneMappingExposure, p.enabled = e.data.colorManagement);
         break;
       case "requestRenderer":
         if (this.renderer !== void 0) {
-          const t = `#${this.renderer.getClearColor(new g()).getHexString()}`;
+          const t = `#${this.renderer.getClearColor(new l()).getHexString()}`;
           this.send({
             event: "addRenderer",
             target: "editor",
@@ -323,7 +332,7 @@ class A extends b {
               outputColorSpace: this.renderer.outputColorSpace,
               clearColor: t,
               clearAlpha: this.renderer.getClearAlpha(),
-              colorManagement: l.enabled,
+              colorManagement: p.enabled,
               toneMapping: this.renderer.toneMapping,
               toneMappingExposure: this.renderer.toneMappingExposure,
               type: this.renderer.isWebGLRenderer ? "WebGLRenderer" : "WebGPURenderer"
@@ -332,17 +341,17 @@ class A extends b {
         }
         break;
       case "requestScene":
-        this.scenes.forEach((t) => {
-          p(), h(t), this.send({
+        this.editorUtils && (this.scenes.forEach((t) => {
+          c(), o(t), this.send({
             event: "addScene",
             target: "editor",
-            data: o(t)
+            data: this.editorUtils.stripScene(t)
           });
-        }), this.scene !== void 0 && (this.renderer !== void 0 && (c.renderer = this.renderer), p(), h(this.scene), this.send({
+        }), this.scene !== void 0 && (this.renderer !== void 0 && (h.renderer = this.renderer), c(), o(this.scene), this.send({
           event: "setScene",
           target: "editor",
-          data: o(this.scene)
-        }));
+          data: this.editorUtils.stripScene(this.scene)
+        })));
         break;
     }
     if (e.event === "updateGroup") {
@@ -410,21 +419,21 @@ class A extends b {
   addRT(e, t = !0, r) {
     if (!this.renderer) return;
     let s;
-    this.renderer instanceof f ? s = new E(32, 32, r) : s = new S(32, 32, r), s.texture.name = e, this.renderTargets.set(e, s), this.renderTargetsResize.set(e, t);
+    this.renderer instanceof g ? s = new v(32, 32, r) : s = new f(32, 32, r), s.texture.name = e, this.renderTargets.set(e, s), this.renderTargetsResize.set(e, t);
   }
   removeRT(e) {
     this.renderTargets.delete(e), this.renderTargetsResize.delete(e);
   }
   resize(e, t) {
     const r = this.dpr;
-    this.renderTargets.forEach((d, a) => {
-      this.renderTargetsResize.get(a) && d.setSize(e * r, t * r);
+    this.renderTargets.forEach((d, i) => {
+      this.renderTargetsResize.get(i) && d.setSize(e * r, t * r);
     });
     const s = !(this.renderer?.domElement instanceof OffscreenCanvas);
     this.renderer?.setSize(e, t, s);
   }
   set dpr(e) {
-    this.renderer?.setPixelRatio(T(1, 2, e));
+    this.renderer?.setPixelRatio(S(1, 2, e));
   }
   get dpr() {
     return this.renderer !== void 0 ? this.renderer?.getPixelRatio() : 1;
@@ -437,6 +446,6 @@ class A extends b {
   }
 }
 export {
-  O as ToolEvents,
-  A as default
+  b as ToolEvents,
+  O as default
 };

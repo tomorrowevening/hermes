@@ -1,4 +1,4 @@
-import { Camera, Curve, EventDispatcher, EventListener, Object3D, RenderTarget, RenderTargetOptions, Scene } from 'three/webgpu';
+import { Camera, Curve, EventDispatcher, EventListener, Object3D, RenderTarget, RenderTargetOptions, Scene, Texture } from 'three/webgpu';
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupData } from '../types';
 export declare enum ToolEvents {
@@ -24,6 +24,13 @@ export type ToolEvent = {
         value?: unknown;
     };
 };
+export interface EditorUtils {
+    stripObject: (obj: Object3D) => unknown;
+    stripScene: (obj: Object3D) => unknown;
+    getSubItem: (child: unknown, key: string) => unknown;
+    setItemProps: (child: unknown, key: string, value: unknown) => void;
+    textureFromSrc: (src: string) => Promise<Texture>;
+}
 export default class RemoteThree extends BaseRemote implements EventDispatcher<ToolEvent> {
     name: string;
     canvas: HTMLCanvasElement | null;
@@ -35,7 +42,9 @@ export default class RemoteThree extends BaseRemote implements EventDispatcher<T
     private renderTargetsResize;
     private groups;
     private _listeners;
+    private editorUtils?;
     constructor(name: string, debug?: boolean, editor?: boolean);
+    setEditorUtils(utils: EditorUtils | undefined): void;
     dispose(): void;
     addEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): void;
     hasEventListener<T extends ToolEvents>(type: T, listener: EventListener<ToolEvent[T], T, this>): boolean;
