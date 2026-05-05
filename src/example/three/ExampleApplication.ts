@@ -3,6 +3,7 @@ import { Inspector } from 'three/examples/jsm/inspector/Inspector.js';
 import Application from '../../core/Application';
 import RemoteTheatre from '../../core/remote/RemoteTheatre';
 import RemoteThree from '../../core/remote/RemoteThree';
+import { IS_DEV, IS_EDITOR } from '../constants';
 
 export default class ExampleApplication extends Application {
   theatre: RemoteTheatre;
@@ -26,7 +27,7 @@ export default class ExampleApplication extends Application {
         renderer.shadowMap.enabled = true;
         renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
         renderer.setClearColor(0x000000);
-        renderer.inspector = new Inspector();
+        if (IS_DEV && !IS_EDITOR) renderer.inspector = new Inspector();
         this.three.setRenderer(renderer, canvas);
         renderer.init()
           .then(() => resolve())

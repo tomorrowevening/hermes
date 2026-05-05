@@ -13,6 +13,7 @@ import Scene3 from '../three/scenes/Scene3';
 // Utils
 import { dispose } from '../../utils/three';
 import { clearComposerGroups } from '../../utils/post';
+import { IS_DEV, IS_EDITOR } from '../constants';
 
 type AppProps = {
   app: Application
@@ -35,7 +36,7 @@ function App(props: AppProps) {
     renderer.shadowMap.enabled = true;
     renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
     renderer.setClearColor(0x000000);
-    renderer.inspector = new Inspector();
+    if (IS_DEV && !IS_EDITOR) renderer.inspector = new Inspector();
     three.setRenderer(renderer, canvas);
 
     const onResize = () => {
@@ -51,7 +52,6 @@ function App(props: AppProps) {
     };
 
     renderer.init().then(() => {
-      console.log('Renderer ready');
       renderer.setAnimationLoop(updateApp);
     });
 
