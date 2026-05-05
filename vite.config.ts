@@ -8,29 +8,46 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'Hermes',
-      formats: ['cjs', 'es'],
-      fileName: (format) => `hermes.${format}.js`,
     },
-    manifest: true,
     rollupOptions: {
       external: [
         'react',
         'react-dom',
         'react/jsx-runtime',
         /^three(\/.*)?$/,
+        'camera-controls',
+        'detect-gpu',
         'framer-motion',
         '@tomorrowevening/theatre-core',
         '@tomorrowevening/theatre-studio',
         'postprocessing',
       ],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          three: 'THREE',
-        }
-      }
-    }
+      output: [
+        {
+          format: 'es',
+          dir: 'dist',
+          entryFileNames: '[name].js',
+          chunkFileNames: '[name].js',
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+            three: 'THREE',
+          },
+        },
+        {
+          format: 'cjs',
+          dir: 'dist',
+          entryFileNames: 'hermes.cjs.js',
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+            three: 'THREE',
+          },
+        },
+      ],
+    },
   },
   plugins: [
     glsl({
