@@ -4,10 +4,11 @@
   "description": "An extendable set of Web Tools controlled via a separate window for non-intereference with content.",
   "license": "GPL-3.0-or-later",
   "main": "./dist/hermes.cjs.js",
-  "module": "./dist/hermes.esm.js",
+  "module": "./dist/index.js",
   "types": "./types/index.d.ts",
   "type": "module",
-  "version": "0.1.39",
+  "sideEffects": ["**/*.css"],
+  "version": "0.1.40",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -19,13 +20,16 @@
     "ThreeJS"
   ],
   "files": [
-    "dist/*",
-    "types/**/*.d.ts"
+    "dist",
+    "types/**/*.d.ts",
+    "!public/images",
+    "!public/json",
+    "!public/models"
   ],
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "import": "./dist/hermes.es.js",
+      "import": "./dist/index.js",
       "require": "./dist/hermes.cjs.js"
     },
     "./hermes.css": "./dist/hermes.css"
@@ -50,6 +54,10 @@
     "react-dom": ">=18",
     "three": ">=0.150"
   },
+  "dependencies": {
+    "camera-controls": "^2.9.0",
+    "detect-gpu": "^5.0.70"
+  },
   "devDependencies": {
     "@tomorrowevening/theatre-core": "^1.0.19",
     "@tomorrowevening/theatre-studio": "^1.0.19",
@@ -59,8 +67,6 @@
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "@vitejs/plugin-react": "^4.0.3",
-    "camera-controls": "^2.9.0",
-    "detect-gpu": "^5.0.70",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
