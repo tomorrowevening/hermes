@@ -1,5 +1,5 @@
 import { colorToHex, randomID } from '../../../editor/utils';
-import { KeyboardEvent, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { capitalize } from '../../../editor/utils';
 import InspectNumber from './InspectNumber';
 import InspectVector2 from './InspectVector2';
@@ -50,6 +50,10 @@ export default function InspectorField(props: InspectorFieldProps) {
   const [fieldValue, setFieldValue] = useState(propsValue);
   const labelRef = useRef<HTMLElement>(null);
 
+  useEffect(() => {
+    setFieldValue(propsValue);
+  }, [propsValue]);
+
   const onChange = (evt: any) => {
     let value = evt.target.value;
     if (props.type === 'boolean') {
@@ -81,7 +85,8 @@ export default function InspectorField(props: InspectorFieldProps) {
     style['opacity'] = 0.8;
   }
 
-  const textfield = props.type === 'field' ||  (props.type === 'string' && (fieldValue.length > 100 || fieldValue.search('\n') > -1));
+  const stringFieldValue = typeof fieldValue === 'string' ? fieldValue : String(fieldValue ?? '');
+  const textfield = props.type === 'field' ||  (props.type === 'string' && (stringFieldValue.length > 100 || stringFieldValue.search('\n') > -1));
   const block = textfield || props.type === 'image' || props.type === 'vector2';
 
   return (
@@ -179,7 +184,7 @@ export default function InspectorField(props: InspectorFieldProps) {
           <select
             onChange={onChange}
             disabled={props.disabled}
-            defaultValue={props.value}
+            value={fieldValue}
             name={randomID()}
           >
             {props.options?.map((option, index) => (

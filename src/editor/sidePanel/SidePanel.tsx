@@ -8,7 +8,7 @@ import Accordion from './Accordion';
 import ContainerObject from './ContainerObject';
 import DebugData from './DebugData';
 import Inspector from './inspector/Inspector';
-import InspectRenderer from './inspector/utils/InspectRenderer';
+// import InspectRenderer from './inspector/utils/InspectRenderer';
 import { ToolEvents } from '../../core/remote/RemoteThree';
 
 export default function SidePanel(props: SidePanelState) {
@@ -122,7 +122,7 @@ export default function SidePanel(props: SidePanelState) {
         {sceneComponents}
       </div>
       <Inspector three={props.three} />
-      <InspectRenderer three={props.three} />
+      {/* <InspectRenderer three={props.three} /> */}
       <DebugData three={props.three} />
     </div>
   );

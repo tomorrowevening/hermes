@@ -225,8 +225,6 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
       Raycaster,
     };
     CameraControls.install({ THREE });
-    this.setupScene();
-    this.setupTools();
 
     const expandedCameraVisibility = localStorage.getItem(this.expandedCameraVisibility);
     if (expandedCameraVisibility !== null) this.cameraVisibility = expandedCameraVisibility === 'open';
@@ -246,6 +244,8 @@ export default class MultiView extends Component<MultiViewProps, MultiViewState>
   }
 
   componentDidMount(): void {
+    this.setupScene();
+    this.setupTools();
     this.enable();
     this.assignControls();
     this.resize();

@@ -46,11 +46,6 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
     const expandedValue = localStorage.getItem(this.expandedName);
     const expanded = expandedValue !== null ? expandedValue === 'open' : false;
 
-    this.state = {
-      expanded: expanded,
-      lastUpdated: Date.now(),
-    };
-
     this.saveExpanded(expanded);
 
     if (MultiView.instance) {
@@ -60,8 +55,15 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
         this.clearAlpha = renderer.getClearAlpha();
         this.toneMapping = renderer.toneMapping;
         this.toneMappingExposure = renderer.toneMappingExposure;
+        // @ts-ignore
+        this.type = renderer.isWebGLRenderer ? 'WebGLRenderer' : 'WebGPURenderer';
       }
     }
+
+    this.state = {
+      expanded: expanded,
+      lastUpdated: Date.now(),
+    };
 
     this.props.three.addEventListener(ToolEvents.ADD_RENDERER, this.onAddRenderer);
   }
@@ -71,6 +73,11 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
   }
 
   private onAddRenderer = (evt: any) => {
+    // Only create 1 renderer
+    if (MultiView.instance) {
+      if (MultiView.instance.renderer) return;
+    }
+
     const data = evt.value;
     this.autoClearColor = data.autoClearColor;
     this.outputColorSpace = data.outputColorSpace;
@@ -90,6 +97,8 @@ export default class InspectRenderer extends Component<InspectRendererProps, Ins
         renderer.toneMapping = this.toneMapping;
         renderer.toneMappingExposure = this.toneMappingExposure;
         renderer.setClearColor(data.clearColor, this.clearAlpha);
+        // @ts-ignore
+        this.type = renderer.isWebGLRenderer ? 'WebGLRenderer' : 'WebGPURenderer';
       }
     }
 
