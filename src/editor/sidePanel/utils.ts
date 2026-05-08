@@ -386,3 +386,5 @@ export function textureFromSrc(imgSource: string): Promise<Texture> {
     img.src = imgSource;
   });
 }
+
+export const EDITOR_UTILS = { stripObject, stripScene, getSubItem, setItemProps, textureFromSrc };
