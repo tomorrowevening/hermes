@@ -13,6 +13,12 @@ import Scene2 from '../three/scenes/Scene2';
 import Scene3 from '../three/scenes/Scene3';
 import RTTScene from '../three/scenes/RTTScene';
 import { loadAssets } from '../three/loader';
+import { EDITOR_UTILS } from '../../editor/sidePanel/utils';
+
+const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
+
+//////////////////////////////////////////////////
+// Debug
 
 const scenes = new Map<string, any>([
   ['Scene2', Scene2],
@@ -24,12 +30,16 @@ const ThreeEditor = IS_DEV
   ? lazy(() => import('../../editor/ThreeEditor'))
   : null;
 
-const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
-
-if (IS_DEV && IS_EDITOR && studio) {
-  studio.initialize();
-  app.theatre.studio = studio;
-  app.theatre.handleEditorApp();
+if (IS_DEV) {
+  if (IS_EDITOR) {
+    if (studio) {
+      studio.initialize();
+      app.theatre.studio = studio;
+      app.theatre.handleEditorApp();
+    }
+  } else {
+    app.three.setEditorUtils(EDITOR_UTILS);
+  }
 }
 
 export default function AppWrapper() {
