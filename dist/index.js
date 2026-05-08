@@ -1,125 +1,134 @@
 import { defaultTheatreCallback as t, noop as a } from "./core/types.js";
-import { capitalize as l, colorToHex as p, copyToClipboard as f, isColor as m, randomID as s } from "./editor/utils.js";
-import { detectMaxFrameRate as i, detectSettings as n } from "./utils/detectSettings.js";
-import { ImageSequenceCapturer as u } from "./utils/ImageSequenceCapturer.js";
-import { clamp as M, cubicBezier as b, damp as T, distance as h, getAngle as g, map as C, mix as O, normalize as j, rgbaToHex as I, roundTo as y } from "./utils/math.js";
-import { animateObjectMaterial as G, animateObjectTransform as B, applyObjectMaterial as D, customizeTheatreElements as P, getObjectMaterialObject as S, getObjectMaterialProps as H, useStudio as A } from "./utils/theatre.js";
-import { ExportTexture as R, anchorGeometry as U, anchorGeometryTL as k, createMask as v, dispose as w, disposeMaterial as z, disposeTexture as V, hierarchyUUID as L, orthoCamera as q, parseModelLite as F, renderToTexture as W, resetThreeObjects as J, setMaterialBlendAdd as K, setMaterialBlendMultiply as Q, setMaterialBlendNormal as X, setMaterialBlendScreen as Y, supportsOffscreenCanvas as Z, totalThreeObjects as _, triangle as $, updateCameraOrtho as ee, updateCameraOrtho16x9 as re, useMask as te } from "./utils/three.js";
-import { clearComposerGroups as oe, generateCubemap as le, inspectComposer as pe, inspectComposerPass as fe } from "./utils/post.js";
-import { ElementProxy as se, WebworkerEventHandlers as de } from "./webworkers/EventHandling.js";
-import { ElementProxyReceiver as ne, ProxyManager as xe } from "./webworkers/ProxyManager.js";
-import { default as ce } from "./core/Application.js";
-import { default as be } from "./core/remote/BaseRemote.js";
-import { default as he } from "./core/remote/RemoteTheatre.js";
-import { default as Ce } from "./core/remote/RemoteThree.js";
-import { default as je } from "./editor/components/NavButton.js";
-import { default as ye } from "./editor/components/DraggableItem.js";
-import { default as Ge } from "./editor/components/Draggable.js";
-import { default as De } from "./editor/components/DropdownItem.js";
-import { default as Se } from "./editor/components/Dropdown.js";
-import { default as Ae } from "./editor/sidePanel/SidePanel.js";
-import { default as Re } from "./editor/sidePanel/Accordion.js";
-import { default as ke } from "./editor/sidePanel/ChildObject.js";
-import { default as we } from "./editor/sidePanel/ContainerObject.js";
-import { default as Ve } from "./editor/sidePanel/inspector/Inspector.js";
-import { default as qe } from "./editor/multiView/MultiView.js";
-import { default as We } from "./editor/Editor.js";
-import { default as Ke } from "./editor/ThreeEditor.js";
-import { default as Xe } from "./editor/HermesApp.js";
-import { default as Ze } from "./editor/tools/Transform.js";
-import { default as $e } from "./editor/tools/splineEditor/Spline.js";
-import { default as rr } from "./editor/tools/splineEditor/index.js";
-import { default as ar } from "./editor/multiView/InfiniteGridMaterial.js";
-import { default as lr } from "./editor/multiView/InfiniteGridNodeMaterial.js";
-import { default as fr } from "./editor/multiView/InfiniteGridHelper.js";
-import { default as sr } from "./editor/multiView/InfiniteGridHelperGPU.js";
-import { default as ir } from "./editor/multiView/DepthNodeMaterial.js";
-import { default as xr } from "./editor/multiView/UVMaterial.js";
-import { default as cr } from "./editor/multiView/UVNodeMaterial.js";
+import { EDITOR_UTILS as p, convertImageToBase64 as l, determineIcon as f, getSubItem as m, setItemProps as s, stripObject as d, stripScene as i, textureFromSrc as n } from "./editor/sidePanel/utils.js";
+import { capitalize as u, colorToHex as c, copyToClipboard as M, isColor as T, randomID as b } from "./editor/utils.js";
+import { detectMaxFrameRate as h, detectSettings as I } from "./utils/detectSettings.js";
+import { ImageSequenceCapturer as C } from "./utils/ImageSequenceCapturer.js";
+import { clamp as S, cubicBezier as y, damp as E, distance as B, getAngle as D, map as G, mix as P, normalize as H, rgbaToHex as R, roundTo as U } from "./utils/math.js";
+import { animateObjectMaterial as A, animateObjectTransform as N, applyObjectMaterial as k, customizeTheatreElements as w, getObjectMaterialObject as z, getObjectMaterialProps as L, useStudio as V } from "./utils/theatre.js";
+import { ExportTexture as q, anchorGeometry as W, anchorGeometryTL as _, createMask as J, dispose as K, disposeMaterial as Q, disposeTexture as X, hierarchyUUID as Y, orthoCamera as Z, parseModelLite as $, renderToTexture as ee, resetThreeObjects as re, setMaterialBlendAdd as te, setMaterialBlendMultiply as ae, setMaterialBlendNormal as oe, setMaterialBlendScreen as pe, supportsOffscreenCanvas as le, totalThreeObjects as fe, triangle as me, updateCameraOrtho as se, updateCameraOrtho16x9 as de, useMask as ie } from "./utils/three.js";
+import { clearComposerGroups as xe, generateCubemap as ue, inspectComposer as ce, inspectComposerPass as Me } from "./utils/post.js";
+import { ElementProxy as be, WebworkerEventHandlers as ge } from "./webworkers/EventHandling.js";
+import { ElementProxyReceiver as Ie, ProxyManager as Oe } from "./webworkers/ProxyManager.js";
+import { default as je } from "./core/Application.js";
+import { default as ye } from "./core/remote/BaseRemote.js";
+import { default as Be } from "./core/remote/RemoteTheatre.js";
+import { default as Ge } from "./core/remote/RemoteThree.js";
+import { default as He } from "./editor/components/NavButton.js";
+import { default as Ue } from "./editor/components/DraggableItem.js";
+import { default as Ae } from "./editor/components/Draggable.js";
+import { default as ke } from "./editor/components/DropdownItem.js";
+import { default as ze } from "./editor/components/Dropdown.js";
+import { default as Ve } from "./editor/sidePanel/SidePanel.js";
+import { default as qe } from "./editor/sidePanel/Accordion.js";
+import { default as _e } from "./editor/sidePanel/ChildObject.js";
+import { default as Ke } from "./editor/sidePanel/ContainerObject.js";
+import { default as Xe } from "./editor/sidePanel/inspector/Inspector.js";
+import { default as Ze } from "./editor/multiView/MultiView.js";
+import { default as er } from "./editor/Editor.js";
+import { default as tr } from "./editor/ThreeEditor.js";
+import { default as or } from "./editor/HermesApp.js";
+import { default as lr } from "./editor/tools/Transform.js";
+import { default as mr } from "./editor/tools/splineEditor/Spline.js";
+import { default as dr } from "./editor/tools/splineEditor/index.js";
+import { default as nr } from "./editor/multiView/InfiniteGridMaterial.js";
+import { default as ur } from "./editor/multiView/InfiniteGridNodeMaterial.js";
+import { default as Mr } from "./editor/multiView/InfiniteGridHelper.js";
+import { default as br } from "./editor/multiView/InfiniteGridHelperGPU.js";
+import { default as hr } from "./editor/multiView/DepthNodeMaterial.js";
+import { default as Or } from "./editor/multiView/UVMaterial.js";
+import { default as jr } from "./editor/multiView/UVNodeMaterial.js";
 export {
-  Re as Accordion,
-  ce as Application,
-  be as BaseRemote,
-  ke as ChildObject,
-  we as ContainerObject,
-  ir as DepthNodeMaterial,
-  Ge as Draggable,
-  ye as DraggableItem,
-  Se as Dropdown,
-  De as DropdownItem,
-  We as Editor,
-  se as ElementProxy,
-  ne as ElementProxyReceiver,
-  R as ExportTexture,
-  Xe as HermesApp,
-  u as ImageSequenceCapturer,
-  fr as InfiniteGridHelper,
-  sr as InfiniteGridHelperGPU,
-  ar as InfiniteGridMaterial,
-  lr as InfiniteGridNodeMaterial,
-  Ve as Inspector,
-  qe as MultiView,
-  je as NavButton,
-  xe as ProxyManager,
-  he as RemoteTheatre,
-  Ce as RemoteThree,
-  Ae as SidePanel,
-  $e as Spline,
-  rr as SplineEditor,
-  Ke as ThreeEditor,
-  Ze as Transform,
-  xr as UVMaterial,
-  cr as UVNodeMaterial,
-  de as WebworkerEventHandlers,
-  U as anchorGeometry,
-  k as anchorGeometryTL,
-  G as animateObjectMaterial,
-  B as animateObjectTransform,
-  D as applyObjectMaterial,
-  l as capitalize,
-  M as clamp,
-  oe as clearComposerGroups,
-  p as colorToHex,
-  f as copyToClipboard,
-  v as createMask,
-  b as cubicBezier,
-  P as customizeTheatreElements,
-  T as damp,
+  qe as Accordion,
+  je as Application,
+  ye as BaseRemote,
+  _e as ChildObject,
+  Ke as ContainerObject,
+  hr as DepthNodeMaterial,
+  Ae as Draggable,
+  Ue as DraggableItem,
+  ze as Dropdown,
+  ke as DropdownItem,
+  p as EDITOR_UTILS,
+  er as Editor,
+  be as ElementProxy,
+  Ie as ElementProxyReceiver,
+  q as ExportTexture,
+  or as HermesApp,
+  C as ImageSequenceCapturer,
+  Mr as InfiniteGridHelper,
+  br as InfiniteGridHelperGPU,
+  nr as InfiniteGridMaterial,
+  ur as InfiniteGridNodeMaterial,
+  Xe as Inspector,
+  Ze as MultiView,
+  He as NavButton,
+  Oe as ProxyManager,
+  Be as RemoteTheatre,
+  Ge as RemoteThree,
+  Ve as SidePanel,
+  mr as Spline,
+  dr as SplineEditor,
+  tr as ThreeEditor,
+  lr as Transform,
+  Or as UVMaterial,
+  jr as UVNodeMaterial,
+  ge as WebworkerEventHandlers,
+  W as anchorGeometry,
+  _ as anchorGeometryTL,
+  A as animateObjectMaterial,
+  N as animateObjectTransform,
+  k as applyObjectMaterial,
+  u as capitalize,
+  S as clamp,
+  xe as clearComposerGroups,
+  c as colorToHex,
+  l as convertImageToBase64,
+  M as copyToClipboard,
+  J as createMask,
+  y as cubicBezier,
+  w as customizeTheatreElements,
+  E as damp,
   t as defaultTheatreCallback,
-  i as detectMaxFrameRate,
-  n as detectSettings,
-  w as dispose,
-  z as disposeMaterial,
-  V as disposeTexture,
-  h as distance,
-  le as generateCubemap,
-  g as getAngle,
-  S as getObjectMaterialObject,
-  H as getObjectMaterialProps,
-  L as hierarchyUUID,
-  pe as inspectComposer,
-  fe as inspectComposerPass,
-  m as isColor,
-  C as map,
-  O as mix,
+  h as detectMaxFrameRate,
+  I as detectSettings,
+  f as determineIcon,
+  K as dispose,
+  Q as disposeMaterial,
+  X as disposeTexture,
+  B as distance,
+  ue as generateCubemap,
+  D as getAngle,
+  z as getObjectMaterialObject,
+  L as getObjectMaterialProps,
+  m as getSubItem,
+  Y as hierarchyUUID,
+  ce as inspectComposer,
+  Me as inspectComposerPass,
+  T as isColor,
+  G as map,
+  P as mix,
   a as noop,
-  j as normalize,
-  q as orthoCamera,
-  F as parseModelLite,
-  s as randomID,
-  W as renderToTexture,
-  J as resetThreeObjects,
-  I as rgbaToHex,
-  y as roundTo,
-  K as setMaterialBlendAdd,
-  Q as setMaterialBlendMultiply,
-  X as setMaterialBlendNormal,
-  Y as setMaterialBlendScreen,
-  Z as supportsOffscreenCanvas,
-  _ as totalThreeObjects,
-  $ as triangle,
-  ee as updateCameraOrtho,
-  re as updateCameraOrtho16x9,
-  te as useMask,
-  A as useStudio
+  H as normalize,
+  Z as orthoCamera,
+  $ as parseModelLite,
+  b as randomID,
+  ee as renderToTexture,
+  re as resetThreeObjects,
+  R as rgbaToHex,
+  U as roundTo,
+  s as setItemProps,
+  te as setMaterialBlendAdd,
+  ae as setMaterialBlendMultiply,
+  oe as setMaterialBlendNormal,
+  pe as setMaterialBlendScreen,
+  d as stripObject,
+  i as stripScene,
+  le as supportsOffscreenCanvas,
+  n as textureFromSrc,
+  fe as totalThreeObjects,
+  me as triangle,
+  se as updateCameraOrtho,
+  de as updateCameraOrtho16x9,
+  ie as useMask,
+  V as useStudio
 };

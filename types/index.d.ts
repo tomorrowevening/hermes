@@ -1,4 +1,5 @@
 export * from './core/types';
+export * from './editor/sidePanel/utils';
 export * from './editor/utils';
 export * from './utils/detectSettings';
 export * from './utils/ImageSequenceCapturer';

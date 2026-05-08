@@ -7,3 +7,10 @@ export declare function stripObject(obj: Object3D): RemoteObject;
 export declare function getSubItem(child: any, key: string): any;
 export declare function setItemProps(child: any, key: string, value: any): void;
 export declare function textureFromSrc(imgSource: string): Promise<Texture>;
+export declare const EDITOR_UTILS: {
+    stripObject: typeof stripObject;
+    stripScene: typeof stripScene;
+    getSubItem: typeof getSubItem;
+    setItemProps: typeof setItemProps;
+    textureFromSrc: typeof textureFromSrc;
+};
