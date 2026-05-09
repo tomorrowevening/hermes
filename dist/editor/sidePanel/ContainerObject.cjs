@@ -1,0 +1,1 @@
+"use strict";const s=require("react/jsx-runtime"),i=require("./ChildObject.cjs");function r(e){const c=[];return e.child?.children.map((n,t)=>{c.push(s.jsx(i,{child:n,scene:e.scene,three:e.three},t))}),s.jsx("div",{className:`scene ${e.class!==void 0?e.class:""}`,children:c})}module.exports=r;

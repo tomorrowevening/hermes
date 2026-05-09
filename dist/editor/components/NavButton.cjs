@@ -1,0 +1,1 @@
+"use strict";const e=require("react/jsx-runtime");function n(t){return t.title.search("<")>-1?e.jsx("button",{className:"svg",dangerouslySetInnerHTML:{__html:t.title}}):e.jsx("button",{children:t.title})}module.exports=n;

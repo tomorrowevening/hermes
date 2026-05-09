@@ -1,0 +1,1 @@
+"use strict";const s=require("three/src/materials/nodes/MeshBasicNodeMaterial.js"),e=require("three/src/nodes/TSL.js");class r extends s{constructor(){super(),this.colorNode=e.vec4(e.uv(),0,1)}}module.exports=r;

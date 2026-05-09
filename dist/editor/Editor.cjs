@@ -1,0 +1,1 @@
+"use strict";const r=require("react/jsx-runtime"),d=require("react");;/* empty css                  */const t=d.forwardRef((e,i)=>r.jsxs("div",{className:"editor",ref:i,style:e.style,children:[e.header&&r.jsx("div",{className:"header",children:e.header}),e.children,e.footer&&r.jsx("div",{className:"footer",children:e.footer})]}));t.displayName="Editor";module.exports=t;

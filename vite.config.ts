@@ -6,7 +6,10 @@ export default defineConfig({
   build: {
     target: 'esnext',
     lib: {
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        'editor/index': 'src/editor/index.ts',
+      },
       name: 'Hermes',
     },
     rollupOptions: {
@@ -39,7 +42,10 @@ export default defineConfig({
         {
           format: 'cjs',
           dir: 'dist',
-          entryFileNames: 'hermes.cjs.js',
+          entryFileNames: '[name].cjs',
+          chunkFileNames: '[name].cjs',
+          preserveModules: true,
+          preserveModulesRoot: 'src',
           globals: {
             react: 'React',
             'react-dom': 'ReactDOM',

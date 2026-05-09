@@ -7,8 +7,8 @@ export default defineConfig({
   resolve: {
   },
   build: {
-		emptyOutDir: false,
+    emptyOutDir: true,
     assetsDir: '',
-    outDir: 'dist'
+    outDir: 'example-dist'
   }
 });

@@ -1,5 +1,5 @@
 import { Texture as m, RepeatWrapping as c } from "three";
-import { ExportTexture as f } from "../../utils/three.js";
+import { ExportTexture as f } from "../../utils/threeEditorDebug.js";
 function k(e) {
   if (e.name === "cameras")
     return "camera";

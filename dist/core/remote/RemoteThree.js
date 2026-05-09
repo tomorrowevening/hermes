@@ -1,9 +1,10 @@
 import { Color as l, ColorManagement as p, WebGPURenderer as g, RenderTarget as v, WebGLRenderTarget as f } from "three/webgpu";
 import E from "./BaseRemote.js";
 import { clamp as S } from "../../utils/math.js";
-import { dispose as u, hierarchyUUID as o, ExportTexture as h, resetThreeObjects as c } from "../../utils/three.js";
+import { dispose as u } from "../../utils/threeDispose.js";
+import { hierarchyUUID as o, ExportTexture as h, resetThreeObjects as c } from "../../utils/threeEditorDebug.js";
 var b = /* @__PURE__ */ ((a) => (a.CUSTOM = "ToolEvents::custom", a.SELECT_DROPDOWN = "ToolEvents::selectDropdown", a.DRAG_UPDATE = "ToolEvents::dragUpdate", a.ADD_SCENE = "ToolEvents::addScene", a.REFRESH_SCENE = "ToolEvents::refreshScene", a.REMOVE_SCENE = "ToolEvents::removeScene", a.SET_SCENE = "ToolEvents::setScene", a.SET_OBJECT = "ToolEvents::setObject", a.CLEAR_OBJECT = "ToolEvents::clearObject", a.ADD_CAMERA = "ToolEvents::addCamera", a.REMOVE_CAMERA = "ToolEvents::removeCamera", a.ADD_GROUP = "ToolEvents::addGroup", a.REMOVE_GROUP = "ToolEvents::removeGroup", a.ADD_SPLINE = "ToolEvents::addSpline", a.ADD_RENDERER = "ToolEvents::addRenderer", a.UPDATE_RENDERER = "ToolEvents::updateRenderer", a))(b || {});
-class O extends E {
+class y extends E {
   name;
   canvas = null;
   // Canvas or OffscreenCanvas
@@ -447,5 +448,5 @@ class O extends E {
 }
 export {
   b as ToolEvents,
-  O as default
+  y as default
 };

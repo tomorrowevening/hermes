@@ -1,10 +1,8 @@
 // Libs
-import { createRafDriver, getProject, IProject, ISheet, ISheetObject, types } from '@tomorrowevening/theatre-core';
+import { getProject, IProject, ISheet, ISheetObject } from '@tomorrowevening/theatre-core';
 // Core
 import BaseRemote from './BaseRemote';
 import { BroadcastData, DataUpdateCallback, EditorEvent, VoidCallback, noop } from '../types';
-// Utils
-import { isColor } from '../../editor/utils';
 
 type KeyframeData = {
   position: number
@@ -18,6 +16,16 @@ type KeyframeVector = {
   x: number
   y: number
   z: number
+}
+
+function isColorLike(obj: any): boolean {
+  return (
+    obj !== null &&
+    obj !== undefined &&
+    obj.r !== undefined &&
+    obj.g !== undefined &&
+    obj.b !== undefined
+  );
 }
 
 // Cubic Bézier formula
@@ -179,7 +187,7 @@ export default class RemoteTheatre extends BaseRemote {
 
     function convertColor(obj, key, value) {
       if (typeof value === 'object') {
-        if (isColor(value)) {
+        if (isColorLike(value)) {
           obj[key] = {
             r: value.r,
             g: value.g,

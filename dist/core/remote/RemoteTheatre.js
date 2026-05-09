@@ -1,24 +1,26 @@
 import { getProject as _ } from "@tomorrowevening/theatre-core";
 import $ from "./BaseRemote.js";
 import { noop as g } from "../types.js";
-import { isColor as w } from "../../editor/utils.js";
-function P(n, e, t, i, h) {
-  const s = 1 - n;
-  return s * s * s * e + 3 * s * s * n * t + 3 * s * n * n * i + n * n * n * h;
+function w(o) {
+  return o != null && o.r !== void 0 && o.g !== void 0 && o.b !== void 0;
 }
-function q(n, e, t) {
-  if (n.type !== "bezier" || n.handles.length !== 4)
+function P(o, e, t, i, h) {
+  const s = 1 - o;
+  return s * s * s * e + 3 * s * s * o * t + 3 * s * o * o * i + o * o * o * h;
+}
+function q(o, e, t) {
+  if (o.type !== "bezier" || o.handles.length !== 4)
     throw new Error("Invalid keyframe data for Bézier interpolation.");
-  const [i, h] = n.handles, s = (t - n.position) / (e.position - n.position);
+  const [i, h] = o.handles, s = (t - o.position) / (e.position - o.position);
   return P(
     s,
-    n.value,
-    n.value + i,
+    o.value,
+    o.value + i,
     e.value + h,
     e.value
   );
 }
-class E extends $ {
+class B extends $ {
   project;
   sheets = /* @__PURE__ */ new Map();
   sheetObjects = /* @__PURE__ */ new Map();
@@ -93,27 +95,27 @@ class E extends $ {
     const u = `${this.getSheetInstance(e, s)}_${t}`;
     let b = this.sheetObjects.get(u), j = i;
     b !== void 0 && (j = { ...i, ...b.value }), b = a.object(t, j, { reconfigure: !0 }), this.sheetObjects.set(u, b), this.sheetObjectCBs.set(u, h !== void 0 ? h : g);
-    function v(d, p, o) {
-      if (typeof o == "object")
-        if (w(o))
+    function v(d, p, n) {
+      if (typeof n == "object")
+        if (w(n))
           d[p] = {
-            r: o.r,
-            g: o.g,
-            b: o.b,
-            a: o.a
+            r: n.r,
+            g: n.g,
+            b: n.b,
+            a: n.a
           };
         else
-          for (const r in o) {
-            const l = o[r];
-            typeof l == "object" && v(o, r, l);
+          for (const r in n) {
+            const l = n[r];
+            typeof l == "object" && v(n, r, l);
           }
     }
     const c = b.onValuesChange((d) => {
       const p = this.sheetObjectCBs.get(u);
       if (this.editor) {
-        for (const o in d) {
-          const r = d[o];
-          typeof r == "object" && v(d, o, r);
+        for (const n in d) {
+          const r = d[n];
+          typeof r == "object" && v(d, n, r);
         }
         this.send({
           event: "updateSheetObject",
@@ -142,13 +144,13 @@ class E extends $ {
     if (s === void 0) return [];
     const a = [], f = i.sequence.__experimental_getKeyframes(s.props.x), u = i.sequence.__experimental_getKeyframes(s.props.y), b = i.sequence.__experimental_getKeyframes(s.props.z), j = /* @__PURE__ */ new Set();
     return f.forEach((c) => j.add(c.position)), u.forEach((c) => j.add(c.position)), b.forEach((c) => j.add(c.position)), Array.from(j).sort((c, d) => c - d).forEach((c) => {
-      const d = (p, o) => {
-        const r = p.find((S, y) => S.position <= o && (p[y + 1]?.position || 1 / 0) > o), l = p.find((S) => S.position > o);
+      const d = (p, n) => {
+        const r = p.find((S, y) => S.position <= n && (p[y + 1]?.position || 1 / 0) > n), l = p.find((S) => S.position > n);
         if (!r) return l?.value || 0;
-        if (!l || r.position === o) return r.value;
+        if (!l || r.position === n) return r.value;
         if (r.type === "bezier")
-          return q(r, l, o);
-        const O = (o - r.position) / (l.position - r.position);
+          return q(r, l, n);
+        const O = (n - r.position) / (l.position - r.position);
         return r.value + O * (l.value - r.value);
       };
       a.push({
@@ -249,5 +251,5 @@ class E extends $ {
   }
 }
 export {
-  E as default
+  B as default
 };

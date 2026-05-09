@@ -1,0 +1,1 @@
+"use strict";const r=require("three/src/materials/nodes/MeshBasicNodeMaterial.js"),s=require("three/src/nodes/TSL.js");class t extends r{constructor(){super();const e=s.remapClamp(s.linearDepth(),.1,.5,0,1).oneMinus();this.colorNode=s.vec4(e,e,e,1)}}module.exports=t;

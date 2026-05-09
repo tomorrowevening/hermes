@@ -16,7 +16,8 @@ import {
 import BaseRemote from './BaseRemote';
 import { BroadcastData, GroupCallback, GroupData } from '../types';
 import { clamp } from '../../utils/math';
-import { dispose, ExportTexture, hierarchyUUID, resetThreeObjects } from '../../utils/three';
+import { dispose } from '../../utils/threeDispose';
+import { ExportTexture, hierarchyUUID, resetThreeObjects } from '../../utils/threeEditorDebug';
 
 export enum ToolEvents {
   CUSTOM = 'ToolEvents::custom',

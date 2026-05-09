@@ -9,7 +9,7 @@ import {
   Texture,
 } from 'three';
 import { MinimumObject, RemoteMaterial, RemoteObject } from './types';
-import { ExportTexture } from '../../utils/three';
+import { ExportTexture } from '../../utils/threeEditorDebug';
 
 export function determineIcon(obj: RemoteObject): string {
   if (obj.name === 'cameras') {

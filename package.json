@@ -3,12 +3,12 @@
   "author": "Colin Duffy <http://tomorrowevening.com/>",
   "description": "An extendable set of Web Tools controlled via a separate window for non-intereference with content.",
   "license": "GPL-3.0-or-later",
-  "main": "./dist/hermes.cjs.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./types/index.d.ts",
   "type": "module",
   "sideEffects": ["**/*.css"],
-  "version": "0.1.42",
+  "version": "0.1.43",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"
@@ -22,15 +22,31 @@
   "files": [
     "dist",
     "types/**/*.d.ts",
-    "!public/images",
-    "!public/json",
-    "!public/models"
+    "!dist/images/**",
+    "!dist/json/**",
+    "!dist/models/**",
+    "!dist/index-*.js",
+    "!dist/index-*.css",
+    "!dist/ThreeEditor-*.js",
+    "!dist/ThreeEditor-*.css",
+    "!dist/index.css",
+    "!dist/index.html"
   ],
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/hermes.cjs.js"
+      "require": "./dist/index.cjs"
+    },
+    "./editor": {
+      "types": "./types/editor/index.d.ts",
+      "import": "./dist/editor/index.js",
+      "require": "./dist/editor/index.cjs"
+    },
+    "./editor/*": {
+      "types": "./types/editor/*.d.ts",
+      "import": "./dist/editor/*.js",
+      "require": "./dist/editor/*.cjs"
     },
     "./hermes.css": "./dist/hermes.css"
   },
@@ -40,7 +56,7 @@
   },
   "scripts": {
     "server": "node server/index.mjs",
-    "clean": "rimraf dist types",
+    "clean": "rimraf dist types example-dist",
     "dev": "vite",
     "declare": "tsc --declaration --emitDeclarationOnly --declarationDir types",
     "buildLib": "yarn declare && vite build",
