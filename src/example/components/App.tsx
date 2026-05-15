@@ -12,7 +12,6 @@ import Scene2 from '../three/scenes/Scene2';
 import Scene3 from '../three/scenes/Scene3';
 // Utils
 import { dispose } from '../../utils/three';
-import { clearComposerGroups } from '../../utils/post';
 import { IS_DEV, IS_EDITOR } from '../constants';
 
 type AppProps = {
@@ -76,7 +75,6 @@ function App(props: AppProps) {
       if (currentSceneRef.current.camera !== undefined) three.removeCamera(currentSceneRef.current.camera);
       three.removeScene(currentSceneRef.current);
       dispose(currentSceneRef.current);
-      clearComposerGroups(three);
     }
     if (sceneNameRef.current === 'scene2') {
       currentSceneRef.current = new Scene2();

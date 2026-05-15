@@ -13,7 +13,6 @@ import Scene2 from '../three/scenes/Scene2';
 import Scene3 from '../three/scenes/Scene3';
 import RTTScene from '../three/scenes/RTTScene';
 import { loadAssets } from '../three/loader';
-import { EDITOR_UTILS } from '../../editor/sidePanel/utils';
 
 const app = new ExampleApplication('Hermes Example', IS_DEV, IS_EDITOR);
 
@@ -26,11 +25,11 @@ const scenes = new Map<string, any>([
   ['RTTScene', RTTScene],
 ]);
 
-const ThreeEditor = IS_DEV
+const ThreeEditor = (import.meta.env.DEV && IS_EDITOR)
   ? lazy(() => import('../../editor/ThreeEditor'))
   : null;
 
-if (IS_DEV) {
+if (import.meta.env.DEV) {
   if (IS_EDITOR) {
     if (studio) {
       studio.initialize();
@@ -38,7 +37,9 @@ if (IS_DEV) {
       app.theatre.handleEditorApp();
     }
   } else {
-    app.three.setEditorUtils(EDITOR_UTILS);
+    import('../../editor/sidePanel/utils').then(({ EDITOR_UTILS }) => {
+      app.three.setEditorUtils(EDITOR_UTILS);
+    });
   }
 }
 

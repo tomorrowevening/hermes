@@ -10,7 +10,6 @@ class n {
   components = /* @__PURE__ */ new Map();
   settings = {
     dpr: 1,
-    fps: 30,
     width: 0,
     height: 0,
     mobile: !1,

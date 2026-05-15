@@ -8,7 +8,7 @@
   "types": "./types/index.d.ts",
   "type": "module",
   "sideEffects": ["**/*.css"],
-  "version": "0.1.43",
+  "version": "0.1.44",
   "homepage": "https://github.com/tomorrowevening/hermes#readme",
   "bugs": {
     "url": "https://github.com/tomorrowevening/hermes/issues"

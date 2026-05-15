@@ -49,7 +49,9 @@ export type DataUpdateCallback = (data: any) => void
 export type EditorEvent =
   | 'custom'
 // Theatre
+  | 'createSheet'
   | 'setSheet'
+  | 'createSheetObject'
   | 'setSheetObject'
   | 'updateSheetObject'
   | 'updateTimeline'
