@@ -1,21 +1,21 @@
 import { getProject as _ } from "@tomorrowevening/theatre-core";
 import $ from "./BaseRemote.js";
 import { noop as g } from "../types.js";
-function w(o) {
-  return o != null && o.r !== void 0 && o.g !== void 0 && o.b !== void 0;
+function w(a) {
+  return a != null && a.r !== void 0 && a.g !== void 0 && a.b !== void 0;
 }
-function P(o, e, t, i, h) {
-  const s = 1 - o;
-  return s * s * s * e + 3 * s * s * o * t + 3 * s * o * o * i + o * o * o * h;
+function k(a, e, t, i, h) {
+  const s = 1 - a;
+  return s * s * s * e + 3 * s * s * a * t + 3 * s * a * a * i + a * a * a * h;
 }
-function q(o, e, t) {
-  if (o.type !== "bezier" || o.handles.length !== 4)
+function P(a, e, t) {
+  if (a.type !== "bezier" || a.handles.length !== 4)
     throw new Error("Invalid keyframe data for Bézier interpolation.");
-  const [i, h] = o.handles, s = (t - o.position) / (e.position - o.position);
-  return P(
+  const [i, h] = a.handles, s = (t - a.position) / (e.position - a.position);
+  return k(
     s,
-    o.value,
-    o.value + i,
+    a.value,
+    a.value + i,
     e.value + h,
     e.value
   );
@@ -39,7 +39,7 @@ class B extends $ {
       this.project?.ready.then(() => {
         if (t) {
           const s = t.sheetsById;
-          for (const a in s) this.sheet(a);
+          for (const n in s) this.sheet(n);
         }
         i();
       }).catch(() => h());
@@ -55,7 +55,14 @@ class B extends $ {
     }
     const i = this.getSheetInstance(e, t);
     let h = this.sheets.get(i);
-    return h !== void 0 || (h = this.project?.sheet(e, t), this.sheets.set(i, h)), h;
+    return h !== void 0 || (h = this.project?.sheet(e, t), this.sheets.set(i, h), this.send({
+      event: "createSheet",
+      target: "editor",
+      data: {
+        sheet: e,
+        instance: t
+      }
+    })), h;
   }
   playSheet(e, t, i) {
     return new Promise((h) => {
@@ -90,32 +97,32 @@ class B extends $ {
       console.error("Theatre Project hasn't been created yet.");
       return;
     }
-    const a = this.sheet(e, s);
-    if (a === void 0) return;
+    const n = this.sheet(e, s);
+    if (n === void 0) return;
     const u = `${this.getSheetInstance(e, s)}_${t}`;
     let b = this.sheetObjects.get(u), j = i;
-    b !== void 0 && (j = { ...i, ...b.value }), b = a.object(t, j, { reconfigure: !0 }), this.sheetObjects.set(u, b), this.sheetObjectCBs.set(u, h !== void 0 ? h : g);
-    function v(d, p, n) {
-      if (typeof n == "object")
-        if (w(n))
+    b !== void 0 && (j = { ...i, ...b.value }), b = n.object(t, j, { reconfigure: !0 }), this.sheetObjects.set(u, b), this.sheetObjectCBs.set(u, h !== void 0 ? h : g);
+    function v(d, p, o) {
+      if (typeof o == "object")
+        if (w(o))
           d[p] = {
-            r: n.r,
-            g: n.g,
-            b: n.b,
-            a: n.a
+            r: o.r,
+            g: o.g,
+            b: o.b,
+            a: o.a
           };
         else
-          for (const r in n) {
-            const l = n[r];
-            typeof l == "object" && v(n, r, l);
+          for (const r in o) {
+            const l = o[r];
+            typeof l == "object" && v(o, r, l);
           }
     }
     const c = b.onValuesChange((d) => {
       const p = this.sheetObjectCBs.get(u);
       if (this.editor) {
-        for (const n in d) {
-          const r = d[n];
-          typeof r == "object" && v(d, n, r);
+        for (const o in d) {
+          const r = d[o];
+          typeof r == "object" && v(d, o, r);
         }
         this.send({
           event: "updateSheetObject",
@@ -129,37 +136,46 @@ class B extends $ {
       } else
         p && p(d);
     });
-    return this.sheetObjectUnsubscribe.set(u, c), b;
+    return this.sheetObjectUnsubscribe.set(u, c), this.send({
+      event: "createSheetObject",
+      target: "editor",
+      data: {
+        sheet: e,
+        instance: s,
+        key: t,
+        props: JSON.stringify(i)
+      }
+    }), b;
   }
   getSheetObjectKeyframes(e, t, i) {
     const h = this.sheet(e);
     if (h === void 0) return [];
-    const s = `${e}_${t}`, a = this.sheetObjects.get(s);
-    return a === void 0 ? [] : h.sequence.__experimental_getKeyframes(a.props[i]);
+    const s = `${e}_${t}`, n = this.sheetObjects.get(s);
+    return n === void 0 ? [] : h.sequence.__experimental_getKeyframes(n.props[i]);
   }
   getSheetObjectVectors(e, t) {
     const i = this.sheet(e);
     if (i === void 0) return [];
     const h = `${e}_${t}`, s = this.sheetObjects.get(h);
     if (s === void 0) return [];
-    const a = [], f = i.sequence.__experimental_getKeyframes(s.props.x), u = i.sequence.__experimental_getKeyframes(s.props.y), b = i.sequence.__experimental_getKeyframes(s.props.z), j = /* @__PURE__ */ new Set();
+    const n = [], f = i.sequence.__experimental_getKeyframes(s.props.x), u = i.sequence.__experimental_getKeyframes(s.props.y), b = i.sequence.__experimental_getKeyframes(s.props.z), j = /* @__PURE__ */ new Set();
     return f.forEach((c) => j.add(c.position)), u.forEach((c) => j.add(c.position)), b.forEach((c) => j.add(c.position)), Array.from(j).sort((c, d) => c - d).forEach((c) => {
-      const d = (p, n) => {
-        const r = p.find((S, y) => S.position <= n && (p[y + 1]?.position || 1 / 0) > n), l = p.find((S) => S.position > n);
+      const d = (p, o) => {
+        const r = p.find((S, y) => S.position <= o && (p[y + 1]?.position || 1 / 0) > o), l = p.find((S) => S.position > o);
         if (!r) return l?.value || 0;
-        if (!l || r.position === n) return r.value;
+        if (!l || r.position === o) return r.value;
         if (r.type === "bezier")
-          return q(r, l, n);
-        const O = (n - r.position) / (l.position - r.position);
+          return P(r, l, o);
+        const O = (o - r.position) / (l.position - r.position);
         return r.value + O * (l.value - r.value);
       };
-      a.push({
+      n.push({
         position: c,
         x: d(f, c),
         y: d(u, c),
         z: d(b, c)
       });
-    }), a;
+    }), n;
   }
   update(e) {
   }
@@ -170,8 +186,8 @@ class B extends $ {
     }
     const t = e.address.sheetId, i = e.address.objectKey;
     this.sheets.get(t)?.detachObject(i);
-    const s = `${t}_${i}`, a = this.sheetObjectUnsubscribe.get(s);
-    a !== void 0 && (this.sheetObjects.delete(s), this.sheetObjectCBs.delete(s), this.sheetObjectUnsubscribe.delete(s), a());
+    const s = `${t}_${i}`, n = this.sheetObjectUnsubscribe.get(s);
+    n !== void 0 && (this.sheetObjects.delete(s), this.sheetObjectCBs.delete(s), this.sheetObjectUnsubscribe.delete(s), n());
   }
   handleApp(e) {
     let t;
@@ -192,11 +208,23 @@ class B extends $ {
   }
   handleEditor(e) {
     switch (e.event) {
+      case "createSheet":
+        this.sheet(e.data.sheet, e.data.instance);
+        break;
       case "playSheet":
         this.sheet(e.data.sheet, e.data.instance)?.sequence.play(e.data.value);
         break;
       case "pauseSheet":
         this.sheet(e.data.sheet, e.data.instance)?.sequence.pause();
+        break;
+      case "createSheetObject":
+        this.sheetObject(
+          e.data.sheet,
+          e.data.key,
+          JSON.parse(e.data.props),
+          void 0,
+          e.data.instanceId
+        );
         break;
     }
   }
@@ -210,7 +238,7 @@ class B extends $ {
     if (this.editor) {
       this.studio?.ui.restore(), this.studio?.onSelectionChange((h) => {
         h.length < 1 || h.forEach((s) => {
-          let a = s.address.sheetId, f = "setSheet", u = {};
+          let n = s.address.sheetId, f = "setSheet", u = {};
           switch (s.type) {
             case "Theatre_Sheet_PublicAPI":
               f = "setSheet", u = {
@@ -218,8 +246,8 @@ class B extends $ {
               }, this.activeSheet = this.sheets.get(s.address.sheetId);
               break;
             case "Theatre_SheetObject_PublicAPI":
-              f = "setSheetObject", a += `_${s.address.objectKey}`, u = {
-                id: a,
+              f = "setSheetObject", n += `_${s.address.objectKey}`, u = {
+                id: n,
                 sheet: s.address.sheetId,
                 key: s.address.objectKey
               }, this.activeSheet = this.sheets.get(s.address.sheetId);

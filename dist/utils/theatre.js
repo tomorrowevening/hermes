@@ -1,37 +1,16 @@
 import { types as n } from "@tomorrowevening/theatre-core";
 import { useState as d, useEffect as p } from "react";
-let m;
+let c;
 function v() {
-  const [i, s] = d(m);
+  const [r, s] = d(c);
   return p(() => {
-    m || import("@tomorrowevening/theatre-studio").then((e) => {
-      m = e.default, m.initialize(), m.ui.hide(), s(m);
+    c || import("@tomorrowevening/theatre-studio").then((e) => {
+      c = e.default, c.initialize(), c.ui.hide(), s(c);
     });
-  }, []), i;
+  }, []), r;
 }
-async function E() {
-  for (; !document.getElementById("theatrejs-studio-root"); )
-    await new Promise((r) => setTimeout(r, 100));
-  const i = document.getElementById("theatrejs-studio-root");
-  if (i === null || i.shadowRoot === null) return;
-  const s = i.shadowRoot.getElementById("pointer-root");
-  if (s === null) return;
-  const e = s.children[0];
-  if (e !== null) {
-    try {
-      const t = e.children[1].children[1];
-      t.parentElement?.removeChild(t);
-    } catch {
-    }
-    try {
-      const r = e.children[3];
-      r.style.top = "0", r.style.right = "300px";
-    } catch {
-    }
-  }
-}
-function O(i, s, e, r) {
-  r.sheetObject(i, s, {
+function M(r, s, e, i) {
+  i.sheetObject(r, s, {
     transform: {
       position: {
         x: e.position.x,
@@ -51,11 +30,11 @@ function O(i, s, e, r) {
       visible: e.visible
     }
   }, (t) => {
-    const o = t.transform;
-    e.position.copy(o.position), e.rotation.copy(o.rotation), e.scale.copy(o.scale), e.visible = o.visible;
+    const a = t.transform;
+    e.position.copy(a.position), e.rotation.copy(a.rotation), e.scale.copy(a.scale), e.visible = a.visible;
   });
 }
-const h = [
+const x = [
   "allowOverride",
   "alphaHash",
   "alphaTest",
@@ -128,9 +107,9 @@ const h = [
   "wireframeLinecap",
   "wireframeLinejoin"
 ];
-function f(i) {
-  const s = typeof i;
-  if (i === null || i.isTexture)
+function f(r) {
+  const s = typeof r;
+  if (r === null || r.isTexture)
     return "texture";
   if (s === "boolean")
     return "boolean";
@@ -139,60 +118,60 @@ function f(i) {
   if (s === "string")
     return "string";
   if (s === "object") {
-    if (i.isColor)
+    if (r.isColor)
       return "color";
-    if (i.isVector2)
+    if (r.isVector2)
       return "vector2";
-    if (i.isVector3)
+    if (r.isVector3)
       return "vector3";
-    if (i.isVector4)
+    if (r.isVector4)
       return "vector4";
-    if (i.isMatrix2)
+    if (r.isMatrix2)
       return "matrix2";
-    if (i.isMatrix3)
+    if (r.isMatrix3)
       return "matrix3";
-    if (i.isMatrix4)
+    if (r.isMatrix4)
       return "matrix4";
-    if (i.isEuler)
+    if (r.isEuler)
       return "euler";
-    if (Array.isArray(i))
+    if (Array.isArray(r))
       return "array";
   }
   return "object";
 }
-function y(i) {
+function y(r) {
   const s = [];
-  for (const r in i) {
-    const t = h.find((a) => a === r), o = r.indexOf("_") === 0 || r.indexOf("is") === 0;
-    if (!(t || o))
-      if (r === "uniforms") {
-        const a = i.uniforms;
-        for (const c in a) {
-          const b = a[c].value, u = f(b);
+  for (const i in r) {
+    const t = x.find((o) => o === i), a = i.indexOf("_") === 0 || i.indexOf("is") === 0;
+    if (!(t || a))
+      if (i === "uniforms") {
+        const o = r.uniforms;
+        for (const m in o) {
+          const b = o[m].value, u = f(b);
           u === "array" || u === "object" || s.push({
-            name: `uniforms.${c}.value`,
+            name: `uniforms.${m}.value`,
             type: u,
             value: b
           });
         }
       } else {
-        const a = f(i[r]);
+        const o = f(r[i]);
         s.push({
-          name: r,
-          type: a,
-          value: i[r]
+          name: i,
+          type: o,
+          value: r[i]
         });
       }
   }
   return s.filter(
-    (r) => r.type !== "array" && r.type !== "object" && r.type !== "texture"
+    (i) => i.type !== "array" && i.type !== "object" && i.type !== "texture"
   );
 }
-function x(i) {
+function h(r) {
   const s = {}, e = { nudgeMultiplier: 0.01 };
-  return i.forEach((r) => {
-    let t = r.value;
-    switch (r.type) {
+  return r.forEach((i) => {
+    let t = i.value;
+    switch (i.type) {
       case "color":
         t = n.rgba({ r: t.r, g: t.g, b: t.b, a: 1 });
         break;
@@ -263,25 +242,25 @@ function x(i) {
         };
         break;
     }
-    if (r.name.includes(".")) {
-      const o = r.name.split(".");
+    if (i.name.includes(".")) {
+      const a = i.name.split(".");
       let l = s;
-      for (let a = 0; a < o.length - 1; a++) {
-        const c = o[a];
-        l[c] || (l[c] = {}), l = l[c];
+      for (let o = 0; o < a.length - 1; o++) {
+        const m = a[o];
+        l[m] || (l[m] = {}), l = l[m];
       }
-      l[o[o.length - 1]] = t;
+      l[a[a.length - 1]] = t;
     } else
-      s[r.name] = t;
+      s[i.name] = t;
   }), s;
 }
-function g(i, s, e) {
-  s.forEach((r) => {
-    if (i[r.name] !== void 0)
-      switch (r.type) {
+function g(r, s, e) {
+  s.forEach((i) => {
+    if (r[i.name] !== void 0)
+      switch (i.type) {
         case "boolean":
         case "number":
-          i[r.name] = e.material[r.name];
+          r[i.name] = e.material[i.name];
           break;
         case "color":
         case "euler":
@@ -291,26 +270,25 @@ function g(i, s, e) {
         case "vector2":
         case "vector3":
         case "vector4":
-          i[r.name].copy(e.material[r.name]);
+          r[i.name].copy(e.material[i.name]);
           break;
       }
   });
 }
-function M(i, s, e, r) {
+function k(r, s, e, i) {
   if (!e.isMaterial) return;
-  const t = y(e), o = x(t);
-  r.sheetObject(i, s, {
-    material: o
+  const t = y(e), a = h(t);
+  i.sheetObject(r, s, {
+    material: a
   }, (l) => {
     g(e, t, l);
   });
 }
 export {
-  M as animateObjectMaterial,
-  O as animateObjectTransform,
+  k as animateObjectMaterial,
+  M as animateObjectTransform,
   g as applyObjectMaterial,
-  E as customizeTheatreElements,
-  x as getObjectMaterialObject,
+  h as getObjectMaterialObject,
   y as getObjectMaterialProps,
   v as useStudio
 };

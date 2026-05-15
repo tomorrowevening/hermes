@@ -12,7 +12,6 @@ export default class Application {
   components: Map<string, BaseRemote> = new Map();
   settings: AppSettings = {
     dpr: 1,
-    fps: 30,
     width: 0,
     height: 0,
     mobile: false,

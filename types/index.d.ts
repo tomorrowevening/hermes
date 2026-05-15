@@ -4,7 +4,6 @@ export * from './utils/ImageSequenceCapturer';
 export * from './utils/math';
 export * from './utils/theatre';
 export * from './utils/three';
-export * from './utils/post';
 export * from './webworkers/types';
 export * from './webworkers/EventHandling';
 export * from './webworkers/ProxyManager';
