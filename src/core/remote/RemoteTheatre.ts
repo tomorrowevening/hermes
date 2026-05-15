@@ -115,6 +115,17 @@ export default class RemoteTheatre extends BaseRemote {
     // Create Sheet
     sheet = this.project?.sheet(name, instanceId);
     this.sheets.set(sheetID, sheet);
+
+    // Remotely
+    this.send({
+      event: 'createSheet',
+      target: 'editor',
+      data: {
+        sheet: name,
+        instance: instanceId,
+      },
+    });
+
     return sheet;
   }
 
@@ -230,6 +241,18 @@ export default class RemoteTheatre extends BaseRemote {
       }
     });
     this.sheetObjectUnsubscribe.set(objName, unsubscribe);
+
+    // Remotely
+    this.send({
+      event: 'createSheetObject',
+      target: 'editor',
+      data: {
+        sheet: sheetName,
+        instance: instanceId,
+        key: key,
+        props: JSON.stringify(props),
+      },
+    });
 
     return obj;
   }
@@ -367,11 +390,23 @@ export default class RemoteTheatre extends BaseRemote {
 
   protected override handleEditor(msg: BroadcastData): void {
     switch (msg.event) {
+      case 'createSheet':
+        this.sheet(msg.data.sheet, msg.data.instance);
+        break;
       case 'playSheet':
         this.sheet(msg.data.sheet, msg.data.instance)?.sequence.play(msg.data.value);
         break;
       case 'pauseSheet':
         this.sheet(msg.data.sheet, msg.data.instance)?.sequence.pause();
+        break;
+      case 'createSheetObject':
+        this.sheetObject(
+          msg.data.sheet,
+          msg.data.key,
+          JSON.parse(msg.data.props),
+          undefined,
+          msg.data.instanceId
+        );
         break;
     }
   }
