@@ -63,7 +63,7 @@
     "buildExample": "vite build --config vite.config.example.ts",
     "build": "yarn buildLib && yarn buildExample",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview --config vite.config.example.ts"
   },
   "peerDependencies": {
     "react": ">=18",

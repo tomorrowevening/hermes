@@ -1,0 +1,5 @@
+{
+  "buildCommand": "yarn buildExample",
+  "outputDirectory": "example-dist",
+  "framework": null
+}

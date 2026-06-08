@@ -25,11 +25,11 @@ const scenes = new Map<string, any>([
   ['RTTScene', RTTScene],
 ]);
 
-const ThreeEditor = (import.meta.env.DEV && IS_EDITOR)
+const ThreeEditor = (IS_DEV && IS_EDITOR)
   ? lazy(() => import('../../editor/ThreeEditor'))
   : null;
 
-if (import.meta.env.DEV) {
+if (IS_DEV) {
   if (IS_EDITOR) {
     if (studio) {
       studio.initialize();
